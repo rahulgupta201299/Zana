@@ -1,0 +1,38 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#1a1a1a"/>
+  
+  <!-- Gradient overlay -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2a2a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#facc15;stop-opacity:0.2" />
+      <stop offset="50%" style="stop-color:#facc15;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#facc15;stop-opacity:0.2" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="600" fill="url(#grad1)"/>
+  
+  <!-- Motorcycle silhouette -->
+  <g transform="translate(200, 250)" opacity="0.15">
+    <path d="M50,80 Q70,50 120,50 L200,50 Q220,50 230,70 L250,90 Q270,100 280,110 L320,110 Q340,110 350,130 L350,150 Q350,170 330,170 L300,170 L290,190 Q280,200 260,200 L240,200 Q220,200 210,190 L190,170 L140,170 L130,190 Q120,200 100,200 L80,200 Q60,200 50,190 L30,170 Q10,170 10,150 L10,130 Q10,110 30,110 L70,110 L50,80 Z M80,170 Q95,170 105,180 Q115,190 115,205 Q115,220 105,230 Q95,240 80,240 Q65,240 55,230 Q45,220 45,205 Q45,190 55,180 Q65,170 80,170 Z M260,170 Q275,170 285,180 Q295,190 295,205 Q295,220 285,230 Q275,240 260,240 Q245,240 235,230 Q225,220 225,205 Q225,190 235,180 Q245,170 260,170 Z" fill="#facc15"/>
+  </g>
+  
+  <!-- Yellow accent line -->
+  <rect x="0" y="280" width="800" height="2" fill="url(#grad2)"/>
+  
+  <!-- Text -->
+  <text x="400" y="340" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#facc15" text-anchor="middle">
+    ZANA
+  </text>
+  <text x="400" y="385" font-family="Arial, sans-serif" font-size="24" fill="#ffffff" text-anchor="middle" opacity="0.8">
+    Coming Soon
+  </text>
+  <text x="400" y="415" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" opacity="0.5">
+    Motorcycle image will be available soon
+  </text>
+</svg>
