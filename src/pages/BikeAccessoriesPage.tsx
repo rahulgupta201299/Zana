@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import CartIcon from "@/components/ui/cart-icon";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 
 const BikeAccessoriesPage = () => {
   const navigate = useNavigate();
@@ -31,19 +24,7 @@ const BikeAccessoriesPage = () => {
     mirrorExtender: false,
   });
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
-
+  
   const products = [
     {
       id: 1,
@@ -160,23 +141,6 @@ const BikeAccessoriesPage = () => {
 
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: '#181818' }}>
-      {/* Header and Navigation */}
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
-      {/* Full Width Header */}
       {/* Header Image */}
       <div className="w-full">
         <div className="relative w-full h-[410px] overflow-hidden">
@@ -364,7 +328,6 @@ const BikeAccessoriesPage = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

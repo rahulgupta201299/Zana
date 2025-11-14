@@ -4,18 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface ProfileModalProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
-const ProfileModal = ({ isOpen, onClose }: ProfileModalProps) => {
+const ProfileModal = ({ onClose }: ProfileModalProps) => {
   const [phoneNumber, setPhoneNumber] = useState("8857477400");
   const [firstName, setFirstName] = useState("Saurav");
   const [lastName, setLastName] = useState("Sharma");
   const [address, setAddress] = useState("Rohini, Sector - 7");
   const [notifyOffers, setNotifyOffers] = useState(false);
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">

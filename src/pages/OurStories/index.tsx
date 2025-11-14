@@ -1,42 +1,8 @@
 
-import { useState } from "react";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-
-const OurStoriesPage = () => {
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
+function OurStories() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       {/* Hero Section */}
       <div 
         className="relative h-[600px] bg-cover bg-center flex items-end"
@@ -94,10 +60,8 @@ const OurStoriesPage = () => {
 
       {/* White Separator */}
       <div className="w-full h-px bg-white"></div>
-
-      <Footer />
     </div>
   );
 };
 
-export default OurStoriesPage;
+export default OurStories
