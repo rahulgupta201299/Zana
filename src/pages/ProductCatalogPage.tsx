@@ -1,29 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
-import CartIcon from "@/components/ui/cart-icon";
 import { products } from "@/data/products";
 import { categories, getProductsByCategory } from "@/data/productCategories";
 import { Heart, ShoppingCart } from "lucide-react";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   // Filter products by selected category
   const displayedProducts = selectedCategory === "All"
@@ -48,21 +32,6 @@ const ProductCatalogPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#2a2a2a' }}>
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       {/* Hero Section */}
       <div className="py-12 md:py-16 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto text-center">
@@ -196,8 +165,6 @@ const ProductCatalogPage = () => {
           )}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

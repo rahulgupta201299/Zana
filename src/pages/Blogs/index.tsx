@@ -1,26 +1,9 @@
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
-const BlogsPage = () => {
+const Blogs = () => {
   const navigate = useNavigate();
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   const blogs = [
     {
@@ -67,25 +50,10 @@ const BlogsPage = () => {
 
   return (
     <div className="min-h-screen bg-dark-gray">
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       <div className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-white text-5xl font-bold mb-12">BLOGS</h1>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {blogs.map((blog, index) => (
               <div key={index} className="rounded-lg overflow-hidden bg-card-gradient">
@@ -95,7 +63,7 @@ const BlogsPage = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-black mb-4">{blog.title}</h3>
                   <p className="text-black mb-6">{blog.description}</p>
-                  <Button 
+                  <Button
                     className="bg-transparent text-black border-2 border-black hover:bg-black hover:text-white rounded-none font-bold px-6"
                     onClick={() => navigate(`/blog/${index + 1}`)}
                   >
@@ -107,10 +75,8 @@ const BlogsPage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
 
-export default BlogsPage;
+export default Blogs

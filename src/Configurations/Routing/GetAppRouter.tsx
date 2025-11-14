@@ -1,15 +1,14 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 
-import ProtectedRoutes from './ProtectedRoutes'
+import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
 import { ROUTES } from '@/Constants/Routes'
+import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
 
-const PublicRoutes = () => <Outlet />
-
-const Index = lazyLoadPage(() => import("@/pages/Index"));
+const Landing = lazyLoadPage(() => import("@/pages/Landing"));
 const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"));
 const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetailPage"));
 const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"));
@@ -17,20 +16,20 @@ const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalogPage
 const BikesPage = lazyLoadPage(() => import("@/pages/BikesPage"));
 const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetailPage"));
 const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"));
-const BlogsPage = lazyLoadPage(() => import("@/pages/BlogsPage"));
-const BlogDetailPage = lazyLoadPage(() => import("@/pages/BlogDetailPage"));
-const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStoriesPage"));
+const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"));
+const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"));
+const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"));
 const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"));
 const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"));
 const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"));
-const NotFound = lazyLoadPage(() => import("@/pages/NotFound"));
+const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"));
 
 export const routeObj: RouteObject[] = [
   {
     element: <PublicRoutes />,
     errorElement: <Navigate to={ROUTES.ANY} replace />,
     children: [
-      { path: ROUTES.BASE_URL, element: Index },
+      { path: ROUTES.BASE_URL, element: Landing },
       { path: ROUTES.TOP_SELLING_PRODUCTS, element: TopSellingProductsPage },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
       { path: ROUTES.ACCESSORIES, element: AccessoriesPage },

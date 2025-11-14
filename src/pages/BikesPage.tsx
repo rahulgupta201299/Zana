@@ -1,27 +1,11 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 import { bikes, brands } from "@/data/bikes";
 
 const BikesPage = () => {
   const navigate = useNavigate();
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string>("All");
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   // Filter bikes by selected brand
   const filteredBikes = selectedBrand === "All" 
@@ -34,21 +18,6 @@ const BikesPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -145,8 +114,6 @@ const BikesPage = () => {
           )}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

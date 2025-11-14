@@ -2,10 +2,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 
 interface BikeData {
   id: string;
@@ -48,19 +44,7 @@ const BikeViewPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseX, setLastMouseX] = useState(0);
   const [lastMouseY, setLastMouseY] = useState(0);
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
@@ -125,21 +109,6 @@ const BikeViewPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Bike 360 View Section */}
@@ -274,8 +243,6 @@ const BikeViewPage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

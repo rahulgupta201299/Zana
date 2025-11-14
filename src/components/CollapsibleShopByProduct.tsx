@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 
 interface CollapsibleShopByProductProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
-const CollapsibleShopByProduct = ({ isOpen, onClose }: CollapsibleShopByProductProps) => {
+const CollapsibleShopByProduct = ({ onClose }: CollapsibleShopByProductProps) => {
   const productCategories = [
     { icon: "🏍️", name: "BIKE PROTECTION" },
     { icon: "🎒", name: "LUGGAGE SOLUTION" },
@@ -26,8 +25,6 @@ const CollapsibleShopByProduct = ({ isOpen, onClose }: CollapsibleShopByProductP
       text: "650CC+"
     }
   ];
-
-  if (!isOpen) return null;
 
   return (
     <>

@@ -1,60 +1,15 @@
-import { useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
-import CartSidebar from "@/components/CartSidebar";
 import { useCart } from "@/hooks/useCart";
 
 const CartCheckoutPage = () => {
   const navigate = useNavigate();
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   
   // Use cart hook
   const { cartItems, updateQuantity, removeItem, subtotal, discount, total, totalItems } = useCart();
 
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
-      <Header
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-        onCartClick={() => setIsCartOpen(true)}
-        cartItemCount={totalItems}
-      />
-      <CollapsibleShopByBike
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-
-      {/* Cart Sidebar */}
-      <CartSidebar
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeItem}
-      />
-
       {/* Cart Content */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <h1 className="text-white text-3xl md:text-5xl font-black mb-6 md:mb-8">YOUR CART</h1>
@@ -249,8 +204,6 @@ const CartCheckoutPage = () => {
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 };

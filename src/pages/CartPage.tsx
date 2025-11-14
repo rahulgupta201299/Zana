@@ -1,26 +1,10 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 
 const CartPage = () => {
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   // Product data with local images
   const product = {
@@ -53,21 +37,7 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#2a2a2a' }}>
-      <Header
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-
+      
       {/* Product Section */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
@@ -360,8 +330,6 @@ const CartPage = () => {
           <span className="relative z-10">CUSTOMER REVIEW</span>
         </button>
       </div>
-
-      <Footer />
     </div>
   );
 };

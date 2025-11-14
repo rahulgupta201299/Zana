@@ -2,11 +2,10 @@ import { Link } from "react-router-dom";
 import { bikes, brands, getBikesByBrand } from "@/data/bikes";
 
 interface CollapsibleShopByBikeProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
-const CollapsibleShopByBike = ({ isOpen, onClose }: CollapsibleShopByBikeProps) => {
+const CollapsibleShopByBike = ({ onClose }: CollapsibleShopByBikeProps) => {
   const bikeImages = [
     {
       image: "/uploads/c1f33cf7-3f69-43ca-8a8b-0aa8b2e842d2.png",
@@ -19,8 +18,6 @@ const CollapsibleShopByBike = ({ isOpen, onClose }: CollapsibleShopByBikeProps) 
       text: "650CC+"
     }
   ];
-
-  if (!isOpen) return null;
 
   // Split brands into two columns
   const midpoint = Math.ceil(brands.length / 2);

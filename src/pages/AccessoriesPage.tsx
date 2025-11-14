@@ -1,24 +1,7 @@
 
-import { useState } from "react";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const AccessoriesPage = () => {
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   const accessories = [
     { name: "Saddle Stay", price: "₹2,999", image: "/uploads/41d681cc-f97d-4924-a37e-09765c9be629.png" },
@@ -33,20 +16,6 @@ const AccessoriesPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
       
       {/* Hero Section */}
       <div 
@@ -135,8 +104,6 @@ const AccessoriesPage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
