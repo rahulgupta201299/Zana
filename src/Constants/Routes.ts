@@ -13,5 +13,6 @@ export const ROUTES = Object.freeze({
   BIKE_VIEW: '/bike-view',
   CART: '/cart',
   SEARCH: '/search',
+  CONTACT_US:'/contact-us',
   ANY: '*'
 })

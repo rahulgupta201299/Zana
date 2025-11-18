@@ -23,6 +23,7 @@ const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"));
 const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"));
 const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"));
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"));
+const ContactUsForm = lazyLoadPage(()=>import("@/pages/QuickLinks/ContactUs"))
 
 export const routeObj: RouteObject[] = [
   {
@@ -43,6 +44,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BIKE_VIEW, element: BikeViewPage },
       { path: ROUTES.CART, element: CartCheckoutPage },
       { path: ROUTES.SEARCH, element: SearchPage },
+      {path:ROUTES.CONTACT_US, element:ContactUsForm},
       { path: ROUTES.ANY, element: NotFound },
     ],
   },
