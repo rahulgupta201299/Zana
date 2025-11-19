@@ -11,6 +11,7 @@ import InstagramFeed from '@/components/InstagramFeed'
 import BlogsSection from '@/components/BlogsSection'
 import BrandStory from '@/components/BrandStory'
 import TestimonialsSection from '@/components/TestimonialsSection'
+import SignupPopup from '@/components/SignupPopup'
 
 function index() {
 
@@ -31,6 +32,7 @@ function index() {
 			<BlogsSection />
 			<BrandStory />
 			<TestimonialsSection />
+			<SignupPopup/>
 		</div>
 	)
 }

@@ -1,9 +1,45 @@
-import { useState, useEffect } from "react";
-import { X, Eye, EyeOff } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+
+import {
+  Box,
+  Dialog,
+  Select,
+  TextField,
+  Button,
+  DialogTitle,
+  DialogContent,
+  Typography,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
+import { useDispatch } from "react-redux";
+import CloseIcon from "@mui/icons-material/Close";
+import { updateLoginStatusActions } from "@/Redux/Auth/Actions";
+
+const countries = [
+  { code: "+1", label: "US", flag: "🇺🇸" },
+  { code: "+91", label: "IN", flag: "🇮🇳" },
+  { code: "+44", label: "UK", flag: "🇬🇧" },
+  { code: "+81", label: "JP", flag: "🇯🇵" },
+  { code: "+61", label: "AU", flag: "🇦🇺" },
+];
 
 const SignupPopup = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [countryCode, setCountryCode] = useState("+91");
+  const [phone, setPhone] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+
+  const dispatch = useDispatch();
+  const actions = useMemo(
+    () => ({
+      handleUpdateLogin: (state: any) =>
+        dispatch(updateLoginStatusActions(state)),
+    }),
+    [dispatch]
+  );
 
   useEffect(() => {
     // Show popup after a short delay on page load
@@ -14,88 +50,187 @@ const SignupPopup = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleRequestOtp = () => {
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+      setPhoneError("Enter a valid 10-digit phone number");
+      return;
+    }
+    setPhoneError("");
+    setOtpSent(true);
+  };
+
+  const handleSubmitOtp = async () => {
+    if (otp.length !== 6) {
+      alert("Enter a valid 6-digit OTP");
+      return;
+    }
+    await actions.handleUpdateLogin(phone);
+
+    setIsOpen(false);
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="relative bg-[#2a2a2a] rounded-lg p-4 md:p-8 w-full max-w-md">
-        {/* Close Button */}
-        <button
-          onClick={() => setIsOpen(false)}
-          className="absolute top-3 right-3 md:top-4 md:right-4 text-white hover:text-gray-300 transition-colors"
-        >
-          <X size={20} className="md:w-6 md:h-6" />
-        </button>
-
-        {/* Title */}
-        <h2 className="text-white text-2xl md:text-3xl font-bold mb-4 md:mb-6">Sign up</h2>
-
-        {/* Form */}
-        <form className="space-y-3 md:space-y-4">
-          {/* Email/Name Input */}
-          <input
-            type="text"
-            placeholder="Name or email"
-            className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-white text-black text-sm md:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#AF7603]"
-          />
-
-          {/* Password Input */}
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-white text-black text-sm md:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#AF7603] pr-10 md:pr-12"
+    <Dialog
+      open={isOpen}
+      // onClose={() => setIsOpen(false)}
+      disableEscapeKeyDown
+      maxWidth="sm"
+      fullWidth
+      slotProps={{
+        backdrop: {
+          onClick: (e) => e.stopPropagation(),
+        },
+        paper: {
+          sx: {
+            backgroundColor: "black",
+            color: "white",
+          },
+        },
+      }}
+    >
+      <IconButton
+        onClick={() => setIsOpen(false)}
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          color: "white",
+          zIndex: 10,
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogTitle sx={{ p: "32px 32px 24px 32px" }}>
+        Login With OTP
+      </DialogTitle>
+      <DialogContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          p: "64px 32px",
+        }}
+      >
+        {!otpSent ? (
+          <>
+            <Typography>
+              Enter your phone number and we’ll send you a six digit OTP
+            </Typography>
+            <TextField
+              fullWidth
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <Box
+                      sx={{
+                        borderRight: "1px solid #000",
+                        mr: "16px",
+                        height: "100%",
+                        left: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          ".MuiSelect-select": {
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          },
+                          ".MuiOutlinedInput-notchedOutline": {
+                            border: "none",
+                          },
+                          backgroundColor: "#fff",
+                          height: "100%",
+                          minWidth: "80px",
+                        }}
+                      >
+                        {countries.map((c) => (
+                          <MenuItem
+                            key={c.code}
+                            value={c.code}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                            }}
+                          >
+                            <span>{c.flag}</span>
+                            <span>{c.code}</span>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Box>
+                  ),
+                  sx: { backgroundColor: "#FFFFFF", color: "#000", p: 0 },
+                  inputProps: { maxlength: 10 },
+                },
+              }}
+              value={phone}
+              onChange={(e) => {
+                if (e.target.value.match(/[^0-9]/)) return;
+                setPhone(e.target.value);
+              }}
+              error={!!phoneError}
+              helperText={phoneError}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
+
+            <Button
+              size="large"
+              onClick={handleRequestOtp}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                color: "#000",
+                border: "2px solid white",
+              }}
             >
-              {showPassword ? <EyeOff size={18} className="md:w-5 md:h-5" /> : <Eye size={18} className="md:w-5 md:h-5" />}
-            </button>
-          </div>
-
-          {/* Sign Up Button */}
-          <button
-            type="submit"
-            className="w-full bg-white text-black font-semibold py-2 md:py-3 rounded-lg text-sm md:text-base hover:bg-gray-100 transition-colors"
-          >
-            Sign Up
-          </button>
-
-          {/* Sign In Link */}
-          <p className="text-center text-white text-xs md:text-sm">
-            Already have an account?{" "}
-            <button type="button" className="text-white underline hover:text-gray-300">
-              Sign in
-            </button>
-          </p>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 md:gap-4 my-3 md:my-4">
-            <div className="flex-1 h-px bg-gray-600"></div>
-            <span className="text-white text-xs md:text-sm">or</span>
-            <div className="flex-1 h-px bg-gray-600"></div>
-          </div>
-
-          {/* Google Sign Up Button */}
-          <button
-            type="button"
-            className="w-full bg-white text-black font-semibold py-2 md:py-3 rounded-lg text-sm md:text-base hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 md:gap-3"
-          >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="md:w-5 md:h-5">
-              <path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#4285F4"/>
-              <path d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.595-4.123H1.064v2.59A9.996 9.996 0 0010 20z" fill="#34A853"/>
-              <path d="M4.405 11.9c-.2-.6-.314-1.24-.314-1.9 0-.66.114-1.3.314-1.9V5.51H1.064A9.996 9.996 0 000 10c0 1.614.386 3.14 1.064 4.49l3.34-2.59z" fill="#FBBC05"/>
-              <path d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.19 5.736 7.395 3.977 10 3.977z" fill="#EA4335"/>
-            </svg>
-            Sign up with Google
-          </button>
-        </form>
-      </div>
-    </div>
+              Request OTP
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography>Enter the 6-digit OTP sent to your phone</Typography>
+            <TextField
+              fullWidth
+              value={otp}
+              variant="outlined"
+              onChange={(e) => {
+                if (e.target.value.match(/[^0-9]/)) return;
+                setOtp(e.target.value);
+              }}
+              slotProps={{
+                input: {
+                  inputProps: { maxLength: 6 },
+                  sx: { backgroundColor: "#FFFFFF", color: "#000" },
+                },
+              }}
+            />
+            <Button
+              disabled={otp.length != 6}
+              size="large"
+              onClick={handleSubmitOtp}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                color: "#000",
+                border: "2px solid white",
+              }}
+            >
+              Submit OTP
+            </Button>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
 export default SignupPopup;
-
