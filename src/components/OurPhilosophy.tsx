@@ -4,7 +4,7 @@ const OurPhilosophy = () => {
   const navigate = useNavigate();
   
   return (
-    <section className="py-6 md:py-8" style={{ backgroundColor: '#181818' }}>
+    <section className="py-6 md:py-8" style={{ backgroundColor: '#181818', paddingTop: "3rem"}}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left side - Image */}
