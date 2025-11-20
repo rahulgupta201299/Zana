@@ -1,6 +1,5 @@
 import React from 'react'
 
-import HeroSection from '@/components/HeroSection'
 import NewArrivals from '@/components/NewArrivals'
 import OurPhilosophy from '@/components/OurPhilosophy'
 import GarageFavorite from '@/components/GarageFavorite'
@@ -20,7 +19,6 @@ function index() {
 
 	return (
 		<div className="min-h-screen">
-			<HeroSection />
 			<OurPhilosophy />
 			<GarageFavorite onAddToCart={handleAddToCart} />
 			<ShopByBike />

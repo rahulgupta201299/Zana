@@ -4,6 +4,7 @@ export const ROUTES = Object.freeze({
   PRODUCT_DETAIL: '/product/:id',
   PRODUCT_CATALOG: '/product-catalog',
   ACCESSORIES: '/accessories',
+  Z_PRO: '/z-pro',
   BIKES: '/bikes',
   BIKE_DETAIL: '/bike/:bikeId',
   BIKE_ACCESSORIES: '/bike-accessories',

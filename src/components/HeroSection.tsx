@@ -1,54 +1,124 @@
+import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  
+
   return (
-    <div className="relative h-[175px] md:min-h-screen flex items-center">
-      {/* Background GIF */}
-      <div className="absolute inset-0 overflow-hidden bg-black">
-        <img 
+    <Box
+      sx={{
+        position: "relative",
+        height: { xs: "175px", md: "100vh" },
+        display: "flex",
+        alignItems: "center",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          overflow: "hidden",
+          bgcolor: "black",
+        }}
+      >
+        <Box
+          component="img"
           src="/uploads/5f9aa5f190665c7e8b28d19f5c20975680b4d9ce.gif"
           alt="Motorcycle hero background"
-          className="w-full h-full object-cover"
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
         />
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-      
+
+        {/* Dark Overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+        />
+      </Box>
+
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 w-full">
-        <div className="max-w-2xl">
-          <h1 className="text-2xl md:text-6xl lg:text-7xl font-bold text-white mb-2 md:mb-6 leading-tight">
-            FORGED IN FIRE<br />
-            MORE THAN METAL
-          </h1>
-          <p className="text-xs md:text-xl lg:text-2xl text-white/90 mb-3 md:mb-8">
-            Made in India- Ridden Everywhere
-          </p>
-          <button 
-            onClick={() => navigate('/product-catalog')}
-            className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-8 md:py-4 rounded-lg text-xs md:text-lg font-medium overflow-hidden group transition-colors duration-500"
-            style={{
-              background: 'linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)',
-              backgroundSize: '200% 200%',
-              backgroundPosition: '0% 0%',
-              transition: 'background-position 0.4s ease, color 0.4s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundPosition = '100% 100%';
-              e.currentTarget.style.color = '#000';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundPosition = '0% 0%';
-              e.currentTarget.style.color = '#fff';
+      <Box
+        sx={{
+          position: "relative",
+          maxWidth: "1280px",
+          mx: "auto",
+          px: { xs: 2, md: 3 },
+          width: "100%",
+        }}
+      >
+        <Box sx={{ maxWidth: "650px" }}>
+          <Typography
+            variant="h1"
+            sx={{
+              fontWeight: 700,
+              color: "white",
+              mb: { xs: 1, md: 3 },
+              fontSize: {
+                xs: "1.5rem",
+                md: "4rem",
+                lg: "5rem",
+              },
+              lineHeight: 1.1,
             }}
           >
-            <span className="relative z-10">Explore the Collection</span>
-          </button>
-        </div>
-      </div>
-    </div>
+            FORGED IN FIRE<br />
+            MORE THAN METAL
+          </Typography>
+
+          <Typography
+            sx={{
+              color: "rgba(255,255,255,0.9)",
+              mb: { xs: 2, md: 4 },
+              fontSize: {
+                xs: "0.75rem",
+                md: "1.25rem",
+                lg: "1.75rem",
+              },
+            }}
+          >
+            Made in India - Ridden Everywhere
+          </Typography>
+
+          {/* Animated Button */}
+          <Button
+            onClick={() => navigate("/product-catalog")}
+            sx={{
+              position: "relative",
+              border: "2px solid white",
+              textTransform: "none",
+              color: "white",
+              px: { xs: 2, md: 6 },
+              py: { xs: 1, md: 2 },
+              fontSize: { xs: "0.75rem", md: "1.1rem" },
+              borderRadius: "8px",
+              overflow: "hidden",
+              transition: "0.4s ease",
+
+              background:
+                "linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "0% 0%",
+
+              "&:hover": {
+                backgroundPosition: "100% 100%",
+                color: "#000",
+                borderColor: "white",
+              },
+            }}
+          >
+            Explore the Collection
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
