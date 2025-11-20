@@ -1,8 +1,7 @@
 import { MenuItemsName } from "./Constant";
 
 export type TopLevelItemsType = {
-  name: string;
-  route: string;
+  name: MenuItemsName;
   Component: any;
 };
 
