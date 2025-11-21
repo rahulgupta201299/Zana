@@ -203,12 +203,12 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
       {
         selectedTopItem === MenuItemsName.PROFILE && (
-          <ProfileModal onClose={() => setSelectedMenuItem(null)} />
+          <ProfileModal onClose={() => setSelectedTopItem(null)} />
         )
       }
       {
         selectedTopItem === MenuItemsName.SEARCH && (
-          <Search onClose={() => setSelectedMenuItem(null)} />
+          <Search onClose={() => setSelectedTopItem(null)} />
         )
       }
       {

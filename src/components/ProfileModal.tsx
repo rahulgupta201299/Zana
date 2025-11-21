@@ -22,9 +22,13 @@ import { LogOutIcon } from "lucide-react";
 import { Formik } from "formik";
 import { Form } from "react-router";
 import * as Yup from "yup";
-import { getFieldErrorState, getHelperOrErrorText } from "@/utils/formik";
+import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 
-export default function ProfileModal({ open, onClose }: any) {
+type ProfileModalPropsType = {
+  onClose: () => void
+}
+
+export default function ProfileModal({ onClose }: ProfileModalPropsType) {
   const isMobile = useMediaQuery("(max-width:900px)");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -56,7 +60,7 @@ export default function ProfileModal({ open, onClose }: any) {
 
   return (
     <Dialog
-      open={open}
+      open={true}
       onClose={onClose}
       fullScreen={isMobile}
       maxWidth="lg"
