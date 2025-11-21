@@ -4,10 +4,6 @@ import { ArrowLeft, Minus, Plus, Facebook, Instagram } from "lucide-react";
 import CartIcon from "@/components/ui/cart-icon";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -15,20 +11,8 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   // Mock product data - in a real app, this would come from an API
   const product = {
@@ -76,21 +60,6 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-      
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -290,8 +259,6 @@ const ProductDetailPage = () => {
         </Button>
         <Separator className="bg-white/20" />
       </div>
-
-      <Footer />
     </div>
   );
 };

@@ -1,25 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
-import Header from "@/components/Header";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
-import Footer from "@/components/Footer";
 
 const SearchPage = () => {
   const navigate = useNavigate();
-  const [isShopByBikeOpen, setIsShopByBikeOpen] = useState(false);
-  const [isShopByProductOpen, setIsShopByProductOpen] = useState(false);
-
-  const toggleShopByBike = () => {
-    setIsShopByBikeOpen(!isShopByBikeOpen);
-    setIsShopByProductOpen(false);
-  };
-
-  const toggleShopByProduct = () => {
-    setIsShopByProductOpen(!isShopByProductOpen);
-    setIsShopByBikeOpen(false);
-  };
 
   const trendingSearches = [
     "Saddle Stay",
@@ -35,21 +17,6 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#2a2a2a' }}>
-      <Header 
-        isShopByBikeOpen={isShopByBikeOpen}
-        onToggleShopByBike={toggleShopByBike}
-        isShopByProductOpen={isShopByProductOpen}
-        onToggleShopByProduct={toggleShopByProduct}
-      />
-      <CollapsibleShopByBike 
-        isOpen={isShopByBikeOpen}
-        onClose={() => setIsShopByBikeOpen(false)}
-      />
-      <CollapsibleShopByProduct 
-        isOpen={isShopByProductOpen}
-        onClose={() => setIsShopByProductOpen(false)}
-      />
-
       {/* Search Content */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-16">
         {/* Search Title */}
@@ -73,8 +40,6 @@ const SearchPage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
