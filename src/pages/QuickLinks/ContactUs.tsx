@@ -3,7 +3,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { Grid } from "@mui/material";
-import { getFieldErrorState, getHelperOrErrorText } from "@/utils/formik";
+import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 
 const ContactSchema = Yup.object().shape({
   name: Yup.string()

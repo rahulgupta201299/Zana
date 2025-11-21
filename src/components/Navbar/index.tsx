@@ -1,10 +1,11 @@
 
 import { useEffect, useState } from "react";
 import { Box, Button } from '@mui/material'
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from '@/Assets/Icons/Zana.png'
+import ZPro from '@/Assets/Icons/ZPro.webp'
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
 import { MenuItemsType, TopLevelItemsType } from "./Types";
 import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
@@ -15,6 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import Search from './Search'
 import MobileNavMenu from "./MobileNavMenu";
+import WebNavMenu from "./WebNavMenu";
 
 type NavbarPropsType = {
   isMobile: boolean
@@ -22,10 +24,12 @@ type NavbarPropsType = {
 
 function Navbar({ isMobile }: NavbarPropsType) {
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemsName | null>(null)
+  const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true)
 
   const navigate = useNavigate();
+  const location = useLocation()
 
   function handleMenuItemClick(item: MenuItemsType) {
     const { name, route } = item
@@ -44,7 +48,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   function handleTopLevelClick(item: TopLevelItemsType) {
     const { name } = item;
 
-    setSelectedMenuItem(name)
+    setSelectedTopItem(name)
   }
 
   function handleScroll() {
@@ -102,8 +106,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
             <Link to={ROUTES.BASE_URL} style={{ display: "flex" }}>
               <img
-                src={Zana}
-                alt="Zana Logo"
+                src={location.pathname === ROUTES.Z_PRO ? ZPro : Zana}
+                alt={`${location.pathname === ROUTES.Z_PRO ? "ZPro" : "Zana"} Logo`}
                 style={{
                   height: isMobile ? "3.5rem" : "5rem",
                   width: "auto",
@@ -198,18 +202,23 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {
-        selectedMenuItem === MenuItemsName.PROFILE && (
-          <ProfileModal onClose={() => setSelectedMenuItem(null)} />
+        selectedTopItem === MenuItemsName.PROFILE && (
+          <ProfileModal onClose={() => setSelectedTopItem(null)} />
         )
       }
       {
-        selectedMenuItem === MenuItemsName.SEARCH && (
-          <Search onClose={() => setSelectedMenuItem(null)} />
+        selectedTopItem === MenuItemsName.SEARCH && (
+          <Search onClose={() => setSelectedTopItem(null)} />
         )
       }
       {
         isMobileMenuOpen && (
           <MobileNavMenu onClose={() => setIsMobileMenuOpen(false)} />
+        )
+      }
+      {
+        selectedMenuItem && (
+          <WebNavMenu name={selectedMenuItem} onClose={() => setSelectedMenuItem(null)} />
         )
       }
     </Box>

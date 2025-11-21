@@ -18,3 +18,10 @@ export type CartItem = {
   image: string;
   description?: string;
 }
+
+export type MenuOptionsType = {
+  _id: string
+  name: string
+  models?: MenuOptionsType[]
+  route?: string
+}
