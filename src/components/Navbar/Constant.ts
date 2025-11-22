@@ -2,7 +2,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { MenuOptionsType, TopLevelItemsType } from "./Types";
-import { ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 
 export enum MenuItemsName {
   SEARCH = "Search",
@@ -41,7 +41,7 @@ export const MenuItems = [
   },
   {
     name: MenuItemsName.Z_PRO,
-    route: ROUTES.Z_PRO,
+    route: '',
   },
   {
     name: MenuItemsName.RIDE_STORIES,
@@ -146,6 +146,7 @@ export const MenuOption: MenuOptionsType[] = [
         ],
       },
     ],
+    route: `${SUB_ROUTES.BIKE}`
   },
   {
     _id: "2",
@@ -238,6 +239,7 @@ export const MenuOption: MenuOptionsType[] = [
         ],
       },
     ],
+    route: `${SUB_ROUTES.PRODUCT}`
   },
   {
     _id: "3",
@@ -330,6 +332,7 @@ export const MenuOption: MenuOptionsType[] = [
         ],
       },
     ],
+    route: `${SUB_ROUTES.Z_PRO_BIKE}`
   },
   {
     _id: "4",

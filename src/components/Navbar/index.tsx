@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Box, Button } from '@mui/material'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
@@ -27,14 +27,20 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true)
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
   const navigate = useNavigate();
   const location = useLocation()
 
-  function handleMenuItemClick(item: MenuItemsType) {
+  const isZProPath = useMemo(() => {
+    return location.pathname.split('/').filter(Boolean)?.[0] || ''
+  }, [location.pathname])
+
+  function handleMenuItemClick(event: React.MouseEvent<HTMLElement>, item: MenuItemsType) {
     const { name, route } = item
 
     setIsMobileMenuOpen(false)
+    setAnchorEl(event.currentTarget)
 
     if (route) {
       setSelectedMenuItem(null)
@@ -106,8 +112,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
             <Link to={ROUTES.BASE_URL} style={{ display: "flex" }}>
               <img
-                src={location.pathname === ROUTES.Z_PRO ? ZPro : Zana}
-                alt={`${location.pathname === ROUTES.Z_PRO ? "ZPro" : "Zana"} Logo`}
+                src={isZProPath ? ZPro : Zana}
+                alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
                 style={{
                   height: isMobile ? "3.5rem" : "5rem",
                   width: "auto",
@@ -191,7 +197,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       color: "#1976D2",
                     },
                   }}
-                  onClick={() => handleMenuItemClick(item)}
+                  onClick={(event: React.MouseEvent<HTMLElement>) => handleMenuItemClick(event, item)}
                 >
                   {item.name}
                 </Button>
@@ -218,7 +224,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
       }
       {
         selectedMenuItem && (
-          <WebNavMenu name={selectedMenuItem} onClose={() => setSelectedMenuItem(null)} />
+          <WebNavMenu menuName={selectedMenuItem} anchorEl={anchorEl} onClose={() => setSelectedMenuItem(null)} />
         )
       }
     </Box>

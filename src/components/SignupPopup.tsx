@@ -172,7 +172,7 @@ const SignupPopup = () => {
                     </Box>
                   ),
                   sx: { backgroundColor: "#FFFFFF", color: "#000", p: 0 },
-                  inputProps: { maxlength: 10 },
+                  inputProps: { maxLength: 10 },
                 },
               }}
               value={phone}
