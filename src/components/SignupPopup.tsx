@@ -11,10 +11,13 @@ import {
   Typography,
   MenuItem,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateLoginStatusActions } from "@/Redux/Auth/Actions";
+import { kMaxLength } from "buffer";
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
 const countries = [
   { code: "+1", label: "US", flag: "🇺🇸" },
@@ -24,14 +27,20 @@ const countries = [
   { code: "+61", label: "AU", flag: "🇦🇺" },
 ];
 
-const SignupPopup = () => {
+interface SIGN_UP_TYPE {
+  isMobile: boolean;
+  onClose?: () => void;
+}
+
+const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
   const [isOpen, setIsOpen] = useState(true);
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
   const [otp, setOtp] = useState("");
+  const [timer, setTimer] = useState(30);
   const [phoneError, setPhoneError] = useState("");
-
   const dispatch = useDispatch();
   const actions = useMemo(
     () => ({
@@ -42,7 +51,6 @@ const SignupPopup = () => {
   );
 
   useEffect(() => {
-    // Show popup after a short delay on page load
     const timer = setTimeout(() => {
       setIsOpen(true);
     }, 1000);
@@ -57,17 +65,69 @@ const SignupPopup = () => {
       return;
     }
     setPhoneError("");
+    setTimer(30);
     setOtpSent(true);
   };
 
-  const handleSubmitOtp = async () => {
+  useEffect(() => {
+    if (otpSent && timer > 0) {
+      const interval = setInterval(() => setTimer((t) => t - 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [otpSent, timer]);
+
+  useEffect(() => {
+    if (otpArray.every((digit) => digit !== "")) {
+      setOtp(otpArray.join(""));
+    }
+  }, [otpArray]);
+
+  const handleOtpChange = (value, index) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newArr = [...otpArray];
+    newArr[index] = value.slice(-1);
+    setOtpArray(newArr);
+
+    if (value && index < 5) {
+      const next = document.getElementById(`otp-box-${index + 1}`);
+      next?.focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otpArray[index] && index > 0) {
+      const prev = document.getElementById(`otp-box-${index - 1}`);
+      prev?.focus();
+    }
+  };
+
+  const handleSubmitOtp = async (otp: any) => {
     if (otp.length !== 6) {
       alert("Enter a valid 6-digit OTP");
       return;
     }
     await actions.handleUpdateLogin(phone);
-
+    onClose && onClose();
     setIsOpen(false);
+  };
+
+  const handleOtpPaste = (e, index) => {
+    e.preventDefault();
+
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
+    if (!pasted) return;
+    const digits = pasted.slice(0, 6).split("");
+
+    const newArr = [...otpArray];
+
+    digits.forEach((d, i) => {
+      if (index + i < 6) newArr[index + i] = d;
+    });
+    setOtpArray(newArr);
+    const lastIndex = Math.min(index + digits.length - 1, 5);
+    const next = document.getElementById(`otp-box-${lastIndex}`);
+    next?.focus();
   };
 
   if (!isOpen) return null;
@@ -75,50 +135,61 @@ const SignupPopup = () => {
   return (
     <Dialog
       open={isOpen}
-      // onClose={() => setIsOpen(false)}
-      disableEscapeKeyDown
-      maxWidth="sm"
+      onClose={() => !isMobile && setIsOpen(false)}
       fullWidth
+      maxWidth="sm"
+      fullScreen={isMobile}
       slotProps={{
         backdrop: {
-          onClick: (e) => e.stopPropagation(),
+          sx: {
+            backgroundColor: "rgba(0,0,0,0.6)",
+          },
         },
+
         paper: {
           sx: {
-            backgroundColor: "black",
+            backgroundColor: "#2A2A2A",
             color: "white",
+            ...(isMobile && {
+              position: "absolute",
+              bottom: 0,
+              m: 0,
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
+              height: "auto",
+              maxHeight: "85vh",
+              animation: "slideUp 0.3s ease",
+            }),
           },
         },
       }}
+      disableEscapeKeyDown
     >
       <IconButton
         onClick={() => setIsOpen(false)}
-        sx={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          color: "white",
-          zIndex: 10,
-        }}
+        sx={{ position: "absolute", top: 16, right: 16, color: "white" }}
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle sx={{ p: "32px 32px 24px 32px" }}>
+
+      <DialogTitle sx={{ p: { md: "32px 32px 24px", xs: "16px" } }}>
         Login With OTP
       </DialogTitle>
+
       <DialogContent
         sx={{
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          p: "64px 32px",
+          p: { md: "64px 32px", xs: "64px 16px" },
         }}
       >
         {!otpSent ? (
           <>
             <Typography>
-              Enter your phone number and we’ll send you a six digit OTP
+              Enter your phone number and we’ll send you a 6-digit OTP
             </Typography>
+
             <TextField
               fullWidth
               slotProps={{
@@ -129,10 +200,8 @@ const SignupPopup = () => {
                         borderRight: "1px solid #000",
                         mr: "16px",
                         height: "100%",
-                        left: 0,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
                       }}
                     >
                       <Select
@@ -141,9 +210,9 @@ const SignupPopup = () => {
                         sx={{
                           display: "flex",
                           alignItems: "center",
+                          borderRadius: "10px",
                           ".MuiSelect-select": {
                             display: "flex",
-                            alignItems: "center",
                             gap: "8px",
                           },
                           ".MuiOutlinedInput-notchedOutline": {
@@ -171,13 +240,19 @@ const SignupPopup = () => {
                       </Select>
                     </Box>
                   ),
-                  sx: { backgroundColor: "#FFFFFF", color: "#000", p: 0 },
+
+                  sx: {
+                    backgroundColor: "#FFFFFF",
+                    color: "#000",
+                    p: 0,
+                    borderRadius: "10px",
+                  },
                   inputProps: { maxLength: 10 },
                 },
               }}
               value={phone}
               onChange={(e) => {
-                if (e.target.value.match(/[^0-9]/)) return;
+                if (/\D/.test(e.target.value)) return;
                 setPhone(e.target.value);
               }}
               error={!!phoneError}
@@ -191,6 +266,7 @@ const SignupPopup = () => {
                 backgroundColor: "#FFFFFF",
                 color: "#000",
                 border: "2px solid white",
+                borderRadius: "10px",
               }}
             >
               Request OTP
@@ -199,29 +275,77 @@ const SignupPopup = () => {
         ) : (
           <>
             <Typography>Enter the 6-digit OTP sent to your phone</Typography>
-            <TextField
-              fullWidth
-              value={otp}
-              variant="outlined"
-              onChange={(e) => {
-                if (e.target.value.match(/[^0-9]/)) return;
-                setOtp(e.target.value);
+
+            <Box
+              sx={{
+                display: "flex",
+                gap: "16px",
+                justifyContent: "center",
+                mt: "16px",
               }}
-              slotProps={{
-                input: {
-                  inputProps: { maxLength: 6 },
-                  sx: { backgroundColor: "#FFFFFF", color: "#000" },
-                },
+            >
+              {otpArray.map((digit, index) => (
+                <TextField
+                  key={index}
+                  id={`otp-box-${index}`}
+                  value={digit}
+                  onPaste={(e) => handleOtpPaste(e, index)}
+                  onChange={(e) => handleOtpChange(e.target.value, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  slotProps={{
+                    input: {
+                      sx: {
+                        backgroundColor: "#FFFFFF",
+                        color: "#000",
+
+                        textAlign: "center",
+                        fontSize: "20px",
+                      },
+                      inputProps: { maxLength: 10 },
+                    },
+                  }}
+                  sx={{
+                    width: "48px",
+                    // backgroundColor: "#FFFFFF",
+                    color: "#000",
+                  }}
+                />
+              ))}
+            </Box>
+
+            {/* TIMER */}
+            <Typography
+              sx={{
+                textAlign: "center",
+                fontSize: "14px",
+                opacity: 0.7,
               }}
-            />
+            >
+              {timer > 0 ? (
+                <>
+                  Resend OTP in <b>00:{String(timer).padStart(2, "0")}</b>
+                </>
+              ) : (
+                <Button
+                  variant="text"
+                  onClick={handleRequestOtp}
+                  sx={{ color: "white" }}
+                >
+                  Resend OTP
+                </Button>
+              )}
+            </Typography>
+
             <Button
-              disabled={otp.length != 6}
+              disabled={otpArray.some((d) => d === "")}
               size="large"
-              onClick={handleSubmitOtp}
+              onClick={() => handleSubmitOtp(otp)}
               sx={{
                 backgroundColor: "#FFFFFF",
                 color: "#000",
                 border: "2px solid white",
+                mt: 2,
+                borderRadius: "10px",
               }}
             >
               Submit OTP
@@ -233,4 +357,4 @@ const SignupPopup = () => {
   );
 };
 
-export default SignupPopup;
+export default withDeviceDetails(SignupPopup);

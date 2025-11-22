@@ -1,4 +1,5 @@
 
+
 import { useEffect, useState, useMemo } from "react";
 import { Box, Button } from '@mui/material'
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -17,6 +18,9 @@ import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import Search from './Search'
 import MobileNavMenu from "./MobileNavMenu";
 import WebNavMenu from "./WebNavMenu";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { useSelector } from "react-redux";
+import SignupPopup from "../SignupPopup";
 
 type NavbarPropsType = {
   isMobile: boolean
@@ -32,7 +36,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true)
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
-
+  const isLoggedIn = useSelector((state: any) => getLoginDetails(state));
   const isZProPath = useMemo(() => {
     return location.pathname.split('/').filter(Boolean)?.[0] === 'z-pro'
   }, [location.pathname])
@@ -217,11 +221,12 @@ function Navbar({ isMobile }: NavbarPropsType) {
         }
       </Box>
 
-      {
-        selectedTopItem === MenuItemsName.PROFILE && (
+      {selectedTopItem === MenuItemsName.PROFILE &&
+        (isLoggedIn ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
-        )
-      }
+          ) : (
+            <SignupPopup onClose={() => setSelectedTopItem(null)} />
+          ))}
       {
         selectedTopItem === MenuItemsName.SEARCH && (
           <Search onClose={() => setSelectedTopItem(null)} />
