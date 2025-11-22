@@ -38,25 +38,25 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
 
   const ProfileSchema = Yup.object().shape({
     phoneNumber: Yup.string()
-    .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
-      if (/^[6-9]\d{9}$/.test(value)) return true;
-      else return false;
-    })
-    .min(10, "Please enter valid 10 digit Phone Number")
-    .max(10, "Please enter valid 10 digit Phone Number"),
+      .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
+        if (/^[6-9]\d{9}$/.test(value)) return true;
+        else return false;
+      })
+      .min(10, "Please enter valid 10 digit Phone Number")
+      .max(10, "Please enter valid 10 digit Phone Number"),
     email: Yup.string()
-    .email("Invalid email format")
-    .test("email", "Invalid email format", (value) => {
-      if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value))
-        return true;
-      else return false;
-    }),
+      .email("Invalid email format")
+      .test("email", "Invalid email format", (value) => {
+        if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value))
+          return true;
+        else return false;
+      }),
     firstName: Yup.string().matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
     lastName: Yup.string().matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
     address: Yup.string().min(3, "Name length should be 3 to 80 characters"),
     notifyOffers: Yup.boolean(),
   });
-  
+
 
   return (
     <Dialog
@@ -308,7 +308,7 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                   console.log("SUBMIT → ", values);
                 }}
               >
-                {({ values, errors, touched, handleChange,handleBlur,setFieldValue }) => (
+                {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
                   <Form>
                     <Box
                       sx={{
@@ -326,7 +326,7 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                         slotProps={{
                           input: {
                             sx: { backgroundColor: "#FFFFFF", color: "#000" },
-                            inputProps: { maxlength: 10 },
+                            inputProps: { maxLength: 10 },
                           },
                           inputLabel: {
                             sx: { color: "#000000" },
@@ -362,7 +362,7 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                         }}
                       />
 
-               
+
                       <Box sx={{ display: "flex", gap: "16px" }}>
                         <TextField
                           fullWidth
@@ -393,8 +393,8 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                           onBlur={handleBlur}
                           error={getFieldErrorState({ errors, touched }, "lastName")}
                           helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "lastName"
+                            { errors, touched },
+                            "lastName"
                           )}
                           sx={{
                             "& .MuiInputBase-input": {
@@ -412,11 +412,11 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                         onChange={handleChange}
                         placeholder="Address"
                         onBlur={handleBlur}
-                          error={getFieldErrorState({ errors, touched }, "address")}
-                          helperText={getHelperOrErrorText(
+                        error={getFieldErrorState({ errors, touched }, "address")}
+                        helperText={getHelperOrErrorText(
                           { errors, touched },
                           "address"
-                          )}
+                        )}
                         sx={{
                           "& .MuiInputBase-input": {
                             padding: "14px",

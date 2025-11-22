@@ -13,39 +13,41 @@ type MobileNavMenuPropsType = {
 
 function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
-	const [selectedMenuItem, setSelectedMenuItem] = useState<string>('')
 	const [menuOptions, setMenuOptions] = useState<MenuOptionsType[]>(MenuOption)
-	const routeRef = useRef<MenuOptionsType[]>([])
+
+	const historyStackRef = useRef<MenuOptionsType[]>([])
+	const routeRef = useRef<string>('')
 
 	const navigate = useNavigate()
 
 	function handleMenuItemClick(item: MenuOptionsType) {
 		const { name, _id, models = [], route } = item
 
-		if (route) {
+		if (route && models.length === 0) {
 			navigate(route)
 			onClose()
 			return
 		}
 
+		historyStackRef.current.push(item)
+
+		if (route) routeRef.current = route + '/'
+		else routeRef.current += name.toLowerCase().split(' ').join('-') + '/'
+
 		if (models.length === 0) {
-			const newRoute = name.toLowerCase().split(' ').join('-')
-			navigate(newRoute)
+			routeRef.current += _id + '/'
+			navigate(routeRef.current)
 			onClose()
 			return
 		}
 
-		routeRef.current.push(item)
-		setSelectedMenuItem(name)
 		setMenuOptions(models)
 	}
 
 	function handleBack() {
-		routeRef.current.pop()
-		const lastObject = routeRef.current.at(-1)
+		historyStackRef.current.pop()
+		const lastObject = historyStackRef.current.at(-1)
 		const { name = '', models = [] } = lastObject || {}
-
-		setSelectedMenuItem(name)
 
 		if (models.length) setMenuOptions(models)
 		else setMenuOptions(MenuOption)
@@ -86,7 +88,8 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 						display: "flex",
 						justifyContent: 'flex-end',
 						marginTop: '1rem',
-						marginRight: "3rem"
+						marginRight: "3rem",
+						cursor: "pointer"
 					}}
 				>
 					<IconButton onClick={onClose}>
@@ -95,7 +98,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 				</Box>
 			</Box>
 			{
-				routeRef.current.length > 0 && (
+				historyStackRef.current.length > 0 && (
 					<Box
 						sx={{
 							backgroundColor: "#3b3b3b",
@@ -122,7 +125,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 								fontSize: "1.25rem",
 							}}
 						>
-							{routeRef.current.at(-1).name}
+							{historyStackRef.current.at(-1).name}
 						</Typography>
 					</Box>
 				)
@@ -145,6 +148,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 									flexDirection: 'row',
 									justifyContent: 'space-between',
 									width: "100%",
+									cursor: "pointer"
 								}}
 								onClick={() => handleMenuItemClick(item)}
 							>

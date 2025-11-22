@@ -33,12 +33,10 @@ const ContactUsForm = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (values, formikProps) => {
-    const {resetForm} = formikProps
+    const { resetForm } = formikProps
     console.log(values)
     setShowSuccess(true)
     resetForm();
-   
-     
   };
 
   return (
@@ -202,7 +200,7 @@ const ContactUsForm = () => {
                       slotProps={{
                         input: {
                           sx: { backgroundColor: "#FFFFFF", color: "#000" },
-                          inputProps: { maxlength: 10 },
+                          inputProps: { maxLength: 10 },
                         },
                         inputLabel: {
                           sx: { color: "#000000" },
