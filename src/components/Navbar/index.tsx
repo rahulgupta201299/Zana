@@ -23,17 +23,18 @@ type NavbarPropsType = {
 }
 
 function Navbar({ isMobile }: NavbarPropsType) {
+
+  const navigate = useNavigate();
+  const location = useLocation()
+
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemsName | null>(null)
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true)
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
-  const navigate = useNavigate();
-  const location = useLocation()
-
   const isZProPath = useMemo(() => {
-    return location.pathname.split('/').filter(Boolean)?.[0] || ''
+    return location.pathname.split('/').filter(Boolean)?.[0] === 'z-pro'
   }, [location.pathname])
 
   function handleMenuItemClick(event: React.MouseEvent<HTMLElement>, item: MenuItemsType) {
@@ -58,27 +59,36 @@ function Navbar({ isMobile }: NavbarPropsType) {
   }
 
   function handleScroll() {
+    if (location.pathname !== ROUTES.BASE_URL) return
+
     const newHeight = isMobile ? 175 : window.innerHeight
+
     if (window.scrollY >= newHeight) setIsSticky(false)
     else setIsSticky(true)
   }
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
+
+    if (location.pathname === ROUTES.BASE_URL) window.addEventListener("scroll", handleScroll)
+    else setIsSticky(false)
 
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [location.pathname, isMobile])
 
   return (
     <Box>
-      <HeroSection />
+      {
+        location.pathname === ROUTES.BASE_URL && (
+          <HeroSection />
+        )
+      }
       <Box
         sx={{
           position: isSticky ? "sticky" : "fixed",
           top: 0,
           width: "100%",
           zIndex: 4,
-          backgroundColor: 'black'
+          backgroundColor: 'black',
         }}
       >
         <Box
