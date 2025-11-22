@@ -65,7 +65,7 @@ const BlogsSection = () => {
                     e.currentTarget.style.color = '#fff';
                   }}
                 >
-                  <span className="relative z-10">READ MORE</span>
+                  <span className="relative">READ MORE</span>
                 </button>
               </Link>
             </div>

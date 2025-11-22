@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Box, Button } from '@mui/material'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
@@ -23,18 +23,25 @@ type NavbarPropsType = {
 }
 
 function Navbar({ isMobile }: NavbarPropsType) {
-  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemsName | null>(null)
-  const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState<boolean>(true)
 
   const navigate = useNavigate();
   const location = useLocation()
 
-  function handleMenuItemClick(item: MenuItemsType) {
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemsName | null>(null)
+  const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState<boolean>(true)
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+
+  const isZProPath = useMemo(() => {
+    return location.pathname.split('/').filter(Boolean)?.[0] === 'z-pro'
+  }, [location.pathname])
+
+  function handleMenuItemClick(event: React.MouseEvent<HTMLElement>, item: MenuItemsType) {
     const { name, route } = item
 
     setIsMobileMenuOpen(false)
+    setAnchorEl(event.currentTarget)
 
     if (route) {
       setSelectedMenuItem(null)
@@ -52,27 +59,36 @@ function Navbar({ isMobile }: NavbarPropsType) {
   }
 
   function handleScroll() {
+    if (location.pathname !== ROUTES.BASE_URL) return
+
     const newHeight = isMobile ? 175 : window.innerHeight
+
     if (window.scrollY >= newHeight) setIsSticky(false)
     else setIsSticky(true)
   }
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
+
+    if (location.pathname === ROUTES.BASE_URL) window.addEventListener("scroll", handleScroll)
+    else setIsSticky(false)
 
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [location.pathname, isMobile])
 
   return (
     <Box>
-      <HeroSection />
+      {
+        location.pathname === ROUTES.BASE_URL && (
+          <HeroSection />
+        )
+      }
       <Box
         sx={{
           position: isSticky ? "sticky" : "fixed",
           top: 0,
           width: "100%",
           zIndex: 4,
-          backgroundColor: 'black'
+          backgroundColor: 'black',
         }}
       >
         <Box
@@ -106,8 +122,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
             <Link to={ROUTES.BASE_URL} style={{ display: "flex" }}>
               <img
-                src={location.pathname === ROUTES.Z_PRO ? ZPro : Zana}
-                alt={`${location.pathname === ROUTES.Z_PRO ? "ZPro" : "Zana"} Logo`}
+                src={isZProPath ? ZPro : Zana}
+                alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
                 style={{
                   height: isMobile ? "3.5rem" : "5rem",
                   width: "auto",
@@ -191,7 +207,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       color: "#1976D2",
                     },
                   }}
-                  onClick={() => handleMenuItemClick(item)}
+                  onClick={(event: React.MouseEvent<HTMLElement>) => handleMenuItemClick(event, item)}
                 >
                   {item.name}
                 </Button>
@@ -218,7 +234,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
       }
       {
         selectedMenuItem && (
-          <WebNavMenu name={selectedMenuItem} onClose={() => setSelectedMenuItem(null)} />
+          <WebNavMenu menuName={selectedMenuItem} anchorEl={anchorEl} onClose={() => setSelectedMenuItem(null)} />
         )
       }
     </Box>

@@ -61,7 +61,7 @@ const OurPhilosophy = () => {
                   e.currentTarget.style.color = '#fff';
                 }}
               >
-                <span className="relative z-10">READ MORE</span>
+                <span className="relative">READ MORE</span>
               </button>
             </div>
           </div>

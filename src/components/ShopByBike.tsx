@@ -33,17 +33,17 @@ const ShopByBike = () => {
   const getNextIndex = () => (currentIndex === brands.length - 1 ? 0 : currentIndex + 1);
 
   return (
-    <div className="py-6 md:py-12 px-4 md:px-6 bg-white relative">
+    <div className="py-6 md:py-12 px-4 md:px-6 bg-black relative">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-lg md:text-4xl font-black text-black mb-6 md:mb-12 text-center">SHOP THE BIKE</h2>
+        <h2 className="text-lg md:text-4xl font-white text-white mb-6 md:mb-12 text-center">SHOP THE BIKE</h2>
         
         <div className="relative flex items-center justify-center">
           {/* Left Arrow */}
           <button
             onClick={handlePrev}
-            className="absolute left-0 md:left-16 z-10 cursor-pointer"
+            className="absolute left-0 md:left-16 cursor-pointer"
           >
-            <ChevronLeft className="h-8 w-4 md:h-14 md:w-7 text-black stroke-[3]" />
+            <ChevronLeft className="h-8 w-4 md:h-14 md:w-7 text-white stroke-[3]" />
           </button>
           
           {/* Bikes Container */}
@@ -59,7 +59,7 @@ const ShopByBike = () => {
 
             {/* Center Bike (Main) */}
             <div 
-              className="relative w-[240px] h-[150px] md:w-[360px] md:h-[230px] cursor-pointer z-10"
+              className="relative w-[240px] h-[150px] md:w-[360px] md:h-[230px] cursor-pointer"
               onClick={handleBikeClick}
             >
               <img 
@@ -82,15 +82,15 @@ const ShopByBike = () => {
           {/* Right Arrow */}
           <button
             onClick={handleNext}
-            className="absolute right-0 md:right-16 z-10 cursor-pointer"
+            className="absolute right-0 md:right-16 cursor-pointer"
           >
-            <ChevronRight className="h-8 w-4 md:h-14 md:w-7 text-black stroke-[3]" />
+            <ChevronRight className="h-8 w-4 md:h-14 md:w-7 text-white stroke-[3]" />
           </button>
         </div>
 
         {/* Bike Name */}
         <div className="text-center mt-4 md:mt-8">
-          <h3 className="text-xl md:text-[32px] font-black text-black">{brands[currentIndex].name}</h3>
+          <h3 className="text-xl md:text-[32px] font-white text-white">{brands[currentIndex].name}</h3>
         </div>
 
         {/* Progress Indicator (Mobile Only) */}
