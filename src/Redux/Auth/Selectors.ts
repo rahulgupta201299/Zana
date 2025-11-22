@@ -9,3 +9,13 @@ export const SLICE_NAME = "auth";
 //   (state: TAppStore) => state[SLICE_NAME].,
 //   data => data
 // )
+
+export const getLoginDetails = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].isLoggedIn,
+  (isLoggedIn) => isLoggedIn
+);
+
+export const getProfileDetails = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].login,
+  (login) => login
+);

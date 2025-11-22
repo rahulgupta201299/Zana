@@ -9,7 +9,7 @@ import {
   Paper,
   Radio,
   IconButton,
-  Button
+  Button,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,18 +23,23 @@ import { Formik } from "formik";
 import { Form } from "react-router";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { useSelector } from "react-redux";
 
-type ProfileModalPropsType = {
-  onClose: () => void
+interface PROFILE_PROPS_TYPE {
+  onClose: () => void;
+  isMobile: boolean;
 }
 
-export default function ProfileModal({ onClose }: ProfileModalPropsType) {
-  const isMobile = useMediaQuery("(max-width:900px)");
+const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
   const [notifyOffers, setNotifyOffers] = useState(false);
+
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   const ProfileSchema = Yup.object().shape({
     phoneNumber: Yup.string()
@@ -57,7 +62,6 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
     notifyOffers: Yup.boolean(),
   });
 
-
   return (
     <Dialog
       open={true}
@@ -71,6 +75,11 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
             borderRadius: isMobile ? 0 : "16px",
             overflow: "hidden",
             position: "relative",
+          },
+        },
+        backdrop: {
+          sx: {
+            backgroundColor: "rgba(0,0,0,0.6)",
           },
         },
       }}
@@ -208,8 +217,8 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: '24px',
-                mt: '8px',
+                gap: "24px",
+                mt: "8px",
               }}
             >
               {[
@@ -255,7 +264,7 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
               bgcolor: "#fff",
               borderRadius: "10px",
               height: "100%",
-              p: isMobile ? "20px" : "40px",
+              p: isMobile ? "20px" : "40px 40px 16px 40px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -296,7 +305,7 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
 
               <Formik
                 initialValues={{
-                  phoneNumber: "",
+                  phoneNumber: profileDetails?.phoneNumber || "",
                   email: "",
                   firstName: "",
                   lastName: "",
@@ -308,7 +317,14 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                   console.log("SUBMIT → ", values);
                 }}
               >
-                {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  setFieldValue,
+                }) => (
                   <Form>
                     <Box
                       sx={{
@@ -317,30 +333,42 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                         gap: "20px",
                       }}
                     >
-
                       <TextField
                         fullWidth
                         name="phoneNumber"
                         value={values.phoneNumber}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          if (e.target.value.match(/[^0-9]/)) return;
+                          handleChange(e);
+                        }}
                         slotProps={{
                           input: {
-                            sx: { backgroundColor: "#FFFFFF", color: "#000" },
-                            inputProps: { maxLength: 10 },
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                            inputProps: { maxlength: 10 },
                           },
-                          inputLabel: {
-                            sx: { color: "#000000" },
+                        }}
+                        sx={{
+                          border: "none",
+                          "& .MuiInputBase-input::placeholder": {
+                            color: "#000",
+                            opacity: 1,
                           },
                         }}
                         placeholder="Phone Number"
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "phoneNumber")}
+                        error={getFieldErrorState(
+                          { errors, touched },
+                          "phoneNumber"
+                        )}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
                           "phoneNumber"
                         )}
                       />
-
 
                       <TextField
                         fullWidth
@@ -360,18 +388,37 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                             fontSize: "16px",
                           },
                         }}
+                        slotProps={{
+                          input: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                            inputProps: { maxlength: 10 },
+                          },
+                        }}
                       />
-
 
                       <Box sx={{ display: "flex", gap: "16px" }}>
                         <TextField
                           fullWidth
                           name="firstName"
                           value={values.firstName}
-                          onChange={(e) => setFieldValue("firstName", e.target.value.replace(/[^A-Za-z]/g, "").toUpperCase())}
+                          onChange={(e) =>
+                            setFieldValue(
+                              "firstName",
+                              e.target.value
+                                .replace(/[^A-Za-z]/g, "")
+                                .toUpperCase()
+                            )
+                          }
                           placeholder="First Name"
                           onBlur={handleBlur}
-                          error={getFieldErrorState({ errors, touched }, "firstName")}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "firstName"
+                          )}
                           helperText={getHelperOrErrorText(
                             { errors, touched },
                             "firstName"
@@ -382,16 +429,36 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                               fontSize: "16px",
                             },
                           }}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: { maxlength: 10 },
+                            },
+                          }}
                         />
 
                         <TextField
                           fullWidth
                           name="lastName"
                           value={values.lastName}
-                          onChange={(e) => setFieldValue("lastName", e.target.value.replace(/[^A-Za-z]/g, "").toUpperCase())}
+                          onChange={(e) =>
+                            setFieldValue(
+                              "lastName",
+                              e.target.value
+                                .replace(/[^A-Za-z]/g, "")
+                                .toUpperCase()
+                            )
+                          }
                           placeholder="Last Name"
                           onBlur={handleBlur}
-                          error={getFieldErrorState({ errors, touched }, "lastName")}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "lastName"
+                          )}
                           helperText={getHelperOrErrorText(
                             { errors, touched },
                             "lastName"
@@ -400,6 +467,16 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                             "& .MuiInputBase-input": {
                               padding: "14px",
                               fontSize: "16px",
+                            },
+                          }}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: { maxlength: 10 },
                             },
                           }}
                         />
@@ -412,7 +489,10 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                         onChange={handleChange}
                         placeholder="Address"
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "address")}
+                        error={getFieldErrorState(
+                          { errors, touched },
+                          "address"
+                        )}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
                           "address"
@@ -421,6 +501,16 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
                           "& .MuiInputBase-input": {
                             padding: "14px",
                             fontSize: "16px",
+                          },
+                        }}
+                        slotProps={{
+                          input: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                            inputProps: { maxlength: 10 },
                           },
                         }}
                       />
@@ -476,4 +566,6 @@ export default function ProfileModal({ onClose }: ProfileModalPropsType) {
       </Box>
     </Dialog>
   );
-}
+};
+
+export default withDeviceDetails(ProfileModal);
