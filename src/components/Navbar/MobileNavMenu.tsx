@@ -6,6 +6,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { MenuOption } from './Constant';
 import { MenuOptionsType } from './Types';
+import { replaceSpacesWithHiphen } from '@/Utils/StringUtils';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -32,7 +33,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		historyStackRef.current.push(item)
 
 		if (route) routeRef.current = route + '/'
-		else routeRef.current += name.toLowerCase().split(' ').join('-') + '/'
+		else routeRef.current += replaceSpacesWithHiphen(name) + '/'
 
 		if (models.length === 0) {
 			routeRef.current += _id + '/'

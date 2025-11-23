@@ -18,7 +18,7 @@ function PublicRoutes() {
 	return (
 		<Box sx={{ minHeight: "100vh" }}>
 			<Navbar />
-			{location.pathname !== ROUTES.BASE_URL && <Box mt={20.5} />}
+			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: {md: 20.5, xs: 10.5} }} />}
 			<Outlet />
 			<Footer />
 			<WhatsAppButton />
