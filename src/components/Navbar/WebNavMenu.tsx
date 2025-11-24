@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { MenuOption } from "./Constant";
 import { MenuOptionsType } from "./Types";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -24,7 +25,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 
 	function handleClick(category: string, subCategory: string, _id: string) {
 		const prefixRoute = MenuOption.find(item => item.name === menuName)?.route || ''
-		const name = `${category}/${subCategory}/${_id}`.split(' ').join('-').toLowerCase()
+		const name = replaceSpacesWithHiphen(`${category}/${subCategory}/${_id}`)
 		const routeName = `${prefixRoute}/${name}`
 
 		navigate(routeName)
