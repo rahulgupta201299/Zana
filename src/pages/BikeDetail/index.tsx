@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
@@ -28,6 +28,8 @@ const BikeDetailPage = () => {
 
   const [loading, setLoading] = useState<boolean>(false)
 
+  const location = useLocation()
+
   async function pageOps() {
     setLoading(true)
     try {
@@ -42,7 +44,7 @@ const BikeDetailPage = () => {
   }
 
   function handleBackToBikes() {
-    navigate(ROUTES.BIKES, { state: { category: bikeBrand } })
+    navigate(ROUTES.BIKES, { state: { brand: replaceHiphenWithSpaces(bikeBrand) } })
   }
 
   function handleProductClick(productCategory: string, productSubCategory: string, productId: string) {
@@ -57,9 +59,9 @@ const BikeDetailPage = () => {
   }, [])
 
   const bikeDetails = useMemo(() => {
-    const bikeModels = shopByBike.find(item => item.name.toLowerCase() === bikeBrand.toLowerCase())?.models || []
+    const bikeModels = shopByBike.find(item => item.name.toLowerCase() === replaceHiphenWithSpaces(bikeBrand))?.models || []
     return bikeModels.find(item => item._id === bikeId)
-  }, [shopByBike.length])
+  }, [shopByBike.length, location.pathname])
 
   function handleSelectCategory(val: string) {
 
@@ -90,7 +92,7 @@ const BikeDetailPage = () => {
 
   const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
     const map = new Map()
-    const result = []
+    const result = [{ name: ALL_CATEGORY, count: bikeProducts.length }]
 
     bikeProducts.forEach(item => {
       const category = item.category.toLowerCase()
@@ -108,11 +110,6 @@ const BikeDetailPage = () => {
 
     return result
   }, [bikeProducts.length])
-
-  const categoryCount = useCallback((categoryName: string) => {
-    if (categoryName === ALL_CATEGORY) return bikeProducts.length;
-    return bikeProducts.filter(item => item.category === categoryName).length;
-  }, [bikeProducts.length]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -143,7 +140,7 @@ const BikeDetailPage = () => {
                 {description}
               </p>
               <div className="flex items-center gap-4 mb-8">
-                <span className="text-yellow-400 text-lg font-medium">{bikeBrand.toUpperCase()}</span>
+                <span className="text-yellow-400 text-lg font-medium">{replaceHiphenWithSpaces(bikeBrand).toUpperCase()}</span>
                 <span className="text-white/50">•</span>
                 {/* TODO */}
                 <span className="text-white/70">{bikeProducts.length} Products Available</span>
@@ -174,16 +171,6 @@ const BikeDetailPage = () => {
 
           {/* Category Filter */}
           <div className="mb-8 flex flex-wrap gap-3">
-            <button
-              onClick={() => handleSelectCategory(ALL_CATEGORY)}
-              className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === ALL_CATEGORY
-                ? "bg-yellow-400 text-black"
-                : "bg-white/10 text-white hover:bg-white/20"
-                }`}
-            >
-              All ({categoryCount(ALL_CATEGORY)})
-            </button>
-
             {categoriesWithCount.map((category, ind) => {
               const { name, count } = category
               const categoryName = name.toLowerCase()
