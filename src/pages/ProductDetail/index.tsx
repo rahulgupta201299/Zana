@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductDetailParamsType } from "./Types";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { ProductCatalogDetailsType, ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import { handleSocialMedia, replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { CartQuantityEnum, SocialMediaPlatformEnum } from "@/Constants/AppConstant";
@@ -40,7 +40,7 @@ const ProductDetailPage = () => {
 
       const { category } = response
 
-      const data = await dispatch(CategoryProductService({ category, queryParams: { page: 1, limit: 10 } })) as ShopByProductDetailsType[]
+      const { data } = await dispatch(CategoryProductService({ category, queryParams: { page: 1, limit: 10 } })) as ProductCatalogDetailsType
       setSuggestedProducts(data)
 
     } catch (error: any) {

@@ -16,11 +16,11 @@ async function productDetailService(
 
   return {
     _id: "1",
-	brand: "",
-	model: "",
+    brand: "",
+    model: "",
     name: "Mobile Holder",
     price: 500,
-	imageUrl: "/uploads/217344ea-47af-4464-9cd6-c943037ad654.png",
+    imageUrl: "/uploads/217344ea-47af-4464-9cd6-c943037ad654.png",
     images: [
       "/uploads/217344ea-47af-4464-9cd6-c943037ad654.png",
       "/uploads/b67e9e8e-d696-4316-b2bb-11bd7bc13b81.png",
@@ -35,11 +35,11 @@ async function productDetailService(
       "• Material: Premium aluminum alloy\n• Weight: 250g\n• Compatibility: Universal fit for all bike models\n• Water resistance: IPX4 rated\n• Installation: Tool-free mounting system",
     shippingAndReturn:
       "• Free shipping on orders above ₹999\n• Standard delivery: 3-5 business days\n• Express delivery: 1-2 business days\n• Easy returns within 30 days\n• Warranty: 1 year manufacturer warranty",
-	category: "Accesory",
-	categoryIcon: "",
-	quantityAvailable: 6,
-	isBikeSpecific: true,
-  }
+    category: "Accesory",
+    categoryIcon: "",
+    quantityAvailable: 6,
+    isBikeSpecific: true,
+  };
 
   // TODO
   //   const response = await network.request(options)
