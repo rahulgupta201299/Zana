@@ -4,9 +4,9 @@ import { Drawer, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { MenuOption } from './Constant';
 import { MenuOptionsType } from './Types';
 import { replaceSpacesWithHiphen } from '@/Utils/StringUtils';
+import { getMenuOption } from './Utils';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -14,7 +14,7 @@ type MobileNavMenuPropsType = {
 
 function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
-	const [menuOptions, setMenuOptions] = useState<MenuOptionsType[]>(MenuOption)
+	const [menuOptions, setMenuOptions] = useState<MenuOptionsType[]>(getMenuOption())
 
 	const historyStackRef = useRef<MenuOptionsType[]>([])
 	const routeRef = useRef<string>('')
@@ -51,7 +51,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		const { name = '', models = [] } = lastObject || {}
 
 		if (models.length) setMenuOptions(models)
-		else setMenuOptions(MenuOption)
+		else setMenuOptions(getMenuOption())
 	}
 
 	return (

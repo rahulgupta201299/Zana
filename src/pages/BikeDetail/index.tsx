@@ -156,6 +156,7 @@ const BikeDetailPage = () => {
         </div>
       </div>
 
+      {/* TODO fallback if product = 0 */}
       {/* Products Section */}
       <div className="py-12 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
@@ -216,8 +217,7 @@ const BikeDetailPage = () => {
                         FEATURED
                       </div>
                     )}
-                    {/* TODO  */}
-                    {isBikeSpecific && (
+                    {!isBikeSpecific && (
                       <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
                         UNIVERSAL
                       </div>
@@ -239,7 +239,7 @@ const BikeDetailPage = () => {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-yellow-400 text-xl md:text-2xl font-bold">
-                        ₹{price.toLocaleString()}
+                        ₹ {price.toLocaleString()}
                       </span>
                       <div className="flex gap-2">
                         <button

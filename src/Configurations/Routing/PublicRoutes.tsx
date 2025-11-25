@@ -6,13 +6,29 @@ import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import Navbar from '@/components/Navbar'
 import { ROUTES } from '@/Constants/Routes'
+import { useDispatch, useSelector } from 'react-redux'
+import ShopByBikeService from '@/Redux/Product/Services/ShopByBikeService'
+import { TAppDispatch } from '../AppStore'
+import { shopByBikeSelector } from '@/Redux/Product/Selectors'
 
 function PublicRoutes() {
 
+	const shopByBike = useSelector(shopByBikeSelector)
+
 	const location = useLocation()
+	const dispatch = useDispatch<TAppDispatch>()
+
+	async function pageOps() {
+		window.scrollTo(0, 0)
+		try {
+			if (!shopByBike.length) await dispatch(ShopByBikeService())
+		} catch (error: any) {
+
+		}
+	}
 
 	useEffect(() => {
-		window.scrollTo(0, 0)
+		pageOps()
 	}, [location.pathname])
 
 	return (

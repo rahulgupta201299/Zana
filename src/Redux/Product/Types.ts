@@ -1,3 +1,10 @@
+
+export type T_PRODUCT_REDUCER = {
+	menu: {
+		shopByBike: ShopByBikeType[]
+	}
+}
+
 export type ShopByProductDetailsType = {
 	_id: string
 	brand: string
@@ -6,6 +13,7 @@ export type ShopByProductDetailsType = {
 	shortDescription: string 
 	longDescription: string
 	category: string
+	categoryIcon: string
 	price: number 
 	imageUrl: string 
 	images: string[]
@@ -21,6 +29,8 @@ export type ShopByBikeModelsType = {
 	brand: string
 	description: string
 	type: string
+	imageUrl: string
+	brandName: string
 }
 
 export type ShopByBikeType = {
@@ -30,8 +40,12 @@ export type ShopByBikeType = {
 	models: ShopByBikeModelsType[]
 }
 
-export type T_PRODUCT_REDUCER = {
-	menu: {
-		shopByBike: ShopByBikeType[]
-	}
+export type QueryParamsType = {
+	page?: number
+	limit?: number
+}
+
+export type CategoryProductReqType = {
+	category: string,
+	queryParams?: QueryParamsType
 }

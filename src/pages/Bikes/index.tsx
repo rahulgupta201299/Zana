@@ -96,13 +96,13 @@ function Bikes() {
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{filteredBrandDetails.map(brand => {
 
-							const { _id, name, description, type } = brand
+							const { _id, name, description, type, brandName, imageUrl } = brand
 
 							return (
 								<div
 									key={_id}
 									style={{ textTransform: 'capitalize' }}
-									onClick={() => handleBikeClick(selectedBrand, name, _id)}
+									onClick={() => handleBikeClick(brandName, name, _id)}
 									className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
 								>
 									{/* Image Section */}
@@ -120,7 +120,7 @@ function Bikes() {
 									<div className="bg-gradient-to-br from-yellow-400 to-yellow-500 text-black p-4 md:p-6">
 										<div className="mb-2">
 											<span className="text-xs md:text-sm font-medium opacity-80">
-												{selectedBrand.toUpperCase()}
+												{brandName.toUpperCase()}
 											</span>
 										</div>
 										<h3 className="text-lg md:text-2xl font-bold mb-2">

@@ -1,1 +1,12 @@
 export const ALL_CATEGORY = 'all'
+
+export enum SocialMediaPlatformEnum {
+	FACEBOOK = 'FACEBOOK',
+	INSTAGRAM = 'INSTAGRAM',
+	WHATSAPP = 'WHATSAPP'
+}
+
+export enum CartQuantityEnum {
+	INCREMENT = 'INCREMENT',
+	DECREMENT = 'DECREMENT'
+}
