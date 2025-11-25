@@ -23,5 +23,6 @@ export const ROUTES = Object.freeze({
   CART: '/cart',
   SEARCH: '/search',
   CONTACT_US:'/contact-us',
+  CHECKOUT:'/checkout',
   ANY: '*'
 })

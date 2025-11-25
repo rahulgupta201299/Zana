@@ -138,7 +138,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               {[
-                { icon: <FavoriteBorderIcon />, label: "Wishlist" },
+                // { icon: <FavoriteBorderIcon />, label: "Wishlist" },
                 { icon: <HelpOutlineIcon />, label: "FAQ's" },
                 { icon: <EmojiEventsIcon />, label: "Rewards" },
                 { icon: <LogOutIcon />, label: "Logout" },
@@ -395,7 +395,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                               color: "#000",
                               borderRadius: "10px",
                             },
-                            inputProps: { maxlength: 10 },
                           },
                         }}
                       />
