@@ -12,7 +12,7 @@ const Landing = lazyLoadPage(() => import("@/pages/Landing"));
 const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"));
 const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"));
 const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"));
-const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalogPage"));
+const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"));
 const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"));
 const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"));
 const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"));

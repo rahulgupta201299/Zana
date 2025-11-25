@@ -12,3 +12,6 @@ export const shopByBikeTraceActions = traceActionsCreator(shopByBikeServiceName)
 
 export const categoryProductServiceName = `${SLICE_NAME}/categoryProduct`
 export const categoryProductTraceActions = traceActionsCreator(categoryProductServiceName)
+
+export const productCategoryCountServiceName = `${SLICE_NAME}/productCategoryCount`
+export const productCategoryCountTraceActions = traceActionsCreator(productCategoryCountServiceName)
