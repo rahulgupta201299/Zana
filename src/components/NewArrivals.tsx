@@ -1,4 +1,5 @@
-import CartIcon from "@/components/ui/cart-icon";
+;
+import { PlusIcon } from "lucide-react";
 
 interface NewArrivalsProps {
   onAddToCart?: (productId: string, productName: string, price: number, image: string, description?: string) => void;
@@ -88,7 +89,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-5 h-5 text-black flex-shrink-0" />
+                  <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
                 </button>
               </div>
 
@@ -106,7 +107,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-5 h-5 text-black flex-shrink-0" />
+                  <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
                 </button>
               </div>
             </div>
@@ -127,7 +128,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap text-sm font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                  <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
                 </button>
               </div>
 
@@ -145,7 +146,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-5 h-5 text-black flex-shrink-0" />
+                  <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
                 </button>
               </div>
             </div>
@@ -166,7 +167,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-5 h-5 text-black flex-shrink-0" />
+                  <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
                 </button>
               </div>
 
@@ -184,7 +185,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                   <span className="whitespace-nowrap text-sm font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                     Add to cart
                   </span>
-                  <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                  <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
                 </button>
               </div>
             </div>
@@ -208,7 +209,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
               </button>
             </div>
 
@@ -226,7 +227,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
               </button>
             </div>
 
@@ -244,7 +245,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-3 h-3 text-black flex-shrink-0" />
+                <PlusIcon className="w-3 h-3 text-black flex-shrink-0" />
               </button>
             </div>
 
@@ -262,7 +263,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
               </button>
             </div>
 
@@ -280,7 +281,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
+                <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
               </button>
             </div>
 
@@ -298,7 +299,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1 transition-all duration-300">
                   Add to cart
                 </span>
-                <CartIcon className="w-3 h-3 text-black flex-shrink-0" />
+                <PlusIcon className="w-3 h-3 text-black flex-shrink-0" />
               </button>
             </div>
           </div>
