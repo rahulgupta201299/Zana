@@ -6,9 +6,9 @@ import {
 	Popover,
 	Divider
 } from "@mui/material";
-import { MenuOption } from "./Constant";
 import { MenuOptionsType } from "./Types";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { getMenuOption } from "./Utils";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -19,12 +19,12 @@ type WebNavMenuPropsType = {
 export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPropsType) {
 	const navigate = useNavigate()
 
-	const getMenuOptions: MenuOptionsType[] = useMemo(() => {
-		return MenuOption.find(item => item.name === menuName)?.models || []
+	const menuOptions: MenuOptionsType[] = useMemo(() => {
+		return getMenuOption().find(item => item.name === menuName)?.models || []
 	}, [menuName])
 
 	function handleClick(category: string, subCategory: string, _id: string) {
-		const prefixRoute = MenuOption.find(item => item.name === menuName)?.route || ''
+		const prefixRoute = getMenuOption().find(item => item.name === menuName)?.route || ''
 		const name = replaceSpacesWithHiphen(`${category}/${subCategory}/${_id}`)
 		const routeName = `${prefixRoute}/${name}`
 
@@ -32,7 +32,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 		onClose()
 	}
 
-	if (!getMenuOptions || getMenuOptions.length === 0) return null
+	if (!menuOptions || menuOptions.length === 0) return null
 
 	return (
 		<Popover
@@ -58,7 +58,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 					paddingY: "10px",
 				}}
 			>
-				{getMenuOptions.map((item) => (
+				{menuOptions.map((item) => (
 					<Box
 						key={item._id}
 						sx={{

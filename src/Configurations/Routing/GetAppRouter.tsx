@@ -10,7 +10,7 @@ import { lazyLoadPage } from '@/Helpers/Route'
 
 const Landing = lazyLoadPage(() => import("@/pages/Landing"));
 const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"));
-const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetailPage"));
+const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"));
 const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"));
 const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalogPage"));
 const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"));

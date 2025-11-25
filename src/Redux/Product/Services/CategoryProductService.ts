@@ -1,17 +1,16 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { CategoryProductReqType, ShopByProductDetailsType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
-import { bikeProductTraceActions } from "../Actions";
+import { categoryProductTraceActions } from "../Actions";
 
 const network = new Network();
 
-async function bikeProductService(
-  modelId: string
-): Promise<ShopByProductDetailsType[]> {
+async function categoryProductService({category, queryParams = {}}: CategoryProductReqType): Promise<ShopByProductDetailsType[]> {
   const options = {
-    url: `/api/v1/product/model/${modelId}`,
-    method: API_METHOD_ENUM.GET,
+	url: `api/v1/product/category/${category}`,
+	method: API_METHOD_ENUM.GET,
+	queryParams
   };
 
   const placeholderImages = [
@@ -20,13 +19,14 @@ async function bikeProductService(
     "/uploads/Bikes Thumbnail/Royal-Enfield-Continental-GT-650.avif",
   ];
 
-  const shopByBikeProducts = [
+  return [
     /* ----------------------------- PROTECTION ----------------------------- */
     {
       _id: "p1",
       brand: "ZANA",
       model: "Generic",
       category: "Protection",
+	  categoryIcon: "",
       name: "Bash Plate",
       shortDescription: "Heavy-duty aluminium bash plate for engine protection",
       longDescription:
@@ -37,16 +37,16 @@ async function bikeProductService(
         "Ships in 2–3 days. Easy returns within 7 days if unused.",
       price: 5000,
       imageUrl: "/bike-placeholder.svg",
-      images: placeholderImages,
+      images: [],
       quantityAvailable: 12,
       isBikeSpecific: true,
-      featured: true,
     },
     {
       _id: "p2",
       brand: "ZANA",
       model: "Generic",
       category: "Protection",
+	  categoryIcon: "",
       name: "Engine Guard with Puck",
       shortDescription:
         "Heavy-duty steel engine guard with crash protection puck",
@@ -58,10 +58,9 @@ async function bikeProductService(
         "Ships within 48 hours. Hassle-free returns within 7 days.",
       price: 6500,
       imageUrl: "/bike-placeholder.svg",
-      images: placeholderImages,
+      images: [],
       quantityAvailable: 20,
       isBikeSpecific: true,
-      featured: true,
     },
     {
       _id: "p3",
@@ -264,9 +263,7 @@ async function bikeProductService(
       quantityAvailable: 15,
       isBikeSpecific: false,
     },
-  ];
-
-  return shopByBikeProducts
+  ]
 
   // TODO
   //   const response = await network.request(options)
@@ -275,6 +272,6 @@ async function bikeProductService(
 }
 
 export default serviceActionCreator(
-  bikeProductTraceActions,
-  bikeProductService
+  categoryProductTraceActions,
+  categoryProductService
 );
