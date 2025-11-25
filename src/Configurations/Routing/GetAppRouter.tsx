@@ -10,9 +10,9 @@ import { lazyLoadPage } from '@/Helpers/Route'
 
 const Landing = lazyLoadPage(() => import("@/pages/Landing"));
 const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"));
-const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetailPage"));
+const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"));
 const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"));
-const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalogPage"));
+const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"));
 const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"));
 const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"));
 const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"));
@@ -23,7 +23,8 @@ const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"));
 const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"));
 const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"));
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"));
-const ContactUsForm = lazyLoadPage(()=>import("@/pages/QuickLinks/ContactUs"))
+const ContactUsForm = lazyLoadPage(()=>import("@/pages/QuickLinks/ContactUs"));
+const Checkout = lazyLoadPage(()=>import("@/pages/Checkout"))
 
 export const routeObj: RouteObject[] = [
   {
@@ -45,6 +46,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.CART, element: CartCheckoutPage },
       { path: ROUTES.SEARCH, element: SearchPage },
       {path:ROUTES.CONTACT_US, element:ContactUsForm},
+      {path:ROUTES.CHECKOUT, element:Checkout},
       { path: ROUTES.ANY, element: NotFound },
     ],
   },

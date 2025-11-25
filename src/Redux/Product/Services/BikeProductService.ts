@@ -270,7 +270,8 @@ async function bikeProductService(
 
   // TODO
   //   const response = await network.request(options)
-  //   return response
+  //   const { data } = response
+  //   return data
 }
 
 export default serviceActionCreator(

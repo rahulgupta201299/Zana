@@ -4,15 +4,15 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { T_PRODUCT_REDUCER } from "./Types";
+import { ShopByBikeType, T_PRODUCT_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { bikes } from "@/pages/BikeDetail/Constant";
+import { shopByBikeTraceActions } from "./Actions";
 
 export const INITIAL_STATE: T_PRODUCT_REDUCER = {
-	menu: {
-		shopByBike: bikes
-	}
-}
+  menu: {
+    shopByBike: [],
+  },
+};
 
 const sliceOptions: CreateSliceOptions<T_PRODUCT_REDUCER> = {
   name: SLICE_NAME,
@@ -20,8 +20,15 @@ const sliceOptions: CreateSliceOptions<T_PRODUCT_REDUCER> = {
   reducers: {
     resetLanding: () => INITIAL_STATE,
   },
-  extraReducers: (builder: ActionReducerMapBuilder<T_PRODUCT_REDUCER>): void => {
-    
+  extraReducers: (
+    builder: ActionReducerMapBuilder<T_PRODUCT_REDUCER>
+  ): void => {
+    builder.addCase(
+      shopByBikeTraceActions.success,
+      (state, action: PayloadAction<ShopByBikeType[]>) => {
+        state.menu.shopByBike = action.payload;
+      }
+    );
   },
 };
 

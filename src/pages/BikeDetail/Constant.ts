@@ -12,7 +12,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Trident 660",
         brand: "Triumph",
         description: "Sporty middleweight street motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g58d1efc0512f82ee9210de01a8d2fd07e9ae0a209b4219cc21ad13d5b34734f62150a5f9b5bf781cae0e2771a14b59352fbd6076cd7f0c84e364260dce8cbb76_1280.jpg",  
+        brandName: "Triumph"
       }
     ]
   },
@@ -27,7 +29,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Pulsar N250",
         brand: "Bajaj",
         description: "Aggressive street bike with torquey engine.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/gd853031c12f118badcc4b271c3719353ffc355abbed5b31c99b41f4c0d6a9bd957fa0504a0bf9dd43bf472078f30c2ee63caffb2e1b66f780d59b9568e2c8a9e_1280.jpg",
+        brandName: "Bajaj"
       }
     ]
   },
@@ -42,7 +46,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Nightster",
         brand: "Harley Davidson",
         description: "Modern cruiser with performance V-twin.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g2fc6a30f6d89dc6939e69b970593244c0970506d8b79fdf889f026dc8eeb39cd0a0f5211cd473c677014ac5ca371e0b9ef55c77511d4ecdb0e6139ffd75e7cfa_1280.jpg",
+        brandName: "Harley Davidson"
       }
     ]
   },
@@ -57,7 +63,9 @@ export const bikes: ShopByBikeType[] = [
         name: "390 Adventure",
         brand: "KTM",
         description: "Lightweight adventure motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g9a0fc3b51215e442f0f18c5033eb976d23a31d3e4e21d3793a010f1cf4e3ea83d8bfc717cab73d1e473622d51c857d75ac7ff2a7b17da8aed672357f456a8f9f_1280.jpg",
+        brandName: "KTM"
       }
     ]
   },
@@ -72,7 +80,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Apache RR310",
         brand: "TVS",
         description: "Track-tuned sport motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g5b778bc869b06d393e48c717ed89098ccb903b39f3b749b04a95ed30f03913b0d34707e2f54e21d4d0b2c03d9609a4e77552e0e78c0643bda60a5fb8f70f8cce_1280.jpg",
+        brandName: "TVS"
       }
     ]
   },
@@ -87,7 +97,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Scrambler Icon",
         brand: "Ducati",
         description: "Retro-modern scrambler motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g9f7ab5c0a96913a331a90c436051e9a3d9fc82d85faa56e5ae651d62fa4de00b3cb565c0364336b2c42495ed5a0423d8a5dc5a9a8a3d200b8e8f69509fbd6fcb_1280.jpg",
+        brandName: "Ducati"
       }
     ]
   },
@@ -102,7 +114,9 @@ export const bikes: ShopByBikeType[] = [
         name: "CB350 RS",
         brand: "Honda",
         description: "Neo-retro roadster with refined performance.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://unsplash.com/photos/a-close-up-of-a-motorcycle-CmM-yZasjaQ",  
+        brandName: "Honda"
       }
     ]
   },
@@ -117,7 +131,9 @@ export const bikes: ShopByBikeType[] = [
         name: "R15 V4",
         brand: "Yamaha",
         description: "Entry-level supersport motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g58d1efc0512f82ee9210de01a8d2fd07e9ae0a209b4219cc21ad13d5b34734f62150a5f9b5bf781cae0e2771a14b59352fbd6076cd7f0c84e364260dce8cbb76_1280.jpg",
+        brandName: "Yamaha"
       }
     ]
   },
@@ -132,7 +148,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Ninja 300",
         brand: "Kawasaki",
         description: "Lightweight twin-cylinder sportbike.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/gd853031c12f118badcc4b271c3719353ffc355abbed5b31c99b41f4c0d6a9bd957fa0504a0bf9dd43bf472078f30c2ee63caffb2e1b66f780d59b9568e2c8a9e_1280.jpg",
+        brandName: "Kawasaki"
       }
     ]
   },
@@ -147,7 +165,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Imperiale 400",
         brand: "Benelli",
         description: "Retro-styled single-cylinder motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g2fc6a30f6d89dc6939e69b970593244c0970506d8b79fdf889f026dc8eeb39cd0a0f5211cd473c677014ac5ca371e0b9ef55c77511d4ecdb0e6139ffd75e7cfa_1280.jpg",
+        brandName: "Benelli"
       }
     ]
   },
@@ -162,7 +182,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Gixxer SF 250",
         brand: "Suzuki",
         description: "Faired sport-touring motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g9a0fc3b51215e442f0f18c5033eb976d23a31d3e4e21d3793a010f1cf4e3ea83d8bfc717cab73d1e473622d51c857d75ac7ff2a7b17da8aed672357f456a8f9f_1280.jpg",
+        brandName: "Suzuki"
       }
     ]
   },
@@ -177,7 +199,9 @@ export const bikes: ShopByBikeType[] = [
         name: "V7 Special",
         brand: "Moto Guzzi",
         description: "Classic retro motorcycle with transverse V-twin engine.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g5b778bc869b06d393e48c717ed89098ccb903b39f3b749b04a95ed30f03913b0d34707e2f54e21d4d0b2c03d9609a4e77552e0e78c0643bda60a5fb8f70f8cce_1280.jpg",
+        brandName: "Moto Guzzi"
       }
     ]
   },
@@ -192,7 +216,9 @@ export const bikes: ShopByBikeType[] = [
         name: "650MT",
         brand: "CFMoto",
         description: "Mid-weight adventure-tourer motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/g58d1efc0512f82ee9210de01a8d2fd07e9ae0a209b4219cc21ad13d5b34734f62150a5f9b5bf781cae0e2771a14b59352fbd6076cd7f0c84e364260dce8cbb76_1280.jpg",
+        brandName: "CFMoto"
       }
     ]
   },
@@ -207,7 +233,9 @@ export const bikes: ShopByBikeType[] = [
         name: "Jawa 42",
         brand: "Jawa",
         description: "Modern-classic motorcycle with retro charm.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://unsplash.com/photos/a-close-up-of-a-motorcycle-CmM-yZasjaQ",
+        brandName: "Jawa"
       }
     ]
   },
@@ -222,7 +250,9 @@ export const bikes: ShopByBikeType[] = [
         name: "350R",
         brand: "Zontes",
         description: "Aggressive streetfighter motorcycle.",
-        type: "motorcycle"
+        type: "motorcycle",
+        imageUrl: "https://pixabay.com/get/gd853031c12f118badcc4b271c3719353ffc355abbed5b31c99b41f4c0d6a9bd957fa0504a0bf9dd43bf472078f30c2ee63caffb2e1b66f780d59b9568e2c8a9e_1280.jpg",
+        brandName: "Zontes"
       }
     ]
   }
