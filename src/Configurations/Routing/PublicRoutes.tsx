@@ -8,12 +8,14 @@ import Navbar from '@/components/Navbar'
 import { ROUTES } from '@/Constants/Routes'
 import { useDispatch, useSelector } from 'react-redux'
 import ShopByBikeService from '@/Redux/Product/Services/ShopByBikeService'
-import { TAppDispatch } from '../AppStore'
-import { shopByBikeSelector } from '@/Redux/Product/Selectors'
+import { TAppDispatch } from '@/Configurations/AppStore'
+import { productCategorySelector, shopByBikeSelector } from '@/Redux/Product/Selectors'
+import ProductCategoryCountService from '@/Redux/Product/Services/ProductCategoryCountService'
 
 function PublicRoutes() {
 
 	const shopByBike = useSelector(shopByBikeSelector)
+	const productCategory = useSelector(productCategorySelector)
 
 	const location = useLocation()
 	const dispatch = useDispatch<TAppDispatch>()
@@ -22,6 +24,7 @@ function PublicRoutes() {
 		window.scrollTo(0, 0)
 		try {
 			if (!shopByBike.length) await dispatch(ShopByBikeService())
+			if (!productCategory.length) await dispatch(ProductCategoryCountService())
 		} catch (error: any) {
 
 		}

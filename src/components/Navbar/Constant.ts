@@ -3,7 +3,6 @@ import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { TopLevelItemsType } from "./Types";
 import { ROUTES } from "@/Constants/Routes";
-import AppStore from "@/Configurations/AppStore";
 
 export enum MenuItemsName {
   SEARCH = "Search",
@@ -15,9 +14,6 @@ export enum MenuItemsName {
   OUR_STORY = "OUR STORY",
   Z_PRO = "Z PRO",
 }
-
-const state = AppStore.getState()
-const shopByBike = state.product.menu.shopByBike
 
 export const TopLevelItems: TopLevelItemsType[] = [
   {
