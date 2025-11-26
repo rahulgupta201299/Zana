@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box } from '@mui/material'
 import { useDispatch } from "react-redux";
 import { products } from "@/data/products";
 import { TAppDispatch } from "@/Configurations/AppStore";
@@ -13,11 +14,19 @@ import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { handleCart } from "@/Utils/CartUtils";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Typography } from "@mui/material";
+import AllProductService from "@/Redux/Product/Services/AllProductService";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
+  const location = useLocation()
+  const state = location.state
+  const initialCategory = state?.category?.toLowerCase() || ALL_CATEGORY
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [categoryDetails, setCategoryDetails] = useState<ProductCatergoryCountType[]>([])
   const [filteredProducts, setFilteredProducts] = useState<ShopByProductDetailsType[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -33,12 +42,18 @@ const ProductCatalogPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  async function handleCategoryService(type: string) {
+  async function handleCategoryService(type: string, page: number) {
     let products: ShopByProductDetailsType[], pagination: PaginationType;
     try {
-      const { data, pagination: paginationResponse } = await dispatch(CategoryProductService({ category: selectedCategory, queryParams: { page: 1, limit: 10 } })) as ProductCatalogDetailsType
-      products = data
-      pagination = paginationResponse
+      if (type === ALL_CATEGORY) {
+        const { data, pagination: paginationResponse } = await dispatch(CategoryProductService({ category: selectedCategory, queryParams: { page, limit: 10 } })) as ProductCatalogDetailsType
+        products = data
+        pagination = paginationResponse
+      } else {
+        const { data, pagination: paginationResponse } = await dispatch(AllProductService({ page, limit: 10 })) as ProductCatalogDetailsType
+        products = data
+        pagination = paginationResponse
+      }
 
       const { totalPages, productsPerPage, currentPage } = pagination
 
@@ -55,12 +70,12 @@ const ProductCatalogPage = () => {
 
   async function pageOps() {
     try {
-      const res = await dispatch(ProductCategoryCountService()) as ProductCatergoryCountType[]
+      const response = await dispatch(ProductCategoryCountService()) as ProductCatergoryCountType[]
 
-      const totalCategoryCount = res.reduce((acc, curr) => acc + curr.count, 0)
-      setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...res])
+      const totalCategoryCount = response.reduce((acc, curr) => acc + curr.count, 0)
+      setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...response])
 
-      await handleCategoryService(selectedCategory)
+      await handleCategoryService(selectedCategory, 1)
 
     } catch (error: any) {
       console.error(error)
@@ -92,7 +107,7 @@ const ProductCatalogPage = () => {
               return (
                 <button
                   key={ind}
-                  onClick={() => handleCategoryService(categoryName)}
+                  onClick={() => handleCategoryService(categoryName, 1)}
                   style={{ textTransform: 'capitalize' }}
                   className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
                     ? "bg-yellow-400 text-black"
@@ -212,6 +227,82 @@ const ProductCatalogPage = () => {
               </button>
             </div>
           )}
+          <Box
+            sx={{
+              marginTop: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: "1rem",
+              color: 'white',
+              cursor: 'pointer'
+            }}
+          >
+            <ArrowBackIosIcon
+              fontSize='large'
+              onClick={() => currentPage > 1 && handleCategoryService(selectedCategory, currentPage - 1)}
+              sx={{
+                color: currentPage <= 1 ? '#5A5A5A' : '#FFF',
+                "&:hover": {
+                  color: currentPage <= 1 ? '#5A5A5A' : 'yellow',
+                }
+              }}
+            />
+            {
+              Array(10).fill(0).map((_, ind, arr) => {
+
+                const pageNum = ind + 1;
+
+                // Last index → ALWAYS "..."
+                if (ind === arr.length - 1) {
+                  return (
+                    <Typography
+                      key={ind}
+                      sx={{
+                        marginTop: 'auto',
+                        fontSize: '1.25rem',
+                        fontWeight: 'bold',
+                        color: 'white'
+                      }}
+                    >
+                      ...
+                    </Typography>
+                  )
+                }
+
+                // Show only 3 pages: current, prev, next
+                if (Math.abs(currentPage - pageNum) > 1) return null;
+
+                return (
+                  <Typography
+                    key={ind}
+                    onClick={() => handleCategoryService(selectedCategory, pageNum)}
+                    sx={{
+                      color: currentPage === pageNum ? '#3B82F6' : 'white',
+                      fontWeight: 'bold',
+                      marginY: 'auto',
+                      fontSize: '1.25rem',
+                      cursor: 'pointer',
+                      "&:hover": {
+                        color: currentPage === pageNum ? '#3B82F6' : 'yellow',
+                      }
+                    }}
+                  >
+                    {pageNum}
+                  </Typography>
+                );
+              })
+            }
+            <ArrowForwardIosIcon
+              fontSize='large'
+              onClick={() => currentPage + 1 <= numberOfPages && handleCategoryService(selectedCategory, currentPage + 1)}
+              sx={{
+                color: currentPage + 1 > numberOfPages ? '#5A5A5A' : '#FFF',
+                "&:hover": {
+                  color: currentPage + 1 > numberOfPages ? '#5A5A5A' : 'yellow',
+                }
+              }}
+            />
+          </Box>
         </div>
       </div>
     </div>

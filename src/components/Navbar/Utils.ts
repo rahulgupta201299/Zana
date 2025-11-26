@@ -6,6 +6,16 @@ import AppStore from "@/Configurations/AppStore";
 export const getMenuOption = (): MenuOptionsType[] => {
   const state = AppStore.getState();
   const shopByBike = state.product.menu.shopByBike;
+  const productCategory = state.product.menu.productCategory;
+
+  const productCategoryList: MenuOptionsType[] = productCategory.map(item => {
+    return {
+      _id: Math.floor(Math.random() * 100 + 1).toString(),
+      name: item.name,
+      models: [],
+      route: ROUTES.PRODUCT_CATALOG
+    }
+  })
 
   return [
     {
@@ -17,7 +27,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
     {
       _id: "2",
       name: MenuItemsName.SHOP_BY_PRODUCT,
-      models: shopByBike,
+      models: productCategoryList,
       route: `${SUB_ROUTES.PRODUCT}`,
     },
     {
