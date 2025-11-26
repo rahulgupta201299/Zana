@@ -4,13 +4,14 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { ShopByBikeType, T_PRODUCT_REDUCER } from "./Types";
+import { ProductCatergoryCountType, ShopByBikeType, T_PRODUCT_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { shopByBikeTraceActions } from "./Actions";
+import { productCategoryCountTraceActions, shopByBikeTraceActions } from "./Actions";
 
 export const INITIAL_STATE: T_PRODUCT_REDUCER = {
   menu: {
     shopByBike: [],
+    productCategory: []
   },
 };
 
@@ -27,6 +28,12 @@ const sliceOptions: CreateSliceOptions<T_PRODUCT_REDUCER> = {
       shopByBikeTraceActions.success,
       (state, action: PayloadAction<ShopByBikeType[]>) => {
         state.menu.shopByBike = action.payload;
+      }
+    ),
+    builder.addCase(
+      productCategoryCountTraceActions.success,
+      (state, action: PayloadAction<ProductCatergoryCountType[]>) => {
+        state.menu.productCategory = action.payload;
       }
     );
   },

@@ -1,6 +1,7 @@
 export type T_PRODUCT_REDUCER = {
   menu: {
     shopByBike: ShopByBikeType[];
+    productCategory: ProductCatergoryCountType[];
   };
 };
 
@@ -50,14 +51,14 @@ export type CategoryProductReqType = {
 };
 
 export type PaginationType = {
-  currentPage: number
-  totalPages: number
-  totalProducts: number
-  productsPerPage: number
-  hasNextPage: boolean
-  hasPrevPage: boolean
-  nextPage: null
-  prevPage: null
+  currentPage: number;
+  totalPages: number;
+  totalProducts: number;
+  productsPerPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  nextPage: null;
+  prevPage: null;
 };
 
 export type ProductCatalogDetailsType = {
@@ -65,9 +66,26 @@ export type ProductCatalogDetailsType = {
   pagination: PaginationType;
 };
 
-
 export type ProductCatergoryCountType = {
-  count: number
-  name: string
-  icon: string
+  count: number;
+  name: string;
+  icon: string;
+};
+
+export interface SearchRequestType extends QueryParamsType {
+  query: string;
 }
+
+export type SearchDataProductsType = {
+  _id: string;
+  name: string;
+  category: string;
+  shortDescription: string;
+  price: number;
+  imageUrl: string;
+};
+
+export type SearchResponseType = {
+  data: []
+  pagination: PaginationType
+};

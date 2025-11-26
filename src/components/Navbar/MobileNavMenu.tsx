@@ -25,7 +25,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		const { name, _id, models = [], route } = item
 
 		if (route && models.length === 0) {
-			navigate(route)
+			navigate(route, { state: { category: name } })
 			onClose()
 			return
 		}

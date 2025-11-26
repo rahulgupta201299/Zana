@@ -9,6 +9,7 @@ import {
 import { MenuOptionsType } from "./Types";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { getMenuOption } from "./Utils";
+import { ROUTES } from "@/Constants/Routes";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -23,12 +24,17 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 		return getMenuOption().find(item => item.name === menuName)?.models || []
 	}, [menuName])
 
-	function handleClick(category: string, subCategory: string, _id: string) {
+	function handleItemClick(category: string, subCategory: string, _id: string) {
 		const prefixRoute = getMenuOption().find(item => item.name === menuName)?.route || ''
 		const name = replaceSpacesWithHiphen(`${category}/${subCategory}/${_id}`)
 		const routeName = `${prefixRoute}/${name}`
 
 		navigate(routeName)
+		onClose()
+	}
+
+	function handleCategoryClick(category: string) {
+		navigate(ROUTES.PRODUCT_CATALOG, { state: { category } })
 		onClose()
 	}
 
@@ -71,7 +77,10 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 								fontWeight: 700,
 								fontSize: "1rem",
 								mb: "6px",
+								cursor: item.models?.length ? "none" : "pointer",
+								"&:hover": { color: item.models?.length ? "#FFF" : "#ff3f6c" },
 							}}
+							onClick={() => !item.models?.length && handleCategoryClick(item.name)}
 						>
 							{item.name}
 						</Typography>
@@ -88,7 +97,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 										cursor: "pointer",
 										"&:hover": { color: "#ff3f6c" },
 									}}
-									onClick={() => handleClick(item.name, name, _id)}
+									onClick={() => handleItemClick(item.name, name, _id)}
 								>
 									{model.name}
 								</Typography>

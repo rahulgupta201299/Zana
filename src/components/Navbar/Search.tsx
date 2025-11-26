@@ -1,4 +1,6 @@
 import { ChangeEvent, useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   Box,
   TextField,
@@ -14,57 +16,51 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
 import { debounce } from "@/Utils/Debounce";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import SearchService from "@/Redux/Product/Services/SearchService";
+import { SearchDataProductsType, SearchResponseType } from "@/Redux/Product/Types";
+import { replaceSpacesWithHiphen, trimByLength } from "@/Utils/StringUtils";
+import { SUB_ROUTES } from "@/Constants/Routes";
 
 type SearchPropsType = {
   onClose: () => void;
 };
 
 export default function Search({ onClose }: SearchPropsType) {
+
+  const navigate = useNavigate()
+
   const [query, setQuery] = useState("");
 
-  const suggestions = [
-    "fog light",
-    "top box for himalayan 450",
-    "fog light clamp mount",
-    "panniers for himalayan 450",
-  ];
+  const dispatch = useDispatch<TAppDispatch>()
 
-  const products = [
-    {
-      img: "https://via.placeholder.com/80",
-      name: "Moto Loop Leather Keychain for Bike | Engina Lifestyle",
-      price: 499,
-    },
-    {
-      img: "https://via.placeholder.com/80",
-      name: "Moto Seal Leather Keychain for Bike | Engina Lifestyle",
-      price: 399,
-    },
-    {
-      img: "https://via.placeholder.com/80",
-      name: "Universal Fit - Fog Light Mounts Set | Auto Engina",
-      price: 899,
-    },
-  ];
+  const [products, setProducts] = useState<SearchDataProductsType[]>([])
 
   const searchDebounce = useCallback(debounce(handleSearchService, 1000), []);
 
-  async function handleSearchService(val: string) {
+  async function handleSearchService(query: string) {
     // Perform API call
+    try {
+      const { data } = await dispatch(SearchService({ query, page: 1, limit: 5 })) as SearchResponseType
+      setProducts(data)
+    } catch (error: any) {
+      console.error(error)
+    }
   }
-
-  const filteredSuggestions = suggestions.filter((s) =>
-    s.toLowerCase().includes(query.toLowerCase())
-  );
-
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(query.toLowerCase())
-  );
 
   function handleSearch(e: ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     setQuery(val);
     searchDebounce(val);
+  }
+
+  function handleNavigate(productCategory: string, productName: string, productId: string) {
+    const category = replaceSpacesWithHiphen(productCategory)
+    const name = replaceSpacesWithHiphen(productName)
+    const routeName = `${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`
+
+    navigate(routeName)
+    onClose()
   }
 
   return (
@@ -168,7 +164,7 @@ export default function Search({ onClose }: SearchPropsType) {
         </Typography>
 
         <List sx={{ display: "flex", flexDirection: "column", gap: 1.2 }}>
-          {filteredSuggestions.map((item, i) => (
+          {products.map((item, i) => (
             <Typography
               key={i}
               sx={{
@@ -177,12 +173,13 @@ export default function Search({ onClose }: SearchPropsType) {
                 cursor: "pointer",
                 "&:hover": { color: "#cccccc" },
               }}
+              onClick={() => handleNavigate(item.category, item.name, item._id)}
             >
-              {item}
+              {item.name}
             </Typography>
           ))}
 
-          {filteredSuggestions.length === 0 && (
+          {products.length === 0 && (
             <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
               No suggestions found.
             </Typography>
@@ -201,32 +198,58 @@ export default function Search({ onClose }: SearchPropsType) {
           PRODUCTS
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {filteredProducts.map((p, i) => (
-            <Box key={i} sx={{ display: "flex", gap: 2 }}>
-              <img
-                src={p.img}
-                className="w-20 h-20 rounded-xl bg-white object-cover"
-              />
+          {products.map((item) => {
+            const { _id, imageUrl, name, price, category, shortDescription } = item;
 
-              <Box>
-                <Typography
-                  sx={{ color: "white", fontSize: "1rem", lineHeight: 1.3 }}
-                >
-                  {p.name}
-                </Typography>
-                <Typography sx={{ color: "#cccccc", mt: 0.6 }}>
-                  Rs. {p.price}.00
-                </Typography>
+            return (
+              <Box
+                key={_id}
+                sx={{ display: "flex", gap: 2, cursor: "pointer" }}
+                onClick={() => handleNavigate(category, name, _id)}
+              >
+                <img
+                  src={imageUrl}
+                  className="w-20 h-20 rounded-xl bg-white object-cover"
+                />
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                  <Typography
+                    sx={{ color: "white", fontSize: "1rem", lineHeight: 1.3 }}
+                  >
+                    {name}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: "#BBBBBB",
+                      fontSize: "0.85rem",
+                      lineHeight: 1.3,
+                      maxWidth: "220px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
+                    {trimByLength(shortDescription, 35)}
+                  </Typography>
+
+                  <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
+                    ₹ {price.toLocaleString()}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            );
+          })}
 
-          {filteredProducts.length === 0 && (
+          {products.length === 0 && (
             <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
               No products found.
             </Typography>
           )}
         </Box>
+
       </Box>
 
       {/* FIXED BOTTOM BUTTON */}

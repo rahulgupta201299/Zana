@@ -274,6 +274,8 @@ async function categoryProductService({
     ],
     pagination: {
       totalPages: 2,
+      productsPerPage: 10,
+      currentPage: 2,
     },
   };
 
