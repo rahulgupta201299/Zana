@@ -22,3 +22,9 @@ export const getIsdCodeActions = traceActionsCreator(getIsdCodeName);
 
 export const addProfileDetailsName = `${SLICE_NAME}/addProfileDetails`;
 export const addProfileDetailsActions = traceActionsCreator(addProfileDetailsName);
+
+export const getBikeBrandName = `${SLICE_NAME}/getBikeBrand`;
+export const  getBikeBrandActions = traceActionsCreator(getBikeBrandName);
+
+export const getBikeModelName = `${SLICE_NAME}/getBikeModel`;
+export const  getBikeModelActions = traceActionsCreator(getBikeModelName);

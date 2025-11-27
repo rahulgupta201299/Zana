@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Dialog,
   Box,
   Typography,
   TextField,
   FormControlLabel,
-  useMediaQuery,
   Paper,
   Radio,
   IconButton,
@@ -23,13 +22,16 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import PersonIcon from "@mui/icons-material/Person";
 import { LogOutIcon } from "lucide-react";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import { Form } from "react-router";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
+import getBikeModelServiceAction from "@/Redux/Auth/Services/GetBikeModel";
 
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
@@ -37,13 +39,32 @@ interface PROFILE_PROPS_TYPE {
 }
 
 const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [notifyOffers, setNotifyOffers] = useState(false);
-
+  const [brands, setBrands] = useState([]);
+  const [models, setModels] = useState([]);
+  const formikRef = useRef();
+  const dispatch = useDispatch<TAppDispatch>();
+  const actions = useMemo(
+    () => ({
+      getBrandList: () => dispatch(getBikeBrandServiceAction()),
+      getBrandModel: (state: any) => dispatch(getBikeModelServiceAction(state)),
+    }),
+    [dispatch]
+  );
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
+
+  useEffect(() => {
+    fetchBrandList();
+  }, []);
+
+  const fetchBrandList = async () => {
+    const result = await actions.getBrandList();
+    setBrands(result);
+  };
+
+  const fetchBrandModels = async (bikeId: string) => {
+    const result = await actions.getBrandModel(bikeId);
+    setModels(result);
+  };
 
   const ProfileSchema = Yup.object().shape({
     phoneNumber: Yup.string()
@@ -110,7 +131,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         >
           <CloseIcon />
         </IconButton>
-
         <Box
           sx={{
             width: "100%",
@@ -343,6 +363,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   }}
                 >
                   <Formik
+                    innerRef={formikRef}
                     initialValues={{
                       phoneNumber: profileDetails?.phoneNumber || "",
                       email: "",
@@ -350,6 +371,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                       lastName: "",
                       address: "",
                       notifyOffers: false,
+                      bikeBrand: "",
+                      bikeModel: "",
                     }}
                     validationSchema={ProfileSchema}
                     onSubmit={(values) => {
@@ -526,52 +549,93 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                           <Box sx={{ display: "flex", gap: "16px" }}>
                             <FormControl fullWidth>
                               <Select
-                                name="country"
-                                // label='Country/Region'
-                                // value={values.country}
-                                onChange={handleChange}
+                                name="bikeBrand"
+                                renderValue={(selected: string) => {
+                                  if (!selected) {
+                                    return (
+                                      <Typography
+                                        sx={{
+                                          fontSize: "16px",
+                                          color: "#8A8A8A",
+                                        }}
+                                      >
+                                        Bike Brand
+                                      </Typography>
+                                    );
+                                  }
+                                  return (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "16px",
+                                        fontWeight: 400,
+                                        color: "#1D1D1D",
+                                      }}
+                                    >
+                                      {selected}
+                                    </Typography>
+                                  );
+                                }}
+                                onChange={(e) => {
+                                  const brand = e.target.value;
+                                  setFieldValue("bikeBrand", brand);
+                                  setFieldValue("bikeModel", "");
+                                  fetchBrandModels(brand);
+                                  handleChange(e);
+                                }}
                                 displayEmpty
                                 IconComponent={() => null}
                                 sx={{
                                   p: 0,
                                   borderRadius: "10px",
+                                  color: "#8A8A8A",
                                 }}
-                                renderValue={() => (
-                                  <Box>
-                                    <Typography
-                                      sx={{
-                                        fontSize: "14px",
-                                        color: "#1D1D1D",
-                                      }}
-                                    >
-                                      Country/Region
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontSize: "20px",
-                                        fontWeight: 400,
-                                        color: "#1D1D1D",
-                                      }}
-                                    >
-                                      {/* {values.country === "india"
-                                        ? "India"
-                                        : values.country} */}
-                                    </Typography>
-                                  </Box>
-                                )}
                               >
-                                <MenuItem value="india">India</MenuItem>
-                                <MenuItem value="usa">United States</MenuItem>
-                                <MenuItem value="uk">United Kingdom</MenuItem>
-                                <MenuItem value="canada">Canada</MenuItem>
+                                {brands &&
+                                  brands.map((bike) => (
+                                    <MenuItem
+                                      key={bike._id}
+                                      value={bike.name}
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <span>{bike.name}</span>
+                                    </MenuItem>
+                                  ))}
                               </Select>
                               {/* </Box> */}
-                            </FormControl>
+                            </FormControl>{" "}
                             <FormControl fullWidth>
                               <Select
-                                name="country"
-                                // label='Country/Region'
-                                // value={values.country}
+                                name="bikeModel"
+                                renderValue={(selected: string) => {
+                                  if (!selected) {
+                                    return (
+                                      <Typography
+                                        sx={{
+                                          fontSize: "16px",
+                                          color: "#8A8A8A",
+                                        }}
+                                      >
+                                        Bike Model
+                                      </Typography>
+                                    );
+                                  }
+                                  return (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "16px",
+                                        fontWeight: 400,
+                                        color: "#1D1D1D",
+                                      }}
+                                    >
+                                      {selected}
+                                    </Typography>
+                                  );
+                                }}
                                 onChange={handleChange}
                                 displayEmpty
                                 IconComponent={() => null}
@@ -579,34 +643,21 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                   p: 0,
                                   borderRadius: "10px",
                                 }}
-                                renderValue={() => (
-                                  <Box>
-                                    <Typography
-                                      sx={{
-                                        fontSize: "14px",
-                                        color: "#1D1D1D",
-                                      }}
-                                    >
-                                      Country/Region
-                                    </Typography>
-                                    <Typography
-                                      sx={{
-                                        fontSize: "20px",
-                                        fontWeight: 400,
-                                        color: "#1D1D1D",
-                                      }}
-                                    >
-                                      {/* {values.country === "india"
-                                        ? "India"
-                                        : values.country} */}
-                                    </Typography>
-                                  </Box>
-                                )}
                               >
-                                <MenuItem value="india">India</MenuItem>
-                                <MenuItem value="usa">United States</MenuItem>
-                                <MenuItem value="uk">United Kingdom</MenuItem>
-                                <MenuItem value="canada">Canada</MenuItem>
+                                {models.map((m) => (
+                                  <MenuItem
+                                    key={m._id}
+                                    value={m.name}
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "8px",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <span>{m.name}</span>
+                                  </MenuItem>
+                                ))}
                               </Select>
                               {/* </Box> */}
                             </FormControl>
