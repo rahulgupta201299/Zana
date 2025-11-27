@@ -6,13 +6,13 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { updateLoginStatusActions } from "./Actions";
+import { updateLoginStatusActions, verifyOtpActions } from "./Actions";
 // import { updateLoginStatusActions } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
-  isLoggedIn: false,
   login: {
     phoneNumber: "",
+    verified:false
   },
 };
 
@@ -34,6 +34,12 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         },
       };
     });
+    builder.addCase(
+      verifyOtpActions.success,
+      (state, { payload }: any) => {
+        state.login=payload
+      }
+    );
   },
 };
 

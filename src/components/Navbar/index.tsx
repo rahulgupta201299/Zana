@@ -40,7 +40,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const isLoggedIn = useSelector((state: any) => getLoginDetails(state));
+  const  { verified } = useSelector((state:any) => getLoginDetails(state))
   const isZProPath = useMemo(() => {
     return location.pathname.split("/").filter(Boolean)?.[0] === "z-pro";
   }, [location.pathname]);
@@ -227,10 +227,12 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {selectedTopItem === MenuItemsName.PROFILE &&
-        (isLoggedIn ? (
+        (verified ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
         ) : (
-          <SignupPopup onClose={() => setSelectedTopItem(null)} />
+          <SignupPopup 
+          type='navbar'
+          onClose={() => setSelectedTopItem(null)} />
         ))}
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />

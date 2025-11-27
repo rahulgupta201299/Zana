@@ -24,6 +24,7 @@ import CartSidebar from "@/components/CartSidebar";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
+import { displayRazorpay } from "./Utils";
 
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeItem } = useCartContext();
@@ -868,6 +869,7 @@ export default function CheckoutPage() {
                     <Button
                       fullWidth
                       type="submit"
+                      onClick={displayRazorpay}
                       variant="outlined"
                       size="large"
                       sx={{
