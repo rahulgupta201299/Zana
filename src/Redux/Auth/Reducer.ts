@@ -24,7 +24,6 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
     builder.addCase(updateLoginStatusActions, (state, { payload }: any) => {
-      console.log(payload);
       return {
         ...state,
         isLoggedIn: true,
@@ -37,6 +36,7 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     builder.addCase(
       verifyOtpActions.success,
       (state, { payload }: any) => {
+        console.log(payload)
         state.login=payload
       }
     );

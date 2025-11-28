@@ -22,8 +22,8 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import PersonIcon from "@mui/icons-material/Person";
 import { LogOutIcon } from "lucide-react";
-import { Formik, useFormikContext } from "formik";
-import { Form } from "react-router";
+import { Formik, Form } from "formik";
+
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -32,6 +32,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
 import getBikeModelServiceAction from "@/Redux/Auth/Services/GetBikeModel";
+import addProfileDetailServiceAction, {
+  ADD_PROFILE_DETAILS,
+} from "@/Redux/Auth/Services/ProfileDetails";
 
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
@@ -41,12 +44,13 @@ interface PROFILE_PROPS_TYPE {
 const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
-  const formikRef = useRef();
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
       getBrandList: () => dispatch(getBikeBrandServiceAction()),
       getBrandModel: (state: any) => dispatch(getBikeModelServiceAction(state)),
+      addProfileDetails: (state: ADD_PROFILE_DETAILS) =>
+        dispatch(addProfileDetailServiceAction(state)),
     }),
     [dispatch]
   );
@@ -86,6 +90,26 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     address: Yup.string().min(3, "Name length should be 3 to 80 characters"),
     notifyOffers: Yup.boolean(),
   });
+
+  const handleSubmit = async(values) => {
+    const [isd, phone] = values.phoneNumber.split("-");
+    const reqBody = {
+      phoneNumber: phone,
+      isdCode: isd,
+      emailId: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      address: values.address,
+      notifyOffers: values.notifyOffers,
+      bikeOwnedByCustomer: [
+        {
+          brand: values.brand,
+          model: values.model,
+        },
+      ],
+    };
+    const result = await actions.addProfileDetails(reqBody)
+  };
 
   return (
     <Dialog
@@ -363,7 +387,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   }}
                 >
                   <Formik
-                    innerRef={formikRef}
                     initialValues={{
                       phoneNumber: profileDetails?.phoneNumber || "",
                       email: "",
@@ -371,12 +394,13 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                       lastName: "",
                       address: "",
                       notifyOffers: false,
-                      bikeBrand: "",
-                      bikeModel: "",
+                      bikes: [
+                        { brand: "", model: "" }, // start with one
+                      ],
                     }}
                     validationSchema={ProfileSchema}
                     onSubmit={(values) => {
-                      console.log("SUBMIT → ", values);
+                      handleSubmit(values);
                     }}
                   >
                     {({
@@ -549,7 +573,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                           <Box sx={{ display: "flex", gap: "16px" }}>
                             <FormControl fullWidth>
                               <Select
-                                name="bikeBrand"
+                                name="brand"
                                 renderValue={(selected: string) => {
                                   if (!selected) {
                                     return (
@@ -577,8 +601,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                 }}
                                 onChange={(e) => {
                                   const brand = e.target.value;
-                                  setFieldValue("bikeBrand", brand);
-                                  setFieldValue("bikeModel", "");
+                                  setFieldValue("brand", brand);
+                                  setFieldValue("model", "");
                                   fetchBrandModels(brand);
                                   handleChange(e);
                                 }}
@@ -610,7 +634,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                             </FormControl>{" "}
                             <FormControl fullWidth>
                               <Select
-                                name="bikeModel"
+                                name="model"
                                 renderValue={(selected: string) => {
                                   if (!selected) {
                                     return (
@@ -636,7 +660,10 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                     </Typography>
                                   );
                                 }}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                  const model = e.target.value;
+                                  setFieldValue("model", model);
+                                }}
                                 displayEmpty
                                 IconComponent={() => null}
                                 sx={{
@@ -667,8 +694,13 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                             control={
                               <Radio
                                 name="notifyOffers"
-                                checked={values.notifyOffers}
-                                onChange={handleChange}
+                                checked={values.notifyOffers === true}
+                                onChange={() =>
+                                  setFieldValue(
+                                    "notifyOffers",
+                                    !values.notifyOffers
+                                  )
+                                }
                                 sx={{ transform: "scale(0.6)" }}
                               />
                             }
