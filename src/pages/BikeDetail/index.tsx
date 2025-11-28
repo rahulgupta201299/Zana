@@ -13,6 +13,8 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { ALL_CATEGORY } from "@/Constants/AppConstant";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 import { replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 
 const BikeDetailPage = () => {
   const { bikeId, bikeBrand, bikeModel } = useParams<BikeDetailParamsType>();
@@ -91,6 +93,9 @@ const BikeDetailPage = () => {
   const { name, description, type } = bikeDetails
 
   const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
+
+    if (bikeProducts.length === 0) return []
+
     const map = new Map()
     const result = [{ name: ALL_CATEGORY, count: bikeProducts.length }]
 
@@ -124,6 +129,7 @@ const BikeDetailPage = () => {
                 src={BikePlaceholderImage}
                 alt={name}
                 className="max-w-full max-h-96 object-contain"
+                loading="lazy"
                 onError={(e) => e.currentTarget.src = BikePlaceholderImage}
               />
             </div>
@@ -142,7 +148,6 @@ const BikeDetailPage = () => {
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">{replaceHiphenWithSpaces(bikeBrand).toUpperCase()}</span>
                 <span className="text-white/50">•</span>
-                {/* TODO */}
                 <span className="text-white/70">{bikeProducts.length} Products Available</span>
               </div>
               <button
@@ -191,6 +196,9 @@ const BikeDetailPage = () => {
                 </button>
               )
             })}
+            {
+              categoriesWithCount.length === 0 && <CategorySkeleton />
+            }
           </div>
 
           {/* Products Grid */}
@@ -267,6 +275,10 @@ const BikeDetailPage = () => {
               )
             })}
           </div>
+
+          {
+            filteredBikeProducts.length === 0 && <ProductSkeleton />
+          }
 
           {/* No Products Found */}
           {filteredBikeProducts.length === 0 && (
