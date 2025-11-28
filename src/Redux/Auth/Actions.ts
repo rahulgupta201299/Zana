@@ -28,3 +28,6 @@ export const  getBikeBrandActions = traceActionsCreator(getBikeBrandName);
 
 export const getBikeModelName = `${SLICE_NAME}/getBikeModel`;
 export const  getBikeModelActions = traceActionsCreator(getBikeModelName);
+
+export const getProfileDetailName = `${SLICE_NAME}/getProfileDetail`;
+export const getProfileDetailsActions = traceActionsCreator(getProfileDetailName);

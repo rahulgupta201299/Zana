@@ -24,7 +24,7 @@ async function verifyOtpService(
   //   const { data } = response
   //   return data
   return {   
-        phoneNumber: '9876543210',
+        phoneNumber: '+91-9876543210',
         verified: true 
   }
   

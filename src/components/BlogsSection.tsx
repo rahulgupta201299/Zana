@@ -1,78 +1,95 @@
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
+import { fetchBlogListName } from "@/Redux/Blogs/Actions";
+import { getListOfBlogs, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
+import fetchBlogListServiceAction from "@/Redux/Blogs/Services/GetBlogList";
+import { TReducers } from "@/Redux/Reducers";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { PersistPartial } from "redux-persist/es/persistReducer";
 
 const BlogsSection = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: "Zana Engineered for India's Harshest Roads. Trusted Across the World.",
-      description: "India is not easy to ride in. 35 states. Weather from -50 to +50. Rain-soaked wetlands to harsh deserts. Salt saturated coastlines to tall mountains.",
-      image: "/uploads/4c58e7da-974c-454c-98fb-590dcaa884ef.png"
-    },
-    {
-      id: 2,
-      title: "Tank Pads and Protectors: Blending Style with Scratch Resistance",
-      description: "India is not easy to ride in. 35 states. Weather from -50 to +50. Rain-soaked wetlands to harsh deserts. Salt saturated coastlines to tall mountains.",
-      image: "/uploads/0fe74faf-510e-47a2-b7a1-5088ed551f39.png"
-    },
-    {
-      id: 3,
-      title: "Exhaust Wraps: Improving Performance While Reducing Heat",
-      description: "India is not easy to ride in. 35 states. Weather from -50 to +50. Rain-soaked wetlands to harsh deserts. Salt saturated coastlines to tall mountains.",
-      image: "/uploads/d791f0f3-6cb4-4507-910d-cf54cd27082a.png"
-    }
-  ];
+  const dispatch = useDispatch<TAppDispatch>();
+  const actions = useMemo(
+    () => ({
+      fetchBlogList: () => dispatch(fetchBlogListServiceAction()),
+    }),
+    [dispatch]
+  );
+  const isListLoading = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, fetchBlogListName) === "LOADING"
+  );
+  const blogs = useSelector((state: TAppStore) =>
+  getTopFourBlogs(state)
+  )
+  
+  const getBlogList = async() => {
+    const result = actions.fetchBlogList();
+  };
+
+  useEffect(() => {
+    getBlogList();
+  }, []);
 
   return (
     <div className="py-8 md:py-16 px-4 md:px-6" style={{ backgroundColor: '#181818' }}>
-      <div className="max-w-7xl mx-auto">
-        {/* 3 Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {blogs.map((blog) => (
-            <div key={blog.id} className="flex flex-col">
-              {/* Blog Image */}
-              <div className="relative h-[180px] md:h-[280px] mb-3 md:mb-6 rounded-lg overflow-hidden">
-                <img
-                  src={blog.image}
-                  alt={blog.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Blog Content */}
-              <h3 className="text-base md:text-xl font-bold text-white mb-2 md:mb-4 leading-tight">
-                {blog.title}
-              </h3>
-              <p className="text-white/80 mb-3 md:mb-6 leading-relaxed text-xs md:text-sm flex-grow">
-                {blog.description}
-              </p>
-
-              {/* Read More Button with Hero Section Animation */}
-              <Link to={`/blog/${blog.id}`}>
-                <button 
-                  className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-base font-medium overflow-hidden group transition-colors duration-500 w-fit"
-                  style={{
-                    background: 'linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)',
-                    backgroundSize: '200% 200%',
-                    backgroundPosition: '0% 0%',
-                    transition: 'background-position 0.4s ease, color 0.4s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundPosition = '100% 100%';
-                    e.currentTarget.style.color = '#000';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundPosition = '0% 0%';
-                    e.currentTarget.style.color = '#fff';
-                  }}
-                >
-                  <span className="relative">READ MORE</span>
-                </button>
-              </Link>
+    <div className="max-w-7xl mx-auto">
+  
+      {/* Responsive Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {blogs.map((blog) => (
+          <div key={blog?._id} className="flex flex-col">
+  
+            {/* Image */}
+            <div className="relative h-[180px] md:h-[280px] mb-4 rounded-lg overflow-hidden">
+              <img
+                src={blog?.imageUrl}
+                alt={blog?.title}
+                className="w-full h-full object-cover"
+              />
             </div>
-          ))}
-        </div>
+  
+            {/* Title */}
+            <h3 className="text-base md:text-xl font-bold text-white mb-3 leading-tight">
+              {blog?.title}
+            </h3>
+  
+            {/* Description */}
+            <p className="text-white/80 mb-4 leading-relaxed text-xs md:text-sm flex-grow">
+              {blog?.description}
+            </p>
+  
+            {/* Button */}
+            <Link to={`/blog/${blog?._id}`}>
+              <button
+                className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-base font-medium overflow-hidden group transition-colors duration-500 w-fit"
+                style={{
+                  background: 'linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)',
+                  backgroundSize: '200% 200%',
+                  backgroundPosition: '0% 0%',
+                  transition: 'background-position 0.4s ease, color 0.4s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundPosition = '100% 100%';
+                  e.currentTarget.style.color = '#000';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundPosition = '0% 0%';
+                  e.currentTarget.style.color = '#fff';
+                }}
+              >
+                READ MORE
+              </button>
+            </Link>
+          </div>
+        ))}
       </div>
+  
     </div>
+  </div>
+  
   );
 };
 

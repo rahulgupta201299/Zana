@@ -330,7 +330,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
                 border: "2px solid white",
                 borderRadius: "10px",
               }}
-              disabled={isGeneratingOtp}
+              disabled={isGeneratingOtp || phone.length != 10}
             >
               Request OTP
             </Button>

@@ -14,16 +14,13 @@ async function generateOtpService(
   requestData: GEN_OTP_REQ
 ): Promise<any> {
   const options = {
-    url: `/api/v1/otp/generate }`,
+    url: `/api/v1/otp/generate`,
     method: API_METHOD_ENUM.POST,
     data:requestData
   };
-  // TODO
-  //   const response = await network.request(options)
-  //   const { data } = response
-  //   return data
-  return {statusCode: 200}
-  
+    const response = await network.request(options)
+    const { data } = response
+    return data 
 }
 
 const GenerateOtpServiceAction = serviceActionCreator(
