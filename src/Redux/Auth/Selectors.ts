@@ -16,6 +16,8 @@ export const getLoginDetails = createSelector(
 );
 
 export const getProfileDetails = createSelector(
-  (state: TAppStore) => state[SLICE_NAME].login,
-  (login) => login
+  (state: TAppStore) => state[SLICE_NAME].profileDetails,
+  (profileDetails) => profileDetails
 );
+
+;

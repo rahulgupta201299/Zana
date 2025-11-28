@@ -35,6 +35,7 @@ import getBikeModelServiceAction from "@/Redux/Auth/Services/GetBikeModel";
 import addProfileDetailServiceAction, {
   ADD_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/ProfileDetails";
+import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
@@ -51,12 +52,15 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       getBrandModel: (state: any) => dispatch(getBikeModelServiceAction(state)),
       addProfileDetails: (state: ADD_PROFILE_DETAILS) =>
         dispatch(addProfileDetailServiceAction(state)),
+      fetchProfileDetails: (state: any) =>
+        dispatch(getProfileDetailsServiceAction(state)),
     }),
     [dispatch]
   );
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   useEffect(() => {
+    fetchProfileData();
     fetchBrandList();
   }, []);
 
@@ -91,11 +95,18 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     notifyOffers: Yup.boolean(),
   });
 
-  const handleSubmit = async(values) => {
+  const fetchProfileData = async () => {
+    const result = await actions.fetchProfileDetails({
+      isdCode: "91",
+      phoneNumber: "7632000876",
+    });
+  };
+
+  const handleSubmit = async (values) => {
     const [isd, phone] = values.phoneNumber.split("-");
     const reqBody = {
-      phoneNumber: phone,
-      isdCode: isd,
+      phoneNumber: values.phoneNumber,
+      isdCode: "+91",
       emailId: values.email,
       firstName: values.firstName,
       lastName: values.lastName,
@@ -108,7 +119,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         },
       ],
     };
-    const result = await actions.addProfileDetails(reqBody)
+    const result = await actions.addProfileDetails(reqBody);
   };
 
   return (
@@ -389,14 +400,13 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   <Formik
                     initialValues={{
                       phoneNumber: profileDetails?.phoneNumber || "",
-                      email: "",
-                      firstName: "",
-                      lastName: "",
-                      address: "",
-                      notifyOffers: false,
-                      bikes: [
-                        { brand: "", model: "" }, // start with one
-                      ],
+                      email: profileDetails?.emailId || "",
+                      firstName: profileDetails?.firstName || "",
+                      lastName: profileDetails?.lastName || "",
+                      address: profileDetails?.address || "",
+                      notifyOffers: profileDetails?.notifyOffers || false,
+                      brand: profileDetails?.bikeOwnedByCustomer[0]?.brand,
+                      model: profileDetails?.bikeOwnedByCustomer[0]?.model,
                     }}
                     validationSchema={ProfileSchema}
                     onSubmit={(values) => {
@@ -587,6 +597,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                       </Typography>
                                     );
                                   }
+
+                                  const foundModel = brands.find(
+                                    (m) => m._id === selected
+                                  );
+
                                   return (
                                     <Typography
                                       sx={{
@@ -595,7 +610,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                         color: "#1D1D1D",
                                       }}
                                     >
-                                      {selected}
+                                      {foundModel?.name}
                                     </Typography>
                                   );
                                 }}
@@ -603,6 +618,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                   const brand = e.target.value;
                                   setFieldValue("brand", brand);
                                   setFieldValue("model", "");
+                                  setModels([]);
                                   fetchBrandModels(brand);
                                   handleChange(e);
                                 }}
@@ -617,8 +633,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                 {brands &&
                                   brands.map((bike) => (
                                     <MenuItem
-                                      key={bike._id}
-                                      value={bike.name}
+                                      key={bike?._id}
+                                      value={bike?._id}
                                       sx={{
                                         display: "flex",
                                         alignItems: "center",
@@ -630,13 +646,19 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                     </MenuItem>
                                   ))}
                               </Select>
-                              {/* </Box> */}
                             </FormControl>{" "}
                             <FormControl fullWidth>
                               <Select
                                 name="model"
+                                value={values.model}
+                                displayEmpty
+                                IconComponent={() => null}
+                                sx={{ p: 0, borderRadius: "10px" }}
                                 renderValue={(selected: string) => {
-                                  if (!selected) {
+                                  const foundModel = models.find(
+                                    (m) => m._id === selected
+                                  );
+                                  if (!foundModel) {
                                     return (
                                       <Typography
                                         sx={{
@@ -647,46 +669,30 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                                         Bike Model
                                       </Typography>
                                     );
+                                  } else {
+                                    return (
+                                      <Typography
+                                        sx={{
+                                          fontSize: "16px",
+                                          fontWeight: 400,
+                                          color: "#1D1D1D",
+                                        }}
+                                      >
+                                        {foundModel?.name}
+                                      </Typography>
+                                    );
                                   }
-                                  return (
-                                    <Typography
-                                      sx={{
-                                        fontSize: "16px",
-                                        fontWeight: 400,
-                                        color: "#1D1D1D",
-                                      }}
-                                    >
-                                      {selected}
-                                    </Typography>
-                                  );
                                 }}
-                                onChange={(e) => {
-                                  const model = e.target.value;
-                                  setFieldValue("model", model);
-                                }}
-                                displayEmpty
-                                IconComponent={() => null}
-                                sx={{
-                                  p: 0,
-                                  borderRadius: "10px",
-                                }}
+                                onChange={(e) =>
+                                  setFieldValue("model", e.target.value)
+                                }
                               >
                                 {models.map((m) => (
-                                  <MenuItem
-                                    key={m._id}
-                                    value={m.name}
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "8px",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <span>{m.name}</span>
+                                  <MenuItem key={m._id} value={m._id}>
+                                    {m.name}
                                   </MenuItem>
                                 ))}
                               </Select>
-                              {/* </Box> */}
                             </FormControl>
                           </Box>
 

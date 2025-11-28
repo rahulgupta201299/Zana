@@ -13,7 +13,7 @@ export interface ADD_PROFILE_DETAILS {
   phoneNumber: string;
   address: string;
   notifyOffers: boolean;
-  bikeOwnedByCustomer: bike_owned[]
+  bikeOwnedByCustomer?: bike_owned[]
 }
 
  type bike_owned={
@@ -25,23 +25,15 @@ async function addProfileDetailsService(
   requestData: ADD_PROFILE_DETAILS
 ): Promise<any> {
   const options = {
-    url: `/api/v1/profile}`,
+    url: `/api/v1/profile`,
     method: API_METHOD_ENUM.POST,
     data: requestData,
   };
   // TODO
-  //   const response = await network.request(options)
-  //   const { data } = response
-  //   return data
-  return {
-    _id: "122334",
-    firstName: "Dhruvi",
-    lastName: "Aadhya",
-    isdCode: "+91",
-    phoneNumber: "9876543211",
-    address: "Pitampura, New Delhi",
-    notifyOffers: boolean,
-  };
+    const response = await network.request(options)
+    const { data } = response
+    return data
+ 
 }
 
 const addProfileDetailServiceAction = serviceActionCreator(

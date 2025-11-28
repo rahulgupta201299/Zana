@@ -6,7 +6,7 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { updateLoginStatusActions, verifyOtpActions } from "./Actions";
+import { addProfileDetailsActions, updateLoginStatusActions, verifyOtpActions } from "./Actions";
 // import { updateLoginStatusActions } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
@@ -14,6 +14,19 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
     phoneNumber: "",
     verified:false
   },
+  profileDetails:{
+    _id: "",
+    firstName: "",
+    lastName: "",
+    isdCode: "",
+    phoneNumber: "",
+    emailId: "",
+    address: "",
+    notifyOffers: false,
+    bikeOwnedByCustomer: [],
+    createdAt: "",
+    __v: 0
+  }
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -36,8 +49,13 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     builder.addCase(
       verifyOtpActions.success,
       (state, { payload }: any) => {
-        console.log(payload)
         state.login=payload
+      }
+    );
+    builder.addCase(
+      addProfileDetailsActions.success,
+      (state, { payload }: any) => {
+        state.profileDetails=payload
       }
     );
   },
