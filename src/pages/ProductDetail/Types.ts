@@ -1,4 +1,4 @@
-export type ProductDetailParamsType = { 
+export type ProductDetailParamsType = {
 	productId: string
 	productCategory: string
 	productItem: string

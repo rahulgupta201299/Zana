@@ -2,6 +2,7 @@ import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { MenuItemsName } from "./Constant";
 import { MenuOptionsType } from "./Types";
 import AppStore from "@/Configurations/AppStore";
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
 
 export const getMenuOption = (): MenuOptionsType[] => {
   const state = AppStore.getState();
@@ -23,7 +24,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
       _id: "1",
       name: MenuItemsName.SHOP_BY_BIKE,
       models: shopByBike,
-      route: `${SUB_ROUTES.BIKE}`,
+      route: `/${BikeCategoryEnum.ZANA}${SUB_ROUTES.BIKE}`,
     },
     {
       _id: "2",
@@ -35,7 +36,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
       _id: "3",
       name: MenuItemsName.Z_PRO,
       models: zProBikes,
-      route: `${SUB_ROUTES.Z_PRO_BIKE}`,
+      route: `/${BikeCategoryEnum.ZPRO}${SUB_ROUTES.BIKE}`,
     },
     {
       _id: "4",

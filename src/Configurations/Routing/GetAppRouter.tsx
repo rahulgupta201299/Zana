@@ -23,8 +23,8 @@ const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"));
 const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"));
 const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"));
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"));
-const ContactUsForm = lazyLoadPage(()=>import("@/pages/QuickLinks/ContactUs"));
-const Checkout = lazyLoadPage(()=>import("@/pages/Checkout"))
+const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"));
+const Checkout = lazyLoadPage(() => import("@/pages/Checkout"))
 
 export const routeObj: RouteObject[] = [
   {
@@ -45,9 +45,10 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BIKE_VIEW, element: BikeViewPage },
       { path: ROUTES.CART, element: CartCheckoutPage },
       { path: ROUTES.SEARCH, element: SearchPage },
-      {path:ROUTES.CONTACT_US, element:ContactUsForm},
-      {path:ROUTES.CHECKOUT, element:Checkout},
-      { path: ROUTES.ANY, element: NotFound },
+      { path: ROUTES.CONTACT_US, element: ContactUsForm },
+      { path: ROUTES.CHECKOUT, element: Checkout },
+      { path: ROUTES.PAGE_NOT_FOUND, element: NotFound },
+      { path: ROUTES.ANY, element: NotFound }
     ],
   },
   {

@@ -8,9 +8,9 @@ import { categories } from "@/data/productCategories";
 import { ShoppingCart, Heart } from "lucide-react";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { BikeDetailParamsType } from "./Types";
-import { shopByBikeSelector } from "@/Redux/Product/Selectors";
+import { shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { ALL_CATEGORY } from "@/Constants/AppConstant";
+import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 import { replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
@@ -22,11 +22,14 @@ import { Skeleton } from "@mui/material";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
-  const { bikeId = '', bikeBrand = '', bikeModel = '' } = params || {}
+  const { bikeType: bikeTypeParams = '', bikeId = '', bikeBrand = '', bikeModel = '' } = params || {}
+
+  const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
+  const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
 
   const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName]))
 
-  const shopByBike = useSelector(shopByBikeSelector)
+  const shopByBike = useSelector(isZProPath ? zProBikeSelector : shopByBikeSelector)
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
@@ -55,7 +58,7 @@ const BikeDetailPage = () => {
   }
 
   function handleBackToBikes() {
-    navigate(ROUTES.BIKES, { state: { brand: replaceHiphenWithSpaces(bikeBrand) } })
+    navigate(`/${bikeType}${SUB_ROUTES.BIKES}`, { state: { brand: replaceHiphenWithSpaces(bikeBrand) } })
   }
 
   function handleProductClick(productCategory: string, productSubCategory: string, productId: string) {
