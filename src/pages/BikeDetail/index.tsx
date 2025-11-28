@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
 import { products } from "@/data/products";
 import { categories } from "@/data/productCategories";
@@ -13,9 +13,16 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { ALL_CATEGORY } from "@/Constants/AppConstant";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 import { replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { bikeProductServiceName } from "@/Redux/Product/Actions";
+import Loading from "@/components/Loading";
 
 const BikeDetailPage = () => {
   const { bikeId, bikeBrand, bikeModel } = useParams<BikeDetailParamsType>();
+
+  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName]))
 
   const shopByBike = useSelector(shopByBikeSelector)
 
@@ -71,10 +78,12 @@ const BikeDetailPage = () => {
     setSelectedCategory(val)
   }
 
+  console.log(1111, isLoading)
 
   if (!bikeDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#181818' }}>
+        {isLoading && <Loading />}
         <div className="text-center">
           <h1 className="text-white text-4xl font-bold mb-4">Bike Not Found</h1>
           <button
@@ -88,9 +97,12 @@ const BikeDetailPage = () => {
     );
   }
 
-  const { name, description, type } = bikeDetails
+  const { name, description, type, imageUrl } = bikeDetails
 
   const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
+
+    if (bikeProducts.length === 0) return []
+
     const map = new Map()
     const result = [{ name: ALL_CATEGORY, count: bikeProducts.length }]
 
@@ -121,9 +133,10 @@ const BikeDetailPage = () => {
             <div className="bg-white rounded-2xl p-8 md:p-12 flex items-center justify-center">
               {/* TODO image */}
               <img
-                src={BikePlaceholderImage}
+                src={imageUrl}
                 alt={name}
                 className="max-w-full max-h-96 object-contain"
+                loading="lazy"
                 onError={(e) => e.currentTarget.src = BikePlaceholderImage}
               />
             </div>
@@ -142,7 +155,6 @@ const BikeDetailPage = () => {
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">{replaceHiphenWithSpaces(bikeBrand).toUpperCase()}</span>
                 <span className="text-white/50">•</span>
-                {/* TODO */}
                 <span className="text-white/70">{bikeProducts.length} Products Available</span>
               </div>
               <button
@@ -191,6 +203,9 @@ const BikeDetailPage = () => {
                 </button>
               )
             })}
+            {
+              categoriesWithCount.length === 0 && <CategorySkeleton />
+            }
           </div>
 
           {/* Products Grid */}
@@ -267,6 +282,10 @@ const BikeDetailPage = () => {
               )
             })}
           </div>
+
+          {
+            filteredBikeProducts.length === 0 && <ProductSkeleton />
+          }
 
           {/* No Products Found */}
           {filteredBikeProducts.length === 0 && (

@@ -18,6 +18,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Typography } from "@mui/material";
 import AllProductService from "@/Redux/Product/Services/AllProductService";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -128,8 +130,11 @@ const ProductCatalogPage = () => {
                     {categoryName === ALL_CATEGORY ? 'All Products' : categoryName} ({count})
                   </span>
                 </button>
-              );
+              )
             })}
+            {
+              categoryDetails.length === 0 && <CategorySkeleton />
+            }
           </div>
         </div>
       </div>
@@ -213,12 +218,16 @@ const ProductCatalogPage = () => {
             })}
           </div>
 
+          {
+            filteredProducts.length === 0 && <ProductSkeleton />
+          }
+
           {/* No Products Found */}
           {filteredProducts.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-white/50 text-lg mb-4">
+              {/* <p className="text-white/50 text-lg mb-4">
                 No products found in this category
-              </p>
+              </p> */}
               <button
                 onClick={() => setSelectedCategory(ALL_CATEGORY)}
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
@@ -248,7 +257,7 @@ const ProductCatalogPage = () => {
               }}
             />
             {
-              Array(10).fill(0).map((_, ind, arr) => {
+              Array(numberOfPages).fill(0).map((_, ind, arr) => {
 
                 const pageNum = ind + 1;
 

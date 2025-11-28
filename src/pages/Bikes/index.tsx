@@ -8,6 +8,8 @@ import { shopByBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 
 function Bikes() {
 	const shopByBike = useSelector(shopByBikeSelector)
@@ -22,6 +24,8 @@ function Bikes() {
 	const navigate = useNavigate();
 
 	const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
+		if (!shopByBike.length) return []
+
 		const result = [{ name: ALL_CATEGORY, count: shopByBike.length }]
 
 		shopByBike.forEach(item => {
@@ -73,7 +77,7 @@ function Bikes() {
 						</p>
 					</div>
 
-					<div className="mb-8 flex flex-wrap gap-3">
+					<div className="mb-8 flex flex-wrap gap-3 justify-center items-center">
 						{categoriesWithCount.map((brand) => {
 							const { name, count } = brand
 							const brandName = name.toLowerCase()
@@ -91,6 +95,9 @@ function Bikes() {
 								</button>
 							);
 						})}
+						{
+							categoriesWithCount.length === 0 && <CategorySkeleton />
+						}
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -109,7 +116,7 @@ function Bikes() {
 									<div className="bg-white p-6 md:p-8 h-48 md:h-64 flex items-center justify-center">
 										{/* TODO image */}
 										<img
-											src={BikePlaceholderImage}
+											src={imageUrl}
 											alt={name}
 											className="max-h-full max-w-full object-contain"
 											onError={(e) => e.currentTarget.src = BikePlaceholderImage}
@@ -142,6 +149,10 @@ function Bikes() {
 							)
 						})}
 					</div>
+
+					{
+						filteredBrandDetails.length === 0 && <ProductSkeleton />
+					}
 
 					{/* No Results */}
 					{filteredBrandDetails.length === 0 && (

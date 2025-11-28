@@ -130,7 +130,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
           {/* LOGO CENTER */}
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-            <Link to={ROUTES.BASE_URL} style={{ display: "flex" }}>
+            <Link to={ROUTES.BASE_URL} style={{ display: "flex", cursor: 'pointer' }}>
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}

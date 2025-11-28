@@ -1,10 +1,11 @@
 import Axios from 'axios'
 import { NetworkTypes } from "./Types"
+import { API_DOMAIN, API_TIME_OUT } from '../env';
 
 // TODO
 const asHttp = Axios.create({
-  baseURL: "https://your-api-base-url.com",
-  timeout: 60000,
+  baseURL: API_DOMAIN,
+  timeout: API_TIME_OUT,
 });
 
 export default class Network {
