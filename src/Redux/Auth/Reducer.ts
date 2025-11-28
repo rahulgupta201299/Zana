@@ -50,6 +50,7 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
       verifyOtpActions.success,
       (state, { payload }: any) => {
         state.login=payload
+        state.profileDetails=payload?.profile
       }
     );
     builder.addCase(

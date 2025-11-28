@@ -1,38 +1,31 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
-import {verifyOtpActions } from "../Actions";
+import { verifyOtpActions } from "../Actions";
 
 const network = new Network();
 
-export interface VERIFY_OTP_REQ{
-    isdCode: string
-    phoneNumber: string
-    otp: string
+export interface VERIFY_OTP_REQ {
+  isdCode: string;
+  phoneNumber: string;
+  otp: string;
 }
 
-async function verifyOtpService(
-  requestData: VERIFY_OTP_REQ
-): Promise<any> {
+async function verifyOtpService(requestData: VERIFY_OTP_REQ): Promise<any> {
   const options = {
-    url: `/api/v1/otp/veify}`,
+    url: `/api/v1/otp/verify`,
     method: API_METHOD_ENUM.POST,
-    data:requestData
+    data: requestData,
   };
-  // TODO
-  //   const response = await network.request(options)
-  //   const { data } = response
-  //   return data
-  return {   
-        phoneNumber: '+91-9876543210',
-        verified: true 
-  }
-  
+
+  const response = await network.request(options);
+  const { data } = response;
+  return data;
 }
 
 const VerifyOtpServiceAction = serviceActionCreator(
-    verifyOtpActions,
-    verifyOtpService
+  verifyOtpActions,
+  verifyOtpService
 );
 
-export default VerifyOtpServiceAction
+export default VerifyOtpServiceAction;

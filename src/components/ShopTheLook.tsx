@@ -40,7 +40,7 @@ const ShopTheLook = () => {
       dots: [
         {
           id: "top-rack-1",
-          x: 20.97,
+          x: 26.97,
           y: 29.66,
           partData: {
             id: "top-rack",
@@ -53,8 +53,8 @@ const ShopTheLook = () => {
         },
         {
           id: "headlight-1",
-          x: 69.43,
-          y: 27.16,
+          x: 66.43,
+          y: 30.16,
           partData: {
             id: "headlight",
             name: "Headlight Assembly",
@@ -66,7 +66,7 @@ const ShopTheLook = () => {
         },
         {
           id: "crash-guard-1",
-          x: 78.2,
+          x: 74.2,
           y: 70.16,
           partData: {
             id: "crash-guard",
@@ -91,7 +91,7 @@ const ShopTheLook = () => {
         },
         {
           id: "rear-brake-1",
-          x: 25,
+          x: 32,
           y: 70,
           partData: {
             id: "rear-brake",
@@ -111,8 +111,8 @@ const ShopTheLook = () => {
       dots: [
         {
           id: "top-rack-2",
-          x: 88,
-          y: 26,
+          x: 79,
+          y: 33,
           partData: {
             id: "top-rack",
             name: "Top Rack",
@@ -124,8 +124,8 @@ const ShopTheLook = () => {
         },
         {
           id: "headlight-2",
-          x: 27,
-          y: 33,
+          x: 30,
+          y: 29.5,
           partData: {
             id: "headlight",
             name: "Headlight Assembly",
@@ -149,8 +149,8 @@ const ShopTheLook = () => {
         },
         {
           id: "front-wheel-2",
-          x: 79,
-          y: 73,
+          x: 73,
+          y: 76,
           partData: {
             id: "front-wheel",
             name: "Front Wheel",
