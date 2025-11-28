@@ -6,14 +6,27 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { updateLoginStatusActions } from "./Actions";
+import { addProfileDetailsActions, updateLoginStatusActions, verifyOtpActions } from "./Actions";
 // import { updateLoginStatusActions } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
-  isLoggedIn: false,
   login: {
     phoneNumber: "",
+    verified:false
   },
+  profileDetails:{
+    _id: "",
+    firstName: "",
+    lastName: "",
+    isdCode: "",
+    phoneNumber: "",
+    emailId: "",
+    address: "",
+    notifyOffers: false,
+    bikeOwnedByCustomer: [],
+    createdAt: "",
+    __v: 0
+  }
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -24,7 +37,6 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
     builder.addCase(updateLoginStatusActions, (state, { payload }: any) => {
-      console.log(payload);
       return {
         ...state,
         isLoggedIn: true,
@@ -34,6 +46,18 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         },
       };
     });
+    builder.addCase(
+      verifyOtpActions.success,
+      (state, { payload }: any) => {
+        state.login=payload
+      }
+    );
+    builder.addCase(
+      addProfileDetailsActions.success,
+      (state, { payload }: any) => {
+        state.profileDetails=payload
+      }
+    );
   },
 };
 

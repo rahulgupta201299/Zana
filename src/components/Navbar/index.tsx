@@ -40,7 +40,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const isLoggedIn = useSelector((state: any) => getLoginDetails(state));
+  const  { verified } = useSelector((state:any) => getLoginDetails(state))
   const isZProPath = useMemo(() => {
     return location.pathname.split("/").filter(Boolean)?.[0] === "z-pro";
   }, [location.pathname]);
@@ -130,7 +130,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
           {/* LOGO CENTER */}
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-            <Link to={ROUTES.BASE_URL} style={{ display: "flex" }}>
+            <Link to={ROUTES.BASE_URL} style={{ display: "flex", cursor: 'pointer' }}>
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
@@ -227,10 +227,12 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {selectedTopItem === MenuItemsName.PROFILE &&
-        (isLoggedIn ? (
+        (!verified ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
         ) : (
-          <SignupPopup onClose={() => setSelectedTopItem(null)} />
+          <SignupPopup 
+          type='navbar'
+          onClose={() => setSelectedTopItem(null)} />
         ))}
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />

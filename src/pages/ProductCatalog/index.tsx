@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box } from '@mui/material'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { products } from "@/data/products";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { categories } from "@/data/productCategories";
 import { Heart, ShoppingCart } from "lucide-react";
 import { ALL_CATEGORY, CartQuantityEnum } from "@/Constants/AppConstant"
@@ -18,16 +18,23 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Typography } from "@mui/material";
 import AllProductService from "@/Redux/Product/Services/AllProductService";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import { productCategorySelector } from "@/Redux/Product/Selectors";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { allProductServiceName, categoryProductServiceName } from "@/Redux/Product/Actions";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
 
   const location = useLocation()
   const state = location.state
-  const initialCategory = state?.category?.toLowerCase() || ALL_CATEGORY
+  const initialCategory = state?.category?.toLowerCase() || ''
+
+  const productCategory = useSelector(productCategorySelector)
+  const isProductCategoryLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [categoryProductServiceName, allProductServiceName]))
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [categoryDetails, setCategoryDetails] = useState<ProductCatergoryCountType[]>([])
   const [filteredProducts, setFilteredProducts] = useState<ShopByProductDetailsType[]>([])
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [limit, setLimit] = useState<number>(0)
@@ -42,15 +49,20 @@ const ProductCatalogPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  async function handleCategoryService(type: string, page: number) {
+  async function handleCategoryService(type: string, page: number, byPassApiCall = true) {
     let products: ShopByProductDetailsType[], pagination: PaginationType;
+
+    if (type === selectedCategory && byPassApiCall) return
+    setFilteredProducts([])
+    setSelectedCategory(type)
+
     try {
       if (type === ALL_CATEGORY) {
-        const { data, pagination: paginationResponse } = await dispatch(CategoryProductService({ category: selectedCategory, queryParams: { page, limit: 10 } })) as ProductCatalogDetailsType
+        const { data, pagination: paginationResponse } = await dispatch(AllProductService({ page, limit: 10 })) as ProductCatalogDetailsType
         products = data
         pagination = paginationResponse
       } else {
-        const { data, pagination: paginationResponse } = await dispatch(AllProductService({ page, limit: 10 })) as ProductCatalogDetailsType
+        const { data, pagination: paginationResponse } = await dispatch(CategoryProductService({ category: type, queryParams: { page, limit: 10 } })) as ProductCatalogDetailsType
         products = data
         pagination = paginationResponse
       }
@@ -61,21 +73,29 @@ const ProductCatalogPage = () => {
       setCurrentPage(currentPage)
       setLimit(productsPerPage)
       setFilteredProducts(products)
-      setSelectedCategory(type)
 
     } catch (error: any) {
       throw error
     }
   }
 
+  const categoryDetails = useMemo(() => {
+
+    if (productCategory.length === 0) return []
+
+    const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
+    return [{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory]
+  }, [productCategory.length])
+
   async function pageOps() {
+    // let response = productCategory
     try {
-      const response = await dispatch(ProductCategoryCountService()) as ProductCatergoryCountType[]
+      // if (!productCategory.length) response = await dispatch(ProductCategoryCountService()) as ProductCatergoryCountType[]
 
-      const totalCategoryCount = response.reduce((acc, curr) => acc + curr.count, 0)
-      setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...response])
+      // const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
+      // setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory])
 
-      await handleCategoryService(selectedCategory, 1)
+      await handleCategoryService(initialCategory || ALL_CATEGORY, 1)
 
     } catch (error: any) {
       console.error(error)
@@ -108,7 +128,7 @@ const ProductCatalogPage = () => {
                 <button
                   key={ind}
                   onClick={() => handleCategoryService(categoryName, 1)}
-                  style={{ textTransform: 'capitalize' }}
+                  style={{ textTransform: 'capitalize', cursor: 'pointer' }}
                   className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
                     ? "bg-yellow-400 text-black"
                     : "bg-white/10 text-white hover:bg-white/20"
@@ -128,22 +148,17 @@ const ProductCatalogPage = () => {
                     {categoryName === ALL_CATEGORY ? 'All Products' : categoryName} ({count})
                   </span>
                 </button>
-              );
+              )
             })}
+            {
+              categoryDetails.length === 0 && <CategorySkeleton />
+            }
           </div>
         </div>
       </div>
 
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
-          {/* {selectedCategory !== "All" && (
-            <h2 className="text-white text-2xl md:text-4xl font-bold mb-6">
-              {categories.find(c => c.id === selectedCategory)?.icon} {selectedCategory}
-              <span className="text-white/60 ml-3 text-lg">({displayedProducts.length} products)</span>
-            </h2>
-          )} */}
-
-          {/* Responsive Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => {
 
@@ -213,14 +228,17 @@ const ProductCatalogPage = () => {
             })}
           </div>
 
-          {/* No Products Found */}
+          {
+            filteredProducts.length === 0 && isProductCategoryLoading && <ProductSkeleton />
+          }
+
           {filteredProducts.length === 0 && (
             <div className="text-center py-16">
               <p className="text-white/50 text-lg mb-4">
                 No products found in this category
               </p>
               <button
-                onClick={() => setSelectedCategory(ALL_CATEGORY)}
+                onClick={() => handleCategoryService(ALL_CATEGORY, 1, isProductCategoryLoading)}
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
               >
                 View All Products
@@ -248,7 +266,7 @@ const ProductCatalogPage = () => {
               }}
             />
             {
-              Array(10).fill(0).map((_, ind, arr) => {
+              Array(numberOfPages).fill(0).map((_, ind, arr) => {
 
                 const pageNum = ind + 1;
 

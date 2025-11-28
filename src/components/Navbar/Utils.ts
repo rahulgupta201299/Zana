@@ -6,6 +6,7 @@ import AppStore from "@/Configurations/AppStore";
 export const getMenuOption = (): MenuOptionsType[] => {
   const state = AppStore.getState();
   const shopByBike = state.product.menu.shopByBike;
+  const zProBikes = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
 
   const productCategoryList: MenuOptionsType[] = productCategory.map(item => {
@@ -33,7 +34,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
     {
       _id: "3",
       name: MenuItemsName.Z_PRO,
-      models: shopByBike,
+      models: zProBikes,
       route: `${SUB_ROUTES.Z_PRO_BIKE}`,
     },
     {

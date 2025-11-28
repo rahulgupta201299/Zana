@@ -13,60 +13,105 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateLoginStatusActions } from "@/Redux/Auth/Actions";
-import { kMaxLength } from "buffer";
+import {
+  generateOtpName,
+  updateLoginStatusActions,
+  verifyOtpName,
+} from "@/Redux/Auth/Actions";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-
-const countries = [
-  { code: "+1", label: "US", flag: "🇺🇸" },
-  { code: "+91", label: "IN", flag: "🇮🇳" },
-  { code: "+44", label: "UK", flag: "🇬🇧" },
-  { code: "+81", label: "JP", flag: "🇯🇵" },
-  { code: "+61", label: "AU", flag: "🇦🇺" },
-];
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { GEN_OTP_REQ } from "@/Redux/Auth/Services/GenerateOtpService";
+import GenerateOtpServiceAction from "@/Redux/Auth/Services/GenerateOtpService";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import { TReducers } from "@/Redux/Reducers";
+import { PersistPartial } from "redux-persist/lib/persistReducer";
+import VerifyOtpServiceAction, {
+  VERIFY_OTP_REQ,
+} from "@/Redux/Auth/Services/VerifyOtpService";
+import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 
 interface SIGN_UP_TYPE {
   isMobile: boolean;
+  type?: string;
   onClose?: () => void;
 }
 
-const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
-  const [isOpen, setIsOpen] = useState(true);
+const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(30);
+  const [countries, setCountries] = useState([]);
   const [phoneError, setPhoneError] = useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<TAppDispatch>();
+  const isGeneratingOtp = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, generateOtpName) === "LOADING"
+  );
+  const loginData = useSelector((state: any) => getLoginDetails(state));
+  const isVerifyingOtp = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, verifyOtpName) === "LOADING"
+  );
+
   const actions = useMemo(
     () => ({
       handleUpdateLogin: (state: any) =>
         dispatch(updateLoginStatusActions(state)),
+      generateOtp: (state: GEN_OTP_REQ) =>
+        dispatch(GenerateOtpServiceAction(state)),
+      verifyOtp: (state: VERIFY_OTP_REQ) =>
+        dispatch(VerifyOtpServiceAction(state)),
+      getIsdCodeList: () => dispatch(getIsdListServiceAction()),
     }),
     [dispatch]
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const hasShownPopup = sessionStorage.getItem("landing_popup_shown");
+    getIsdCode();
+    if (type === "navbar") {
       setIsOpen(true);
-    }, 1000);
+      return;
+    }
+    if (!loginData?.verified && !hasShownPopup) {
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+      }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [loginData, type]);
 
-  const handleRequestOtp = () => {
+  const handleRequestOtp = async () => {
     const phoneRegex = /^[6-9]\d{9}$/;
     if (!phoneRegex.test(phone)) {
       setPhoneError("Enter a valid 10-digit phone number");
       return;
+    } else {
+      const body = {
+        isdCode: countryCode,
+        phoneNumber: phone,
+      };
+      const result = await actions.generateOtp(body);
+      if (result.statusCode === 200) {
+        setPhoneError("");
+        setTimer(30);
+        setOtpSent(true);
+      }
     }
-    setPhoneError("");
-    setTimer(30);
-    setOtpSent(true);
+  };
+
+  const getIsdCode = async () => {
+    const result = await actions.getIsdCodeList();
+    console.log(result);
+    setCountries(result);
   };
 
   useEffect(() => {
@@ -107,7 +152,13 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
       alert("Enter a valid 6-digit OTP");
       return;
     }
-    await actions.handleUpdateLogin(phone);
+    const reqBody = {
+      isdCode: countryCode,
+      phoneNumber: phone,
+      otp: otp,
+    };
+    const result = await actions.verifyOtp(reqBody);
+    console.log(result);
     onClose && onClose();
     setIsOpen(false);
   };
@@ -135,7 +186,6 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
   return (
     <Dialog
       open={isOpen}
-      onClose={() => !isMobile && setIsOpen(false)}
       fullWidth
       maxWidth="sm"
       fullScreen={isMobile}
@@ -145,7 +195,6 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
             backgroundColor: "rgba(0,0,0,0.6)",
           },
         },
-
         paper: {
           sx: {
             backgroundColor: "#2A2A2A",
@@ -154,10 +203,12 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
               position: "absolute",
               bottom: 0,
               m: 0,
+              width: "100%",
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
-              height: "auto",
-              maxHeight: "85vh",
+              maxHeight: "40vh",
+              display: "flex",
+              flexDirection: "column",
               animation: "slideUp 0.3s ease",
             }),
           },
@@ -166,8 +217,18 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
       disableEscapeKeyDown
     >
       <IconButton
-        onClick={() => setIsOpen(false)}
-        sx={{ position: "absolute", top: 16, right: 16, color: "white" }}
+        onClick={() => {
+          setIsOpen(false);
+          onClose && onClose();
+          sessionStorage.setItem("landing_popup_shown", "true");
+        }}
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          color: "white",
+          zIndex: 1,
+        }}
       >
         <CloseIcon />
       </IconButton>
@@ -181,7 +242,9 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          p: { md: "64px 32px", xs: "64px 16px" },
+          p: { md: "64px 32px", xs: "32px 16px" },
+          overflowY: "auto",
+          flex: 1,
         }}
       >
         {!otpSent ? (
@@ -207,14 +270,12 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
                       <Select
                         value={countryCode}
                         onChange={(e) => setCountryCode(e.target.value)}
+                        renderValue={(selected) => selected}
                         sx={{
                           display: "flex",
                           alignItems: "center",
                           borderRadius: "10px",
-                          ".MuiSelect-select": {
-                            display: "flex",
-                            gap: "8px",
-                          },
+                          ".MuiSelect-select": { display: "flex", gap: "8px" },
                           ".MuiOutlinedInput-notchedOutline": {
                             border: "none",
                           },
@@ -225,22 +286,22 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
                       >
                         {countries.map((c) => (
                           <MenuItem
-                            key={c.code}
-                            value={c.code}
+                            key={c.isd}
+                            value={c.isd}
                             sx={{
                               display: "flex",
                               alignItems: "center",
                               gap: "8px",
+                              justifyContent: "space-between",
                             }}
                           >
-                            <span>{c.flag}</span>
-                            <span>{c.code}</span>
+                            <span>{c.isd}</span>
+                            <span>{c.name}</span>
                           </MenuItem>
                         ))}
                       </Select>
                     </Box>
                   ),
-
                   sx: {
                     backgroundColor: "#FFFFFF",
                     color: "#000",
@@ -253,6 +314,7 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
               value={phone}
               onChange={(e) => {
                 if (/\D/.test(e.target.value)) return;
+                setPhoneError("");
                 setPhone(e.target.value);
               }}
               error={!!phoneError}
@@ -268,6 +330,7 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
                 border: "2px solid white",
                 borderRadius: "10px",
               }}
+              disabled={isGeneratingOtp || phone.length != 10}
             >
               Request OTP
             </Button>
@@ -297,23 +360,16 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
                       sx: {
                         backgroundColor: "#FFFFFF",
                         color: "#000",
-
                         textAlign: "center",
                         fontSize: "20px",
                       },
                       inputProps: { maxLength: 10 },
                     },
                   }}
-                  sx={{
-                    width: "48px",
-                    // backgroundColor: "#FFFFFF",
-                    color: "#000",
-                  }}
+                  sx={{ width: "48px", color: "#000" }}
                 />
               ))}
             </Box>
-
-            {/* TIMER */}
             <Typography
               sx={{
                 textAlign: "center",
@@ -330,6 +386,7 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
                   variant="text"
                   onClick={handleRequestOtp}
                   sx={{ color: "white" }}
+                  disabled={isVerifyingOtp || isGeneratingOtp}
                 >
                   Resend OTP
                 </Button>
@@ -337,7 +394,7 @@ const SignupPopup = ({ isMobile, onClose }: SIGN_UP_TYPE) => {
             </Typography>
 
             <Button
-              disabled={otpArray.some((d) => d === "")}
+              disabled={otpArray.some((d) => d === "") || isVerifyingOtp}
               size="large"
               onClick={() => handleSubmitOtp(otp)}
               sx={{

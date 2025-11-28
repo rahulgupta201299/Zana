@@ -10,6 +10,7 @@ import { MenuOptionsType } from "./Types";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { getMenuOption } from "./Utils";
 import { ROUTES } from "@/Constants/Routes";
+import WebNavMenuSkeleton from "@/components/Skeleton/WebNavMenuSkeleton";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -38,8 +39,6 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 		onClose()
 	}
 
-	if (!menuOptions || menuOptions.length === 0) return null
-
 	return (
 		<Popover
 			anchorEl={anchorEl}
@@ -56,6 +55,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 				},
 			}}
 		>
+			{(!menuOptions || menuOptions.length === 0) && <WebNavMenuSkeleton />}
 			<Box
 				sx={{
 					columnCount: 4,
@@ -64,7 +64,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 					paddingY: "10px",
 				}}
 			>
-				{menuOptions.map((item) => (
+				{menuOptions && menuOptions.map((item) => (
 					<Box
 						key={item._id}
 						sx={{

@@ -17,11 +17,16 @@ import ProductReducer from "@/Redux/Product/Reducer";
 import { SLICE_NAME as ProductSliceName } from "@/Redux/Product/Selectors";
 import type { T_PRODUCT_REDUCER } from "@/Redux/Product/Types";
 
+import BlogReducer from "@/Redux/Blogs/Reducer";
+import {SLICE_NAME as BlogsSliceName} from "@/Redux/Blogs/Selectors";
+import type { T_BLOG_REDUCER } from "./Blogs/Types";
+
 export type TReducers = {
   [ServiceTrackerSliceName]: T_SERVICE_TRACKER_REDUCER;
   [AuthSliceName]: T_AUTH_REDUCER;
   [LandingSliceName]: T_LANDING_REDUCER;
   [ProductSliceName]: T_PRODUCT_REDUCER;
+  [BlogsSliceName]: T_BLOG_REDUCER;
 };
 
 const reducers: ReducersMapObject<TReducers> = {
@@ -29,6 +34,7 @@ const reducers: ReducersMapObject<TReducers> = {
   [AuthSliceName]: AuthReducer,
   [LandingSliceName]: LandingReducer,
   [ProductSliceName]: ProductReducer,
+  [BlogsSliceName]: BlogReducer
 };
 
 export default combineReducers<ReducersMapObject<TReducers>>(reducers);

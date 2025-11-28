@@ -11,11 +11,13 @@ export const SLICE_NAME = "auth";
 // )
 
 export const getLoginDetails = createSelector(
-  (state: TAppStore) => state[SLICE_NAME].isLoggedIn,
-  (isLoggedIn) => isLoggedIn
-);
-
-export const getProfileDetails = createSelector(
   (state: TAppStore) => state[SLICE_NAME].login,
   (login) => login
 );
+
+export const getProfileDetails = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].profileDetails,
+  (profileDetails) => profileDetails
+);
+
+;

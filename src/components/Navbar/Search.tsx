@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import {
   Box,
@@ -16,11 +16,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
 import { debounce } from "@/Utils/Debounce";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import SearchService from "@/Redux/Product/Services/SearchService";
 import { SearchDataProductsType, SearchResponseType } from "@/Redux/Product/Types";
 import { replaceSpacesWithHiphen, trimByLength } from "@/Utils/StringUtils";
-import { SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import SearchSkeleton from '@/components/Skeleton/SearchSkeleton'
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { searchServiceName } from "@/Redux/Product/Actions";
 
 type SearchPropsType = {
   onClose: () => void;
@@ -30,21 +33,27 @@ export default function Search({ onClose }: SearchPropsType) {
 
   const navigate = useNavigate()
 
+  const isSearchLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [searchServiceName]))
+
   const [query, setQuery] = useState("");
 
   const dispatch = useDispatch<TAppDispatch>()
 
   const [products, setProducts] = useState<SearchDataProductsType[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const searchDebounce = useCallback(debounce(handleSearchService, 1000), []);
 
   async function handleSearchService(query: string) {
     // Perform API call
+    if (!query) return
     try {
       const { data } = await dispatch(SearchService({ query, page: 1, limit: 5 })) as SearchResponseType
       setProducts(data)
     } catch (error: any) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -52,6 +61,7 @@ export default function Search({ onClose }: SearchPropsType) {
     const val = e.target.value;
     setQuery(val);
     searchDebounce(val);
+    setLoading(true)
   }
 
   function handleNavigate(productCategory: string, productName: string, productId: string) {
@@ -142,115 +152,121 @@ export default function Search({ onClose }: SearchPropsType) {
         />
       </Box>
 
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: "auto",
-          px: { xs: 3, sm: 4 },
-          pb: 12,
-          pt: 1,
-        }}
-      >
-        <Typography
-          sx={{
-            color: "#bdbdbd",
-            fontSize: "0.7rem",
-            letterSpacing: "2px",
-            mt: 3,
-            mb: 1,
-          }}
-        >
-          SUGGESTIONS
-        </Typography>
-
-        <List sx={{ display: "flex", flexDirection: "column", gap: 1.2 }}>
-          {products.map((item, i) => (
+      {
+        loading ? (
+          <SearchSkeleton />
+        ) : (
+          <Box
+            sx={{
+              flexGrow: 1,
+              overflowY: "auto",
+              px: { xs: 3, sm: 4 },
+              pb: 12,
+              pt: 1,
+            }}
+          >
             <Typography
-              key={i}
               sx={{
-                color: "white",
-                fontSize: "1.05rem",
-                cursor: "pointer",
-                "&:hover": { color: "#cccccc" },
+                color: "#bdbdbd",
+                fontSize: "0.7rem",
+                letterSpacing: "2px",
+                mt: 3,
+                mb: 1,
               }}
-              onClick={() => handleNavigate(item.category, item.name, item._id)}
             >
-              {item.name}
+              SUGGESTIONS
             </Typography>
-          ))}
 
-          {products.length === 0 && (
-            <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
-              No suggestions found.
+            <List sx={{ display: "flex", flexDirection: "column", gap: 1.2 }}>
+              {products.map((item, i) => (
+                <Typography
+                  key={i}
+                  sx={{
+                    color: "white",
+                    fontSize: "1.05rem",
+                    cursor: "pointer",
+                    "&:hover": { color: "#cccccc" },
+                  }}
+                  onClick={() => handleNavigate(item.category, item.name, item._id)}
+                >
+                  {item.name}
+                </Typography>
+              ))}
+
+              {products.length === 0 && (
+                <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
+                  No suggestions found.
+                </Typography>
+              )}
+            </List>
+
+            <Typography
+              sx={{
+                color: "#bdbdbd",
+                fontSize: "0.7rem",
+                letterSpacing: "2px",
+                mt: 4,
+                mb: 1,
+              }}
+            >
+              PRODUCTS
             </Typography>
-          )}
-        </List>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {products.map((item) => {
+                const { _id, imageUrl, name, price, category, shortDescription } = item;
 
-        <Typography
-          sx={{
-            color: "#bdbdbd",
-            fontSize: "0.7rem",
-            letterSpacing: "2px",
-            mt: 4,
-            mb: 1,
-          }}
-        >
-          PRODUCTS
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {products.map((item) => {
-            const { _id, imageUrl, name, price, category, shortDescription } = item;
-
-            return (
-              <Box
-                key={_id}
-                sx={{ display: "flex", gap: 2, cursor: "pointer" }}
-                onClick={() => handleNavigate(category, name, _id)}
-              >
-                <img
-                  src={imageUrl}
-                  className="w-20 h-20 rounded-xl bg-white object-cover"
-                />
-
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                  <Typography
-                    sx={{ color: "white", fontSize: "1rem", lineHeight: 1.3 }}
+                return (
+                  <Box
+                    key={_id}
+                    sx={{ display: "flex", gap: 2, cursor: "pointer" }}
+                    onClick={() => handleNavigate(category, name, _id)}
                   >
-                    {name}
-                  </Typography>
+                    <img
+                      src={imageUrl}
+                      className="w-20 h-20 rounded-xl bg-white object-cover"
+                    />
 
-                  <Typography
-                    sx={{
-                      color: "#BBBBBB",
-                      fontSize: "0.85rem",
-                      lineHeight: 1.3,
-                      maxWidth: "220px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                    }}
-                  >
-                    {trimByLength(shortDescription, 35)}
-                  </Typography>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                      <Typography
+                        sx={{ color: "white", fontSize: "1rem", lineHeight: 1.3 }}
+                      >
+                        {name}
+                      </Typography>
 
-                  <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
-                    ₹ {price.toLocaleString()}
-                  </Typography>
-                </Box>
-              </Box>
-            );
-          })}
+                      <Typography
+                        sx={{
+                          color: "#BBBBBB",
+                          fontSize: "0.85rem",
+                          lineHeight: 1.3,
+                          maxWidth: "220px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                      >
+                        {trimByLength(shortDescription, 35)}
+                      </Typography>
 
-          {products.length === 0 && (
-            <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
-              No products found.
-            </Typography>
-          )}
-        </Box>
+                      <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
+                        ₹ {price.toLocaleString()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                );
+              })}
 
-      </Box>
+              {products.length === 0 && (
+                <Typography sx={{ color: "#777", fontSize: "0.9rem" }}>
+                  No products found.
+                </Typography>
+              )}
+            </Box>
+
+          </Box>
+        )
+      }
 
       {/* FIXED BOTTOM BUTTON */}
       <Box
@@ -273,6 +289,7 @@ export default function Search({ onClose }: SearchPropsType) {
             textTransform: "none",
             "&:hover": { bgcolor: "#d62839" },
           }}
+          onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
         >
           See all results →
         </Button>

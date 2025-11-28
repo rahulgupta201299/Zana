@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { MenuOptionsType } from './Types';
 import { replaceSpacesWithHiphen } from '@/Utils/StringUtils';
 import { getMenuOption } from './Utils';
+import MobileNavMenuSkeleton from '@/components/Skeleton/MobileNavMenuSkeleton';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -98,6 +99,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 					</IconButton>
 				</Box>
 			</Box>
+			{(!menuOptions || menuOptions.length === 0) && <MobileNavMenuSkeleton />}
 			{
 				historyStackRef.current.length > 0 && (
 					<Box
@@ -139,7 +141,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 				}}
 			>
 				{
-					menuOptions.map((item, ind) => {
+					menuOptions && menuOptions.map((item, ind) => {
 						const { name } = item
 						return (
 							<Box

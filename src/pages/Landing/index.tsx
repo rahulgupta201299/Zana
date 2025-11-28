@@ -16,7 +16,7 @@ import { useCartContext } from "@/Context/CartProvider";
 
 function index() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const {  addToCart } =
+  const { addToCart } =
   useCartContext();
 
   const handleAddToCart = (
