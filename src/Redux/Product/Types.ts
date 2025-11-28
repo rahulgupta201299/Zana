@@ -1,9 +1,16 @@
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
+
 export type T_PRODUCT_REDUCER = {
   menu: {
     shopByBike: ShopByBikeType[];
+    zProBikes: ShopByBikeType[];
     productCategory: ProductCatergoryCountType[];
   };
 };
+
+export type QueryParamShopByBikeType = {
+  category: BikeCategoryEnum
+}
 
 export type ShopByProductDetailsType = {
   _id: string;

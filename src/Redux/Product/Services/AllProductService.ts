@@ -10,17 +10,16 @@ import { allProductTraceActions } from "../Actions";
 const network = new Network();
 
 async function allProductService(
-  queryParams: QueryParamsType = {}
+  params: QueryParamsType = {}
 ): Promise<ProductCatalogDetailsType> {
   const options = {
     url: `/api/v1/product/all`,
     method: API_METHOD_ENUM.GET,
-    queryParams,
+    params,
   };
 
   const response = await network.request(options);
-  const { data } = response;
-  return data;
+  return response;
 }
 
 export default serviceActionCreator(allProductTraceActions, allProductService);

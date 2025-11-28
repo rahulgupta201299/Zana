@@ -2,16 +2,16 @@ import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import { QueryParamShopByBikeType, ShopByBikeType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
-import { shopByBikeTraceActions } from "../Actions";
+import { zProBikeTraceActions } from "../Actions";
 import { bikes } from "@/pages/BikeDetail/Constant";
 
 const network = new Network();
 
-async function shopByBikeService(params: QueryParamShopByBikeType): Promise<ShopByBikeType[]> {
+async function zProBikeService(params: QueryParamShopByBikeType): Promise<ShopByBikeType[]> {
   const options = {
-    url: `/api/v1/brand/with-models`,
-    method: API_METHOD_ENUM.GET,
-    params
+	url: `/api/v1/brand/with-models`,
+	method: API_METHOD_ENUM.GET,
+	params
   };
 
   const response = await network.request(options);
@@ -19,4 +19,4 @@ async function shopByBikeService(params: QueryParamShopByBikeType): Promise<Shop
   return data;
 }
 
-export default serviceActionCreator(shopByBikeTraceActions, shopByBikeService);
+export default serviceActionCreator(zProBikeTraceActions, zProBikeService);

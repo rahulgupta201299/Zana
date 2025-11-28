@@ -10,15 +10,18 @@ import { SUB_ROUTES } from "@/Constants/Routes";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import { TAppStore } from "@/Configurations/AppStore";
+import { shopByBikeServiceName } from "@/Redux/Product/Actions";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 
 function Bikes() {
 	const shopByBike = useSelector(shopByBikeSelector)
+	const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName]))
 
 	const location = useLocation()
-	const { brand: initialBikeBrand = ALL_CATEGORY } = location.state
+	const { brand: initialBikeBrand } = location.state || {}
 
-	const [selectedBrand, setSelectedBrand] = useState<string>(initialBikeBrand);
-	const [allBrandDetails, setAllBrandDetails] = useState<ShopByBikeModelsType[]>([]);
+	const [selectedBrand, setSelectedBrand] = useState<string>(initialBikeBrand || ALL_CATEGORY);
 	const [filteredBrandDetails, setFilteredBrandDetails] = useState<ShopByBikeModelsType[]>([]);
 
 	const navigate = useNavigate();
@@ -42,6 +45,12 @@ function Bikes() {
 		navigate(`${SUB_ROUTES.BIKE}/${bikeBrand}/${bikeModel}/${id}`);
 	}
 
+	const allBrandDetails = useMemo(() => {
+		return shopByBike.reduce((acc, curr) => {
+			return [...acc, ...curr.models]
+		}, [])
+	}, [shopByBike.length])
+
 	function handleBrandCategoryClick(val: string) {
 
 		if (val === ALL_CATEGORY) setFilteredBrandDetails(allBrandDetails)
@@ -53,17 +62,9 @@ function Bikes() {
 		setSelectedBrand(val)
 	}
 
-	function pageOps() {
-		const data = shopByBike.reduce((acc, curr) => {
-			return [...acc, ...curr.models]
-		}, [])
-		setAllBrandDetails(data)
-		setFilteredBrandDetails(data)
-	}
-
 	useEffect(() => {
-		pageOps()
-	}, [])
+		setFilteredBrandDetails(allBrandDetails)
+	}, [allBrandDetails.length])
 
 	return (
 		<div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -108,7 +109,7 @@ function Bikes() {
 							return (
 								<div
 									key={_id}
-									style={{ textTransform: 'capitalize' }}
+									style={{ textTransform: 'capitalize', cursor: 'pointer' }}
 									onClick={() => handleBikeClick(brandName, name, _id)}
 									className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
 								>
@@ -151,15 +152,20 @@ function Bikes() {
 					</div>
 
 					{
-						filteredBrandDetails.length === 0 && <ProductSkeleton />
+						filteredBrandDetails.length === 0 && isBikeProductLoading && <ProductSkeleton />
 					}
 
-					{/* No Results */}
 					{filteredBrandDetails.length === 0 && (
 						<div className="text-center py-16">
 							<p className="text-white/50 text-lg">
 								No bikes found for {selectedBrand.toUpperCase()}
 							</p>
+							<button
+								onClick={() => handleBrandCategoryClick(ALL_CATEGORY)}
+								className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+							>
+								View All Bikes
+							</button>
 						</div>
 					)}
 				</div>
