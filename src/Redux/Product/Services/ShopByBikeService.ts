@@ -9,19 +9,13 @@ const network = new Network();
 
 async function shopByBikeService(): Promise<ShopByBikeType[]> {
   const options = {
-	url: `/api/v1/brand/with-models`,
-	method: API_METHOD_ENUM.GET,
+    url: `/api/v1/brand/with-models`,
+    method: API_METHOD_ENUM.GET,
   };
 
-  return bikes
-
-  // TODO
-  //   const response = await network.request(options)
-  //   const { data } = response
-  //   return data
+  const response = await network.request(options);
+  const { data } = response;
+  return data;
 }
 
-export default serviceActionCreator(
-  shopByBikeTraceActions,
-  shopByBikeService
-);
+export default serviceActionCreator(shopByBikeTraceActions, shopByBikeService);

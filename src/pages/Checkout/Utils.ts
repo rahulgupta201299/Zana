@@ -1,3 +1,4 @@
+import { RAZORPAY_TEST_API_KEY } from "@/Configurations/env";
 import { loadScript } from "@/Utils/razorpay";
 import axios from "axios";
 import Razorpay from "razorpay"
@@ -26,7 +27,7 @@ import Razorpay from "razorpay"
     // const { amount, id: order_id, currency } = result.data;
 
     const options = {
-        key: "rzp_test_RkTm7yBhES8XAi", // Enter the Key ID generated from the Dashboard
+        key: RAZORPAY_TEST_API_KEY, // Enter the Key ID generated from the Dashboard
         amount: 500,
         currency: "INR",
         name: "Soumya Corp.",
