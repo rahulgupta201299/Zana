@@ -227,7 +227,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {selectedTopItem === MenuItemsName.PROFILE &&
-        (!verified ? (
+        (verified ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
         ) : (
           <SignupPopup 
