@@ -1,22 +1,28 @@
 
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
-import { ALL_CATEGORY } from "@/Constants/AppConstant";
-import { shopByBikeSelector } from "@/Redux/Product/Selectors";
+import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
+import { shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
-import { SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import { TAppStore } from "@/Configurations/AppStore";
-import { shopByBikeServiceName } from "@/Redux/Product/Actions";
+import { shopByBikeServiceName, zProBikeServiceName } from "@/Redux/Product/Actions";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 
 function Bikes() {
-	const shopByBike = useSelector(shopByBikeSelector)
-	const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName]))
+	const params = useParams()
+	const bikeTypeParams = params?.bikeType?.toLowerCase() || ''
+
+	const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
+	const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
+
+	const bikeSelector = useSelector(isZProPath ? zProBikeSelector : shopByBikeSelector)
+	const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName]))
 
 	const location = useLocation()
 	const { brand: initialBikeBrand } = location.state || {}
@@ -27,35 +33,35 @@ function Bikes() {
 	const navigate = useNavigate();
 
 	const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
-		if (!shopByBike.length) return []
+		if (!bikeSelector.length) return []
 
-		const result = [{ name: ALL_CATEGORY, count: shopByBike.length }]
+		const result = [{ name: ALL_CATEGORY, count: bikeSelector.length }]
 
-		shopByBike.forEach(item => {
+		bikeSelector.forEach(item => {
 			result.push({ name: item.name.toLowerCase(), count: item.models.length })
 		})
 
 		return result
-	}, [shopByBike.length])
+	}, [bikeSelector.length])
 
 	function handleBikeClick(brand: string, model: string, id: string) {
 		const bikeBrand = replaceSpacesWithHiphen(brand)
 		const bikeModel = replaceSpacesWithHiphen(model)
 
-		navigate(`${SUB_ROUTES.BIKE}/${bikeBrand}/${bikeModel}/${id}`);
+		navigate(`/${bikeType}${SUB_ROUTES.BIKE}/${bikeBrand}/${bikeModel}/${id}`);
 	}
 
 	const allBrandDetails = useMemo(() => {
-		return shopByBike.reduce((acc, curr) => {
+		return bikeSelector.reduce((acc, curr) => {
 			return [...acc, ...curr.models]
 		}, [])
-	}, [shopByBike.length])
+	}, [bikeSelector.length])
 
 	function handleBrandCategoryClick(val: string) {
 
 		if (val === ALL_CATEGORY) setFilteredBrandDetails(allBrandDetails)
 		else {
-			const data = shopByBike.find(item => item.name.toLowerCase() === val)?.models || []
+			const data = bikeSelector.find(item => item.name.toLowerCase() === val)?.models || []
 			setFilteredBrandDetails(data)
 		}
 
@@ -74,7 +80,7 @@ function Bikes() {
 					<div className="mb-8 md:mb-12">
 						<h1 className="text-white text-3xl md:text-5xl font-bold mb-4">BIKES</h1>
 						<p className="text-white/70 text-sm md:text-base">
-							Explore our range of {allBrandDetails.length} bike models from {shopByBike.length} premium brands
+							Explore our range of {allBrandDetails.length} bike models from {bikeSelector.length} premium brands
 						</p>
 					</div>
 

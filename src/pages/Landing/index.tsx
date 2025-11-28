@@ -16,8 +16,7 @@ import { useCartContext } from "@/Context/CartProvider";
 
 function index() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { addToCart } =
-  useCartContext();
+  const { addToCart } = useCartContext();
 
   const handleAddToCart = (
     productId: string,
@@ -27,14 +26,14 @@ function index() {
     description?: string
   ) => {
     addToCart(productId, productName, price, image, description);
-    setIsCartOpen(true); 
+    setIsCartOpen(true);
   };
 
   return (
     <div className="min-h-screen">
       <OurPhilosophy />
       <GarageFavorite onAddToCart={handleAddToCart} />
-      <ShopByBike />
+      {/* <ShopByBike /> */}
       <ShopTheLook />
       <NewArrivals onAddToCart={handleAddToCart} />
       <YouTubeSection />
@@ -43,10 +42,7 @@ function index() {
       <BrandStory />
       <TestimonialsSection />
       <SignupPopup />
-      <CartSidebar
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-      />
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 }

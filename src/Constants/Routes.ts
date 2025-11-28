@@ -1,7 +1,7 @@
 export const SUB_ROUTES = Object.freeze({
   PRODUCT: '/product',
-  Z_PRO_BIKE: '/z-pro/bike',
   BIKE: '/bike',
+  BIKES: '/bikes',
   BLOG: '/blog',
 })
 
@@ -11,10 +11,8 @@ export const ROUTES = Object.freeze({
   PRODUCT_DETAIL: `${SUB_ROUTES.PRODUCT}/:productCategory/:productItem/:productId`,
   PRODUCT_CATALOG: '/product-catalog',
   ACCESSORIES: '/accessories',
-  Z_PRO: '/z-pro/bikes',
-  Z_PRO_BIKE_DETAIL: `${SUB_ROUTES.Z_PRO_BIKE}/:bikeBrand/:bikeModel/:bikeId`,
-  BIKES: '/bikes',
-  BIKE_DETAIL: `${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
+  BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
+  BIKE_DETAIL: `/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
   BIKE_ACCESSORIES: '/bike-accessories',
   BLOGS: '/blogs',
   BLOG_DETAIL: `${SUB_ROUTES.BLOG}/:id`,
@@ -24,5 +22,6 @@ export const ROUTES = Object.freeze({
   SEARCH: '/search',
   CONTACT_US:'/contact-us',
   CHECKOUT:'/checkout',
+  PAGE_NOT_FOUND: '/page-not-found',
   ANY: '*'
 })

@@ -95,16 +95,16 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       setPhoneError("Enter a valid 10-digit phone number");
       return;
     } else {
-      const body = {
-        isdCode: countryCode,
-        phoneNumber: phone,
-      };
-      const result = await actions.generateOtp(body);
-      if (result.statusCode === 200) {
+      // const body = {
+      //   isdCode: countryCode,
+      //   phoneNumber: phone,
+      // };
+      // const result = await actions.generateOtp(body);
+      // if (result.statusCode === 200) {
         setPhoneError("");
         setTimer(30);
         setOtpSent(true);
-      }
+      // }
     }
   };
 

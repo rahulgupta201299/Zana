@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import { Box, Button } from "@mui/material";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import SignupPopup from "../SignupPopup";
 import { useCart } from "@/hooks/useCart";
 import { useCartContext } from "@/Context/CartProvider";
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
 
 
 type NavbarPropsType = {
@@ -31,6 +32,8 @@ type NavbarPropsType = {
 function Navbar({ isMobile }: NavbarPropsType) {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams()
+  const bikeType = params?.bikeType?.toLowerCase() || ''
 
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
@@ -41,13 +44,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const [isSticky, setIsSticky] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const  { verified } = useSelector((state:any) => getLoginDetails(state))
-  const isZProPath = useMemo(() => {
-    return location.pathname.split("/").filter(Boolean)?.[0] === "z-pro";
-  }, [location.pathname]);
 
+  const { totalItems } = useCartContext();
 
-  const { totalItems } =
-  useCartContext();
+  const isZProPath = bikeType === BikeCategoryEnum.ZPRO
 
 
   function handleMenuItemClick(
@@ -61,7 +61,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     if (route) {
       setSelectedMenuItem(null);
-      navigate(route, { replace: true });
+      navigate(route);
       return;
     }
 
@@ -227,7 +227,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {selectedTopItem === MenuItemsName.PROFILE &&
-        (!verified ? (
+        (verified ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
         ) : (
           <SignupPopup 
