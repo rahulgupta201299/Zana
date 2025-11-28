@@ -60,7 +60,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   useEffect(() => {
-    fetchProfileData();
+    // fetchProfileData();
     fetchBrandList();
   }, []);
 
