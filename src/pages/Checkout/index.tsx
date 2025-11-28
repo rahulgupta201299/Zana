@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Container,
   Grid,
@@ -20,23 +20,44 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import CartSidebar from "@/components/CartSidebar";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
-
+import { useDispatch } from "react-redux";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import cartCheckoutServiceAction from "@/Redux/Cart/Services/Checkout";
+import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
+import {  useSnackbar } from 'notistack';
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeItem } = useCartContext();
-
+  const [countries, setCountries] = useState([]);
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
   const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
   const total = subtotal - discount;
+  const dispatch = useDispatch<TAppDispatch>();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const actions = useMemo(
+    () => ({
+      saveCartDetails: (state: any) =>
+        dispatch(cartCheckoutServiceAction(state)),
+      getCountryList: () => dispatch(getIsdListServiceAction()),
+    }),
+    [dispatch]
+  );
+
+  const listOfCountry = async () => {
+    const result = await actions.getCountryList();
+    setCountries(result);
+  };
+
+  useEffect(() => {
+    listOfCountry();
+  }, []);
 
   const CheckoutSchema = Yup.object({
-    country: Yup.string().required("Country is required"),
-
+    shippingCountry: Yup.string().required("Country is required"),
     email: Yup.string()
       .email("Invalid email format")
       .required("Email Id is required")
@@ -51,10 +72,11 @@ export default function CheckoutPage() {
         if (/^[6-9]\d{9}$/.test(value)) return true;
         else return false;
       }),
+
     shippingFirstName: Yup.string().required("First name is required"),
     shippingLastName: Yup.string().required("Last name is required"),
     shippingAddress: Yup.string().required("Address is required"),
-    shippingApartment: Yup.string(),
+    shippingApartment: Yup.string().required("Address is required"),
     shippingCity: Yup.string().required("City is required"),
     shippingState: Yup.string().required("State is required"),
     shippingPincode: Yup.string()
@@ -63,8 +85,9 @@ export default function CheckoutPage() {
 
     saveInfo: Yup.boolean(),
     sameAsDelivery: Yup.boolean(),
-
-    /** BILLING — TS-SAFE WHEN() */
+    billingCountry: Yup.string().when("sameAsDelivery", (same, schema) =>
+      same ? schema : schema.required("Country is required")
+    ),
     billingFirstName: Yup.string().when("sameAsDelivery", (same, schema) =>
       same ? schema : schema.required("Billing first name is required")
     ),
@@ -96,10 +119,68 @@ export default function CheckoutPage() {
     ),
   });
 
+  const handleSubmit = async (values) => {
+    const body = {
+      phoneNumber: values.phone,
+      items: cartItems,
+  
+      shippingAddress: {
+        fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+        addressLine1: values.shippingAddress,
+        addressLine2: values.shippingApartment,
+        city: values.shippingCity,
+        state: values.shippingState,
+        postalCode: values.shippingPincode,
+        country: values.shippingCountry,
+      },
+  
+      billingAddress: values.sameAsDelivery
+        ? {
+            fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+            addressLine1: values.shippingAddress,
+            addressLine2: values.shippingApartment,
+            city: values.shippingCity,
+            state: values.shippingState,
+            postalCode: values.shippingPincode,
+            country: values.shippingCountry,
+          }
+        : {
+            fullName: `${values.billingFirstName} ${values.billingLastName}`,
+            addressLine1: values.billingAddress,
+            addressLine2: values.billingApartment,
+            city: values.billingCity,
+            state: values.billingState,
+            postalCode: values.billingPincode,
+            country: values.billingCountry,
+          },
+    };
+  
+    try {
+      const result = await actions.saveCartDetails(body);
+      enqueueSnackbar('Cart details saved successfully!', {
+        variant: 'success',
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+      })
+  
+    } catch (err) {
+      if(err.response?.status === 400)
+      enqueueSnackbar( err.response?.data?.error, {
+        variant: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+      });
+    }
+  };
+  
+
   return (
     <Container sx={{ py: 6 }}>
       <Grid container spacing={4}>
-        <Grid size={6}>
+        <Grid
+          size={{ md: 6, xs: 12 }}
+          sx={{
+            order: { md: 1, xs: 2 },
+          }}
+        >
           <Paper
             elevation={3}
             sx={{
@@ -118,7 +199,7 @@ export default function CheckoutPage() {
 
             <Formik
               initialValues={{
-                country: "",
+                shippingCountry: "",
                 email: "",
                 shippingFirstName: "",
                 shippingLastName: "",
@@ -139,7 +220,7 @@ export default function CheckoutPage() {
                 sameAsDelivery: true,
               }}
               validationSchema={CheckoutSchema}
-              onSubmit={(values) => console.log(values)}
+              onSubmit={handleSubmit}
             >
               {({
                 handleChange,
@@ -190,9 +271,9 @@ export default function CheckoutPage() {
                     </Typography>
                     <FormControl fullWidth>
                       <Select
-                        name="country"
+                        name="shippingCountry"
                         // label='Country/Region'
-                        value={values.country}
+                        value={values.shippingCountry}
                         onChange={handleChange}
                         displayEmpty
                         IconComponent={() => null}
@@ -217,17 +298,27 @@ export default function CheckoutPage() {
                                 color: "#1D1D1D",
                               }}
                             >
-                              {values.country === "india"
+                              {values.shippingCountry === "india"
                                 ? "India"
-                                : values.country}
+                                : values.shippingCountry}
                             </Typography>
                           </Box>
                         )}
                       >
-                        <MenuItem value="india">India</MenuItem>
-                        <MenuItem value="usa">United States</MenuItem>
-                        <MenuItem value="uk">United Kingdom</MenuItem>
-                        <MenuItem value="canada">Canada</MenuItem>
+                        {countries.map((c) => (
+                          <MenuItem
+                            key={c.isd}
+                            value={c.name}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span>{c.name}</span>
+                          </MenuItem>
+                        ))}
                       </Select>
                       {/* </Box> */}
                     </FormControl>
@@ -436,7 +527,7 @@ export default function CheckoutPage() {
                           value={values.shippingPincode}
                           onChange={(e) => {
                             if (e.target.value.match(/[^0-9]/)) return;
-                            handleChange(e)
+                            handleChange(e);
                           }}
                           onBlur={handleBlur}
                           error={getFieldErrorState(
@@ -472,7 +563,7 @@ export default function CheckoutPage() {
                       value={values.phone}
                       onChange={(e) => {
                         if (e.target.value.match(/[^0-9]/)) return;
-                        handleChange(e)
+                        handleChange(e);
                       }}
                       onBlur={handleBlur}
                       error={getFieldErrorState({ errors, touched }, "phone")}
@@ -657,6 +748,59 @@ export default function CheckoutPage() {
                         {!values?.sameAsDelivery && (
                           <Box sx={{ mt: "32px" }}>
                             <Grid container spacing={2}>
+                              <FormControl fullWidth>
+                                <Select
+                                  name="billingCountry"
+                                  // label='Country/Region'
+                                  value={values.billingCountry}
+                                  onChange={handleChange}
+                                  displayEmpty
+                                  IconComponent={() => null}
+                                  sx={{
+                                    p: 0,
+                                    borderRadius: "10px",
+                                  }}
+                                  renderValue={() => (
+                                    <Box>
+                                      <Typography
+                                        sx={{
+                                          fontSize: "14px",
+                                          color: "#1D1D1D",
+                                        }}
+                                      >
+                                        Country/Region
+                                      </Typography>
+                                      <Typography
+                                        sx={{
+                                          fontSize: "20px",
+                                          fontWeight: 400,
+                                          color: "#1D1D1D",
+                                        }}
+                                      >
+                                        {values.shippingCountry === "india"
+                                          ? "India"
+                                          : values.shippingCountry}
+                                      </Typography>
+                                    </Box>
+                                  )}
+                                >
+                                  {countries.map((c) => (
+                                    <MenuItem
+                                      key={c.isd}
+                                      value={c.name}
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <span>{c.name}</span>
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {/* </Box> */}
+                              </FormControl>
                               <Grid size={6}>
                                 <TextField
                                   fullWidth
@@ -814,12 +958,14 @@ export default function CheckoutPage() {
                                   value={values.billingState}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
-                                  error={Boolean(
-                                    touched.billingState && errors.billingState
+                                  error={getFieldErrorState(
+                                    { errors, touched },
+                                    "billingState"
                                   )}
-                                  helperText={
-                                    touched.billingState && errors.billingState
-                                  }
+                                  helperText={getHelperOrErrorText(
+                                    { errors, touched },
+                                    "billingState"
+                                  )}
                                   slotProps={{
                                     input: {
                                       sx: {
@@ -841,14 +987,14 @@ export default function CheckoutPage() {
                                   value={values.billingPincode}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
-                                  error={Boolean(
-                                    touched.billingPincode &&
-                                      errors.billingPincode
+                                  error={getFieldErrorState(
+                                    { errors, touched },
+                                    "billingPincode"
                                   )}
-                                  helperText={
-                                    touched.billingPincode &&
-                                    errors.billingPincode
-                                  }
+                                  helperText={getHelperOrErrorText(
+                                    { errors, touched },
+                                    "billingPincode"
+                                  )}
                                   slotProps={{
                                     input: {
                                       sx: {
@@ -869,7 +1015,7 @@ export default function CheckoutPage() {
                     <Button
                       fullWidth
                       type="submit"
-                      onClick={displayRazorpay}
+                      // onClick={displayRazorpay}
                       variant="outlined"
                       size="large"
                       sx={{
@@ -891,7 +1037,12 @@ export default function CheckoutPage() {
         </Grid>
 
         {/* RIGHT SIDE CART */}
-        <Grid size={6}>
+        <Grid
+          size={{ md: 6, xs: 12 }}
+          sx={{
+            order: { xs: 1, md: 2 },
+          }}
+        >
           <Box
             sx={{
               display: "flex",
