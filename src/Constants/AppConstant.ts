@@ -10,3 +10,8 @@ export enum CartQuantityEnum {
 	INCREMENT = 'INCREMENT',
 	DECREMENT = 'DECREMENT'
 }
+
+export enum BikeCategoryEnum {
+	ZANA = 'zana',
+	ZPRO = 'zpro'
+}

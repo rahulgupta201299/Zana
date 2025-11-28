@@ -16,12 +16,11 @@ async function categoryProductService({
   const options = {
     url: `api/v1/product/category/${category}`,
     method: API_METHOD_ENUM.GET,
-    queryParams,
+    params: queryParams,
   };
 
   const response = await network.request(options);
-  const { data } = response;
-  return data;
+  return response;
 }
 
 export default serviceActionCreator(

@@ -18,11 +18,13 @@ import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName } from "@/Redux/Product/Actions";
 import Loading from "@/components/Loading";
+import { Skeleton } from "@mui/material";
 
 const BikeDetailPage = () => {
-  const { bikeId, bikeBrand, bikeModel } = useParams<BikeDetailParamsType>();
+  const params = useParams<BikeDetailParamsType>();
+  const { bikeId = '', bikeBrand = '', bikeModel = '' } = params || {}
 
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName]))
+  const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName]))
 
   const shopByBike = useSelector(shopByBikeSelector)
 
@@ -32,13 +34,13 @@ const BikeDetailPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>([])
   const [filteredBikeProducts, setFilteredBikeProducts] = useState<ShopByProductDetailsType[]>([])
-
   const [loading, setLoading] = useState<boolean>(false)
 
   const location = useLocation()
 
-  async function pageOps() {
+  async function getBikeProducts() {
     setLoading(true)
+    setFilteredBikeProducts([])
     try {
       const response = await dispatch(BikeProductService(bikeId)) as ShopByProductDetailsType[]
       setBikeProducts(response)
@@ -46,7 +48,9 @@ const BikeDetailPage = () => {
     } catch (error: any) {
       console.error(error)
     } finally {
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
     }
   }
 
@@ -62,42 +66,14 @@ const BikeDetailPage = () => {
   };
 
   useEffect(() => {
-    pageOps()
-  }, [])
+    getBikeProducts()
+  }, [location.pathname])
 
   const bikeDetails = useMemo(() => {
+    if (shopByBike.length === 0) return null
     const bikeModels = shopByBike.find(item => item.name.toLowerCase() === replaceHiphenWithSpaces(bikeBrand))?.models || []
     return bikeModels.find(item => item._id === bikeId)
   }, [shopByBike.length, location.pathname])
-
-  function handleSelectCategory(val: string) {
-
-    if (val === ALL_CATEGORY) setFilteredBikeProducts(bikeProducts)
-    else setFilteredBikeProducts(bikeProducts.filter(item => item.category.toLowerCase() === val))
-
-    setSelectedCategory(val)
-  }
-
-  console.log(1111, isLoading)
-
-  if (!bikeDetails) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#181818' }}>
-        {isLoading && <Loading />}
-        <div className="text-center">
-          <h1 className="text-white text-4xl font-bold mb-4">Bike Not Found</h1>
-          <button
-            onClick={handleBackToBikes}
-            className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
-          >
-            Back to Bikes
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const { name, description, type, imageUrl } = bikeDetails
 
   const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
 
@@ -123,6 +99,32 @@ const BikeDetailPage = () => {
     return result
   }, [bikeProducts.length])
 
+  function handleSelectCategory(val: string) {
+
+    if (val === ALL_CATEGORY) setFilteredBikeProducts(bikeProducts)
+    else setFilteredBikeProducts(bikeProducts.filter(item => item.category.toLowerCase() === val))
+
+    setSelectedCategory(val)
+  }
+
+  if (!bikeDetails && !loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#181818' }}>
+        <div className="text-center">
+          <h1 className="text-white text-4xl font-bold mb-4">Bike Not Found</h1>
+          <button
+            onClick={handleBackToBikes}
+            className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+          >
+            Back to Bikes
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { name = '', description = '', type = '', imageUrl = '' } = bikeDetails || {}
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
 
@@ -132,25 +134,37 @@ const BikeDetailPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="bg-white rounded-2xl p-8 md:p-12 flex items-center justify-center">
               {/* TODO image */}
-              <img
-                src={imageUrl}
-                alt={name}
-                className="max-w-full max-h-96 object-contain"
-                loading="lazy"
-                onError={(e) => e.currentTarget.src = BikePlaceholderImage}
-              />
+              {
+                imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={name}
+                    className="max-w-full max-h-96 object-contain"
+                    loading="lazy"
+                    onError={(e) => e.currentTarget.src = BikePlaceholderImage}
+                  />
+                ) : <Skeleton width={500} height={380} />
+              }
             </div>
 
             {/* Bike Info */}
             <div className="text-white">
               <div className="mb-4">
-                <span style={{ textTransform: 'capitalize' }} className="px-4 py-2 bg-yellow-400/20 text-yellow-400 rounded-full text-sm font-medium">
-                  {type}
-                </span>
+                {
+                  type ? (
+                    <span style={{ textTransform: 'capitalize' }} className="px-4 py-2 bg-yellow-400/20 text-yellow-400 rounded-full text-sm font-medium">
+                      {type}
+                    </span>
+                  ) : (
+                    <Skeleton sx={{ backgroundColor: '#facc1533', borderRadius: '1rem' }} width={80} height={40} />
+                  )
+                }
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">{name}</h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                {name ? name : <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={300} />}
+              </h1>
               <p className="text-xl md:text-2xl text-white/70 mb-6">
-                {description}
+                {description ? description : <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={150} />}
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">{replaceHiphenWithSpaces(bikeBrand).toUpperCase()}</span>
@@ -168,7 +182,6 @@ const BikeDetailPage = () => {
         </div>
       </div>
 
-      {/* TODO fallback if product = 0 */}
       {/* Products Section */}
       <div className="py-12 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
@@ -284,7 +297,7 @@ const BikeDetailPage = () => {
           </div>
 
           {
-            filteredBikeProducts.length === 0 && <ProductSkeleton />
+            filteredBikeProducts.length === 0 && isBikeProductLoading && <ProductSkeleton />
           }
 
           {/* No Products Found */}

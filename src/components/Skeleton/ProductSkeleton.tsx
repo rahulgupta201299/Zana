@@ -5,7 +5,7 @@ function ProductSkeleton() {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{
-				Array(10).fill(0).map((_, ind) => (
+				Array(6).fill(0).map((_, ind) => (
 					<div
 						key={ind}
 						className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"

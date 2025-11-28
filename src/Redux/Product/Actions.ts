@@ -10,6 +10,9 @@ export const productDetailTraceActions = traceActionsCreator(productDetailServic
 export const shopByBikeServiceName = `${SLICE_NAME}/shopByBike`
 export const shopByBikeTraceActions = traceActionsCreator(shopByBikeServiceName)
 
+export const zProBikeServiceName = `${SLICE_NAME}/zProBike`
+export const zProBikeTraceActions = traceActionsCreator(zProBikeServiceName)
+
 export const categoryProductServiceName = `${SLICE_NAME}/categoryProduct`
 export const categoryProductTraceActions = traceActionsCreator(categoryProductServiceName)
 

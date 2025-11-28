@@ -9,12 +9,15 @@ import { ROUTES } from '@/Constants/Routes'
 import { useDispatch, useSelector } from 'react-redux'
 import ShopByBikeService from '@/Redux/Product/Services/ShopByBikeService'
 import { TAppDispatch } from '@/Configurations/AppStore'
-import { productCategorySelector, shopByBikeSelector } from '@/Redux/Product/Selectors'
+import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from '@/Redux/Product/Selectors'
 import ProductCategoryCountService from '@/Redux/Product/Services/ProductCategoryCountService'
+import { BikeCategoryEnum } from '@/Constants/AppConstant'
+import ZProBikeService from '@/Redux/Product/Services/ZProBikeService'
 
 function PublicRoutes() {
 
 	const shopByBike = useSelector(shopByBikeSelector)
+	const zProBike = useSelector(zProBikeSelector)
 	const productCategory = useSelector(productCategorySelector)
 
 	const location = useLocation()
@@ -23,7 +26,8 @@ function PublicRoutes() {
 	async function pageOps() {
 		window.scrollTo(0, 0)
 		try {
-			if (!shopByBike.length) await dispatch(ShopByBikeService())
+			if (!shopByBike.length) await dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))
+			if (!zProBike.length) await dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))
 			if (!productCategory.length) await dispatch(ProductCategoryCountService())
 		} catch (error: any) {
 
