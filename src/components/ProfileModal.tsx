@@ -36,7 +36,13 @@ import addProfileDetailServiceAction, {
   ADD_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/ProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
-
+import { addProfileDetailsName } from "@/Redux/Auth/Actions";
+import { PersistPartial } from "redux-persist/es/persistReducer";
+import { TReducers } from "@/Redux/Reducers";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import Loading from "./Loading";
+import { useSnackbar } from "notistack";
+import { resetAuth } from "@/Redux/Auth/Reducer";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -46,6 +52,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
   const dispatch = useDispatch<TAppDispatch>();
+  const formikRef = useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
   const actions = useMemo(
     () => ({
       getBrandList: () => dispatch(getBikeBrandServiceAction()),
@@ -54,15 +62,28 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         dispatch(addProfileDetailServiceAction(state)),
       fetchProfileDetails: (state: any) =>
         dispatch(getProfileDetailsServiceAction(state)),
+        //@ts-ignore
+        logout :()=>  dispatch(resetAuth())
     }),
     [dispatch]
   );
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
-
+  const isAddingProfile = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, addProfileDetailsName) === "LOADING"
+  );
   useEffect(() => {
     // fetchProfileData();
     fetchBrandList();
   }, []);
+
+  useEffect(() => {
+    if (!formikRef.current) return;
+    const { brand, model } = formikRef.current.values;
+    if (brand && models.length === 0) {
+      fetchBrandModels(brand);
+    }
+  }, [formikRef.current?.values.brand]);
 
   const fetchBrandList = async () => {
     const result = await actions.getBrandList();
@@ -95,31 +116,63 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     notifyOffers: Yup.boolean(),
   });
 
-  const fetchProfileData = async () => {
-    const result = await actions.fetchProfileDetails({
-      isdCode: "91",
-      phoneNumber: "7632000876",
-    });
+  // const fetchProfileData = async () => {
+  //   const result = await actions.fetchProfileDetails({
+  //     isdCode: "91",
+  //     phoneNumber: "7632000876",
+  //   });
+  // };
+
+  const handleMenuClick = (label: string) => {
+    if (label === "Logout") {
+      actions.logout();
+      onClose();
+      enqueueSnackbar("You have been logged Out!", {
+        variant: "info",
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 2000,
+      });
+      localStorage.clear();
+    } else {
+      console.log(`Clicked on ${label}`);
+    }
   };
 
+
+
   const handleSubmit = async (values) => {
-    const [isd, phone] = values.phoneNumber.split("-");
-    const reqBody = {
-      phoneNumber: values.phoneNumber,
-      isdCode: "+91",
-      emailId: values.email,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      address: values.address,
-      notifyOffers: values.notifyOffers,
-      bikeOwnedByCustomer: [
-        {
-          brand: values.brand,
-          model: values.model,
-        },
-      ],
-    };
-    const result = await actions.addProfileDetails(reqBody);
+    try {
+      const [isd, phone] = values.phoneNumber.split("-");
+      const reqBody = {
+        phoneNumber: values.phoneNumber,
+        isdCode: "+91",
+        emailId: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        address: values.address,
+        notifyOffers: values.notifyOffers,
+        bikeOwnedByCustomer: [
+          {
+            brand: values.brand,
+            model: values.model,
+          },
+        ],
+      };
+      const result = await actions.addProfileDetails(reqBody);
+      enqueueSnackbar("Profile updated successfully!", {
+        variant: "success",
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 2000,
+      });
+
+      return result;
+    } catch (error) {
+      enqueueSnackbar("Failed to update profile. Please try again.", {
+        variant: "error",
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 3000,
+      });
+    }
   };
 
   return (
@@ -144,6 +197,24 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         },
       }}
     >
+      {isAddingProfile && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            bgcolor: "rgba(0,0,0,0.4)",
+            zIndex: 2000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Loading />
+        </Box>
+      )}
       <DialogContent
         sx={{
           display: "flex",
@@ -217,6 +288,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   { icon: <LogOutIcon />, label: "Logout" },
                 ].map((item) => (
                   <Paper
+                   onClick={() => handleMenuClick(item.label)}
                     key={item.label}
                     sx={{
                       p: "16px 24px",
@@ -398,6 +470,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   }}
                 >
                   <Formik
+                    innerRef={formikRef}
                     initialValues={{
                       phoneNumber: profileDetails?.phoneNumber || "",
                       email: profileDetails?.emailId || "",
@@ -408,7 +481,13 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                       brand: profileDetails?.bikeOwnedByCustomer[0]?.brand,
                       model: profileDetails?.bikeOwnedByCustomer[0]?.model,
                     }}
+                    enableReinitialize
                     validationSchema={ProfileSchema}
+                    validate={(values) => {
+                      if (values.brand && models.length === 0) {
+                        fetchBrandModels(values.brand);
+                      }
+                    }}
                     onSubmit={(values) => {
                       handleSubmit(values);
                     }}
@@ -584,6 +663,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                             <FormControl fullWidth>
                               <Select
                                 name="brand"
+                                value={values.brand}
                                 renderValue={(selected: string) => {
                                   if (!selected) {
                                     return (

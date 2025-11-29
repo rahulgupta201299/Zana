@@ -1,12 +1,18 @@
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { getBlogDetail } from "@/Redux/Blogs/Selectors";
+import { blogDetailsName } from "@/Redux/Blogs/Actions";
+import { getBlogDetail, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
 import getBlogDetailServiceAction from "@/Redux/Blogs/Services/GetBlogDetail";
+import { TReducers } from "@/Redux/Reducers";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import Loading from "@/components/Loading";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { PersistPartial } from "redux-persist/es/persistReducer";
 
 const BlogDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
@@ -14,8 +20,15 @@ const BlogDetail = () => {
     }),
     [dispatch]
   );
+  const isDetailsLoading = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, blogDetailsName) === "LOADING"
+  );
   const blogDetails = useSelector((state: TAppStore) =>
   getBlogDetail(state)
+  )
+  const relatedBlogs = useSelector((state: TAppStore) =>
+  getTopFourBlogs(state)
   )
 
   const fetchBlogDetails = async () => {
@@ -29,31 +42,8 @@ const BlogDetail = () => {
     }
   }, [id]);
 
-  const relatedBlogs = [
-    {
-      title: "Exhaust Wraps: Improving Performance While Reducing Heat",
-      image: "/uploads/4c58e7da-974c-454c-98fb-590dcaa884ef.png",
-    },
-    {
-      title:
-        "Zana Engineered for India's Harshest Roads. Trusted Across the World.",
-      image: "/uploads/0fe74faf-510e-47a2-b7a1-5088ed551f39.png",
-    },
-    {
-      title:
-        "Battery Chargers and Tenders: Essential for Off-Season Motorcycle Storage",
-      image: "/uploads/4c58e7da-974c-454c-98fb-590dcaa884ef.png",
-    },
-    {
-      title:
-        "Decal and Graphic Kits: Easy Ways to Customize Without Breaking the Bank",
-      image: "/uploads/0fe74faf-510e-47a2-b7a1-5088ed551f39.png",
-    },
-    {
-      title: "Locking Systems Reviewed: Keeping Your Bike Secure on the Go",
-      image: "/uploads/4c58e7da-974c-454c-98fb-590dcaa884ef.png",
-    },
-  ];
+  
+
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
@@ -61,6 +51,7 @@ const BlogDetail = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Side - Blog Content */}
+            {isDetailsLoading && <Loading/>}
             <div className="lg:col-span-2">
               <h1 className="text-white text-4xl md:text-5xl font-bold mb-6">
                {blogDetails?.title}
@@ -100,11 +91,12 @@ const BlogDetail = () => {
                     <div
                       key={index}
                       className="cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => navigate(`/blog/${blog?._id}`)}
                     >
                       <div className="mb-3">
                         <img
-                          src={blog.image}
-                          alt={blog.title}
+                          src={blog?.imageUrl}
+                          alt={blog?.title}
                           className="w-full h-32 object-cover rounded-lg"
                         />
                       </div>
@@ -116,6 +108,7 @@ const BlogDetail = () => {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
