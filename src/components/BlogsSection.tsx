@@ -10,17 +10,23 @@ import { Link } from "react-router-dom";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 
 const BlogsSection = () => {
+
+  const blogList = useSelector(getListOfBlogs)
+
   const dispatch = useDispatch<TAppDispatch>();
+
   const actions = useMemo(
     () => ({
-      fetchBlogList: () => dispatch(fetchBlogListServiceAction()),
+      fetchBlogList: () => blogList.length === 0 ? dispatch(fetchBlogListServiceAction()) : null,
     }),
     [dispatch]
   );
+
   const isListLoading = useSelector(
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, fetchBlogListName) === "LOADING"
   );
+
   const blogs = useSelector((state: TAppStore) =>
   getTopFourBlogs(state)
   )

@@ -29,49 +29,54 @@ import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
 import getBikeModelServiceAction from "@/Redux/Auth/Services/GetBikeModel";
 import addProfileDetailServiceAction, {
   ADD_PROFILE_DETAILS,
-} from "@/Redux/Auth/Services/ProfileDetails";
+} from "@/Redux/Auth/Services/AddProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
-import { addProfileDetailsName } from "@/Redux/Auth/Actions";
+import { addProfileDetailsName, updateProfileDetailName } from "@/Redux/Auth/Actions";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { TReducers } from "@/Redux/Reducers";
-import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import { getServiceSelector, isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import Loading from "./Loading";
 import { useSnackbar } from "notistack";
 import { resetAuth } from "@/Redux/Auth/Reducer";
+import updateProfileDetailServiceAction, { UPDATE_PROFILE_DETAILS } from "@/Redux/Auth/Services/UpdateProfileDetails";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
 }
 
 const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
+
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false)
+
   const dispatch = useDispatch<TAppDispatch>();
   const formikRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
+
   const actions = useMemo(
     () => ({
       getBrandList: () => dispatch(getBikeBrandServiceAction()),
       getBrandModel: (state: any) => dispatch(getBikeModelServiceAction(state)),
       addProfileDetails: (state: ADD_PROFILE_DETAILS) =>
         dispatch(addProfileDetailServiceAction(state)),
+      updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) => dispatch(updateProfileDetailServiceAction(state)),
       fetchProfileDetails: (state: any) =>
         dispatch(getProfileDetailsServiceAction(state)),
-        //@ts-ignore
-        logout :()=>  dispatch(resetAuth())
+      //@ts-ignore
+      logout: () => dispatch(resetAuth())
     }),
     [dispatch]
   );
+
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
-  const isAddingProfile = useSelector(
-    (state: TReducers & PersistPartial) =>
-      getServiceSelector(state, addProfileDetailsName) === "LOADING"
-  );
+  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [addProfileDetailsName, updateProfileDetailName]))
+
   useEffect(() => {
     // fetchProfileData();
     fetchBrandList();
@@ -97,12 +102,14 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const ProfileSchema = Yup.object().shape({
     phoneNumber: Yup.string()
-      .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
-        if (/^[6-9]\d{9}$/.test(value)) return true;
-        else return false;
-      })
-      .min(10, "Please enter valid 10 digit Phone Number")
-      .max(10, "Please enter valid 10 digit Phone Number"),
+      // TODO once double + issue resolve from BE
+      // .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
+      //   if (/^[6-9]\d{9}$/.test(value)) return true;
+      //   else return false;
+      // })
+      // .min(10, "Please enter valid 10 digit Phone Number")
+      // .max(10, "Please enter valid 10 digit Phone Number"),
+      .notRequired(),
     email: Yup.string()
       .email("Invalid email format")
       .test("email", "Invalid email format", (value) => {
@@ -116,6 +123,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     notifyOffers: Yup.boolean(),
   });
 
+  // TODO later need to check if the data needs to be persisted or not
   // const fetchProfileData = async () => {
   //   const result = await actions.fetchProfileDetails({
   //     isdCode: "91",
@@ -125,14 +133,17 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const handleMenuClick = (label: string) => {
     if (label === "Logout") {
-      actions.logout();
-      onClose();
-      enqueueSnackbar("You have been logged Out!", {
-        variant: "info",
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        autoHideDuration: 2000,
-      });
-      localStorage.clear();
+      setLoading(true)
+      setTimeout(() => {
+        actions.logout();
+        onClose();
+        enqueueSnackbar("You have been logged Out!", {
+          variant: "info",
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          autoHideDuration: 2000,
+        })
+        setLoading(false)
+      }, 2000);
     } else {
       console.log(`Clicked on ${label}`);
     }
@@ -142,10 +153,10 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const handleSubmit = async (values) => {
     try {
-      const [isd, phone] = values.phoneNumber.split("-");
+      // const [isd, phone] = values.phoneNumber.split("-");
       const reqBody = {
         phoneNumber: values.phoneNumber,
-        isdCode: "+91",
+        isdCode: "+91", // TODO hardcoded
         emailId: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
@@ -158,7 +169,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
           },
         ],
       };
-      const result = await actions.addProfileDetails(reqBody);
+      const result = await actions.updateProfileDetails(reqBody);
       enqueueSnackbar("Profile updated successfully!", {
         variant: "success",
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
@@ -197,24 +208,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         },
       }}
     >
-      {isAddingProfile && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            bgcolor: "rgba(0,0,0,0.4)",
-            zIndex: 2000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Loading />
-        </Box>
-      )}
+      {(isLoading || loading) && <Loading />}
       <DialogContent
         sx={{
           display: "flex",
@@ -288,7 +282,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   { icon: <LogOutIcon />, label: "Logout" },
                 ].map((item) => (
                   <Paper
-                   onClick={() => handleMenuClick(item.label)}
+                    onClick={() => handleMenuClick(item.label)}
                     key={item.label}
                     sx={{
                       p: "16px 24px",
@@ -374,7 +368,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   <FavoriteBorderIcon fontSize="small" />,
                   <HelpOutlineIcon fontSize="small" />,
                   <EmojiEventsIcon fontSize="small" />,
-                  <LogOutIcon size={18} />,
+                  <LogOutIcon size={18} onClick={() => handleMenuClick("Logout")} />,
                 ].map((icon, index) => (
                   <Box
                     key={index}
@@ -467,6 +461,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   sx={{
                     flex: 1,
                     overflowY: "auto",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                    "&::-webkit-scrollbar": {
+                      display: "none",
+                    },
                   }}
                 >
                   <Formik
@@ -478,8 +477,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                       lastName: profileDetails?.lastName || "",
                       address: profileDetails?.address || "",
                       notifyOffers: profileDetails?.notifyOffers || false,
-                      brand: profileDetails?.bikeOwnedByCustomer[0]?.brand,
-                      model: profileDetails?.bikeOwnedByCustomer[0]?.model,
+                      brand: profileDetails?.bikeOwnedByCustomer?.[0]?.brand || '',
+                      model: profileDetails?.bikeOwnedByCustomer?.[0]?.model || '',
                     }}
                     enableReinitialize
                     validationSchema={ProfileSchema}
@@ -488,9 +487,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                         fetchBrandModels(values.brand);
                       }
                     }}
-                    onSubmit={(values) => {
-                      handleSubmit(values);
-                    }}
+                    onSubmit={handleSubmit}
                   >
                     {({
                       values,
@@ -499,6 +496,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                       handleChange,
                       handleBlur,
                       setFieldValue,
+                      dirty,
+                      isValid,
                     }) => (
                       <Form>
                         <Box
@@ -512,6 +511,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                             fullWidth
                             name="phoneNumber"
                             value={values.phoneNumber}
+                            disabled={true}
                             onChange={(e) => {
                               if (e.target.value.match(/[^0-9]/)) return;
                               handleChange(e);
@@ -797,13 +797,15 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                             type="submit"
                             size="medium"
                             sx={{
-                              backgroundColor: "Black",
-                              color: "white",
+                              backgroundColor: !(dirty && isValid) ? "#00000033" : "black",
+                              opacity: 1,
+                              color: !(dirty && isValid) ? "black" : "white",
                               mb: "32px",
                               py: "16px",
                               borderRadius: "10px",
                               textTransform: "none",
                             }}
+                            disabled={!(dirty && isValid)}
                           >
                             UPDATE
                           </Button>

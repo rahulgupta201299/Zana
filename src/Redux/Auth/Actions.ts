@@ -6,11 +6,6 @@ import traceActionsCreator from "@/Redux/traceActionsCreator";
 export const signInServiceName = `${SLICE_NAME}/login`;
 export const signInTraceActions = traceActionsCreator(signInServiceName);
 
-export const updateLoginStatus = 'api/updateLogin'
-export const updateLoginStatusActions = createAction(
-  `${updateLoginStatus}/UPDATE`
-)
-
 export const generateOtpName = `${SLICE_NAME}/generateOtp`;
 export const generateOtpActions = traceActionsCreator(generateOtpName);
 
@@ -31,3 +26,7 @@ export const  getBikeModelActions = traceActionsCreator(getBikeModelName);
 
 export const getProfileDetailName = `${SLICE_NAME}/getProfileDetail`;
 export const getProfileDetailsActions = traceActionsCreator(getProfileDetailName);
+
+export const updateProfileDetailName = `${SLICE_NAME}/updateProfileDetail`;
+export const updateProfileDetailsActions = traceActionsCreator(updateProfileDetailName);
+
