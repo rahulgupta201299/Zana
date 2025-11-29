@@ -21,6 +21,7 @@ import {
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
+import PaymentImg from '@/Assets/Images/Payment.svg'
 import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
@@ -28,10 +29,15 @@ import { useDispatch } from "react-redux";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import cartCheckoutServiceAction from "@/Redux/Cart/Services/Checkout";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
-import {  useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
+import { paymentOptions, PaymentTypeEnum } from "./Constant";
+
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeItem } = useCartContext();
+
   const [countries, setCountries] = useState([]);
+  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.RAZORPAY)
+
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
   const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
@@ -114,8 +120,8 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-            .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
-            .required("Billing pincode is required")
+          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+          .required("Billing pincode is required")
     ),
   });
 
@@ -123,7 +129,7 @@ export default function CheckoutPage() {
     const body = {
       phoneNumber: values.phone,
       items: cartItems,
-  
+
       shippingAddress: {
         fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
         addressLine1: values.shippingAddress,
@@ -133,28 +139,28 @@ export default function CheckoutPage() {
         postalCode: values.shippingPincode,
         country: values.shippingCountry,
       },
-  
+
       billingAddress: values.sameAsDelivery
         ? {
-            fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-            addressLine1: values.shippingAddress,
-            addressLine2: values.shippingApartment,
-            city: values.shippingCity,
-            state: values.shippingState,
-            postalCode: values.shippingPincode,
-            country: values.shippingCountry,
-          }
+          fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+          addressLine1: values.shippingAddress,
+          addressLine2: values.shippingApartment,
+          city: values.shippingCity,
+          state: values.shippingState,
+          postalCode: values.shippingPincode,
+          country: values.shippingCountry,
+        }
         : {
-            fullName: `${values.billingFirstName} ${values.billingLastName}`,
-            addressLine1: values.billingAddress,
-            addressLine2: values.billingApartment,
-            city: values.billingCity,
-            state: values.billingState,
-            postalCode: values.billingPincode,
-            country: values.billingCountry,
-          },
+          fullName: `${values.billingFirstName} ${values.billingLastName}`,
+          addressLine1: values.billingAddress,
+          addressLine2: values.billingApartment,
+          city: values.billingCity,
+          state: values.billingState,
+          postalCode: values.billingPincode,
+          country: values.billingCountry,
+        },
     };
-  
+
     try {
       const result = await actions.saveCartDetails(body);
       enqueueSnackbar('Cart details saved successfully!', {
@@ -162,17 +168,16 @@ export default function CheckoutPage() {
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
         autoHideDuration: 3000
       })
-  
+
     } catch (err) {
-      if(err.response?.status === 400)
-      enqueueSnackbar( err.response?.data?.error, {
-        variant: 'error',
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        autoHideDuration: 3000
-      });
+      if (err.response?.status === 400)
+        enqueueSnackbar(err.response?.data?.error, {
+          variant: 'error',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
     }
   };
-  
+
 
   return (
     <Container sx={{ py: 6 }}>
@@ -639,83 +644,57 @@ export default function CheckoutPage() {
                         backgroundColor: "#fff",
                       }}
                     >
-                      <RadioGroup defaultValue="razorpay">
-                        <FormControlLabel
-                          value="razorpay"
-                          control={<Radio sx={{ transform: "scale(0.8)" }} />}
-                          sx={{
-                            alignItems: "center",
-                            p: "16px",
-                          }}
-                          label={
-                            <Box>
-                              <Typography
-                                sx={{
-                                  fontWeight: 500,
-                                  fontSize: "16px",
-                                  color: "#202020",
-                                }}
-                              >
-                                Razorpay Secure (UPI, Cards, Wallets, Net
-                                Banking)
-                              </Typography>
+                      <RadioGroup value={paymentType}>
+                        {paymentOptions.map((option, index) => {
+                          const { value, label, showRazorpayInfo = false } = option
+                          return (
+                            <Box key={value}>
+                              <FormControlLabel
+                                value={value}
+                                control={<Radio sx={{ transform: "scale(0.8)" }} />}
+                                sx={{ alignItems: "center", p: "16px" }}
+                                label={<Typography sx={{ fontWeight: 500, fontSize: "16px", color: "#202020" }}>{label}</Typography>}
+                                onClick={() => setPaymentType(value)}
+                              />
+
+                              {/* Divider after each option except last */}
+                              {index !== paymentOptions.length - 1 && (
+                                <Divider sx={{ borderColor: "#1F1F1F" }} />
+                              )}
+
+                              {/* Razorpay Extra Section */}
+                              {showRazorpayInfo && (
+                                <>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: "12px",
+                                      py: "24px",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <img src={PaymentImg} alt="payment preview" style={{ opacity: 0.8 }} />
+
+                                    <Typography
+                                      sx={{
+                                        fontSize: "14px",
+                                        color: "#202020",
+                                        mb: 2,
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      After clicking “Pay now”, you will be redirected to Razorpay Secure to
+                                      complete your purchase.
+                                    </Typography>
+                                  </Box>
+
+                                  <Divider sx={{ borderColor: "#1F1F1F" }} />
+                                </>
+                              )}
                             </Box>
-                          }
-                        />
-
-                        <Divider sx={{ borderColor: "#1F1F1F" }} />
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "12px",
-                            py: "24px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Box>
-                            <img
-                              src="/uploads/payment.svg"
-                              alt="payment preview"
-                              style={{ opacity: 0.8 }}
-                            />
-                          </Box>
-
-                          <Typography
-                            sx={{
-                              fontSize: "14px",
-                              color: "#202020",
-                              mb: 2,
-                              textAlign: "center",
-                            }}
-                          >
-                            After clicking “Pay now”, you will be redirected to
-                            Razorpay Secure to complete your purchase.
-                          </Typography>
-                        </Box>
-
-                        <Divider sx={{ borderColor: "#1F1F1F" }} />
-
-                        {/* PhonePe Option */}
-                        <FormControlLabel
-                          value="phonepe"
-                          control={<Radio sx={{ transform: "scale(0.8)" }} />}
-                          sx={{
-                            alignItems: "center",
-                            p: "16px",
-                          }}
-                          label={
-                            <Typography
-                              sx={{
-                                fontWeight: 500,
-                                fontSize: "16px",
-                                color: "#202020",
-                              }}
-                            >
-                              PhonePe Payment Gateway (UPI, Cards & Net Banking)
-                            </Typography>
-                          }
-                        />
+                          )
+                        })}
                       </RadioGroup>
                     </Box>
                     <Box>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box } from '@mui/material'
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,7 @@ import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import { productCategorySelector } from "@/Redux/Product/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { allProductServiceName, categoryProductServiceName } from "@/Redux/Product/Actions";
+import { useCartContext } from "@/Context/CartProvider";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ const ProductCatalogPage = () => {
   const location = useLocation()
   const state = location.state
   const initialCategory = state?.category?.toLowerCase() || ''
+
+  const { addToCart } = useCartContext()
 
   const productCategory = useSelector(productCategorySelector)
   const isProductCategoryLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [categoryProductServiceName, allProductServiceName]))
@@ -101,6 +104,12 @@ const ProductCatalogPage = () => {
     }
   }
 
+  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, description?: string, quantity?: number) {
+    e.stopPropagation()
+    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
+    navigate(ROUTES.CART)
+  }
+
   useEffect(() => {
     pageOps()
   }, [])
@@ -161,7 +170,7 @@ const ProductCatalogPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => {
 
-              const { _id, category, name, imageUrl, isBikeSpecific, price } = product
+              const { _id, category, name, imageUrl, quantityAvailable, isBikeSpecific, price } = product
 
               return (
                 <div
@@ -211,7 +220,7 @@ const ProductCatalogPage = () => {
                           <Heart size={14} className="md:w-4 md:h-4" />
                         </button> */}
                         <button
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable)}
                           className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
                           <ShoppingCart size={14} className="md:w-4 md:h-4" />

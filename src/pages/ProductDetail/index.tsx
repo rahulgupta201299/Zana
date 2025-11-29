@@ -65,9 +65,9 @@ const ProductDetailPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  function handleAddToCart(productId: string, productName: string, price: number, image: string, quantityAvailable: number, description?: string, quantity?: number) {
+  function handleAddToCart(productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
     addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
-    navigate(ROUTES.CART)
+    navigateTo && navigate(navigateTo)
   }
 
   useEffect(() => {
@@ -193,14 +193,18 @@ const ProductDetailPage = () => {
 
             <div className="flex gap-4 mb-6">
               <Button
-                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, shortDescription, quantity)}
+                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription, quantity)}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
                 ADD TO CART
               </Button>
               {/* TODO handle the buy now  */}
-              <Button disabled={!price} className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold">
+              <Button
+                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, ROUTES.CHECKOUT, shortDescription, quantity)}
+                disabled={!price}
+                className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
+              >
                 BUY NOW
               </Button>
             </div>
