@@ -36,6 +36,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
+import ProductRecommendation from "./ProductRecommendation";
 
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeItem, clearCart } = useCartContext();
@@ -179,7 +180,7 @@ export default function CheckoutPage() {
 
     try {
       await actions.saveCartDetails(body);
-      enqueueSnackbar('Cart details saved successfully!', {
+      enqueueSnackbar('Order Placed successfully!', {
         variant: 'success',
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
         autoHideDuration: 3000
@@ -1265,6 +1266,8 @@ export default function CheckoutPage() {
               })}
             </Typography>
           </Box>
+
+          <ProductRecommendation />
         </Grid>
       </Grid >
     </Container >
