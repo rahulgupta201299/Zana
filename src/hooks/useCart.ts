@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useSnackbar } from "notistack";
+import { useState, useEffect } from "react";
 
 export interface CartItem {
   id: string;
@@ -9,16 +10,18 @@ export interface CartItem {
   description?: string;
 }
 
-const CART_STORAGE_KEY = 'zana_cart_items';
+const CART_STORAGE_KEY = "zana_cart_items";
 
 export const useCart = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   // Initialize cart from localStorage
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
       const storedCart = localStorage.getItem(CART_STORAGE_KEY);
       return storedCart ? JSON.parse(storedCart) : [];
     } catch (error) {
-      console.error('Error loading cart from localStorage:', error);
+      console.error("Error loading cart from localStorage:", error);
       return [];
     }
   });
@@ -28,32 +31,54 @@ export const useCart = () => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
     } catch (error) {
-      console.error('Error saving cart to localStorage:', error);
+      console.error("Error saving cart to localStorage:", error);
     }
   }, [cartItems]);
 
   // Add item to cart
-  const addToCart = (productId: string, productName: string, price: number, image: string, description?: string) => {
+  const addToCart = (
+    productId: string,
+    productName: string,
+    price: number,
+    image: string,
+    quantityAvailable: number,
+    description?: string,
+    quantity: number = 1,
+  ) => {
+    const currentQuantity =
+      cartItems.find((item) => item.id === productId)?.quantity || 0;
+
+    if (currentQuantity + quantity > quantityAvailable) {
+      enqueueSnackbar("Out Of Stock!", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
+      return;
+    }
+
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find(item => item.id === productId);
-      
+      const existingItem = prevItems.find((item) => item.id === productId);
+
       if (existingItem) {
         // Update quantity if item exists
-        return prevItems.map(item =>
+        return prevItems.map((item) =>
           item.id === productId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
         // Add new item
-        return [...prevItems, {
-          id: productId,
-          name: productName,
-          price,
-          quantity: 1,
-          image,
-          description
-        }];
+        return [
+          ...prevItems,
+          {
+            id: productId,
+            name: productName,
+            price,
+            quantity,
+            image,
+            description,
+          },
+        ];
       }
     });
   };
@@ -64,17 +89,15 @@ export const useCart = () => {
       removeItem(id);
       return;
     }
-    
+
     setCartItems((prevItems) =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      )
+      prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
   };
 
   // Remove item
   const removeItem = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.id !== id));
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   // Clear cart
@@ -83,7 +106,10 @@ export const useCart = () => {
   };
 
   // Calculate subtotal
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   // Calculate discount (10% if subtotal > 10,000)
   const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
@@ -103,7 +129,6 @@ export const useCart = () => {
     subtotal,
     discount,
     total,
-    totalItems
+    totalItems,
   };
 };
-

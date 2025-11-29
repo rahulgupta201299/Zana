@@ -1,30 +1,35 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Minus, Plus, Facebook, Instagram } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
 import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
 import CartIcon from "@/components/ui/cart-icon";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCartContext } from "@/Context/CartProvider";
 import { ProductDetailParamsType } from "./Types";
 import { ProductCatalogDetailsType, ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import { handleSocialMedia, replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { CartQuantityEnum, SocialMediaPlatformEnum } from "@/Constants/AppConstant";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
-import { handleCart } from "@/Utils/CartUtils";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
+import { Box, Skeleton } from "@mui/material";
+import { setOpenCart } from "@/Redux/Cart/Reducer";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
+  const { addToCart } = useCartContext()
   const { productCategory, productId, productItem } = useParams<ProductDetailParamsType>();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [product, setProduct] = useState<ShopByProductDetailsType | null>(null)
   const [suggestedProducts, setSuggestedProducts] = useState<ShopByProductDetailsType[]>([])
+  const [quantity, setQuantity] = useState<number>(1)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const dispatch = useDispatch<TAppDispatch>()
 
@@ -34,6 +39,7 @@ const ProductDetailPage = () => {
   }
 
   async function pageOps() {
+    setLoading(true)
     try {
       const response = await dispatch(ProductDetailService(productId)) as ShopByProductDetailsType
       setProduct(response)
@@ -45,6 +51,10 @@ const ProductDetailPage = () => {
 
     } catch (error: any) {
       console.error(error)
+    } finally {
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
     }
   }
 
@@ -55,11 +65,16 @@ const ProductDetailPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
+  function handleAddToCart(productId: string, productName: string, price: number, image: string, quantityAvailable: number, description?: string, quantity?: number) {
+    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
+    navigate(ROUTES.CART)
+  }
+
   useEffect(() => {
     pageOps()
   }, [])
 
-  if (!product) {
+  if (!product && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#181818' }}>
         <div className="text-center">
@@ -75,7 +90,7 @@ const ProductDetailPage = () => {
     )
   }
 
-  const { _id, name, shippingAndReturn, shortDescription, longDescription, category, price, imageUrl, images, quantityAvailable, specifications, isBikeSpecific } = product
+  const { _id = '', name = '', shippingAndReturn = '', shortDescription = '', longDescription = '', category = '', price = 0, imageUrl = '', images = [], quantityAvailable = 0, specifications = '', isBikeSpecific = false } = product || {}
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -86,14 +101,23 @@ const ProductDetailPage = () => {
           <div className="lg:col-span-2">
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
               {images.map((image, index) => (
-                <div
-                  key={index}
-                  className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index ? 'border-white' : 'border-gray-600'
-                    }`}
-                  onClick={() => setSelectedImageIndex(index)}
-                >
-                  <img src={image} alt={`${name} ${index + 1}`} className="w-full h-full object-contain p-2" />
-                </div>
+                <>
+                  {
+                    image ? (
+                      <div
+                        key={index}
+                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index ? 'border-white' : 'border-gray-600'
+                          }`}
+                        onClick={() => setSelectedImageIndex(index)}
+                      >
+                        <img src={image} alt={`${name} ${index + 1}`} className="w-full h-full object-contain p-2" />
+                      </div>
+                    ) : (
+                      <Skeleton sx={{ backgroundColor: 'grey' }} width={180} height={160} />
+                    )
+                  }
+                </>
+
               ))}
             </div>
           </div>
@@ -101,36 +125,65 @@ const ProductDetailPage = () => {
           {/* Center - Main Product Image */}
           <div className="lg:col-span-5">
             <div className="bg-gradient-to-b from-[#7B7575] to-white rounded-lg p-8 h-96 lg:h-[600px] flex items-center justify-center">
-              <img
-                src={images[selectedImageIndex]}
-                alt={name}
-                className="max-w-full max-h-full object-contain"
-              />
+              {
+                !imageUrl ? (
+                  <img
+                    src={images[selectedImageIndex]}
+                    alt={name}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                ) : (
+                  <Skeleton width={500} height={700} />
+                )
+              }
             </div>
           </div>
 
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
-            <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
-            <p className="text-white text-lg mb-6 leading-relaxed">{shortDescription}</p>
+            {
+              name ? (
+                <h1 className="text-4xl font-bold text-white mb-4">
+                  {name}
+                </h1>
+              ) : <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={300} height={60} />
+            }
+            {
+              shortDescription ? (
+                <p className="text-white text-lg mb-6 leading-relaxed">
+                  {shortDescription}
+                </p>
+              ) : <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={450} height={40} />
+            }
 
             <div className="flex items-center justify-between mb-6">
-              <span className="text-2xl font-bold text-white">₹ {price.toLocaleString()}</span>
+              {
+                price ? (
+                  <span className="text-2xl font-bold text-white">
+                    ₹ {price.toLocaleString()}
+                  </span>
+                ) : <Box sx={{ display: 'flex', gap: 2 }}>
+                  <span style={{ margin: 'auto 0' }} className="text-2xl font-bold text-white">₹{' '}</span>
+                  <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={100} height={60} />
+                </Box>
+              }
               <div className="flex items-center gap-2">
                 {/* TODO Add condition for disabling buttons */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleCart(CartQuantityEnum.INCREMENT, _id, price)}
+                  disabled={quantity === 1}
+                  onClick={() => setQuantity(p => p > 1 ? p - 1 : p)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{0}</span>
+                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{quantity}</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleCart(CartQuantityEnum.DECREMENT, _id, price)}
+                  disabled={quantity === quantityAvailable}
+                  onClick={() => setQuantity(p => quantityAvailable > p ? p + 1 : p)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -140,13 +193,14 @@ const ProductDetailPage = () => {
 
             <div className="flex gap-4 mb-6">
               <Button
-                onClick={() => handleCart(CartQuantityEnum.INCREMENT, _id, price, ROUTES.CART)}
+                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, shortDescription, quantity)}
+                disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
                 ADD TO CART
               </Button>
               {/* TODO handle the buy now  */}
-              <Button className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold">
+              <Button disabled={!price} className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold">
                 BUY NOW
               </Button>
             </div>
@@ -194,17 +248,29 @@ const ProductDetailPage = () => {
 
               <div className="bg-white rounded-b-lg p-6 min-h-[200px] max-h-[300px] overflow-y-auto">
                 <TabsContent value="description" className="text-black text-sm leading-relaxed">
-                  {longDescription}
+                  {
+                    longDescription ? longDescription : (
+                      <Skeleton width={"100%"} height={200} />
+                    )
+                  }
                 </TabsContent>
                 <TabsContent value="specification" className="text-black text-sm leading-relaxed whitespace-pre-line">
-                  {specifications}
+                  {
+                    specifications ? specifications : (
+                      <Skeleton width={"100%"} height={200} />
+                    )
+                  }
                 </TabsContent>
                 <TabsContent value="shipping" className="text-black text-sm leading-relaxed whitespace-pre-line">
-                  {shippingAndReturn}
+                  {
+                    shippingAndReturn ? shippingAndReturn : (
+                      <Skeleton width={"100%"} height={200} />
+                    )
+                  }
                 </TabsContent>
 
                 <div className="flex justify-center mt-6">
-                  <Button className="bg-white text-black border-2 border-black hover:bg-black hover:text-white px-8 py-2 font-bold">
+                  <Button disabled={!price} className="bg-white text-black border-2 border-black hover:bg-black hover:text-white px-8 py-2 font-bold">
                     BROCHURE
                   </Button>
                 </div>
@@ -233,7 +299,7 @@ const ProductDetailPage = () => {
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {suggestedProducts.map((relatedProduct, index) => {
 
-            const { _id, name, imageUrl, price, category } = relatedProduct
+            const { _id, name, imageUrl, price, category, shortDescription } = relatedProduct
 
             return (
               <div
@@ -250,18 +316,17 @@ const ProductDetailPage = () => {
                     />
                     <div className="absolute bottom-2 left-2 group">
                       <div
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleCart(CartQuantityEnum.INCREMENT, _id, price, ROUTES.CART)
-                        }}
-                        className="bg-white rounded-full p-2 cursor-pointer transition-all duration-300 ease-out overflow-hidden group-hover:pr-4 group-hover:rounded-full"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="flex items-center gap-2">
-                          <CartIcon className="w-4 h-4 text-black flex-shrink-0" />
-                          <span className="text-black font-medium text-sm whitespace-nowrap opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto transition-all duration-300 ease-out">
-                            Add to Cart
+                        <button
+                          onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, shortDescription)}
+                          className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
+                        >
+                          <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
+                            Add to cart
                           </span>
-                        </div>
+                          <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
+                        </button>
                       </div>
                     </div>
                   </div>

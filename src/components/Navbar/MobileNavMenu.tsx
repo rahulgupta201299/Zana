@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
 import { Drawer, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -8,6 +9,10 @@ import { MenuOptionsType } from './Types';
 import { replaceSpacesWithHiphen } from '@/Utils/StringUtils';
 import { getMenuOption } from './Utils';
 import MobileNavMenuSkeleton from '@/components/Skeleton/MobileNavMenuSkeleton';
+import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from '@/Redux/Product/Selectors';
+import { TAppStore } from '@/Configurations/AppStore';
+import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors';
+import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName } from '@/Redux/Product/Actions';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -15,7 +20,13 @@ type MobileNavMenuPropsType = {
 
 function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
-	const [menuOptions, setMenuOptions] = useState<MenuOptionsType[]>(getMenuOption())
+	const shopByBike = useSelector(shopByBikeSelector)
+	const shopByProduct = useSelector(zProBikeSelector)
+	const productCategory = useSelector(productCategorySelector)
+
+	const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName, categoryProductServiceName]))
+
+	const [menuOptions, setMenuOptions] = useState<MenuOptionsType[]>([])
 
 	const historyStackRef = useRef<MenuOptionsType[]>([])
 	const routeRef = useRef<string>('')
@@ -54,6 +65,13 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		if (models.length) setMenuOptions(models)
 		else setMenuOptions(getMenuOption())
 	}
+
+	useEffect(() => {
+		const menuOptions = getMenuOption()
+		setMenuOptions(menuOptions)
+	}, [shopByBike.length, shopByProduct.length, productCategory.length])
+
+	const isDataPending = !menuOptions || menuOptions.length === 0 || isLoading
 
 	return (
 		<Drawer
@@ -99,7 +117,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 					</IconButton>
 				</Box>
 			</Box>
-			{(!menuOptions || menuOptions.length === 0) && <MobileNavMenuSkeleton />}
+			{isDataPending && <MobileNavMenuSkeleton />}
 			{
 				historyStackRef.current.length > 0 && (
 					<Box
@@ -141,7 +159,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 				}}
 			>
 				{
-					menuOptions && menuOptions.map((item, ind) => {
+					!isDataPending && menuOptions.map((item, ind) => {
 						const { name } = item
 						return (
 							<Box

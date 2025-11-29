@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import NewArrivals from "@/components/NewArrivals";
 import OurPhilosophy from "@/components/OurPhilosophy";
 import GarageFavorite from "@/components/GarageFavorite";
@@ -10,39 +8,19 @@ import InstagramFeed from "@/components/InstagramFeed";
 import BlogsSection from "@/components/BlogsSection";
 import BrandStory from "@/components/BrandStory";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import SignupPopup from "@/components/SignupPopup";
-import CartSidebar from "@/components/CartSidebar";
-import { useCartContext } from "@/Context/CartProvider";
 
 function index() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const { addToCart } = useCartContext();
-
-  const handleAddToCart = (
-    productId: string,
-    productName: string,
-    price: number,
-    image: string,
-    description?: string
-  ) => {
-    addToCart(productId, productName, price, image, description);
-    setIsCartOpen(true);
-  };
-
   return (
     <div className="min-h-screen">
       <OurPhilosophy />
-      <GarageFavorite onAddToCart={handleAddToCart} />
-      {/* <ShopByBike /> */}
+      <GarageFavorite />
       <ShopTheLook />
-      <NewArrivals onAddToCart={handleAddToCart} />
+      <NewArrivals />
       <YouTubeSection />
       <InstagramFeed />
       <BlogsSection />
       <BrandStory />
       <TestimonialsSection />
-      <SignupPopup />
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 }

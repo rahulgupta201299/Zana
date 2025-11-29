@@ -13,7 +13,6 @@ import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
-import { handleCart } from "@/Utils/CartUtils";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Typography } from "@mui/material";
@@ -212,10 +211,7 @@ const ProductCatalogPage = () => {
                           <Heart size={14} className="md:w-4 md:h-4" />
                         </button> */}
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleCart(CartQuantityEnum.INCREMENT, _id, price, ROUTES.CART)
-                          }}
+                          onClick={(e) => e.stopPropagation()}
                           className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
                           <ShoppingCart size={14} className="md:w-4 md:h-4" />
