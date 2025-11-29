@@ -4,58 +4,58 @@ import { useCartContext } from "@/Context/CartProvider";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { PlusIcon } from "lucide-react";
 
-const products = [
+export const capProducts = [
   {
-    id: "garage-1",
+    id: "cap-1",
     name: "Crash Guard",
     price: 500,
     quantityAvailable: 6,
     image: "/uploads/3f568aa5-84f0-400d-bcee-50d7f72ac960.png",
   },
   {
-    id: "garage-2",
+    id: "cap-2",
     name: "Saddle Stay",
     price: 500,
     quantityAvailable: 7,
     image: "/uploads/a1bc180c-1729-4869-9875-7565313c92f5.png",
   },
   {
-    id: "garage-3",
+    id: "cap-3",
     name: "Radiator Guard",
     price: 500,
     quantityAvailable: 8,
     image: "/uploads/2f72e496-2fd9-4119-9f82-40c335b48e00.png",
   },
   {
-    id: "garage-4",
+    id: "cap-4",
     name: "Saddle Bag",
     price: 500,
     quantityAvailable: 9,
     image: "/uploads/681f7126-6997-49d7-b7df-cfcbbefcee1f.png",
   },
   {
-    id: "garage-5",
+    id: "cap-5",
     name: "Tank Bag",
     price: 500,
     quantityAvailable: 10,
     image: "/uploads/c4a8d0de-712f-4e03-9ebd-fc8ca95fd796.png",
   },
   {
-    id: "garage-6",
+    id: "cap-6",
     name: "Aux Light",
     price: 500,
     quantityAvailable: 11,
     image: "/uploads/2628a268-dabd-479c-8c8a-4aea7d9044f2.png",
   },
   {
-    id: "garage-7",
+    id: "cap-7",
     name: "Light Mount",
     price: 500,
     quantityAvailable: 12,
     image: "/uploads/4e0cd1d8-aed1-4a03-88d2-f008c9f84ceb.png",
   },
   {
-    id: "garage-8",
+    id: "cap-8",
     name: "Fog Light",
     price: 500,
     quantityAvailable: 5,
@@ -68,7 +68,7 @@ const ProductCard = ({
   onClick,
   height = 176,
 }: {
-  product: (typeof products)[0];
+  product: (typeof capProducts)[0];
   onClick: () => void;
   height?: number;
 }) => (
@@ -96,7 +96,7 @@ const CapSection = () => {
   const dispatch = useDispatch<TAppDispatch>()
 
   function handleAddToCart(index: number) {
-    const product = products[index];
+    const product = capProducts[index];
 
     const {id: productId, name: productName, price, image, quantityAvailable } = product
     addToCart(productId, productName, price, image, quantityAvailable)
@@ -122,7 +122,7 @@ const CapSection = () => {
               {col.map((idx) => (
                 <ProductCard
                   key={idx}
-                  product={products[idx]}
+                  product={capProducts[idx]}
                   onClick={() => handleAddToCart(idx)}
                   height={col.length === 1 ? 360 : 176}
                 />
@@ -132,7 +132,7 @@ const CapSection = () => {
         </div>
 
         <div className="grid lg:hidden grid-cols-2 gap-2">
-          {products.slice(0, 4).map((product, idx) => (
+          {capProducts.slice(0, 4).map((product, idx) => (
             <ProductCard
               key={product.id}
               product={product}
