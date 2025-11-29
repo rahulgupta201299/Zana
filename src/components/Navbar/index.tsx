@@ -11,18 +11,18 @@ import { MenuItemsType, TopLevelItemsType } from "./Types";
 import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
 import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
 import HeroSection from "@/components/HeroSection";
-import CartSidebar from "@/components/CartSidebar";
 import MenuIcon from "@mui/icons-material/Menu";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import Search from "./Search";
 import MobileNavMenu from "./MobileNavMenu";
 import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SignupPopup from "../SignupPopup";
-import { useCart } from "@/hooks/useCart";
 import { useCartContext } from "@/Context/CartProvider";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { setOpenCart } from "@/Redux/Cart/Reducer";
 
 
 type NavbarPropsType = {
@@ -49,6 +49,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
   const isZProPath = bikeType === BikeCategoryEnum.ZPRO
 
+  const dispatch = useDispatch<TAppDispatch>()
+
 
   function handleMenuItemClick(
     event: React.MouseEvent<HTMLElement>,
@@ -70,6 +72,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
   function handleTopLevelClick(item: TopLevelItemsType) {
     const { name } = item;
+
+    if (name === MenuItemsName.CART) {
+      dispatch(setOpenCart(true))
+      return
+    }
 
     setSelectedTopItem(name);
   }
@@ -178,7 +185,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                   />
                   {/* TODO */}
 
-                  {name === "Cart" && totalItems > 0 && (
+                  {name === MenuItemsName.CART && totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                       {totalItems > 99 ? "99+" : totalItems}
                     </span>
@@ -236,13 +243,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
         ))}
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />
-      )}
-      {selectedTopItem === MenuItemsName.CART && (
-        <CartSidebar
-          isOpen={selectedTopItem === MenuItemsName.CART}
-          onClose={() => setSelectedTopItem(null)}
-         
-        />
       )}
       {isMobileMenuOpen && (
         <MobileNavMenu onClose={() => setIsMobileMenuOpen(false)} />

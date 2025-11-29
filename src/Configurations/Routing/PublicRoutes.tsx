@@ -13,6 +13,8 @@ import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from '@
 import ProductCategoryCountService from '@/Redux/Product/Services/ProductCategoryCountService'
 import { BikeCategoryEnum } from '@/Constants/AppConstant'
 import ZProBikeService from '@/Redux/Product/Services/ZProBikeService'
+import SignupPopup from '@/components/SignupPopup'
+import CartSidebar from '@/components/CartSidebar'
 
 function PublicRoutes() {
 
@@ -41,7 +43,9 @@ function PublicRoutes() {
 	return (
 		<Box sx={{ minHeight: "100vh" }}>
 			<Navbar />
-			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: {md: 20.5, xs: 10.5} }} />}
+			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: { md: 20.5, xs: 10.5 } }} />}
+			<SignupPopup />
+			<CartSidebar />
 			<Outlet />
 			<Footer />
 			<WhatsAppButton />

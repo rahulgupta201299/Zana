@@ -21,12 +21,17 @@ import BlogReducer from "@/Redux/Blogs/Reducer";
 import {SLICE_NAME as BlogsSliceName} from "@/Redux/Blogs/Selectors";
 import type { T_BLOG_REDUCER } from "./Blogs/Types";
 
+import CartReducer from "@/Redux/Cart/Reducer";
+import {SLICE_NAME as CartSliceName} from "@/Redux/Cart/Selectors";
+import type { T_CART_REDUCER } from "./Cart/Types";
+
 export type TReducers = {
   [ServiceTrackerSliceName]: T_SERVICE_TRACKER_REDUCER;
   [AuthSliceName]: T_AUTH_REDUCER;
   [LandingSliceName]: T_LANDING_REDUCER;
   [ProductSliceName]: T_PRODUCT_REDUCER;
   [BlogsSliceName]: T_BLOG_REDUCER;
+  [CartSliceName]: T_CART_REDUCER;
 };
 
 const reducers: ReducersMapObject<TReducers> = {
@@ -34,7 +39,8 @@ const reducers: ReducersMapObject<TReducers> = {
   [AuthSliceName]: AuthReducer,
   [LandingSliceName]: LandingReducer,
   [ProductSliceName]: ProductReducer,
-  [BlogsSliceName]: BlogReducer
+  [BlogsSliceName]: BlogReducer,
+  [CartSliceName]: CartReducer,
 };
 
 export default combineReducers<ReducersMapObject<TReducers>>(reducers);

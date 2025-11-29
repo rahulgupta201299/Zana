@@ -5,36 +5,43 @@ import {
   IconButton,
   Button,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { X, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCartContext } from "@/Context/CartProvider";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { setOpenCart } from "@/Redux/Cart/Reducer";
+import { openCartSelector } from "@/Redux/Cart/Selectors";
 
 interface CartSidebarProps {
-  isOpen?: boolean;     
-  onClose?: () => void;   
   variant?: "drawer" | "checkout"; 
 }
 
 const CartSidebar = ({
-  isOpen = false,
-  onClose,
   variant = "drawer",
 }: CartSidebarProps) => {
   const navigate = useNavigate();
+
+  const isOpenCart = useSelector(openCartSelector)
+
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const { cartItems, updateQuantity, removeItem } = useCartContext();
+
+  const dispatch = useDispatch<TAppDispatch>()
 
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
   const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
   const total = subtotal - discount;
 
+  function onClose() {
+    dispatch(setOpenCart(false))
+  }
+
 
   const CartContent = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-
-    
       <Box
         sx={{
           p: { xs: 2, md: 3 },
@@ -365,7 +372,7 @@ const CartSidebar = ({
   return (
     <Drawer
       anchor="right"
-      open={isOpen}
+      open={isOpenCart}
       onClose={onClose}
       slotProps={{
         backdrop: {
