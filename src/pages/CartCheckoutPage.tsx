@@ -1,12 +1,12 @@
 import { Minus, Plus, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext } from "@/Context/CartProvider";
 
 const CartCheckoutPage = () => {
   const navigate = useNavigate();
   
   // Use cart hook
-  const { cartItems, updateQuantity, removeItem, subtotal, discount, total, totalItems } = useCart();
+  const { cartItems, updateQuantity, removeItem, subtotal, discount, total, totalItems } = useCartContext();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>

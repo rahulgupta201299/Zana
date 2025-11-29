@@ -5,6 +5,7 @@ export type T_CART_REDUCER = {
     items: Item[]
     shippingAddress: ShippingAddress
     billingAddress: BillingAddress
+    isOpenCart: boolean
   }
   
   export interface Item {

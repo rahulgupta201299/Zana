@@ -30,12 +30,16 @@ export const INITIAL_STATE: T_CART_REDUCER = {
     postalCode: "",
     country: "",
   },
+  isOpenCart: false,
 };
 
 const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
   reducers: {
+    setOpenCart(state, action: PayloadAction<boolean>) {
+      state.isOpenCart = action.payload
+    },
     resetLanding: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_CART_REDUCER>): void => {},
@@ -43,6 +47,6 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
 
 const slice = createSlice(sliceOptions);
 
-export const { resetLanding } = slice.actions;
+export const { resetLanding, setOpenCart } = slice.actions;
 
 export default slice.reducer;

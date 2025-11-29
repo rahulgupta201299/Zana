@@ -1,17 +1,18 @@
 ;
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { useCartContext } from "@/Context/CartProvider";
+import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { PlusIcon } from "lucide-react";
+import { useDispatch } from "react-redux";
 
-interface NewArrivalsProps {
-  onAddToCart?: (productId: string, productName: string, price: number, image: string, description?: string) => void;
-}
+const NewArrivals = () => {
 
-const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
-  
   const products = [
     {
       id: "new-arrival-1",
       name: "Triumph Bike with Accessories",
       price: 500,
+      quantityAvailable: 6,
       image: "/uploads/565e17f1-53ab-4367-aa31-3448ba30c50b.png",
       alt: "Triumph Bike with Accessories"
     },
@@ -19,6 +20,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
       id: "new-arrival-2",
       name: "Luggage Rack Platform",
       price: 500,
+      quantityAvailable: 7,
       image: "/uploads/541e4934-ac81-4da2-92fa-97c949bc6340.png",
       alt: "Luggage Rack Platform"
     },
@@ -26,6 +28,7 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
       id: "new-arrival-3",
       name: "Windscreen Fairing",
       price: 500,
+      quantityAvailable: 8,
       image: "/uploads/d60b6a26-30f5-4662-8b62-2d7161398039.png",
       alt: "Windscreen Fairing"
     },
@@ -33,13 +36,15 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
       id: "new-arrival-4",
       name: "Blue Bike Part",
       price: 500,
-      image: "/uploads/343f7510-7c35-4261-a6a3-30857f9b05cf.png", 
+      quantityAvailable: 9,
+      image: "/uploads/343f7510-7c35-4261-a6a3-30857f9b05cf.png",
       alt: "Blue Bike Part"
     },
     {
       id: "new-arrival-5",
       name: "Bike Stand",
       price: 500,
+      quantityAvailable: 10,
       image: "/uploads/9f936388-954a-4ece-b203-e73a59d3af67.png",
       alt: "Bike Stand"
     },
@@ -47,18 +52,21 @@ const NewArrivals = ({ onAddToCart }: NewArrivalsProps) => {
       id: "new-arrival-6",
       name: "LED Headlight",
       price: 500,
+      quantityAvailable: 11,
       image: "/uploads/bca53fd6-ffc1-4498-ac6c-3162dd7221fe.png",
       alt: "LED Headlight"
     }
   ];
 
+  const { addToCart } = useCartContext()
+  const dispatch = useDispatch<TAppDispatch>()
+
   const handleAddToCart = (index: number) => {
     const product = products[index];
-    if (onAddToCart) {
-      onAddToCart(product.id, product.name, product.price, product.image, product.alt);
-    } else {
-      console.log("Added to cart:", product.name);
-    }
+
+    const { id: productId, name: productName, price, image, quantityAvailable } = product
+    addToCart(productId, productName, price, image, quantityAvailable)
+    dispatch(setOpenCart(true))
   };
 
   return (

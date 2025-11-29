@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import {
 	Box,
 	Typography,
@@ -11,6 +12,8 @@ import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { getMenuOption } from "./Utils";
 import { ROUTES } from "@/Constants/Routes";
 import WebNavMenuSkeleton from "@/components/Skeleton/WebNavMenuSkeleton";
+import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
+import { MenuItemsName } from "./Constant";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -21,9 +24,13 @@ type WebNavMenuPropsType = {
 export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPropsType) {
 	const navigate = useNavigate()
 
+	const shopByBike = useSelector(shopByBikeSelector)
+	const shopByProduct = useSelector(zProBikeSelector)
+	const productCategory = useSelector(productCategorySelector)
+
 	const menuOptions: MenuOptionsType[] = useMemo(() => {
 		return getMenuOption().find(item => item.name === menuName)?.models || []
-	}, [menuName])
+	}, [menuName, shopByBike.length, productCategory.length, shopByProduct.length])
 
 	function handleItemClick(category: string, subCategory: string, _id: string) {
 		const prefixRoute = getMenuOption().find(item => item.name === menuName)?.route || ''

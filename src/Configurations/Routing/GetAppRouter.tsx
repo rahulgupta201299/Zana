@@ -7,24 +7,25 @@ import { ROUTES } from '@/Constants/Routes'
 import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
+import Loading from '@/components/Loading'
 
-const Landing = lazyLoadPage(() => import("@/pages/Landing"));
-const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"));
-const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"));
-const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"));
-const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"));
-const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"));
-const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"));
-const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"));
-const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"));
-const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"));
-const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"));
-const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"));
-const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"));
-const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"));
-const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"));
-const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"));
-const Checkout = lazyLoadPage(() => import("@/pages/Checkout"))
+const Landing = lazyLoadPage(() => import("@/pages/Landing"), Loading);
+const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"), Loading);
+const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"), Loading);
+const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"), Loading);
+const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"), Loading);
+const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"), Loading);
+const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"), Loading);
+const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"), Loading);
+const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"), Loading);
+const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"), Loading);
+const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"), Loading);
+const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"), Loading);
+const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"), Loading);
+const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"), Loading);
+const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"), Loading);
+const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"), Loading);
+const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
 
 export const routeObj: RouteObject[] = [
   {
