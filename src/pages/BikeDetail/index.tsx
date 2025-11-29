@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
@@ -19,6 +19,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName } from "@/Redux/Product/Actions";
 import Loading from "@/components/Loading";
 import { Skeleton } from "@mui/material";
+import { useCartContext } from "@/Context/CartProvider";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
@@ -33,6 +34,7 @@ const BikeDetailPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
+  const { addToCart } = useCartContext()
 
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>([])
@@ -108,6 +110,12 @@ const BikeDetailPage = () => {
     else setFilteredBikeProducts(bikeProducts.filter(item => item.category.toLowerCase() === val))
 
     setSelectedCategory(val)
+  }
+
+  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
+    e.stopPropagation()
+    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
+    navigateTo && navigate(navigateTo)
   }
 
   if (!bikeDetails && !loading) {
@@ -227,7 +235,7 @@ const BikeDetailPage = () => {
           {/* Products Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBikeProducts.map((product) => {
-              const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price } = product
+              const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, quantityAvailable } = product
 
               return (
                 <div
@@ -273,7 +281,7 @@ const BikeDetailPage = () => {
                         ₹ {price.toLocaleString()}
                       </span>
                       <div className="flex gap-2">
-                        <button
+                        {/* <button
                           onClick={(e) => {
                             e.stopPropagation();
                             // Add to wishlist logic
@@ -281,12 +289,9 @@ const BikeDetailPage = () => {
                           className="p-2 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-black transition-all"
                         >
                           <Heart size={18} />
-                        </button>
+                        </button> */}
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add to cart logic
-                          }}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription)}
                           className="p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
                           <ShoppingCart size={18} />

@@ -11,13 +11,11 @@ import {
   Typography,
   MenuItem,
   IconButton,
-  useMediaQuery,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   generateOtpName,
-  updateLoginStatusActions,
   verifyOtpName,
 } from "@/Redux/Auth/Actions";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -64,8 +62,6 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
 
   const actions = useMemo(
     () => ({
-      handleUpdateLogin: (state: any) =>
-        dispatch(updateLoginStatusActions(state)),
       generateOtp: (state: GEN_OTP_REQ) =>
         dispatch(GenerateOtpServiceAction(state)),
       verifyOtp: (state: VERIFY_OTP_REQ) =>
@@ -163,7 +159,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     };
   
     try {
-      const result = await actions.verifyOtp(reqBody);
+      await actions.verifyOtp(reqBody);
       enqueueSnackbar("You have logged in successfully.", {
         variant: "success",
         anchorOrigin: { vertical: 'top', horizontal: 'center' },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
@@ -65,7 +65,8 @@ const ProductDetailPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  function handleAddToCart(productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
+  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
+    e.stopPropagation()
     addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
     navigateTo && navigate(navigateTo)
   }
@@ -193,7 +194,7 @@ const ProductDetailPage = () => {
 
             <div className="flex gap-4 mb-6">
               <Button
-                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription, quantity)}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
@@ -201,7 +202,7 @@ const ProductDetailPage = () => {
               </Button>
               {/* TODO handle the buy now  */}
               <Button
-                onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, ROUTES.CHECKOUT, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CHECKOUT, shortDescription, quantity)}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
@@ -319,11 +320,8 @@ const ProductDetailPage = () => {
                       className="max-w-full max-h-full object-contain"
                     />
                     <div className="absolute bottom-2 left-2 group">
-                      <div
-                        onClick={(e) => e.stopPropagation()}
-                      >
                         <button
-                          onClick={() => handleAddToCart(_id, name, price, imageUrl, quantityAvailable, shortDescription)}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART)}
                           className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
                         >
                           <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
@@ -331,7 +329,6 @@ const ProductDetailPage = () => {
                           </span>
                           <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
                         </button>
-                      </div>
                     </div>
                   </div>
                 </div>

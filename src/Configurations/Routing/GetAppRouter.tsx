@@ -26,6 +26,7 @@ const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"), Loading);
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"), Loading);
 const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"), Loading);
 const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
+const OrderDetails = lazyLoadPage(() => import("@/pages/OrderDetails"), Loading);
 
 export const routeObj: RouteObject[] = [
   {
@@ -55,7 +56,9 @@ export const routeObj: RouteObject[] = [
   {
     element: <ProtectedRoutes />,
     errorElement: <Navigate to={ROUTES.ANY} replace />,
-    children: []
+    children: [
+      { path: ROUTES.ORDER_DETAILS, element: OrderDetails },
+    ]
   }
 ];
 

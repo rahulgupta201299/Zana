@@ -23,5 +23,6 @@ export const ROUTES = Object.freeze({
   CONTACT_US:'/contact-us',
   CHECKOUT:'/checkout',
   PAGE_NOT_FOUND: '/page-not-found',
+  ORDER_DETAILS: '/order-details',
   ANY: '*'
 })
