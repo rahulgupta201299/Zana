@@ -211,7 +211,7 @@ const NewArrivals = () => {
                 className="w-full h-[87px] object-cover rounded-lg"
               />
               <button
-                onClick={() => handleAddToCart(products[0].id)}
+                onClick={() => handleAddToCart(0)}
                 className="absolute bottom-2 left-2 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-8 hover:w-auto hover:px-3 hover:justify-start group"
               >
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
@@ -229,7 +229,7 @@ const NewArrivals = () => {
                 className="w-full h-[86px] object-cover rounded-lg"
               />
               <button
-                onClick={() => handleAddToCart(products[1].id)}
+                onClick={() => handleAddToCart(1)}
                 className="absolute bottom-2 left-2 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-8 hover:w-auto hover:px-3 hover:justify-start group"
               >
                 <span className="whitespace-nowrap text-xs font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">

@@ -6,8 +6,7 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { addProfileDetailsActions, updateLoginStatusActions, verifyOtpActions } from "./Actions";
-// import { updateLoginStatusActions } from "./Actions";
+import { addProfileDetailsActions, verifyOtpActions } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
   login: {
@@ -36,23 +35,13 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     resetAuth: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
-    builder.addCase(updateLoginStatusActions, (state, { payload }: any) => {
-      return {
-        ...state,
-        isLoggedIn: true,
-        login: {
-          ...state.login,
-          phoneNumber: payload,
-        },
-      };
-    });
     builder.addCase(
       verifyOtpActions.success,
       (state, { payload }: any) => {
         state.login=payload
         state.profileDetails = payload.profile || {
-          phoneNumber: payload.phoneNumber,
           ...state.profileDetails,
+          phoneNumber: payload.phoneNumber,
         };
       }
     );

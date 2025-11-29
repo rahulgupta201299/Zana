@@ -25,6 +25,10 @@ import CartReducer from "@/Redux/Cart/Reducer";
 import {SLICE_NAME as CartSliceName} from "@/Redux/Cart/Selectors";
 import type { T_CART_REDUCER } from "./Cart/Types";
 
+import OrderReducer from "@/Redux/Order/Reducer";
+import {SLICE_NAME as OrderSliceName} from "@/Redux/Order/Selectors";
+import type { T_ORDER_REDUCER } from "./Order/Types";
+
 export type TReducers = {
   [ServiceTrackerSliceName]: T_SERVICE_TRACKER_REDUCER;
   [AuthSliceName]: T_AUTH_REDUCER;
@@ -32,6 +36,7 @@ export type TReducers = {
   [ProductSliceName]: T_PRODUCT_REDUCER;
   [BlogsSliceName]: T_BLOG_REDUCER;
   [CartSliceName]: T_CART_REDUCER;
+  [OrderSliceName]: T_ORDER_REDUCER;
 };
 
 const reducers: ReducersMapObject<TReducers> = {
@@ -41,8 +46,9 @@ const reducers: ReducersMapObject<TReducers> = {
   [ProductSliceName]: ProductReducer,
   [BlogsSliceName]: BlogReducer,
   [CartSliceName]: CartReducer,
+  [OrderSliceName]: OrderReducer,
 };
 
 export default combineReducers<ReducersMapObject<TReducers>>(reducers);
 
-export const persistedReducers: (keyof TReducers)[] = [];
+export const persistedReducers: (keyof TReducers)[] = [AuthSliceName];

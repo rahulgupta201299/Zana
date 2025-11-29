@@ -8,6 +8,7 @@ import InstagramFeed from "@/components/InstagramFeed";
 import BlogsSection from "@/components/BlogsSection";
 import BrandStory from "@/components/BrandStory";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import CapSection from "@/components/CapSection";
 
 function index() {
   return (
@@ -20,6 +21,7 @@ function index() {
       <InstagramFeed />
       <BlogsSection />
       <BrandStory />
+      <CapSection />
       <TestimonialsSection />
     </div>
   );
