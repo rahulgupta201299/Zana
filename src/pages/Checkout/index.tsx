@@ -160,6 +160,7 @@ export default function CheckoutPage() {
       enqueueSnackbar('Cart details saved successfully!', {
         variant: 'success',
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 3000
       })
   
     } catch (err) {
@@ -167,6 +168,7 @@ export default function CheckoutPage() {
       enqueueSnackbar( err.response?.data?.error, {
         variant: 'error',
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 3000
       });
     }
   };

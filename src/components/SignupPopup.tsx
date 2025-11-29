@@ -32,7 +32,8 @@ import VerifyOtpServiceAction, {
   VERIFY_OTP_REQ,
 } from "@/Redux/Auth/Services/VerifyOtpService";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
-
+import {  useSnackbar } from 'notistack';
+import Loading from "./Loading";
 interface SIGN_UP_TYPE {
   isMobile: boolean;
   type?: string;
@@ -54,6 +55,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, generateOtpName) === "LOADING"
   );
+  const { enqueueSnackbar } = useSnackbar();
   const loginData = useSelector((state: any) => getLoginDetails(state));
   const isVerifyingOtp = useSelector(
     (state: TReducers & PersistPartial) =>
@@ -110,9 +112,10 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
 
   const getIsdCode = async () => {
     const result = await actions.getIsdCodeList();
-    console.log(result);
     setCountries(result);
   };
+
+ 
 
   useEffect(() => {
     if (otpSent && timer > 0) {
@@ -152,16 +155,31 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       alert("Enter a valid 6-digit OTP");
       return;
     }
+  
     const reqBody = {
       isdCode: countryCode,
       phoneNumber: phone,
       otp: otp,
     };
-    const result = await actions.verifyOtp(reqBody);
-    console.log(result);
-    onClose && onClose();
-    setIsOpen(false);
+  
+    try {
+      const result = await actions.verifyOtp(reqBody);
+      enqueueSnackbar("You have logged in successfully.", {
+        variant: "success",
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 3000,
+      });
+      onClose && onClose();
+      setIsOpen(false);
+    } catch (error: any) {
+      enqueueSnackbar( "Failed to verify OTP. Please try again.", {
+        variant: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        autoHideDuration: 3000,
+      });  
+    }
   };
+  
 
   const handleOtpPaste = (e, index) => {
     e.preventDefault();
@@ -183,6 +201,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
 
   if (!isOpen) return null;
 
+ if(isVerifyingOtp || isGeneratingOtp) return <Loading/>
   return (
     <Dialog
       open={isOpen}
