@@ -14,10 +14,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  generateOtpName,
-  verifyOtpName,
-} from "@/Redux/Auth/Actions";
+import { generateOtpName, verifyOtpName } from "@/Redux/Auth/Actions";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { GEN_OTP_REQ } from "@/Redux/Auth/Services/GenerateOtpService";
@@ -30,7 +27,7 @@ import VerifyOtpServiceAction, {
   VERIFY_OTP_REQ,
 } from "@/Redux/Auth/Services/VerifyOtpService";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
-import {  useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 import Loading from "./Loading";
 interface SIGN_UP_TYPE {
   isMobile: boolean;
@@ -99,9 +96,9 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       // };
       // const result = await actions.generateOtp(body);
       // if (result.statusCode === 200) {
-        setPhoneError("");
-        setTimer(30);
-        setOtpSent(true);
+      setPhoneError("");
+      setTimer(30);
+      setOtpSent(true);
       // }
     }
   };
@@ -110,8 +107,6 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     const result = await actions.getIsdCodeList();
     setCountries(result);
   };
-
- 
 
   useEffect(() => {
     if (otpSent && timer > 0) {
@@ -151,31 +146,30 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       alert("Enter a valid 6-digit OTP");
       return;
     }
-  
+
     const reqBody = {
       isdCode: countryCode,
       phoneNumber: phone,
       otp: otp,
     };
-  
+
     try {
       await actions.verifyOtp(reqBody);
       enqueueSnackbar("You have logged in successfully.", {
         variant: "success",
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        anchorOrigin: { vertical: "top", horizontal: "center" },
         autoHideDuration: 3000,
       });
       onClose && onClose();
       setIsOpen(false);
     } catch (error: any) {
-      enqueueSnackbar( "Failed to verify OTP. Please try again.", {
-        variant: 'error',
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+      enqueueSnackbar("Failed to verify OTP. Please try again.", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
         autoHideDuration: 3000,
-      });  
+      });
     }
   };
-  
 
   const handleOtpPaste = (e, index) => {
     e.preventDefault();
@@ -197,7 +191,6 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
 
   if (!isOpen) return null;
 
- if(isVerifyingOtp || isGeneratingOtp) return <Loading/>
   return (
     <Dialog
       open={isOpen}
@@ -251,7 +244,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       <DialogTitle sx={{ p: { md: "32px 32px 24px", xs: "16px" } }}>
         Login With OTP
       </DialogTitle>
-
+      {(isVerifyingOtp || isGeneratingOtp) && <Loading />}
       <DialogContent
         sx={{
           display: "flex",

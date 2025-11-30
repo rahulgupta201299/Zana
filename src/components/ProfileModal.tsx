@@ -169,8 +169,13 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
           },
         ],
       };
-      const result = await actions.updateProfileDetails(reqBody);
-      enqueueSnackbar("Profile updated successfully!", {
+      let result; 
+    if (profileDetails?._id) {
+      result = await actions.updateProfileDetails(reqBody);
+    } else {
+      result = await actions.addProfileDetails(reqBody);
+    }
+      enqueueSnackbar(profileDetails?._id?"Profile Details updated successfully!":"Profile Details added successfully!", {
         variant: "success",
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
         autoHideDuration: 2000,

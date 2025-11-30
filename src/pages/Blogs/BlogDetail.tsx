@@ -1,7 +1,8 @@
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { blogDetailsName } from "@/Redux/Blogs/Actions";
+import { blogDetailsName, fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { getBlogDetail, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
 import getBlogDetailServiceAction from "@/Redux/Blogs/Services/GetBlogDetail";
+import fetchBlogListServiceAction from "@/Redux/Blogs/Services/GetBlogList";
 import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import Loading from "@/components/Loading";
@@ -17,6 +18,7 @@ const BlogDetail = () => {
   const actions = useMemo(
     () => ({
       getBlogDetails: (state) => dispatch(getBlogDetailServiceAction(state)),
+      fetchBlogList: () => dispatch(fetchBlogListServiceAction()),
     }),
     [dispatch]
   );
@@ -24,12 +26,21 @@ const BlogDetail = () => {
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, blogDetailsName) === "LOADING"
   );
+  const isListLoading = useSelector(
+    (state: TReducers & PersistPartial) =>
+      getServiceSelector(state, fetchBlogListName) === "LOADING"
+  );
   const blogDetails = useSelector((state: TAppStore) =>
     getBlogDetail(state)
   )
   const relatedBlogs = useSelector((state: TAppStore) =>
     getTopFourBlogs(state)
   )
+
+  const getBlogList = async() => {
+    const result = actions.fetchBlogList();
+  };
+
 
   const fetchBlogDetails = async () => {
     const result = await actions.getBlogDetails(id);
@@ -40,6 +51,7 @@ const BlogDetail = () => {
     if (id) {
       fetchBlogDetails();
     }
+    getBlogList();
   }, [id]);
 
   return (
@@ -48,7 +60,7 @@ const BlogDetail = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Side - Blog Content */}
-            {isDetailsLoading && <Loading />}
+            {(isDetailsLoading || isListLoading) && <Loading/>}
             <div className="lg:col-span-2">
               <h1 className="text-white text-4xl md:text-5xl font-bold mb-6">
                 {blogDetails?.title}

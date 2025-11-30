@@ -22,7 +22,7 @@ import {
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
-import PaymentImg from '@/Assets/Images/Payment.svg'
+import PaymentImg from "@/Assets/Images/Payment.svg";
 import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import cartCheckoutServiceAction from "@/Redux/Cart/Services/Checkout";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
@@ -40,13 +40,17 @@ import ProductRecommendation from "./ProductRecommendation";
 
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeItem, clearCart } = useCartContext();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const phoneNumber = useSelector<TAppStore, string>(state => state.auth.login.phoneNumber)
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartCheckOutServiceName]))
+  const phoneNumber = useSelector<TAppStore, string>(
+    (state) => state.auth.login.phoneNumber
+  );
+  const isLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [cartCheckOutServiceName])
+  );
 
   const [countries, setCountries] = useState([]);
-  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD)
+  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD);
 
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
@@ -82,8 +86,7 @@ export default function CheckoutPage() {
           return true;
         else return false;
       }),
-    phone: Yup.string()
-      .required("Phone Number is required"),
+    phone: Yup.string().required("Phone Number is required"),
     // TODO once BE is fixed with double + issue
     // .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
     //   if (/^[6-9]\d{9}$/.test(value)) return true;
@@ -131,67 +134,77 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
-          .required("Billing pincode is required")
+            .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+            .required("Billing pincode is required")
     ),
+    billingPhone:Yup.string().when("sameAsDelivery", (same, schema) =>
+    same
+      ? schema
+      : schema
+          .required("Billing phone number is required")
+  ),
   });
 
   const handleSubmit = async (values) => {
-
     if (paymentType !== PaymentTypeEnum.COD) {
-      displayRazorpay()
-      return
+      displayRazorpay();
+      return;
     }
-
+    const mappedItems = cartItems.map((item) => ({
+      productId: item.id,
+      quantity: item.quantity,
+    }));
     const body = {
-      phoneNumber: values.phone,
-      items: cartItems,
-
+      phoneNumber: phoneNumber,
+      items: mappedItems,
       shippingAddress: {
         fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
         addressLine1: values.shippingAddress,
         addressLine2: values.shippingApartment,
         city: values.shippingCity,
         state: values.shippingState,
+        phone: values.phone,
         postalCode: values.shippingPincode,
         country: values.shippingCountry,
       },
 
       billingAddress: values.sameAsDelivery
         ? {
-          fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-          addressLine1: values.shippingAddress,
-          addressLine2: values.shippingApartment,
-          city: values.shippingCity,
-          state: values.shippingState,
-          postalCode: values.shippingPincode,
-          country: values.shippingCountry,
-        }
+            fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+            addressLine1: values.shippingAddress,
+            addressLine2: values.shippingApartment,
+            city: values.shippingCity,
+            state: values.shippingState,
+            postalCode: values.shippingPincode,
+            country: values.shippingCountry,
+            phone:values.phone
+          }
         : {
-          fullName: `${values.billingFirstName} ${values.billingLastName}`,
-          addressLine1: values.billingAddress,
-          addressLine2: values.billingApartment,
-          city: values.billingCity,
-          state: values.billingState,
-          postalCode: values.billingPincode,
-          country: values.billingCountry,
-        },
+            fullName: `${values.billingFirstName} ${values.billingLastName}`,
+            addressLine1: values.billingAddress,
+            addressLine2: values.billingApartment,
+            city: values.billingCity,
+            state: values.billingState,
+            postalCode: values.billingPincode,
+            country: values.billingCountry,
+            phone: values.billingPhone
+          },
     };
 
     try {
       await actions.saveCartDetails(body);
-      enqueueSnackbar('Order Placed successfully!', {
-        variant: 'success',
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        autoHideDuration: 3000
-      })
-      clearCart()
-      navigate(ROUTES.ORDER_DETAILS)
+      enqueueSnackbar("Order Placed successfully!", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+        autoHideDuration: 3000,
+      });
+      clearCart();
+      navigate(ROUTES.ORDER_DETAILS);
     } catch (err) {
       if (err.response?.status === 400)
         enqueueSnackbar(err.response?.data?.error, {
-          variant: 'error',
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
         });
     }
   };
@@ -235,7 +248,7 @@ export default function CheckoutPage() {
                 shippingCity: "",
                 shippingState: "",
                 shippingPincode: "",
-                phone: phoneNumber,
+                phone: "",
                 saveInfo: true,
                 billingFirstName: "",
                 billingLastName: "",
@@ -244,6 +257,7 @@ export default function CheckoutPage() {
                 billingCity: "",
                 billingState: "",
                 billingPincode: "",
+                billingPhone: "",
                 sameAsDelivery: true,
               }}
               validationSchema={CheckoutSchema}
@@ -257,7 +271,7 @@ export default function CheckoutPage() {
                 touched,
                 handleSubmit,
                 setFieldValue,
-                isValid
+                isValid,
               }) => {
                 return (
                   <Form>
@@ -590,7 +604,7 @@ export default function CheckoutPage() {
                         name="phone"
                         label="Phone"
                         value={values.phone}
-                        disabled={true}
+                        // disabled={true}
                         onChange={(e) => {
                           if (e.target.value.match(/[^0-9]/)) return;
                           handleChange(e);
@@ -608,6 +622,7 @@ export default function CheckoutPage() {
                               color: "#000",
                               borderRadius: "10px",
                             },
+                            inputProps: { maxLength: 10 },
                           },
                           inputLabel: {
                             sx: {
@@ -669,14 +684,30 @@ export default function CheckoutPage() {
                       >
                         <RadioGroup value={paymentType}>
                           {paymentOptions.map((option, index) => {
-                            const { value, label, showRazorpayInfo = false } = option
+                            const {
+                              value,
+                              label,
+                              showRazorpayInfo = false,
+                            } = option;
                             return (
                               <Box key={value}>
                                 <FormControlLabel
                                   value={value}
-                                  control={<Radio sx={{ transform: "scale(0.8)" }} />}
+                                  control={
+                                    <Radio sx={{ transform: "scale(0.8)" }} />
+                                  }
                                   sx={{ alignItems: "center", p: "16px" }}
-                                  label={<Typography sx={{ fontWeight: 500, fontSize: "16px", color: "#202020" }}>{label}</Typography>}
+                                  label={
+                                    <Typography
+                                      sx={{
+                                        fontWeight: 500,
+                                        fontSize: "16px",
+                                        color: "#202020",
+                                      }}
+                                    >
+                                      {label}
+                                    </Typography>
+                                  }
                                   onClick={() => setPaymentType(value)}
                                 />
 
@@ -697,7 +728,11 @@ export default function CheckoutPage() {
                                         alignItems: "center",
                                       }}
                                     >
-                                      <img src={PaymentImg} alt="payment preview" style={{ opacity: 0.8 }} />
+                                      <img
+                                        src={PaymentImg}
+                                        alt="payment preview"
+                                        style={{ opacity: 0.8 }}
+                                      />
 
                                       <Typography
                                         sx={{
@@ -707,7 +742,8 @@ export default function CheckoutPage() {
                                           textAlign: "center",
                                         }}
                                       >
-                                        After clicking “Pay now”, you will be redirected to Razorpay Secure to
+                                        After clicking “Pay now”, you will be
+                                        redirected to Razorpay Secure to
                                         complete your purchase.
                                       </Typography>
                                     </Box>
@@ -716,7 +752,7 @@ export default function CheckoutPage() {
                                   </>
                                 )}
                               </Box>
-                            )
+                            );
                           })}
                         </RadioGroup>
                       </Box>
@@ -781,9 +817,9 @@ export default function CheckoutPage() {
                                             color: "#1D1D1D",
                                           }}
                                         >
-                                          {values.shippingCountry === "india"
+                                          {values.billingCountry === "india"
                                             ? "India"
-                                            : values.shippingCountry}
+                                            : values.billingCountry}
                                         </Typography>
                                       </Box>
                                     )}
@@ -1012,6 +1048,44 @@ export default function CheckoutPage() {
                                   />
                                 </Grid>
                               </Grid>
+                              <TextField
+                                fullWidth
+                                name="billingPhone"
+                                label="Phone"
+                                value={values.billingPhone}
+                                sx={{
+                                  mt:'16px'
+                                }}
+                                onChange={(e) => {
+                                  if (e.target.value.match(/[^0-9]/)) return;
+                                  handleChange(e);
+                                }}
+                                onBlur={handleBlur}
+                                error={getFieldErrorState(
+                                  { errors, touched },
+                                  "billingPhone"
+                                )}
+                                helperText={getHelperOrErrorText(
+                                  { errors, touched },
+                                  "billingPhone"
+                                )}
+                                slotProps={{
+                                  input: {
+                                    sx: {
+                                      backgroundColor: "#fff",
+                                      color: "#000",
+                                      borderRadius: "10px",
+                                    },
+                                    inputProps: { maxLength: 10 },
+                                  },
+                               
+                                  inputLabel: {
+                                    sx: {
+                                      color: "#000",
+                                    },
+                                  },
+                                }}
+                              />
                             </Box>
                           )}
                         </Box>
@@ -1032,13 +1106,13 @@ export default function CheckoutPage() {
                           textTransform: "none",
                         }}
                       >
-                        {
-                          PaymentTypeEnum.COD === paymentType ? 'Place Order' : 'Pay Now'
-                        }
+                        {PaymentTypeEnum.COD === paymentType
+                          ? "Place Order"
+                          : "Pay Now"}
                       </Button>
                     </Box>
                   </Form>
-                )
+                );
               }}
             </Formik>
           </Paper>
@@ -1170,7 +1244,11 @@ export default function CheckoutPage() {
             <>
               <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6">
                 <p className="text-green-400 text-sm text-center">
-                  🎉 You saved ₹ {discount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}!
+                  🎉 You saved ₹{" "}
+                  {discount.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                  })}
+                  !
                 </p>
               </div>
               <Box
@@ -1269,7 +1347,7 @@ export default function CheckoutPage() {
 
           <ProductRecommendation />
         </Grid>
-      </Grid >
-    </Container >
+      </Grid>
+    </Container>
   );
 }
