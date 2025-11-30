@@ -51,10 +51,10 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 			anchorEl={anchorEl}
 			open={true}
 			onClose={onClose}
-			anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+			anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
 			PaperProps={{
 				sx: {
-					width: "90%",
+					width: "100%",
 					borderRadius: "1rem",
 					p: 3,
 					bgcolor: "black",
