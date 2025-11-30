@@ -98,7 +98,7 @@ const CapSection = () => {
   function handleAddToCart(index: number) {
     const product = capProducts[index];
 
-    const {id: productId, name: productName, price, image, quantityAvailable } = product
+    const { id: productId, name: productName, price, image, quantityAvailable } = product
     addToCart(productId, productName, price, image, quantityAvailable)
     dispatch(setOpenCart(true))
   }
@@ -111,9 +111,10 @@ const CapSection = () => {
       style={{ backgroundColor: "#181818" }}
     >
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-white text-lg md:text-4xl lg:text-5xl font-black text-center mb-4 md:mb-8">
-          CAPS Section
-        </h2>
+        <div className="text-center mb-6 md:mb-12">
+          <h2 className="text-lg md:text-5xl font-black text-white mb-1 md:mb-2">Moto Devil</h2>
+          <p className="text-gray-300 text-xs md:text-lg">Brought To You by Zana</p>
+        </div>
 
         {/* Desktop Layout */}
         <div className="hidden lg:grid grid-cols-5 gap-2">

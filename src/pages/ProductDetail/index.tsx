@@ -251,7 +251,7 @@ const ProductDetailPage = () => {
               </TabsList>
 
               <div className="bg-white rounded-b-lg p-6 min-h-[200px] max-h-[300px] overflow-y-auto">
-                <TabsContent value="description" className="text-black text-sm leading-relaxed">
+                <TabsContent value="description" className="text-black text-sm leading-relaxed whitespace-pre-line">
                   {
                     longDescription ? longDescription : (
                       <Skeleton width={"100%"} height={200} />
