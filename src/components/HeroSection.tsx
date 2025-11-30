@@ -56,7 +56,6 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           top: '20px',
           left: "50%",
           transform: "translateX(-50%)",
-          zIndex: 20,
         }}
       >
         <Link component={RouterLink} to={ROUTES.BASE_URL} sx={{ display: "flex", cursor: 'pointer' }}>
