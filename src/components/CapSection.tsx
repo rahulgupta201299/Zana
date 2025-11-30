@@ -3,63 +3,87 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { useCartContext } from "@/Context/CartProvider";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { PlusIcon } from "lucide-react";
+import CapImg1 from '@/Assets/Images/CapSection/IMG_1234.jpg'
+import CapImg2 from '@/Assets/Images/CapSection/IMG_7994.jpg'
+import CapImg3 from '@/Assets/Images/CapSection/IMG_8059.jpg'
+import CapImg4 from '@/Assets/Images/CapSection/IMG_8132.jpg'
+import CapImg5 from '@/Assets/Images/CapSection/IMG_8134.jpg'
+import CapImg6 from '@/Assets/Images/CapSection/IMG_8136.jpg'
+import CapImg7 from '@/Assets/Images/CapSection/IMG_8137.jpg'
+import CapImg8 from '@/Assets/Images/CapSection/IMG_8139.jpg'
+import CapImg9 from '@/Assets/Images/CapSection/IMG_8140.jpg'
+import CapImg10 from '@/Assets/Images/CapSection/IMG_8142.jpg'
 
 export const capProducts = [
   {
     id: "cap-1",
-    name: "Crash Guard",
-    price: 500,
+    name: "Throttle Up",
+    price: 1500,
     quantityAvailable: 6,
-    image: "/uploads/3f568aa5-84f0-400d-bcee-50d7f72ac960.png",
+    image: CapImg1,
   },
   {
     id: "cap-2",
-    name: "Saddle Stay",
-    price: 500,
+    name: "Love Speed",
+    price: 1600,
     quantityAvailable: 7,
-    image: "/uploads/a1bc180c-1729-4869-9875-7565313c92f5.png",
+    image: CapImg2,
   },
   {
     id: "cap-3",
-    name: "Radiator Guard",
-    price: 500,
+    name: "Pure Love",
+    price: 1800,
     quantityAvailable: 8,
-    image: "/uploads/2f72e496-2fd9-4119-9f82-40c335b48e00.png",
+    image: CapImg3,
   },
   {
     id: "cap-4",
-    name: "Saddle Bag",
-    price: 500,
+    name: "Godzilla",
+    price: 2000,
     quantityAvailable: 9,
-    image: "/uploads/681f7126-6997-49d7-b7df-cfcbbefcee1f.png",
+    image: CapImg4,
   },
   {
     id: "cap-5",
-    name: "Tank Bag",
-    price: 500,
+    name: "Devil",
+    price: 1500,
     quantityAvailable: 10,
-    image: "/uploads/c4a8d0de-712f-4e03-9ebd-fc8ca95fd796.png",
+    image: CapImg5,
   },
   {
     id: "cap-6",
-    name: "Aux Light",
-    price: 500,
+    name: "Hard Tuned",
+    price: 1700,
     quantityAvailable: 11,
-    image: "/uploads/2628a268-dabd-479c-8c8a-4aea7d9044f2.png",
+    image: CapImg6,
   },
   {
     id: "cap-7",
-    name: "Light Mount",
-    price: 500,
+    name: "Ride Easy",
+    price: 1900,
     quantityAvailable: 12,
-    image: "/uploads/4e0cd1d8-aed1-4a03-88d2-f008c9f84ceb.png",
+    image: CapImg7,
   },
   {
     id: "cap-8",
-    name: "Fog Light",
-    price: 500,
+    name: "Decimo",
+    price: 2000,
     quantityAvailable: 5,
-    image: "/uploads/51fb8fe4-8cdd-4935-8adf-f71da854df6e.png",
+    image: CapImg8,
+  },
+  {
+    id: "cap-9",
+    name: "Super veloce",
+    price: 1600,
+    quantityAvailable: 5,
+    image: CapImg9,
+  },
+  {
+    id: "cap-10",
+    name: "Super Charged",
+    price: 1800,
+    quantityAvailable: 5,
+    image: CapImg10,
   },
 ];
 
