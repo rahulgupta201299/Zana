@@ -1,7 +1,12 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import { Box, Typography, Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import LandingVideo from '@/Assets/Images/LandingVideo.gif'
+import { ROUTES } from "@/Constants/Routes";
+import Zana from "@/Assets/Icons/Zana.png";
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
-const HeroSection = () => {
+const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
 
   return (
@@ -25,7 +30,7 @@ const HeroSection = () => {
       >
         <Box
           component="img"
-          src="/uploads/5f9aa5f190665c7e8b28d19f5c20975680b4d9ce.gif"
+          src={LandingVideo}
           alt="Motorcycle hero background"
           sx={{
             width: "100%",
@@ -42,6 +47,33 @@ const HeroSection = () => {
             backgroundColor: "rgba(0,0,0,0.4)",
           }}
         />
+      </Box>
+
+      {/* LOGO */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '20px',
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 20,
+        }}
+      >
+        <Link component={RouterLink} to={ROUTES.BASE_URL} sx={{ display: "flex", cursor: 'pointer' }}>
+          <img
+            src={Zana}
+            alt={`Zana Logo`}
+            style={{
+              height: isMobile ? "3.5rem" : "5rem",
+              width: "auto",
+              cursor: "pointer",
+              transition: "opacity 0.2s",
+              filter: 'brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)'
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
+            onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+          />
+        </Link>
       </Box>
 
       {/* Content */}
@@ -122,4 +154,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default withDeviceDetails(HeroSection);
