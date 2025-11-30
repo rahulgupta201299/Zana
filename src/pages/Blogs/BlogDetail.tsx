@@ -25,25 +25,22 @@ const BlogDetail = () => {
       getServiceSelector(state, blogDetailsName) === "LOADING"
   );
   const blogDetails = useSelector((state: TAppStore) =>
-  getBlogDetail(state)
+    getBlogDetail(state)
   )
   const relatedBlogs = useSelector((state: TAppStore) =>
-  getTopFourBlogs(state)
+    getTopFourBlogs(state)
   )
 
   const fetchBlogDetails = async () => {
-   const result = await actions.getBlogDetails(id);
-   console.log(result)
+    const result = await actions.getBlogDetails(id);
+    console.log(result)
   };
 
-  useEffect(() => {  
-    if(id){
-    fetchBlogDetails();
+  useEffect(() => {
+    if (id) {
+      fetchBlogDetails();
     }
   }, [id]);
-
-  
-
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
@@ -51,10 +48,10 @@ const BlogDetail = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Side - Blog Content */}
-            {isDetailsLoading && <Loading/>}
+            {isDetailsLoading && <Loading />}
             <div className="lg:col-span-2">
               <h1 className="text-white text-4xl md:text-5xl font-bold mb-6">
-               {blogDetails?.title}
+                {blogDetails?.title}
               </h1>
 
               <p className="text-white text-lg mb-8 leading-relaxed">
@@ -69,8 +66,8 @@ const BlogDetail = () => {
                 />
               </div>
 
-              <div className="text-white space-y-6 leading-relaxed">
-             {blogDetails?.content}
+              <div className="text-white space-y-6 leading-relaxed whitespace-pre-line">
+                {blogDetails?.content}
               </div>
             </div>
 
