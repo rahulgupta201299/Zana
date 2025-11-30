@@ -7,12 +7,15 @@ import { allProductTraceActions } from "../Actions";
 const network = new Network();
 
 async function searchService(
-  params: SearchRequestType
+  { query = '' }: SearchRequestType
 ): Promise<SearchResponseType> {
+
   const options = {
     url: `api/v1/product/search`,
     method: API_METHOD_ENUM.GET,
-    params,
+    params: {
+      query: encodeURIComponent(query)
+    },
   };
 
   const response = await network.request(options);

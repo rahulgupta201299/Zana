@@ -14,7 +14,7 @@ async function categoryProductService({
   queryParams = {},
 }: CategoryProductReqType): Promise<ProductCatalogDetailsType> {
   const options = {
-    url: `api/v1/product/category/${category}`,
+    url: `api/v1/product/category/${encodeURIComponent(category)}`,
     method: API_METHOD_ENUM.GET,
     params: queryParams,
   };

@@ -16,7 +16,7 @@ import { replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/String
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { bikeProductServiceName } from "@/Redux/Product/Actions";
+import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
 import Loading from "@/components/Loading";
 import { Skeleton } from "@mui/material";
 import { useCartContext } from "@/Context/CartProvider";
@@ -28,7 +28,7 @@ const BikeDetailPage = () => {
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
 
-  const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName]))
+  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName, shopByBikeServiceName, productCategoryCountServiceName]))
 
   const shopByBike = useSelector(isZProPath ? zProBikeSelector : shopByBikeSelector)
 
@@ -118,7 +118,7 @@ const BikeDetailPage = () => {
     navigateTo && navigate(navigateTo)
   }
 
-  if (!bikeDetails && !loading) {
+  if (!bikeDetails && !loading && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#181818' }}>
         <div className="text-center">
@@ -305,7 +305,7 @@ const BikeDetailPage = () => {
           </div>
 
           {
-            filteredBikeProducts.length === 0 && isBikeProductLoading && <ProductSkeleton />
+            filteredBikeProducts.length === 0 && isLoading && <ProductSkeleton />
           }
 
           {/* No Products Found */}
