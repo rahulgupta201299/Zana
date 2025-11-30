@@ -15,7 +15,6 @@ async function cartCheckoutService(
   };
     const response = await network.request(options)
     const { data } = response
-    console.log(response)
     return data
  
 }

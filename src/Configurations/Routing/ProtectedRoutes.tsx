@@ -12,14 +12,14 @@ function ProtectedRoutes() {
 
   // draft id is NA - redirect to error screen
   // if already in error screen then ignore otherwise max stack issue
-  if (!isAuthenticated && !isErrorScreen) {
-    return (
-      <Navigate
-        to={ROUTES.PAGE_NOT_FOUND}
-        replace
-      />
-    )
-  }
+  // if (!isAuthenticated && !isErrorScreen) {
+  //   return (
+  //     <Navigate
+  //       to={ROUTES.PAGE_NOT_FOUND}
+  //       replace
+  //     />
+  //   )
+  // }
 
   return <Outlet />
 }
