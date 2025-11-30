@@ -6,6 +6,7 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_ORDER_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
+import { orderDetailActions } from "./Action";
 
 export const INITIAL_STATE: T_ORDER_REDUCER = {
   orderDetails: [],
@@ -36,7 +37,12 @@ const sliceOptions: CreateSliceOptions<T_ORDER_REDUCER> = {
   initialState: INITIAL_STATE,
   reducers: {},
   extraReducers: (builder: ActionReducerMapBuilder<T_ORDER_REDUCER>): void => {
-    
+    builder.addCase(
+      orderDetailActions.success,
+      (state, action: PayloadAction<any>) => {
+        state.orderDetails = action.payload;
+      }
+    );
   },
 };
 
