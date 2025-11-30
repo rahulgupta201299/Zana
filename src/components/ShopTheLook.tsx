@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/Constants/Routes";
+import { useCartContext } from "@/Context/CartProvider";
 
 interface BikePartData {
   id: string;
   name: string;
   price: number;
   description: string;
+  quantityAvailable: number;
   image: string;
 }
 
@@ -26,6 +29,9 @@ interface BikeView {
 
 const ShopTheLook = () => {
   const navigate = useNavigate();
+
+  const { addToCart } = useCartContext()
+
   const [currentViewIndex, setCurrentViewIndex] = useState(0);
   const [selectedPart, setSelectedPart] = useState<BikePartData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -49,6 +55,7 @@ const ShopTheLook = () => {
             description:
               "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
             image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -62,6 +69,7 @@ const ShopTheLook = () => {
             description:
               "High-performance LED headlight for enhanced visibility and style.",
             image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -75,6 +83,7 @@ const ShopTheLook = () => {
             description:
               "Heavy-duty protection for your bike's engine and frame during adventures.",
             image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -87,6 +96,7 @@ const ShopTheLook = () => {
             price: 900,
             description: "Durable engine protection for off-road adventures.",
             image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -100,6 +110,7 @@ const ShopTheLook = () => {
             description:
               "Premium rear brake assembly for superior stopping power.",
             image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+            quantityAvailable: 10,
           },
         },
       ],
@@ -120,6 +131,7 @@ const ShopTheLook = () => {
             description:
               "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
             image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -133,6 +145,7 @@ const ShopTheLook = () => {
             description:
               "High-performance LED headlight for enhanced visibility and style.",
             image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -145,6 +158,7 @@ const ShopTheLook = () => {
             price: 1800,
             description: "Robust engine protection for all riding conditions.",
             image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -158,6 +172,7 @@ const ShopTheLook = () => {
             description:
               "Premium alloy wheels for superior performance and style.",
             image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+            quantityAvailable: 10,
           },
         },
         {
@@ -171,6 +186,7 @@ const ShopTheLook = () => {
             description:
               "High-performance rear wheel for enhanced traction and stability.",
             image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+            quantityAvailable: 10,
           },
         },
       ],
@@ -207,6 +223,13 @@ const ShopTheLook = () => {
       }, 600); // Match the animation duration
     }
   };
+
+  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, data: BikePartData, navigateTo: string) {
+    const { id, name, price, description, quantityAvailable, image } = data
+    e.stopPropagation()
+    addToCart(id, name, price, image, quantityAvailable, description)
+    navigate(navigateTo)
+  }
 
   return (
     <div className="py-8 md:py-16" style={{ backgroundColor: "#181818" }}>
@@ -315,10 +338,7 @@ const ShopTheLook = () => {
                         {/* Buttons */}
                         <div className="flex gap-2">
                           <button
-                            onClick={() => {
-                              console.log("Added to cart:", selectedPart?.name);
-                              navigate("/cart");
-                            }}
+                            onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, selectedPart, ROUTES.CART)}
                             className="relative flex-1 bg-transparent border-2 border-white text-white rounded px-3 py-1.5 md:py-2 text-xs md:text-sm font-bold overflow-hidden transition-colors duration-500"
                             style={{
                               background:
@@ -342,10 +362,7 @@ const ShopTheLook = () => {
                             <span className="relative z-10">ADD TO CART</span>
                           </button>
                           <button
-                            onClick={() => {
-                              console.log("Shop now:", selectedPart?.name);
-                              navigate("/product-catalog");
-                            }}
+                            onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, selectedPart, ROUTES.CHECKOUT)}
                             className="relative flex-1 bg-transparent border-2 border-white text-white rounded px-3 py-1.5 md:py-2 text-xs md:text-sm font-bold overflow-hidden transition-colors duration-500"
                             style={{
                               background:
