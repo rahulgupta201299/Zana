@@ -127,7 +127,7 @@ const ProductDetailPage = () => {
           <div className="lg:col-span-5">
             <div className="bg-gradient-to-b from-[#7B7575] to-white rounded-lg p-8 h-96 lg:h-[600px] flex items-center justify-center">
               {
-                !imageUrl ? (
+                imageUrl ? (
                   <img
                     src={images[selectedImageIndex]}
                     alt={name}
