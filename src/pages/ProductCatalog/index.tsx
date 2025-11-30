@@ -97,7 +97,7 @@ const ProductCatalogPage = () => {
       // const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
       // setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory])
 
-      await handleCategoryService(initialCategory || ALL_CATEGORY, 1)
+      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, false)
 
     } catch (error: any) {
       console.error(error)
@@ -142,7 +142,7 @@ const ProductCatalogPage = () => {
                     : "bg-white/10 text-white hover:bg-white/20"
                     }`}
                 >
-                  {
+                  {/* {
                     categoryName !== ALL_CATEGORY && (
                       <img
                         src={icon}
@@ -151,7 +151,7 @@ const ProductCatalogPage = () => {
                         className="w-5 h-5 object-contain"
                       />
                     )
-                  }
+                  } */}
                   <span>
                     {categoryName === ALL_CATEGORY ? 'All Products' : categoryName} ({count})
                   </span>

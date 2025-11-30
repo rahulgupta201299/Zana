@@ -17,7 +17,6 @@ import { CartQuantityEnum, SocialMediaPlatformEnum } from "@/Constants/AppConsta
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { Box, Skeleton } from "@mui/material";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
