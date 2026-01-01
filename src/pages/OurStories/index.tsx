@@ -75,7 +75,7 @@ function OurStories() {
               textAlign: "center",
             }}
           >
-            From hustling city streets to the hardest terrains — Zana&apos;s got
+            From hustling city streets to the hardest terrains — Zana's got
             your ride covered.
           </Typography>
         </Container>
