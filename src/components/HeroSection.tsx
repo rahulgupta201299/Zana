@@ -1,7 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import LandingVideo from '@/Assets/Images/LandingVideo.gif'
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -29,9 +28,14 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
         }}
       >
         <Box
-          component="img"
-          src={LandingVideo}
-          alt="Motorcycle hero background"
+          component="video"
+          src={`https://zana-website-s3.s3.ap-south-1.amazonaws.com/website-videos/Zana-KTM+ADV.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+           preload="auto"
+          // alt="Motorcycle hero background"
           sx={{
             width: "100%",
             height: "100%",
@@ -52,13 +56,17 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
       {/* LOGO */}
       <Box
         sx={{
-          position: 'absolute',
-          top: '20px',
+          position: "absolute",
+          top: "20px",
           left: "50%",
           transform: "translateX(-50%)",
         }}
       >
-        <Link component={RouterLink} to={ROUTES.BASE_URL} sx={{ display: "flex", cursor: 'pointer' }}>
+        <Link
+          component={RouterLink}
+          to={ROUTES.BASE_URL}
+          sx={{ display: "flex", cursor: "pointer" }}
+        >
           <img
             src={Zana}
             alt={`Zana Logo`}
@@ -67,7 +75,8 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
               width: "auto",
               cursor: "pointer",
               transition: "opacity 0.2s",
-              filter: 'brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)'
+              filter:
+                "brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)",
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
             onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
@@ -100,7 +109,8 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
               lineHeight: 1.1,
             }}
           >
-            FORGED IN FIRE<br />
+            FORGED IN FIRE
+            <br />
             MORE THAN METAL
           </Typography>
 
