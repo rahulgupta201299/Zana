@@ -36,7 +36,7 @@ import addProfileDetailServiceAction, {
   ADD_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/AddProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
-import { addProfileDetailsName, updateProfileDetailName } from "@/Redux/Auth/Actions";
+import { addProfileDetailsName, getBikeBrandName, getBikeModelName, getProfileDetailName, updateProfileDetailName } from "@/Redux/Auth/Actions";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector, isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
@@ -75,7 +75,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   );
 
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [addProfileDetailsName, updateProfileDetailName]))
+  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [addProfileDetailsName, updateProfileDetailName,getBikeModelName,getBikeBrandName,getProfileDetailName]))
 
   useEffect(() => {
     // fetchProfileData();

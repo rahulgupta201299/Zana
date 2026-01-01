@@ -1,93 +1,126 @@
 import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box } from '@mui/material'
+import { Box, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { products } from "@/data/products";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { categories } from "@/data/productCategories";
 import { Heart, ShoppingCart } from "lucide-react";
-import { ALL_CATEGORY, CartQuantityEnum } from "@/Constants/AppConstant"
-import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg';
-import { PaginationType, ProductCatalogDetailsType, ProductCatergoryCountType, ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { ALL_CATEGORY, CartQuantityEnum } from "@/Constants/AppConstant";
+import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
+import {
+  PaginationType,
+  ProductCatalogDetailsType,
+  ProductCatergoryCountType,
+  ShopByProductDetailsType,
+} from "@/Redux/Product/Types";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Typography } from "@mui/material";
 import AllProductService from "@/Redux/Product/Services/AllProductService";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import { productCategorySelector } from "@/Redux/Product/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { allProductServiceName, categoryProductServiceName } from "@/Redux/Product/Actions";
+import {
+  allProductServiceName,
+  categoryProductServiceName,
+} from "@/Redux/Product/Actions";
 import { useCartContext } from "@/Context/CartProvider";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
 
-  const location = useLocation()
-  const state = location.state
-  const initialCategory = state?.category?.toLowerCase() || ''
+  const location = useLocation();
+  const state = location.state;
+  const initialCategory = state?.category?.toLowerCase() || "";
 
-  const { addToCart } = useCartContext()
+  const { addToCart } = useCartContext();
 
-  const productCategory = useSelector(productCategorySelector)
-  const isProductCategoryLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [categoryProductServiceName, allProductServiceName]))
+  const productCategory = useSelector(productCategorySelector);
+  const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [categoryProductServiceName, allProductServiceName])
+  );
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [filteredProducts, setFilteredProducts] = useState<ShopByProductDetailsType[]>([])
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [limit, setLimit] = useState<number>(0)
-  const [numberOfPages, setNumberOfPages] = useState<number>(0)
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>(initialCategory);
+  const [filteredProducts, setFilteredProducts] = useState<
+    ShopByProductDetailsType[]
+  >([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(0);
+  const [numberOfPages, setNumberOfPages] = useState<number>(0);
 
-  const dispatch = useDispatch<TAppDispatch>()
+  const dispatch = useDispatch<TAppDispatch>();
 
-  function handleProductClick(productCategory: string, productName: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory)
-    const name = replaceSpacesWithHiphen(productName)
+  function handleProductClick(
+    productCategory: string,
+    productName: string,
+    productId: string
+  ) {
+    const category = replaceSpacesWithHiphen(productCategory);
+    const name = replaceSpacesWithHiphen(productName);
 
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  async function handleCategoryService(type: string, page: number, byPassApiCall = true) {
+  async function handleCategoryService(
+    type: string,
+    page: number,
+    byPassApiCall = true
+  ) {
+    console.log(type, page, byPassApiCall,'hello')
     let products: ShopByProductDetailsType[], pagination: PaginationType;
-
-    if (type === selectedCategory && byPassApiCall) return
-    setFilteredProducts([])
-    setSelectedCategory(type)
+console.log(type === selectedCategory && byPassApiCall)
+    if (type === selectedCategory && byPassApiCall) return;
+    setFilteredProducts([]);
+    setSelectedCategory(type);
 
     try {
       if (type === ALL_CATEGORY) {
-        const { data, pagination: paginationResponse } = await dispatch(AllProductService({ page, limit: 10 })) as ProductCatalogDetailsType
-        products = data
-        pagination = paginationResponse
+        const { data, pagination: paginationResponse } = (await dispatch(
+          AllProductService({ page, limit: 10 })
+        )) as ProductCatalogDetailsType;
+        products = data;
+        pagination = paginationResponse;
       } else {
-        const { data, pagination: paginationResponse } = await dispatch(CategoryProductService({ category: type, queryParams: { page, limit: 10 } })) as ProductCatalogDetailsType
-        products = data
-        pagination = paginationResponse
+        const { data, pagination: paginationResponse } = (await dispatch(
+          CategoryProductService({
+            category: type,
+            queryParams: { page, limit: 10 },
+          })
+        )) as ProductCatalogDetailsType;
+        products = data;
+        pagination = paginationResponse;
       }
 
-      const { totalPages, productsPerPage, currentPage } = pagination
+      const { totalPages, productsPerPage, currentPage } = pagination;
 
-      setNumberOfPages(totalPages)
-      setCurrentPage(currentPage)
-      setLimit(productsPerPage)
-      setFilteredProducts(products)
-
+      setNumberOfPages(totalPages);
+      setCurrentPage(currentPage);
+      setLimit(productsPerPage);
+      setFilteredProducts(products);
     } catch (error: any) {
-      throw error
+      throw error;
     }
   }
 
   const categoryDetails = useMemo(() => {
+    if (productCategory.length === 0) return [];
 
-    if (productCategory.length === 0) return []
-
-    const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
-    return [{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory]
-  }, [productCategory.length])
+    const totalCategoryCount = productCategory.reduce(
+      (acc, curr) => acc + curr.count,
+      0
+    );
+    return [
+      { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
+      ...productCategory,
+    ];
+  }, [productCategory.length]);
 
   async function pageOps() {
     // let response = productCategory
@@ -97,25 +130,41 @@ const ProductCatalogPage = () => {
       // const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
       // setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory])
 
-      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, false)
-
+      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, false);
     } catch (error: any) {
-      console.error(error)
+      console.error(error);
     }
   }
 
-  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, description?: string, quantity?: number) {
-    e.stopPropagation()
-    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
-    navigate(ROUTES.CART)
+  function handleAddToCart(
+    e: MouseEvent<HTMLButtonElement>,
+    productId: string,
+    productName: string,
+    price: number,
+    image: string,
+    quantityAvailable: number,
+    description?: string,
+    quantity?: number
+  ) {
+    e.stopPropagation();
+    addToCart(
+      productId,
+      productName,
+      price,
+      image,
+      quantityAvailable,
+      description,
+      quantity
+    );
+    navigate(ROUTES.CART);
   }
 
   useEffect(() => {
-    pageOps()
-  }, [])
+    pageOps();
+  }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#2a2a2a' }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       {/* Hero Section */}
       <div className="py-12 md:py-16 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto text-center">
@@ -123,24 +172,26 @@ const ProductCatalogPage = () => {
             PRODUCT CATALOG
           </h1>
           <p className="text-white/70 text-lg md:text-xl mb-8">
-            Explore {categoryDetails?.[0]?.count || 0} premium motorcycle accessories
+            Explore {categoryDetails?.[0]?.count || 0} premium motorcycle
+            accessories
           </p>
 
           {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-3">
             {categoryDetails.map((category, ind) => {
-              const { name, count, icon } = category
-              const categoryName = name.toLowerCase()
+              const { name, count, icon } = category;
+              const categoryName = name.toLowerCase();
 
               return (
                 <button
                   key={ind}
                   onClick={() => handleCategoryService(categoryName, 1)}
-                  style={{ textTransform: 'capitalize', cursor: 'pointer' }}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
-                    ? "bg-yellow-400 text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
+                  style={{ textTransform: "capitalize", cursor: "pointer" }}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                    selectedCategory === categoryName
+                      ? "bg-yellow-400 text-black"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
                 >
                   {/* {
                     categoryName !== ALL_CATEGORY && (
@@ -153,14 +204,15 @@ const ProductCatalogPage = () => {
                     )
                   } */}
                   <span>
-                    {categoryName === ALL_CATEGORY ? 'All Products' : categoryName} ({count})
+                    {categoryName === ALL_CATEGORY
+                      ? "All Products"
+                      : categoryName}{" "}
+                    ({count})
                   </span>
                 </button>
-              )
+              );
             })}
-            {
-              categoryDetails.length === 0 && <CategorySkeleton />
-            }
+            {categoryDetails.length === 0 && <CategorySkeleton />}
           </div>
         </div>
       </div>
@@ -169,8 +221,15 @@ const ProductCatalogPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => {
-
-              const { _id, category, name, imageUrl, quantityAvailable, isBikeSpecific, price } = product
+              const {
+                _id,
+                category,
+                name,
+                imageUrl,
+                quantityAvailable,
+                isBikeSpecific,
+                price,
+              } = product;
 
               return (
                 <div
@@ -184,7 +243,9 @@ const ProductCatalogPage = () => {
                       src={imageUrl}
                       alt={name}
                       className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => e.currentTarget.src = BikePlaceholderImage}
+                      onError={(e) =>
+                        (e.currentTarget.src = BikePlaceholderImage)
+                      }
                     />
                     {isBikeSpecific && (
                       <div className="absolute top-2 right-2 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
@@ -220,7 +281,16 @@ const ProductCatalogPage = () => {
                           <Heart size={14} className="md:w-4 md:h-4" />
                         </button> */}
                         <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable)}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                            handleAddToCart(
+                              e,
+                              _id,
+                              name,
+                              price,
+                              imageUrl,
+                              quantityAvailable
+                            )
+                          }
                           className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
                           <ShoppingCart size={14} className="md:w-4 md:h-4" />
@@ -229,28 +299,73 @@ const ProductCatalogPage = () => {
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
 
-          {
-            filteredProducts.length === 0 && isProductCategoryLoading && <ProductSkeleton />
-          }
+          {filteredProducts.length === 0 && isProductCategoryLoading && (
+            <ProductSkeleton />
+          )}
 
-          {filteredProducts.length === 0 && (
+          {filteredProducts.length === 0 && !isProductCategoryLoading && (
             <div className="text-center py-16">
               <p className="text-white/50 text-lg mb-4">
                 No products found in this category
               </p>
               <button
-                onClick={() => handleCategoryService(ALL_CATEGORY, 1, isProductCategoryLoading)}
+                onClick={() =>
+                  handleCategoryService(
+                    ALL_CATEGORY,
+                    1,
+                    isProductCategoryLoading
+                  )
+                }
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
               >
                 View All Products
               </button>
             </div>
           )}
-          <Box
+         <Box
+            sx={{
+              marginTop: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              gap: "1rem",
+              color: "white",
+              cursor: "pointer",
+            }}
+          >
+            <Pagination
+              count={numberOfPages}
+              page={currentPage}
+              siblingCount={1} 
+              boundaryCount={0} 
+              onChange={(_, page) => {
+                handleCategoryService(selectedCategory, page, false);
+              }}
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  color: "white",
+                  fontSize: "1.25rem",
+                  fontWeight: "bold",
+                },
+                "& .Mui-selected": {
+                  color: "#3B82F6",
+                  backgroundColor: "transparent",
+                },
+                "& .MuiPaginationItem-root:hover": {
+                  color: "yellow",
+                  backgroundColor: "transparent",
+                },
+                "& .Mui-disabled": {
+                  color: "#f9f8f8ff",
+                },
+              }}
+            />
+          </Box>
+          
+          {/* <Box
             sx={{
               marginTop: '2rem',
               display: 'flex',
@@ -325,7 +440,7 @@ const ProductCatalogPage = () => {
                 }
               }}
             />
-          </Box>
+          </Box> */}
         </div>
       </div>
     </div>
