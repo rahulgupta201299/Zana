@@ -16,11 +16,12 @@ function OurStories() {
         {/* Background Video */}
         <Box
           component="video"
-         src="https://zana-website-s3.s3.ap-south-1.amazonaws.com/website-videos/Zana-Himalyan+Drop+Test.mp4"
+          src="https://zana-website-s3.s3.ap-south-1.amazonaws.com/website-videos/Zana-Himalyan+Drop+Test.mp4"
           autoPlay
           loop
           playsInline
-          preload="auto"
+          controls={false}
+          preload="metadata"
           sx={{
             position: "absolute",
             inset: 0,
@@ -29,8 +30,6 @@ function OurStories() {
             objectFit: "cover",
           }}
         />
-         
-     
 
         {/* Dark Overlay */}
         <Box
@@ -75,8 +74,8 @@ function OurStories() {
               textAlign: "center",
             }}
           >
-            From hustling city streets to the hardest terrains — Zana's got
-            your ride covered.
+            From hustling city streets to the hardest terrains — Zana's got your
+            ride covered.
           </Typography>
         </Container>
       </Box>

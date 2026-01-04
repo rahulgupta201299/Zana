@@ -34,7 +34,8 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           muted
           loop
           playsInline
-           preload="auto"
+          controls={false}
+          preload="metadata"
           // alt="Motorcycle hero background"
           sx={{
             width: "100%",
