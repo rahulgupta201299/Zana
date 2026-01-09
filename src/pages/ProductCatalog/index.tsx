@@ -2,25 +2,17 @@ import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { products } from "@/data/products";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { categories } from "@/data/productCategories";
 import { Heart, ShoppingCart } from "lucide-react";
-import { ALL_CATEGORY, CartQuantityEnum } from "@/Constants/AppConstant";
+import { ALL_CATEGORY } from "@/Constants/AppConstant";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import {
-  PaginationType,
   ProductCatalogDetailsType,
-  ProductCatergoryCountType,
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
-import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { Typography } from "@mui/material";
 import AllProductService from "@/Redux/Product/Services/AllProductService";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
@@ -52,8 +44,9 @@ const ProductCatalogPage = () => {
     ShopByProductDetailsType[]
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
+
+  const LIMIT_PER_PAGE = 10;
 
   const dispatch = useDispatch<TAppDispatch>();
 
@@ -68,44 +61,28 @@ const ProductCatalogPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  async function handleCategoryService(
-    type: string,
-    page: number,
-    byPassApiCall = true
-  ) {
-    console.log(type, page, byPassApiCall,'hello')
-    let products: ShopByProductDetailsType[], pagination: PaginationType;
-console.log(type === selectedCategory && byPassApiCall)
-    if (type === selectedCategory && byPassApiCall) return;
-    setFilteredProducts([]);
-    setSelectedCategory(type);
+  async function handleCategoryService(type: string, page = 1) {
+    if (type === selectedCategory && page === currentPage) return;
 
     try {
-      if (type === ALL_CATEGORY) {
-        const { data, pagination: paginationResponse } = (await dispatch(
-          AllProductService({ page, limit: 10 })
-        )) as ProductCatalogDetailsType;
-        products = data;
-        pagination = paginationResponse;
-      } else {
-        const { data, pagination: paginationResponse } = (await dispatch(
-          CategoryProductService({
+      setFilteredProducts([]);
+      setSelectedCategory(type);
+
+      const action =
+        type === ALL_CATEGORY
+          ? AllProductService({ page, limit: LIMIT_PER_PAGE })
+          : CategoryProductService({
             category: type,
-            queryParams: { page, limit: 10 },
-          })
-        )) as ProductCatalogDetailsType;
-        products = data;
-        pagination = paginationResponse;
-      }
+            queryParams: { page, limit: LIMIT_PER_PAGE },
+          });
 
-      const { totalPages, productsPerPage, currentPage } = pagination;
+      const { data, pagination } = (await dispatch(action)) as ProductCatalogDetailsType;
 
-      setNumberOfPages(totalPages);
-      setCurrentPage(currentPage);
-      setLimit(productsPerPage);
-      setFilteredProducts(products);
-    } catch (error: any) {
-      throw error;
+      setFilteredProducts(data);
+      setNumberOfPages(pagination.totalPages);
+      setCurrentPage(pagination.currentPage);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -123,14 +100,8 @@ console.log(type === selectedCategory && byPassApiCall)
   }, [productCategory.length]);
 
   async function pageOps() {
-    // let response = productCategory
     try {
-      // if (!productCategory.length) response = await dispatch(ProductCategoryCountService()) as ProductCatergoryCountType[]
-
-      // const totalCategoryCount = productCategory.reduce((acc, curr) => acc + curr.count, 0)
-      // setCategoryDetails([{ name: ALL_CATEGORY, count: totalCategoryCount, icon: "" }, ...productCategory])
-
-      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, false);
+      await handleCategoryService(initialCategory || ALL_CATEGORY);
     } catch (error: any) {
       console.error(error);
     }
@@ -185,24 +156,13 @@ console.log(type === selectedCategory && byPassApiCall)
               return (
                 <button
                   key={ind}
-                  onClick={() => handleCategoryService(categoryName, 1)}
+                  onClick={() => handleCategoryService(categoryName)}
                   style={{ textTransform: "capitalize", cursor: "pointer" }}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
-                    selectedCategory === categoryName
-                      ? "bg-yellow-400 text-black"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
+                    ? "bg-yellow-400 text-black"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
                 >
-                  {/* {
-                    categoryName !== ALL_CATEGORY && (
-                      <img
-                        src={icon}
-                        alt={categoryName}
-                        style={{ display: 'inline-block' }}
-                        className="w-5 h-5 object-contain"
-                      />
-                    )
-                  } */}
                   <span>
                     {categoryName === ALL_CATEGORY
                       ? "All Products"
@@ -304,7 +264,7 @@ console.log(type === selectedCategory && byPassApiCall)
           </div>
 
           {filteredProducts.length === 0 && isProductCategoryLoading && (
-            <ProductSkeleton />
+            <ProductSkeleton gridSize="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" />
           )}
 
           {filteredProducts.length === 0 && !isProductCategoryLoading && (
@@ -314,11 +274,7 @@ console.log(type === selectedCategory && byPassApiCall)
               </p>
               <button
                 onClick={() =>
-                  handleCategoryService(
-                    ALL_CATEGORY,
-                    1,
-                    isProductCategoryLoading
-                  )
+                  handleCategoryService(ALL_CATEGORY)
                 }
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
               >
@@ -326,7 +282,7 @@ console.log(type === selectedCategory && byPassApiCall)
               </button>
             </div>
           )}
-         <Box
+          <Box
             sx={{
               marginTop: "2rem",
               display: "flex",
@@ -339,10 +295,10 @@ console.log(type === selectedCategory && byPassApiCall)
             <Pagination
               count={numberOfPages}
               page={currentPage}
-              siblingCount={1} 
-              boundaryCount={0} 
+              siblingCount={1}
+              boundaryCount={0}
               onChange={(_, page) => {
-                handleCategoryService(selectedCategory, page, false);
+                handleCategoryService(selectedCategory, page);
               }}
               sx={{
                 "& .MuiPaginationItem-root": {
@@ -364,83 +320,6 @@ console.log(type === selectedCategory && byPassApiCall)
               }}
             />
           </Box>
-          
-          {/* <Box
-            sx={{
-              marginTop: '2rem',
-              display: 'flex',
-              justifyContent: 'center',
-              gap: "1rem",
-              color: 'white',
-              cursor: 'pointer'
-            }}
-          >
-            <ArrowBackIosIcon
-              fontSize='large'
-              onClick={() => currentPage > 1 && handleCategoryService(selectedCategory, currentPage - 1)}
-              sx={{
-                color: currentPage <= 1 ? '#5A5A5A' : '#FFF',
-                "&:hover": {
-                  color: currentPage <= 1 ? '#5A5A5A' : 'yellow',
-                }
-              }}
-            />
-            {
-              Array(numberOfPages).fill(0).map((_, ind, arr) => {
-
-                const pageNum = ind + 1;
-
-                // Last index → ALWAYS "..."
-                if (ind === arr.length - 1) {
-                  return (
-                    <Typography
-                      key={ind}
-                      sx={{
-                        marginTop: 'auto',
-                        fontSize: '1.25rem',
-                        fontWeight: 'bold',
-                        color: 'white'
-                      }}
-                    >
-                      ...
-                    </Typography>
-                  )
-                }
-
-                // Show only 3 pages: current, prev, next
-                if (Math.abs(currentPage - pageNum) > 1) return null;
-
-                return (
-                  <Typography
-                    key={ind}
-                    onClick={() => handleCategoryService(selectedCategory, pageNum)}
-                    sx={{
-                      color: currentPage === pageNum ? '#3B82F6' : 'white',
-                      fontWeight: 'bold',
-                      marginY: 'auto',
-                      fontSize: '1.25rem',
-                      cursor: 'pointer',
-                      "&:hover": {
-                        color: currentPage === pageNum ? '#3B82F6' : 'yellow',
-                      }
-                    }}
-                  >
-                    {pageNum}
-                  </Typography>
-                );
-              })
-            }
-            <ArrowForwardIosIcon
-              fontSize='large'
-              onClick={() => currentPage + 1 <= numberOfPages && handleCategoryService(selectedCategory, currentPage + 1)}
-              sx={{
-                color: currentPage + 1 > numberOfPages ? '#5A5A5A' : '#FFF',
-                "&:hover": {
-                  color: currentPage + 1 > numberOfPages ? '#5A5A5A' : 'yellow',
-                }
-              }}
-            />
-          </Box> */}
         </div>
       </div>
     </div>
