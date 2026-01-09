@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Box, Button } from "@mui/material";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
@@ -8,8 +8,6 @@ import Zana from "@/Assets/Icons/Zana.png";
 import ZPro from "@/Assets/Icons/ZPro.webp";
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
 import { MenuItemsType, TopLevelItemsType } from "./Types";
-import CollapsibleShopByBike from "@/components/CollapsibleShopByBike";
-import CollapsibleShopByProduct from "@/components/CollapsibleShopByProduct";
 import HeroSection from "@/components/HeroSection";
 import MenuIcon from "@mui/icons-material/Menu";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -41,9 +39,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
     null
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const  { verified } = useSelector((state:any) => getLoginDetails(state))
+  const { verified } = useSelector((state: any) => getLoginDetails(state))
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const heroSectionRef = useRef<HTMLDivElement>(null);
 
   const { totalItems } = useCartContext();
 
@@ -81,29 +81,33 @@ function Navbar({ isMobile }: NavbarPropsType) {
     setSelectedTopItem(name);
   }
 
-  function handleScroll() {
-    if (location.pathname !== ROUTES.BASE_URL) return;
-
-    const newHeight = isMobile ? 175 : window.innerHeight;
-
-    if (window.scrollY >= newHeight) setIsSticky(false);
-    else setIsSticky(true);
-  }
-
   useEffect(() => {
-    if (location.pathname === ROUTES.BASE_URL)
-      window.addEventListener("scroll", handleScroll);
-    else setIsSticky(false);
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [location.pathname, isMobile]);
+    if (location.pathname !== ROUTES.BASE_URL) {
+      containerRef.current!.style.position = 'fixed';
+      return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      const entry = entries[0];
+      if (!entry.isIntersecting && entry.intersectionRatio === 0) containerRef.current.style.position = 'fixed';
+      else containerRef.current.style.position = 'sticky';
+    })
+
+    observer.observe(heroSectionRef.current)
+
+    return () => observer.disconnect()
+  }, [location.pathname]);
 
   return (
     <Box>
-      {location.pathname === ROUTES.BASE_URL && <HeroSection />}
+      <Box ref={heroSectionRef}>
+        {location.pathname === ROUTES.BASE_URL && <HeroSection />}
+      </Box>
       <Box
+        ref={containerRef}
         sx={{
-          position: isSticky ? "sticky" : "fixed",
+          position: "sticky",
           top: 0,
           width: "100%",
           zIndex: 4,
@@ -237,9 +241,9 @@ function Navbar({ isMobile }: NavbarPropsType) {
         (verified ? (
           <ProfileModal onClose={() => setSelectedTopItem(null)} />
         ) : (
-          <SignupPopup 
-          type='navbar'
-          onClose={() => setSelectedTopItem(null)} />
+          <SignupPopup
+            type='navbar'
+            onClose={() => setSelectedTopItem(null)} />
         ))}
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />

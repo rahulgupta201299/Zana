@@ -32,10 +32,16 @@ function Bikes() {
 
 	const navigate = useNavigate();
 
+	const allBrandDetails = useMemo(() => {
+		return bikeSelector.reduce((acc, curr) => {
+			return [...acc, ...curr.models]
+		}, [])
+	}, [bikeSelector.length])
+
 	const categoriesWithCount: { name: string, count: number }[] = useMemo(() => {
 		if (!bikeSelector.length) return []
 
-		const result = [{ name: ALL_CATEGORY, count: bikeSelector.length }]
+		const result = [{ name: ALL_CATEGORY, count: allBrandDetails.length }]
 
 		bikeSelector.forEach(item => {
 			result.push({ name: item.name.toLowerCase(), count: item.models.length })
@@ -50,12 +56,6 @@ function Bikes() {
 
 		navigate(`/${bikeType}${SUB_ROUTES.BIKE}/${bikeBrand}/${bikeModel}/${id}`);
 	}
-
-	const allBrandDetails = useMemo(() => {
-		return bikeSelector.reduce((acc, curr) => {
-			return [...acc, ...curr.models]
-		}, [])
-	}, [bikeSelector.length])
 
 	function handleBrandCategoryClick(val: string) {
 
@@ -140,7 +140,7 @@ function Bikes() {
 										<h3 className="text-lg md:text-2xl font-bold mb-2">
 											{name}
 										</h3>
-										<p className="text-xs md:text-sm opacity-75 mb-3">
+										<p className="text-xs md:text-sm opacity-75 mb-3 truncate">
 											{description}
 										</p>
 										<div className="flex items-center justify-between">
@@ -158,7 +158,7 @@ function Bikes() {
 					</div>
 
 					{
-						filteredBrandDetails.length === 0 && isBikeProductLoading && <ProductSkeleton />
+						filteredBrandDetails.length === 0 && isBikeProductLoading && <ProductSkeleton gridSize="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" />
 					}
 
 					{filteredBrandDetails.length === 0 && (
