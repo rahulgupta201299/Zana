@@ -15,7 +15,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
-import { debounce } from "@/Utils/Debounce";
+import { createDebounce } from "@/Utils/Debounce";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import SearchService from "@/Redux/Product/Services/SearchService";
 import { SearchDataProductsType, SearchResponseType } from "@/Redux/Product/Types";
@@ -42,7 +42,7 @@ export default function Search({ onClose }: SearchPropsType) {
   const [products, setProducts] = useState<SearchDataProductsType[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const searchDebounce = useCallback(debounce(handleSearchService, 1000), []);
+  const searchDebounce = useCallback(createDebounce(handleSearchService, 1000), []);
 
   async function handleSearchService(query: string) {
     // Perform API call
