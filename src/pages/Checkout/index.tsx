@@ -23,41 +23,42 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import PaymentImg from "@/Assets/Images/Payment.svg";
-import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import cartCheckoutServiceAction from "@/Redux/Cart/Services/Checkout";
+import cartCheckoutServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
+// import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
+import useCart from "@/hooks/useCart";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import ProductRecommendation from "./ProductRecommendation";
 
 export default function CheckoutPage() {
-  const { cartItems, updateQuantity, removeItem, clearCart } = useCartContext();
+  const { decrementToCart, incrementToCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   const phoneNumber = useSelector<TAppStore, string>(
     (state) => state.auth.login.phoneNumber
   );
-  const isLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [cartCheckOutServiceName])
-  );
+  const cartDetail = useSelector(cartDetailSelector)
+
+  // TODO
+  const isLoading = false // useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartCheckOutServiceName]));
 
   const [countries, setCountries] = useState([]);
   const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD);
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
-  const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
-  const total = subtotal - discount;
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const { subtotal, totalAmount: total, discountAmount: discount } = cartDetail
+
   const actions = useMemo(
     () => ({
       saveCartDetails: (state: any) =>
@@ -134,24 +135,25 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-            .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
-            .required("Billing pincode is required")
+          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+          .required("Billing pincode is required")
     ),
-    billingPhone:Yup.string().when("sameAsDelivery", (same, schema) =>
-    same
-      ? schema
-      : schema
+    billingPhone: Yup.string().when("sameAsDelivery", (same, schema) =>
+      same
+        ? schema
+        : schema
           .required("Billing phone number is required")
-  ),
+    ),
   });
 
+  // TODO change the API contract completely
   const handleSubmit = async (values) => {
     if (paymentType !== PaymentTypeEnum.COD) {
       displayRazorpay();
       return;
     }
-    const mappedItems = cartItems.map((item) => ({
-      productId: item.id,
+    const mappedItems = cartDetail.items.map((item) => ({
+      productId: item.product._id,
       quantity: item.quantity,
     }));
     const body = {
@@ -170,25 +172,25 @@ export default function CheckoutPage() {
 
       billingAddress: values.sameAsDelivery
         ? {
-            fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-            addressLine1: values.shippingAddress,
-            addressLine2: values.shippingApartment,
-            city: values.shippingCity,
-            state: values.shippingState,
-            postalCode: values.shippingPincode,
-            country: values.shippingCountry,
-            phone:values.phone
-          }
+          fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+          addressLine1: values.shippingAddress,
+          addressLine2: values.shippingApartment,
+          city: values.shippingCity,
+          state: values.shippingState,
+          postalCode: values.shippingPincode,
+          country: values.shippingCountry,
+          phone: values.phone
+        }
         : {
-            fullName: `${values.billingFirstName} ${values.billingLastName}`,
-            addressLine1: values.billingAddress,
-            addressLine2: values.billingApartment,
-            city: values.billingCity,
-            state: values.billingState,
-            postalCode: values.billingPincode,
-            country: values.billingCountry,
-            phone: values.billingPhone
-          },
+          fullName: `${values.billingFirstName} ${values.billingLastName}`,
+          addressLine1: values.billingAddress,
+          addressLine2: values.billingApartment,
+          city: values.billingCity,
+          state: values.billingState,
+          postalCode: values.billingPincode,
+          country: values.billingCountry,
+          phone: values.billingPhone
+        },
     };
 
     try {
@@ -1054,7 +1056,7 @@ export default function CheckoutPage() {
                                 label="Phone"
                                 value={values.billingPhone}
                                 sx={{
-                                  mt:'16px'
+                                  mt: '16px'
                                 }}
                                 onChange={(e) => {
                                   if (e.target.value.match(/[^0-9]/)) return;
@@ -1078,7 +1080,7 @@ export default function CheckoutPage() {
                                     },
                                     inputProps: { maxLength: 10 },
                                   },
-                               
+
                                   inputLabel: {
                                     sx: {
                                       color: "#000",
@@ -1132,9 +1134,9 @@ export default function CheckoutPage() {
               gap: "16px",
             }}
           >
-            {cartItems.map((item) => (
+            {cartDetail.items.map((item) => (
               <Box
-                key={item.id}
+                key={item.product._id}
                 sx={{
                   color: "#FFFFFF",
                   borderRadius: "10px",
@@ -1155,8 +1157,8 @@ export default function CheckoutPage() {
                   }}
                 >
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={item.product.imageUrl}
+                    alt={item.product.name}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -1176,7 +1178,7 @@ export default function CheckoutPage() {
                 >
                   <Box>
                     <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
-                      {item.name}
+                      {item.product.name}
                     </Typography>
                   </Box>
 
@@ -1206,9 +1208,7 @@ export default function CheckoutPage() {
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          item.quantity > 1
-                            ? updateQuantity(item.id, item.quantity - 1)
-                            : removeItem(item.id);
+                          decrementToCart(item.product._id, { saveToDb: true })
                         }}
                         sx={{
                           color: "white",
@@ -1225,7 +1225,7 @@ export default function CheckoutPage() {
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          updateQuantity(item.id, item.quantity + 1);
+                          incrementToCart(item.product._id, item.product.quantityAvailable, { saveToDb: true })
                         }}
                         sx={{
                           color: "white",
@@ -1345,7 +1345,7 @@ export default function CheckoutPage() {
             </Typography>
           </Box>
 
-          <ProductRecommendation />
+          {/* <ProductRecommendation /> */}
         </Grid>
       </Grid>
     </Container>

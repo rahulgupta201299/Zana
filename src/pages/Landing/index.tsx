@@ -1,8 +1,7 @@
 import NewArrivals from "@/components/NewArrivals";
 import OurPhilosophy from "@/components/OurPhilosophy";
 import GarageFavorite from "@/components/GarageFavorite";
-import ShopByBike from "@/components/ShopByBike";
-import ShopTheLook from "@/components/ShopTheLook";
+// import ShopTheLook from "@/components/ShopTheLook";
 import YouTubeSection from "@/components/YouTubeSection";
 import InstagramFeed from "@/components/InstagramFeed";
 import BlogsSection from "@/components/BlogsSection";
@@ -15,7 +14,7 @@ function index() {
     <div className="min-h-screen">
       <OurPhilosophy />
       <GarageFavorite />
-      <ShopTheLook />
+      {/* <ShopTheLook /> */}
       <NewArrivals />
       <YouTubeSection />
       <InstagramFeed />

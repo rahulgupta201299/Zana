@@ -22,7 +22,7 @@ import {
   allProductServiceName,
   categoryProductServiceName,
 } from "@/Redux/Product/Actions";
-import { useCartContext } from "@/Context/CartProvider";
+import useCart from "@/hooks/useCart";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const ProductCatalogPage = () => {
   const state = location.state;
   const initialCategory = state?.category?.toLowerCase() || "";
 
-  const { addToCart } = useCartContext();
+  const { incrementToCart } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
@@ -110,24 +110,10 @@ const ProductCatalogPage = () => {
   function handleAddToCart(
     e: MouseEvent<HTMLButtonElement>,
     productId: string,
-    productName: string,
-    price: number,
-    image: string,
     quantityAvailable: number,
-    description?: string,
-    quantity?: number
   ) {
     e.stopPropagation();
-    addToCart(
-      productId,
-      productName,
-      price,
-      image,
-      quantityAvailable,
-      description,
-      quantity
-    );
-    navigate(ROUTES.CART);
+    incrementToCart(productId, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
   }
 
   useEffect(() => {
@@ -245,9 +231,6 @@ const ProductCatalogPage = () => {
                             handleAddToCart(
                               e,
                               _id,
-                              name,
-                              price,
-                              imageUrl,
                               quantityAvailable
                             )
                           }

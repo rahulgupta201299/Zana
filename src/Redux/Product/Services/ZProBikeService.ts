@@ -6,7 +6,6 @@ import {
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { zProBikeTraceActions } from "../Actions";
-import { bikes } from "@/pages/BikeDetail/Constant";
 
 const network = new Network();
 

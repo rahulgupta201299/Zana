@@ -8,26 +8,25 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCartContext } from "@/Context/CartProvider";
 import { ProductDetailParamsType } from "./Types";
 import { ProductCatalogDetailsType, ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import { handleSocialMedia, replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
-import { CartQuantityEnum, SocialMediaPlatformEnum } from "@/Constants/AppConstant";
+import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { Box, Skeleton } from "@mui/material";
+import useCart from "@/hooks/useCart";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
-  const { addToCart } = useCartContext()
+  const { addToCart, getQuantity, incrementToCart, decrementToCart } = useCart()
   const { productCategory, productId, productItem } = useParams<ProductDetailParamsType>();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [product, setProduct] = useState<ShopByProductDetailsType | null>(null)
   const [suggestedProducts, setSuggestedProducts] = useState<ShopByProductDetailsType[]>([])
-  const [quantity, setQuantity] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
 
   const dispatch = useDispatch<TAppDispatch>()
@@ -62,12 +61,6 @@ const ProductDetailPage = () => {
     const name = replaceSpacesWithHiphen(productName)
 
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
-  }
-
-  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
-    e.stopPropagation()
-    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
-    navigateTo && navigate(navigateTo)
   }
 
   useEffect(() => {
@@ -172,18 +165,18 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity === 1}
-                  onClick={() => setQuantity(p => p > 1 ? p - 1 : p)}
+                  disabled={getQuantity(_id) === 0}
+                  onClick={() => decrementToCart(_id)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{quantity}</span>
+                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{getQuantity(_id)}</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity === quantityAvailable}
-                  onClick={() => setQuantity(p => quantityAvailable > p ? p + 1 : p)}
+                  disabled={getQuantity(_id) === quantityAvailable}
+                  onClick={() => incrementToCart(_id, quantityAvailable)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -193,7 +186,10 @@ const ProductDetailPage = () => {
 
             <div className="flex gap-4 mb-6">
               <Button
-                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation()
+                  addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
+                }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
@@ -201,7 +197,10 @@ const ProductDetailPage = () => {
               </Button>
               {/* TODO handle the buy now  */}
               <Button
-                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CHECKOUT, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation()
+                  addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CHECKOUT })
+                }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
@@ -303,7 +302,7 @@ const ProductDetailPage = () => {
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {suggestedProducts.map((relatedProduct, index) => {
 
-            const { _id, name, imageUrl, price, category, shortDescription } = relatedProduct
+            const { _id, name, imageUrl, price, category } = relatedProduct
 
             return (
               <div
@@ -320,7 +319,10 @@ const ProductDetailPage = () => {
                     />
                     <div className="absolute bottom-2 left-2 group">
                         <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART)}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                            e.stopPropagation()
+                            addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
+                          }}
                           className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
                         >
                           <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">

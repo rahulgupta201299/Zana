@@ -11,11 +11,9 @@ const container = document.getElementById('root') as HTMLElement
 const root = createRoot(container)
 
 root.render(
-	// <React.StrictMode>
 	<Provider store={store}>
 		<PersistGate persistor={PersistedAppStore} onBeforeLift={() => undefined}>
 			{(_persisted: boolean) => <App />}
 		</PersistGate>
 	</Provider>
-	// </React.StrictMode>,
 )
