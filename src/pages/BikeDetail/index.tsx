@@ -1,10 +1,8 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
-import { products } from "@/data/products";
-import { categories } from "@/data/productCategories";
 import { ShoppingCart, Heart } from "lucide-react";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { BikeDetailParamsType } from "./Types";
@@ -19,7 +17,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
 import Loading from "@/components/Loading";
 import { Skeleton } from "@mui/material";
-import { useCartContext } from "@/Context/CartProvider";
+import useCart from "@/hooks/useCart";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
@@ -34,7 +32,7 @@ const BikeDetailPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
-  const { addToCart } = useCartContext()
+  const { addToCart } = useCart()
 
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>([])
@@ -110,12 +108,6 @@ const BikeDetailPage = () => {
     else setFilteredBikeProducts(bikeProducts.filter(item => item.category.toLowerCase() === val))
 
     setSelectedCategory(val)
-  }
-
-  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
-    e.stopPropagation()
-    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
-    navigateTo && navigate(navigateTo)
   }
 
   if (!bikeDetails && !loading && !isLoading) {
@@ -291,7 +283,10 @@ const BikeDetailPage = () => {
                           <Heart size={18} />
                         </button> */}
                         <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription)}
+                          onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                            e.stopPropagation()
+                            addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
+                          }}
                           className="p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
                           <ShoppingCart size={18} />
@@ -305,7 +300,7 @@ const BikeDetailPage = () => {
           </div>
 
           {
-            filteredBikeProducts.length === 0 && isLoading && <ProductSkeleton />
+            filteredBikeProducts.length === 0 && isLoading && <ProductSkeleton gridSize="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" />
           }
 
           {/* No Products Found */}

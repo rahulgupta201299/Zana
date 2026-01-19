@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { X, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useCartContext } from "@/Context/CartProvider";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
-import { openCartSelector } from "@/Redux/Cart/Selectors";
+import { cartDetailSelector, openCartSelector } from "@/Redux/Cart/Selectors";
+import useCart from "@/hooks/useCart";
+import { ROUTES } from "@/Constants/Routes";
 
 interface CartSidebarProps {
-  variant?: "drawer" | "checkout"; 
+  variant?: "drawer" | "checkout";
 }
 
 const CartSidebar = ({
@@ -23,17 +24,18 @@ const CartSidebar = ({
 }: CartSidebarProps) => {
   const navigate = useNavigate();
 
+  const cartDetail = useSelector(cartDetailSelector);
   const isOpenCart = useSelector(openCartSelector)
 
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const { cartItems, updateQuantity, removeItem } = useCartContext();
 
   const dispatch = useDispatch<TAppDispatch>()
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
-  const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
-  const total = subtotal - discount;
+  const { getTotalQuantity, incrementToCart, decrementToCart, removeItemToCart } = useCart()
+
+  const { subtotal, discountAmount: discount, totalAmount: total } = cartDetail;
+
+  const totalItems = getTotalQuantity()
 
   function onClose() {
     dispatch(setOpenCart(false))
@@ -70,7 +72,7 @@ const CartSidebar = ({
         )}
       </Box>
 
-    
+
       <Box
         sx={{
           flex: 1,
@@ -81,7 +83,7 @@ const CartSidebar = ({
           gap: 2,
         }}
       >
-        {cartItems.length === 0 ? (
+        {cartDetail.items.length === 0 ? (
           <Box sx={{ textAlign: "center", opacity: 0.5, mt: 10 }}>
             <Typography>Your cart is empty</Typography>
             <Typography sx={{ opacity: 0.6, mt: 1 }}>
@@ -89,14 +91,14 @@ const CartSidebar = ({
             </Typography>
           </Box>
         ) : (
-          cartItems.map((item) => (
+          cartDetail.items.map((item) => (
             <Box
-              key={item.id}
-              onClick={() => setActiveItem(item.id)}
+              key={item.product._id}
+              onClick={() => setActiveItem(item.product._id)}
               sx={{
                 border: "2px solid",
                 borderColor:
-                  activeItem === item.id ? "yellow" : "transparent",
+                  activeItem === item.product._id ? "yellow" : "transparent",
                 bgcolor: "rgba(255,255,255,0.05)",
                 borderRadius: 2,
                 transition: "0.2s",
@@ -105,7 +107,7 @@ const CartSidebar = ({
                 gap: 2,
               }}
             >
-           
+
               <Box
                 sx={{
                   width: { xs: 80, md: 110 },
@@ -117,8 +119,8 @@ const CartSidebar = ({
                 }}
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item.product.imageUrl}
+                  alt={item.product.name}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -128,7 +130,7 @@ const CartSidebar = ({
                 />
               </Box>
 
-        
+
               <Box
                 sx={{
                   flex: 1,
@@ -143,10 +145,10 @@ const CartSidebar = ({
                     fontSize={{ xs: 16, md: 18 }}
                     sx={{ mb: 0.5 }}
                   >
-                    {item.name}
+                    {item.product.name}
                   </Typography>
                   <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
-                    {item.description || "Premium motorcycle accessory"}
+                    {item.product.shortDescription || "Premium motorcycle accessory"}
                   </Typography>
                 </Box>
 
@@ -158,7 +160,7 @@ const CartSidebar = ({
                     alignItems: "center",
                   }}
                 >
-             
+
                   <Typography
                     color="yellow"
                     fontWeight={700}
@@ -167,7 +169,7 @@ const CartSidebar = ({
                     ₹ {item.price.toLocaleString()}
                   </Typography>
 
-               
+
                   <Box
                     sx={{
                       display: "flex",
@@ -179,9 +181,7 @@ const CartSidebar = ({
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
-                        item.quantity > 1
-                          ? updateQuantity(item.id, item.quantity - 1)
-                          : removeItem(item.id);
+                        decrementToCart(item.product._id, {saveToDb: true})
                       }}
                       sx={{
                         color: "white",
@@ -198,7 +198,7 @@ const CartSidebar = ({
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
-                        updateQuantity(item.id, item.quantity + 1);
+                        incrementToCart(item.product._id, item.product.quantityAvailable, { saveToDb: true })
                       }}
                       sx={{
                         color: "white",
@@ -215,8 +215,8 @@ const CartSidebar = ({
         )}
       </Box>
 
-   
-      {cartItems.length > 0 && (
+
+      {cartDetail.items.length > 0 && (
         <Box
           sx={{
             borderTop: "1px solid rgba(255,255,255,0.1)",
@@ -244,7 +244,7 @@ const CartSidebar = ({
             + Add more products
           </Button>
 
-          
+
           <Box
             sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
           >
@@ -256,7 +256,7 @@ const CartSidebar = ({
             </Typography>
           </Box>
 
-        
+
           {discount > 0 && (
             <Box
               sx={{
@@ -276,7 +276,7 @@ const CartSidebar = ({
             </Box>
           )}
 
-          
+
           {subtotal > 8000 && subtotal <= 10000 && (
             <Box
               sx={{
@@ -295,7 +295,7 @@ const CartSidebar = ({
             </Box>
           )}
 
-       
+
           <Box
             sx={{
               display: "flex",
@@ -335,11 +335,11 @@ const CartSidebar = ({
               color: "black",
               borderRadius: "10px",
               fontWeight: 800,
-              fontSize: 18,           
+              fontSize: 18,
             }}
             onClick={() => {
               onClose?.();
-              navigate("/checkout");
+              navigate(ROUTES.CHECKOUT);
             }}
           >
             CHECKOUT
@@ -349,7 +349,7 @@ const CartSidebar = ({
     </Box>
   );
 
- 
+
   if (variant === "checkout") {
     return (
       <Box

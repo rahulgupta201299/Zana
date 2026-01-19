@@ -2,19 +2,21 @@ import React, { MouseEvent } from "react";
 import { useNavigate } from "react-router";
 import { Box, Typography, Button } from "@mui/material";
 import { capProducts } from "@/components/CapSection";
-import { useCartContext } from "@/Context/CartProvider";
 import { ROUTES } from "@/Constants/Routes";
+import useCart from "@/hooks/useCart";
 
 export default function ProductRecommendation() {
 
 	const navigate = useNavigate()
 
-	const { addToCart } = useCartContext()
+	const { incrementToCart } = useCart()
 
-	function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, description?: string, quantity?: number) {
+	function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, quantityAvailable: number) {
 		e.stopPropagation()
-		addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
+		incrementToCart(productId, quantityAvailable, { saveToDb: true })
 	}
+
+	// TODO handle Button UI
 
 	return (
 		<Box
@@ -133,7 +135,7 @@ export default function ProductRecommendation() {
 									height: 30,
 									fontSize: "12px",
 								}}
-								onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, id, name, price, image, quantityAvailable)}
+								onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, id, quantityAvailable)}
 							>
 								Add
 							</Button>

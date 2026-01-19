@@ -1,8 +1,5 @@
-import { useDispatch } from "react-redux";
-import { TAppDispatch } from "@/Configurations/AppStore";
-import { useCartContext } from "@/Context/CartProvider";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { PlusIcon } from "lucide-react";
+import useCart from "@/hooks/useCart";
 
 const products = [
   {
@@ -67,9 +64,11 @@ const ProductCard = ({
   product,
   onClick,
   height = 176,
+  count = 0,
 }: {
   product: (typeof products)[0];
   onClick: () => void;
+  count: number,
   height?: number;
 }) => (
   <div className="relative group" style={{ height }}>
@@ -78,29 +77,49 @@ const ProductCard = ({
       alt={product.name}
       className="w-full h-full object-cover rounded-lg shadow-lg"
     />
-    <button
-      onClick={onClick}
-      className="absolute bottom-2 left-2 h-9 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-9 hover:w-auto hover:px-3 hover:justify-start group"
-    >
-      <span className="whitespace-nowrap text-sm font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
-        Add to cart
-      </span>
-      <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
-    </button>
+    <div className="absolute bottom-2 left-2 group">
+      <button
+        onClick={onClick}
+        className="h-9 bg-white rounded-full flex items-center justify-center
+               overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
+               w-9 group-hover:w-auto group-hover:px-3"
+      >
+        <span
+          className="whitespace-nowrap text-sm font-semibold text-black
+                 hidden translate-x-[-6px]
+                 group-hover:inline-block group-hover:translate-x-0
+                 transition-all duration-300 mr-1"
+        >
+          Add to cart
+        </span>
+        <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
+      </button>
+
+      {
+        count > 0 && (
+          <span
+            className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
+               bg-red-500 text-white text-xs flex items-center justify-center
+               font-semibold shadow transition-all duration-300
+               group-hover:translate-x-0"
+          >
+            {count}
+          </span>
+        )
+      }
+    </div>
   </div>
 );
 
 const GarageFavorite = () => {
 
-  const { addToCart } = useCartContext()
-  const dispatch = useDispatch<TAppDispatch>()
+  const { incrementToCart, getQuantity } = useCart()
 
   function handleAddToCart(index: number) {
     const product = products[index];
 
-    const {id: productId, name: productName, price, image, quantityAvailable } = product
-    addToCart(productId, productName, price, image, quantityAvailable)
-    dispatch(setOpenCart(true))
+    const {id: productId, quantityAvailable } = product
+    incrementToCart(productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
@@ -125,6 +144,7 @@ const GarageFavorite = () => {
                   product={products[idx]}
                   onClick={() => handleAddToCart(idx)}
                   height={col.length === 1 ? 360 : 176}
+                  count={getQuantity(products[idx].id)}
                 />
               ))}
             </div>
@@ -138,6 +158,7 @@ const GarageFavorite = () => {
               product={product}
               onClick={() => handleAddToCart(idx)}
               height={150}
+              count={getQuantity(products[idx].id)}
             />
           ))}
         </div>

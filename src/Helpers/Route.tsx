@@ -1,9 +1,7 @@
 import type { ComponentType } from 'react'
 import { lazy, Suspense } from 'react'
 import type { LoaderFunction, LoaderFunctionArgs } from 'react-router-dom'
-import { redirect } from 'react-router-dom'
 
-import { ROUTES } from '@/Constants/Routes'
 import AppStore from '@/Configurations/AppStore'
 
 export const lazyLoadPage = (

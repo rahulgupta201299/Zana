@@ -1,4 +1,4 @@
-export function debounce(fn: any, delay = 1000) {
+export function createDebounce(fn: any, delay: number) {
   let timerId: any;
   return function (...args: any[]) {
     if (timerId) clearTimeout(timerId);

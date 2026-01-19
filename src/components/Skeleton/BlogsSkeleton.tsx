@@ -1,6 +1,6 @@
-import { Box, Skeleton, Card, CardContent } from "@mui/material";
+import { Skeleton, Card, CardContent } from "@mui/material";
 
-export const BlogShimmer = () => {
+export default function BlogsSkeleton() {
   return (
     <Card
       sx={{

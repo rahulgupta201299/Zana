@@ -1,9 +1,6 @@
 ;
-import { TAppDispatch } from "@/Configurations/AppStore";
-import { useCartContext } from "@/Context/CartProvider";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
+import useCart from "@/hooks/useCart";
 import { PlusIcon } from "lucide-react";
-import { useDispatch } from "react-redux";
 
 const NewArrivals = () => {
 
@@ -58,15 +55,13 @@ const NewArrivals = () => {
     }
   ];
 
-  const { addToCart } = useCartContext()
-  const dispatch = useDispatch<TAppDispatch>()
+  const { incrementToCart } = useCart()
 
   const handleAddToCart = (index: number) => {
     const product = products[index];
 
-    const { id: productId, name: productName, price, image, quantityAvailable } = product
-    addToCart(productId, productName, price, image, quantityAvailable)
-    dispatch(setOpenCart(true))
+    const { id: productId, quantityAvailable } = product
+    incrementToCart(productId, quantityAvailable, {saveToDb: true, easyCheckout: true})
   };
 
   return (

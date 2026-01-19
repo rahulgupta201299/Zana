@@ -1,12 +1,18 @@
+import useCart from "@/hooks/useCart";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { Minus, Plus, X } from "lucide-react";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useCartContext } from "@/Context/CartProvider";
 
 const CartCheckoutPage = () => {
   const navigate = useNavigate();
   
-  // Use cart hook
-  const { cartItems, updateQuantity, removeItem, subtotal, discount, total, totalItems } = useCartContext();
+  const cartDetail = useSelector(cartDetailSelector);
+
+  const { removeItemToCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
+  const { subtotal, discountAmount: discount, totalAmount: total } = cartDetail
+
+  const totalItems = getTotalQuantity()
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -14,7 +20,7 @@ const CartCheckoutPage = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <h1 className="text-white text-3xl md:text-5xl font-black mb-6 md:mb-8">YOUR CART</h1>
 
-        {cartItems.length === 0 ? (
+        {cartDetail.items.length === 0 ? (
           /* Empty Cart State */
           <div className="flex flex-col items-center justify-center py-16 md:py-32">
             <div className="w-32 h-32 md:w-48 md:h-48 mb-6 opacity-20">
@@ -37,18 +43,18 @@ const CartCheckoutPage = () => {
             {/* Left: Cart Items */}
             <div className="lg:col-span-8">
               <div className="space-y-4">
-                {cartItems.map((item) => (
+                {cartDetail.items.map((item) => (
                   <div
-                    key={item.id}
+                    key={item.product._id}
                     className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:border-yellow-400 transition-colors"
                   >
                     <div className="flex gap-4 p-4">
                       {/* Product Image */}
-                      <Link to={`/product/${item.id}`} className="flex-shrink-0">
+                      <Link to={`/product/${item.product._id}`} className="flex-shrink-0">
                         <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden">
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={item.product.imageUrl}
+                            alt={item.product.name}
                             className="w-full h-full object-contain p-2"
                             onError={(e) => {
                               e.currentTarget.src = '/bike-placeholder.svg';
@@ -60,13 +66,13 @@ const CartCheckoutPage = () => {
                       {/* Product Info */}
                       <div className="flex-1 flex flex-col justify-between">
                         <div>
-                          <Link to={`/product/${item.id}`}>
+                          <Link to={`/product/${item.product._id}`}>
                             <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
-                              {item.name}
+                              {item.product.name}
                             </h3>
                           </Link>
                           <p className="text-white/60 text-sm md:text-base">
-                            {item.description || 'Premium motorcycle accessory'}
+                            {item.product.shortDescription || 'Premium motorcycle accessory'}
                           </p>
                         </div>
 
@@ -78,7 +84,7 @@ const CartCheckoutPage = () => {
                             </span>
                             {item.quantity > 1 && (
                               <p className="text-white/40 text-sm">
-                                ₹ {(item.price * item.quantity).toLocaleString()} total
+                                ₹ {(item.totalPrice).toLocaleString()} total
                               </p>
                             )}
                           </div>
@@ -87,13 +93,7 @@ const CartCheckoutPage = () => {
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2 bg-white/10 rounded-lg">
                               <button
-                                onClick={() => {
-                                  if (item.quantity > 1) {
-                                    updateQuantity(item.id, item.quantity - 1);
-                                  } else {
-                                    removeItem(item.id);
-                                  }
-                                }}
+                                onClick={() => decrementToCart(item.product._id, { saveToDb: true })}
                                 className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                               >
                                 <Minus size={20} />
@@ -102,7 +102,7 @@ const CartCheckoutPage = () => {
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() => incrementToCart(item.product._id, item.product.quantityAvailable, { saveToDb: true })}
                                 className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                               >
                                 <Plus size={20} />
@@ -111,7 +111,7 @@ const CartCheckoutPage = () => {
 
                             {/* Remove Button */}
                             <button
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => removeItemToCart(item.product._id)}
                               className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
                               title="Remove item"
                             >

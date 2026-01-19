@@ -6,7 +6,7 @@ import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
 import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
 import { shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { SUB_ROUTES } from "@/Constants/Routes";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";

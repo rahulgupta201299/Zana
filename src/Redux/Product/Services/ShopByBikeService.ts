@@ -3,7 +3,6 @@ import { QueryParamShopByBikeType, ShopByBikeType } from "@/Redux/Product/Types"
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { shopByBikeTraceActions } from "../Actions";
-import { bikes } from "@/pages/BikeDetail/Constant";
 
 const network = new Network();
 

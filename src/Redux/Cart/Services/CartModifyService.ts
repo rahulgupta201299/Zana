@@ -1,27 +1,27 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
-import { cartCheckoutActions } from "../Action";
+import { cartModifyActions } from "../Action";
+import { CartModifyReqType, CartDetailResType } from "../Types";
 
 const network = new Network();
 
-async function cartCheckoutService(
-  requestData: any
-): Promise<any> {
+async function cartModifyService(
+  requestData: CartModifyReqType
+): Promise<CartDetailResType> {
   const options = {
-    url: `/api/v1/cart/save`,
+    url: `/api/v1/cart/item`,
     method: API_METHOD_ENUM.POST,
     data: requestData,
   };
     const response = await network.request(options)
     const { data } = response
     return data
- 
 }
 
-const cartCheckoutServiceAction = serviceActionCreator(
-  cartCheckoutActions,
-  cartCheckoutService
+const cartModifyServiceAction = serviceActionCreator(
+  cartModifyActions,
+  cartModifyService
 );
 
-export default cartCheckoutServiceAction;
+export default cartModifyServiceAction;

@@ -17,10 +17,10 @@ import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
 import SignupPopup from "../SignupPopup";
-import { useCartContext } from "@/Context/CartProvider";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
+import useCart from "@/hooks/useCart";
 
 
 type NavbarPropsType = {
@@ -45,11 +45,13 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLDivElement>(null);
 
-  const { totalItems } = useCartContext();
+  const { getTotalQuantity } = useCart();
 
   const isZProPath = bikeType === BikeCategoryEnum.ZPRO
 
   const dispatch = useDispatch<TAppDispatch>()
+
+  const totalItems = getTotalQuantity()
 
 
   function handleMenuItemClick(

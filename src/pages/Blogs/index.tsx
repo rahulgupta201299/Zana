@@ -10,7 +10,7 @@ import { PersistPartial } from "redux-persist/es/persistReducer";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { Grid } from "lucide-react";
-import { BlogShimmer } from "./component/BlogsShimmer";
+import BlogsSkeleton from "@/components/Skeleton/BlogsSkeleton";
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -108,7 +108,7 @@ const Blogs = () => {
             {
             isListLoading
               ? Array.from({ length: 4 }).map((_, i) => (
-                    <BlogShimmer/>
+                    <BlogsSkeleton />
                 ))
               
            : blogs.map((blog, index) => (
