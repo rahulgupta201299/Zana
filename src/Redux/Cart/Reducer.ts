@@ -14,7 +14,8 @@ import { cartModifyActions, getCartDetailActions } from "./Action";
 export const INITIAL_STATE: T_CART_REDUCER = {
   cartDetail: {
     _id: "",
-    items: [],
+    processedItems: [],
+    unProcessedItems: [],
     subtotal: 0,
     paymentStatus: "",
     shippingCost: 0,
@@ -45,15 +46,13 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     builder.addCase(
       cartModifyActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
-        const { phoneNumber, ...rest } = action.payload;
-        state.cartDetail = rest;
+        state.cartDetail = action.payload;
       },
     );
     builder.addCase(
       getCartDetailActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
-        const { phoneNumber, ...rest } = action.payload;
-        state.cartDetail = rest;
+        state.cartDetail = action.payload;
       },
     );
   },

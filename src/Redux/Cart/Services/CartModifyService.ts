@@ -15,8 +15,7 @@ async function cartModifyService(
     data: requestData,
   };
     const response = await network.request(options)
-    const { data } = response
-    return data
+    return response
 }
 
 const cartModifyServiceAction = serviceActionCreator(

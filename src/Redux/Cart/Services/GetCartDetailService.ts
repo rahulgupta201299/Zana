@@ -16,8 +16,7 @@ async function getCartDetailService(): Promise<CartDetailResType> {
     method: API_METHOD_ENUM.GET,
   };
     const response = await network.request(options)
-    const { data } = response
-    return data
+    return response
 }
 
 const getCartDetailServiceAction = serviceActionCreator(

@@ -33,7 +33,7 @@ const CartSidebar = ({
 
   const { getTotalQuantity, incrementToCart, decrementToCart, removeItemToCart } = useCart()
 
-  const { subtotal, discountAmount: discount, totalAmount: total } = cartDetail;
+  const { subtotal, discountAmount: discount, totalAmount: total, processedItems = [] } = cartDetail;
 
   const totalItems = getTotalQuantity()
 
@@ -83,7 +83,7 @@ const CartSidebar = ({
           gap: 2,
         }}
       >
-        {cartDetail.items.length === 0 ? (
+        {processedItems.length === 0 ? (
           <Box sx={{ textAlign: "center", opacity: 0.5, mt: 10 }}>
             <Typography>Your cart is empty</Typography>
             <Typography sx={{ opacity: 0.6, mt: 1 }}>
@@ -91,132 +91,137 @@ const CartSidebar = ({
             </Typography>
           </Box>
         ) : (
-          cartDetail.items.map((item) => (
-            <Box
-              key={item.product._id}
-              onClick={() => setActiveItem(item.product._id)}
-              sx={{
-                border: "2px solid",
-                borderColor:
-                  activeItem === item.product._id ? "yellow" : "transparent",
-                bgcolor: "rgba(255,255,255,0.05)",
-                borderRadius: 2,
-                transition: "0.2s",
-                p: 2,
-                display: "flex",
-                gap: 2,
-              }}
-            >
+          processedItems.map((item) => {
+            const { product, quantity = 0, price = 0 } = item;
+            const { _id: productId = '', imageUrl = '', name = '', shortDescription = '' } = product || {}
 
+            return (
               <Box
+                key={item.product._id}
+                onClick={() => setActiveItem(productId)}
                 sx={{
-                  width: { xs: 80, md: 110 },
-                  height: { xs: 80, md: 110 },
-                  bgcolor: "white",
+                  border: "2px solid",
+                  borderColor:
+                    activeItem === item.product._id ? "yellow" : "transparent",
+                  bgcolor: "rgba(255,255,255,0.05)",
                   borderRadius: 2,
-                  overflow: "hidden",
-                  flexShrink: 0,
-                }}
-              >
-                <img
-                  src={item.product.imageUrl}
-                  alt={item.product.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    padding: 8,
-                  }}
-                />
-              </Box>
-
-
-              <Box
-                sx={{
-                  flex: 1,
+                  transition: "0.2s",
+                  p: 2,
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  gap: 2,
                 }}
               >
-                <Box>
-                  <Typography
-                    fontWeight="bold"
-                    fontSize={{ xs: 16, md: 18 }}
-                    sx={{ mb: 0.5 }}
-                  >
-                    {item.product.name}
-                  </Typography>
-                  <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
-                    {item.product.shortDescription || "Premium motorcycle accessory"}
-                  </Typography>
-                </Box>
 
                 <Box
                   sx={{
-                    mt: 1.5,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    width: { xs: 80, md: 110 },
+                    height: { xs: 80, md: 110 },
+                    bgcolor: "white",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    flexShrink: 0,
                   }}
                 >
+                  <img
+                    src={imageUrl}
+                    alt={name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      padding: 8,
+                    }}
+                  />
+                </Box>
 
-                  <Typography
-                    color="yellow"
-                    fontWeight={700}
-                    fontSize={{ xs: 18, md: 22 }}
-                  >
-                    ₹ {item.price.toLocaleString()}
-                  </Typography>
 
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      fontWeight="bold"
+                      fontSize={{ xs: 16, md: 18 }}
+                      sx={{ mb: 0.5 }}
+                    >
+                      {name}
+                    </Typography>
+                    <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
+                      {shortDescription || "Premium motorcycle accessory"}
+                    </Typography>
+                  </Box>
 
                   <Box
                     sx={{
+                      mt: 1.5,
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      borderRadius: 2,
                     }}
                   >
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        decrementToCart(item.product._id, {saveToDb: true})
-                      }}
-                      sx={{
-                        color: "white",
-                        "&:hover": { color: "yellow" },
-                      }}
-                    >
-                      <Minus size={18} />
-                    </IconButton>
 
-                    <Typography sx={{ width: 30, textAlign: "center" }}>
-                      {item.quantity}
+                    <Typography
+                      color="yellow"
+                      fontWeight={700}
+                      fontSize={{ xs: 18, md: 22 }}
+                    >
+                      ₹ {price.toLocaleString()}
                     </Typography>
 
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        incrementToCart(item.product._id, item.product.quantityAvailable, { saveToDb: true })
-                      }}
+
+                    <Box
                       sx={{
-                        color: "white",
-                        "&:hover": { color: "yellow" },
+                        display: "flex",
+                        alignItems: "center",
+                        bgcolor: "rgba(255,255,255,0.1)",
+                        borderRadius: 2,
                       }}
                     >
-                      <Plus size={18} />
-                    </IconButton>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          decrementToCart(productId, { saveToDb: true })
+                        }}
+                        sx={{
+                          color: "white",
+                          "&:hover": { color: "yellow" },
+                        }}
+                      >
+                        <Minus size={18} />
+                      </IconButton>
+
+                      <Typography sx={{ width: 30, textAlign: "center" }}>
+                        {quantity}
+                      </Typography>
+
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          incrementToCart(product, item.product._id, item.product.quantityAvailable, { saveToDb: true })
+                        }}
+                        sx={{
+                          color: "white",
+                          "&:hover": { color: "yellow" },
+                        }}
+                      >
+                        <Plus size={18} />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          ))
+            )
+          })
         )}
       </Box>
 
 
-      {cartDetail.items.length > 0 && (
+      {processedItems.length > 0 && (
         <Box
           sx={{
             borderTop: "1px solid rgba(255,255,255,0.1)",

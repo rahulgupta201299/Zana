@@ -13,7 +13,7 @@ export default function ProductRecommendation() {
 
 	function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, quantityAvailable: number) {
 		e.stopPropagation()
-		incrementToCart(productId, quantityAvailable, { saveToDb: true })
+		// incrementToCart(productId, quantityAvailable, { saveToDb: true })
 	}
 
 	// TODO handle Button UI
@@ -64,11 +64,11 @@ export default function ProductRecommendation() {
 				}}
 			>
 				{capProducts.map((item) => {
-					const { image, id, name, price, quantityAvailable } = item;
+					const { image, _id, name, price, quantityAvailable } = item;
 
 					return (
 						<Box
-							key={id}
+							key={_id}
 							sx={{
 								display: "flex",
 								alignItems: "center",
@@ -135,7 +135,7 @@ export default function ProductRecommendation() {
 									height: 30,
 									fontSize: "12px",
 								}}
-								onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, id, quantityAvailable)}
+								onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, quantityAvailable)}
 							>
 								Add
 							</Button>
