@@ -109,11 +109,12 @@ const ProductCatalogPage = () => {
 
   function handleAddToCart(
     e: MouseEvent<HTMLButtonElement>,
+    product: ShopByProductDetailsType,
     productId: string,
     quantityAvailable: number,
   ) {
     e.stopPropagation();
-    incrementToCart(productId, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
+    incrementToCart(product, productId, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
   }
 
   useEffect(() => {
@@ -230,6 +231,7 @@ const ProductCatalogPage = () => {
                           onClick={(e: MouseEvent<HTMLButtonElement>) =>
                             handleAddToCart(
                               e,
+                              product,
                               _id,
                               quantityAvailable
                             )

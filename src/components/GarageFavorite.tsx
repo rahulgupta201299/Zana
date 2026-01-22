@@ -14,14 +14,12 @@ const GarageFavorite = () => {
   const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [garageFavoriteName]))
   const { incrementToCart, getQuantity } = useCart();
 
+  // TODO
   function handleAddToCart(index: number) {
-    const product = productList[index];
+    // const product = products[index] as unknown as ShopByProductDetailsType;
 
-    const { _id: productId, quantityAvailable } = product;
-    incrementToCart(productId, quantityAvailable, {
-      saveToDb: true,
-      easyCheckout: true,
-    });
+    // const {_id: productId, quantityAvailable } = product
+    // incrementToCart(product, productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];

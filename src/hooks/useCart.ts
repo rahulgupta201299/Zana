@@ -1,149 +1,168 @@
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
-import { CartDetailResType } from "@/Redux/Cart/Types";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { cartModifyServiceName, getCartDetailServiceName } from "@/Redux/Cart/Action";
+import { autoRetry } from "@/Utils/AutoRetryMechanism";
 
 export default function useCart() {
   const cartDetail = useSelector(cartDetailSelector);
-  const [cartItem, setCartItem] = useState<Record<string, number>>({});
+
+  const { processedItems = [] } = cartDetail;
+
+  const [cartItems, setCartItems] = useState<CartItemDetail[]>(structuredClone(processedItems));
+
+  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName, getCartDetailServiceName]))
   
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
 
-  const debounceMapRef = useRef<Record<string, any>>({});
-
   const loginDetails = useSelector(getLoginDetails);
   const { phoneNumber = "" } = loginDetails;
 
-  function getDebounce(productId: string) {
-    if (!debounceMapRef.current[productId]) {
-      debounceMapRef.current[productId] = createDebounce(
-        (pid: string, qty: number, optional: any = {}) => {
-          addToCart(pid, qty, optional);
-        },
-        500,
-      );
-    }
+  const debounceFn = useMemo(() => {
+    return createDebounce(handleSaveToDB, 500);
+  }, [])
 
-    return debounceMapRef.current[productId];
-  }
+  const retry = useMemo(() => {
+    return autoRetry()
+  }, [])
 
-  async function addToCart(
-    productId: string,
-    quantity?: number,
-    optional?: { easyCheckout?: boolean, navigateTo?: string }
+  async function handleSaveToDB(
+    details: CartItemDetail[],
+    optional?: { easyCheckout?: boolean; navigateTo?: string },
   ): Promise<void> {
-    const getProductQuantity = quantity || cartItem[productId];
 
-    if (!getProductQuantity && typeof quantity !== "number") return;
+    const items = details.map(item => ({productId: item.product._id, quantity: item.quantity }))
 
     try {
       const response = (await dispatch(
         cartModifyServiceAction({
-          phoneNumber,
-          productId,
-          quantity: getProductQuantity,
+          phoneNumber: "+919163277940",
+          items,
         }),
       )) as CartDetailResType;
-      const { phoneNumber: _phoneNumber, ...rest } = response;
 
-      updateState(rest);
+      const { unProcessedItems = [], processedItems = [] } = response;
 
-      if (optional?.easyCheckout) dispatch(setOpenCart(true))
-      if (optional?.navigateTo) navigate(optional.navigateTo)
-      
+      setCartItems(processedItems);
+
+      if (unProcessedItems.length) {
+        enqueueSnackbar({
+          variant: "warning",
+          message: `Some items couldn't be processed due to unavailability.`
+        });
+      }
+
+      if (optional?.easyCheckout) dispatch(setOpenCart(true));
+      if (optional?.navigateTo) navigate(optional.navigateTo);
     } catch (error) {
       const { message = "" } = error || {};
       enqueueSnackbar({
         variant: "error",
         message,
       });
-      updateState(cartDetail);
+      setCartItems(processedItems);
     }
   }
 
-  function incrementToCart(
-    productId: string,
-    maxQuantityAvailable: number,
-    { saveToDb = false, easyCheckout = false, navigateTo = '' }: { saveToDb?: boolean, easyCheckout?: boolean, navigateTo?: string } = {}
-  ) {
-    const getProductQuantity = cartItem[productId] || 0;
-
-    if (getProductQuantity >= maxQuantityAvailable) return;
-
-    setCartItem((prev) => {
-      return {
-        ...prev,
-        [productId]: getProductQuantity + 1,
-      };
-    });
-
-    if (!saveToDb) return;
-
-    getDebounce(productId)(productId, getProductQuantity + 1, { easyCheckout, navigateTo });
+  function addToCart(optional?: { easyCheckout?: boolean; navigateTo?: string }) {
+    handleSaveToDB(cartItems, optional)
   }
 
-  function decrementToCart(productId: string, { saveToDb = false }: { saveToDb?: boolean } = {}) {
-    const getProductQuantity = cartItem[productId] || 0;
+  function incrementToCart(
+    product: ShopByProductDetailsType,
+    productId: string,
+    maxQuantityAvailable: number,
+    {
+      saveToDb = false,
+      easyCheckout = false,
+      navigateTo = "",
+    }: { saveToDb?: boolean; easyCheckout?: boolean; navigateTo?: string } = {},
+  ) {
+    const productQuantity = getQuantity(productId);
 
-    if (getProductQuantity <= 0) return;
+    if (productQuantity >= maxQuantityAvailable) return;
 
-    setCartItem((prev) => {
-      return {
-        ...prev,
-        [productId]: getProductQuantity - 1,
-      };
+    let productIncremented = false;
+
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) {
+        item.quantity += 1;
+        productIncremented = true
+      }
+      return item;
     });
+
+    if (!productIncremented) {
+      newProductDetails.push({
+        product,
+        quantity: 1,
+        price: product.price,
+        totalPrice: product.price,
+        _id: Date.now().toString(),
+      })
+    }
+
+    setCartItems(newProductDetails);
 
     if (!saveToDb) return;
 
-    getDebounce(productId)(productId, getProductQuantity - 1);
+    debounceFn(newProductDetails, { easyCheckout, navigateTo });
+  }
+
+  function decrementToCart(
+    productId: string,
+    { saveToDb = false }: { saveToDb?: boolean } = {},
+  ) {
+    const productQuantity = getQuantity(productId);
+
+    if (productQuantity <= 0) return;
+
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) item.quantity -= 1;
+      return item;
+    });
+
+    setCartItems(newProductDetails);
+
+    if (!saveToDb) return;
+
+    debounceFn(newProductDetails);
   }
 
   // TODO
-  function clearCart() {}
+  function clearCart() {
+    setCartItems([]);
+  }
 
   function removeItemToCart(productId: string) {
-    setCartItem((prev) => {
-      return {
-        ...prev,
-        [productId]: 0,
-      };
-    });
-    addToCart(productId, 0);
+    const filterProducts = cartItems.filter(
+      (item) => item.product._id !== productId,
+    );
+    setCartItems(filterProducts);
+    debounceFn(filterProducts);
   }
 
   function getTotalQuantity() {
-    return Object.values(cartItem).reduce((acc, curr) => acc + curr, 0);
+    return cartItems.reduce((acc, curr) => acc + curr.quantity, 0);
   }
 
   function getQuantity(productId: string) {
-    return cartItem[productId] || 0;
+    return (
+      cartItems.find((item) => item.product._id === productId)?.quantity || 0
+    );
   }
-
-  function updateState(cartDetail: Omit<CartDetailResType, "phoneNumber">) {
-    const obj = cartDetail.items.reduce((acc, curr) => {
-      acc[curr.product._id] = curr.quantity;
-      return acc;
-    }, {});
-    setCartItem(obj);
-  }
-
-  function performOps() {
-    updateState(cartDetail);
-  }
-
-  useEffect(() => {
-    performOps();
-  }, []);
 
   return {
     addToCart,
@@ -153,5 +172,6 @@ export default function useCart() {
     incrementToCart,
     clearCart,
     removeItemToCart,
+    cartLoading,
   };
 }

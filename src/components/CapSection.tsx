@@ -10,73 +10,74 @@ import CapImg8 from '@/Assets/Images/CapSection/IMG_8139.jpg'
 import CapImg9 from '@/Assets/Images/CapSection/IMG_8140.jpg'
 import CapImg10 from '@/Assets/Images/CapSection/IMG_8142.jpg'
 import useCartX from "@/hooks/useCart";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export const capProducts = [
   {
-    id: "cap-1",
+    _id: "cap-1",
     name: "Throttle Up",
     price: 1500,
     quantityAvailable: 6,
     image: CapImg1,
   },
   {
-    id: "cap-2",
+    _id: "cap-2",
     name: "Love Speed",
     price: 1600,
     quantityAvailable: 7,
     image: CapImg2,
   },
   {
-    id: "cap-3",
+    _id: "cap-3",
     name: "Pure Love",
     price: 1800,
     quantityAvailable: 8,
     image: CapImg3,
   },
   {
-    id: "cap-4",
+    _id: "cap-4",
     name: "Godzilla",
     price: 2000,
     quantityAvailable: 9,
     image: CapImg4,
   },
   {
-    id: "cap-5",
+    _id: "cap-5",
     name: "Devil",
     price: 1500,
     quantityAvailable: 10,
     image: CapImg5,
   },
   {
-    id: "cap-6",
+    _id: "cap-6",
     name: "Hard Tuned",
     price: 1700,
     quantityAvailable: 11,
     image: CapImg6,
   },
   {
-    id: "cap-7",
+    _id: "cap-7",
     name: "Ride Easy",
     price: 1900,
     quantityAvailable: 12,
     image: CapImg7,
   },
   {
-    id: "cap-8",
+    _id: "cap-8",
     name: "Decimo",
     price: 2000,
     quantityAvailable: 5,
     image: CapImg8,
   },
   {
-    id: "cap-9",
+    _id: "cap-9",
     name: "Super veloce",
     price: 1600,
     quantityAvailable: 5,
     image: CapImg9,
   },
   {
-    id: "cap-10",
+    _id: "cap-10",
     name: "Super Charged",
     price: 1800,
     quantityAvailable: 5,
@@ -140,10 +141,10 @@ const CapSection = () => {
   const { incrementToCart, getQuantity } = useCartX()
 
   function handleAddToCart(index: number) {
-    const product = capProducts[index];
+    const product = capProducts[index] as unknown as ShopByProductDetailsType;
 
-    const { id: productId, quantityAvailable } = product
-    incrementToCart(productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
+    const { _id: productId, quantityAvailable } = product
+    incrementToCart(product, productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
@@ -169,7 +170,7 @@ const CapSection = () => {
                   product={capProducts[idx]}
                   onClick={() => handleAddToCart(idx)}
                   height={col.length === 1 ? 360 : 176}
-                  count={getQuantity(capProducts[idx].id)}
+                  count={getQuantity(capProducts[idx]._id)}
                 />
               ))}
             </div>
@@ -179,11 +180,11 @@ const CapSection = () => {
         <div className="grid lg:hidden grid-cols-2 gap-2">
           {capProducts.slice(0, 4).map((product, idx) => (
             <ProductCard
-              key={product.id}
+              key={product._id}
               product={product}
               onClick={() => handleAddToCart(idx)}
               height={150}
-              count={getQuantity(product.id)}
+              count={getQuantity(product._id)}
             />
           ))}
         </div>

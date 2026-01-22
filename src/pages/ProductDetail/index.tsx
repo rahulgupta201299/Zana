@@ -175,8 +175,8 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={getQuantity(_id) === quantityAvailable}
-                  onClick={() => incrementToCart(_id, quantityAvailable)}
+                  disabled={getQuantity(_id) >= quantityAvailable}
+                  onClick={() => incrementToCart(product, _id, quantityAvailable)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -188,7 +188,7 @@ const ProductDetailPage = () => {
               <Button
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation()
-                  addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
+                  addToCart({ navigateTo: ROUTES.CART })
                 }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -199,7 +199,7 @@ const ProductDetailPage = () => {
               <Button
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation()
-                  addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CHECKOUT })
+                  addToCart({ navigateTo: ROUTES.CHECKOUT })
                 }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -302,7 +302,7 @@ const ProductDetailPage = () => {
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {suggestedProducts.map((relatedProduct, index) => {
 
-            const { _id, name, imageUrl, price, category } = relatedProduct
+            const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
 
             return (
               <div
@@ -321,7 +321,7 @@ const ProductDetailPage = () => {
                         <button
                           onClick={(e: MouseEvent<HTMLButtonElement>) => {
                             e.stopPropagation()
-                            addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
+                            incrementToCart(relatedProduct, _id, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
                           }}
                           className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
                         >

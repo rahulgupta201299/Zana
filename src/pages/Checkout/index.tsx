@@ -57,7 +57,7 @@ export default function CheckoutPage() {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const { subtotal, totalAmount: total, discountAmount: discount } = cartDetail
+  const { subtotal, totalAmount: total, discountAmount: discount, processedItems = [] } = cartDetail
 
   const actions = useMemo(
     () => ({
@@ -152,7 +152,7 @@ export default function CheckoutPage() {
       displayRazorpay();
       return;
     }
-    const mappedItems = cartDetail.items.map((item) => ({
+    const mappedItems = processedItems.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
     }));
@@ -1134,111 +1134,116 @@ export default function CheckoutPage() {
               gap: "16px",
             }}
           >
-            {cartDetail.items.map((item) => (
-              <Box
-                key={item.product._id}
-                sx={{
-                  color: "#FFFFFF",
-                  borderRadius: "10px",
-                  transition: "0.2s",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "24px",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: { xs: 80, md: 110 },
-                    height: { xs: 80, md: 110 },
-                    bgcolor: "#FFFFFF",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={item.product.imageUrl}
-                    alt={item.product.name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                      padding: 8,
-                    }}
-                  />
-                </Box>
+            {processedItems.map((item) => {
+              const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
+              const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
+              return (
                 <Box
+                  key={productId}
                   sx={{
-                    flex: 1,
+                    color: "#FFFFFF",
+                    borderRadius: "10px",
+                    transition: "0.2s",
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
+                    alignItems: "center",
+                    gap: "24px",
                   }}
                 >
-                  <Box>
-                    <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
-                      {item.product.name}
-                    </Typography>
+                  <Box
+                    sx={{
+                      width: { xs: 80, md: 110 },
+                      height: { xs: 80, md: 110 },
+                      bgcolor: "#FFFFFF",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        padding: 8,
+                      }}
+                    />
                   </Box>
 
                   <Box
                     sx={{
+                      flex: 1,
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      flexDirection: "column",
+                      gap: "16px",
                     }}
                   >
-                    <Typography
-                      color="#FFFFFF"
-                      fontWeight={300}
-                      fontSize={{ xs: 18, md: 22 }}
-                    >
-                      ₹ {item.price.toLocaleString()}
-                    </Typography>
+                    <Box>
+                      <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
+                        {name}
+                      </Typography>
+                    </Box>
 
                     <Box
                       sx={{
                         display: "flex",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        bgcolor: "rgba(255,255,255,0.1)",
-                        borderRadius: 2,
                       }}
                     >
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          decrementToCart(item.product._id, { saveToDb: true })
-                        }}
-                        sx={{
-                          color: "white",
-                          "&:hover": { color: "yellow" },
-                        }}
+                      <Typography
+                        color="#FFFFFF"
+                        fontWeight={300}
+                        fontSize={{ xs: 18, md: 22 }}
                       >
-                        <Minus size={18} />
-                      </IconButton>
-
-                      <Typography sx={{ width: 30, textAlign: "center" }}>
-                        {item.quantity}
+                        ₹ {price.toLocaleString()}
                       </Typography>
 
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          incrementToCart(item.product._id, item.product.quantityAvailable, { saveToDb: true })
-                        }}
+                      <Box
                         sx={{
-                          color: "white",
-                          "&:hover": { color: "yellow" },
+                          display: "flex",
+                          alignItems: "center",
+                          bgcolor: "rgba(255,255,255,0.1)",
+                          borderRadius: 2,
                         }}
                       >
-                        <Plus size={18} />
-                      </IconButton>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            decrementToCart(productId, { saveToDb: true })
+                          }}
+                          sx={{
+                            color: "white",
+                            "&:hover": { color: "yellow" },
+                          }}
+                        >
+                          <Minus size={18} />
+                        </IconButton>
+
+                        <Typography sx={{ width: 30, textAlign: "center" }}>
+                          {quantity}
+                        </Typography>
+
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementToCart(product, productId, quantityAvailable, { saveToDb: true })
+                          }}
+                          sx={{
+                            color: "white",
+                            "&:hover": { color: "yellow" },
+                          }}
+                        >
+                          <Plus size={18} />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              )
+            })}
           </Box>
           {discount > 0 && (
             <>
