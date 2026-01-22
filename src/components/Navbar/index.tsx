@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
@@ -32,7 +32,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const location = useLocation();
   const params = useParams()
   const bikeType = params?.bikeType?.toLowerCase() || ''
-
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(
@@ -71,20 +70,32 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     setSelectedMenuItem(name);
   }
+  const handleTopLevelClick = (item: any) => {
+  const { name } = item;
 
-  function handleTopLevelClick(item: TopLevelItemsType) {
-    const { name } = item;
+  switch (name) {
+    case MenuItemsName.PROFILE:
+      if (verified) {
+        navigate("/profile");
+      } else {
+        setSelectedTopItem(MenuItemsName.PROFILE);
+      }
+      break;
 
-    if (name === MenuItemsName.CART) {
+    case MenuItemsName.SEARCH:
+      setSelectedTopItem(MenuItemsName.SEARCH);
+      break;
+
+    case MenuItemsName.CART:
       dispatch(setOpenCart(true))
-      return
-    }
+      break;
 
-    setSelectedTopItem(name);
+    default:
+      navigate(`/${name.toLowerCase()}`);
   }
+ };
 
   useEffect(() => {
-
     if (location.pathname !== ROUTES.BASE_URL) {
       containerRef.current!.style.position = 'fixed';
       return;
@@ -100,6 +111,9 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     return () => observer.disconnect()
   }, [location.pathname]);
+
+
+
 
   return (
     <Box>
@@ -239,14 +253,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
         )}
       </Box>
 
-      {selectedTopItem === MenuItemsName.PROFILE &&
-        (verified ? (
-          <ProfileModal onClose={() => setSelectedTopItem(null)} />
-        ) : (
+      {selectedTopItem === MenuItemsName.PROFILE && 
           <SignupPopup
             type='navbar'
             onClose={() => setSelectedTopItem(null)} />
-        ))}
+        }
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />
       )}
