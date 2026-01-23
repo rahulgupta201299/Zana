@@ -4,6 +4,8 @@ import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import ZProBikeService from "@/Redux/Product/Services/ZProBikeService";
 import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
 import { ROUTES } from "@/Constants/Routes";
+import { autoRetry } from "@/Utils/AutoRetryMechanism";
+import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 export async function appServiceOnMount() {
   const state = AppStore.getState();
@@ -12,15 +14,23 @@ export async function appServiceOnMount() {
   const shopByBike = state.product.menu.shopByBike;
   const zProBike = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
+  const initialCartLoaded = state.cart.initialCartLoaded;
+
+  const retry = autoRetry()
 
   window.scrollTo(0, 0);
+
+  const requests: Promise<any>[] = []
+  
   try {
-    if (!shopByBike.length)
-      await dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }));
-    if (!zProBike.length)
-      await dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }));
-    if (!productCategory.length) await dispatch(ProductCategoryCountService());
-  } catch (error: any) {}
+    if (!shopByBike.length) requests.push(retry(() => dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))))
+    if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))
+    if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
+    if (!initialCartLoaded) requests.push(retry(() => dispatch(getCartDetailServiceAction())))
+    
+    await Promise.allSettled(requests)
+  } catch (error: any) {
+  }
 }
 
 export function onMountChecks() {

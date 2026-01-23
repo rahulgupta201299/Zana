@@ -24,6 +24,7 @@ export const INITIAL_STATE: T_CART_REDUCER = {
     totalAmount: 0,
     status: "",
   },
+  initialCartLoaded: false,
   isOpenCart: false,
 };
 
@@ -53,6 +54,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       getCartDetailActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
         state.cartDetail = action.payload;
+        state.initialCartLoaded = true;
       },
     );
   },

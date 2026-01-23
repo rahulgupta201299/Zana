@@ -2,6 +2,7 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export type T_CART_REDUCER = {
   cartDetail: CartDetailResType;
+  initialCartLoaded: boolean;
   isOpenCart: boolean;
 };
 
