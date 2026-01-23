@@ -1,3 +1,5 @@
+import { ShopByProductDetailsType } from "../Product/Types";
+
 export type T_AUTH_REDUCER = {
   login: {
     phoneNumber: string;
@@ -6,7 +8,9 @@ export type T_AUTH_REDUCER = {
     lastName?: string;
     address?: string;
   };
-  
+
+  wishlist: ShopByProductDetailsType[];
+
   profileDetails:{
     _id: string
   firstName: string

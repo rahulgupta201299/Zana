@@ -1,6 +1,6 @@
 import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Pagination } from "@mui/material";
+import { Box, Button, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { Heart, ShoppingCart } from "lucide-react";
@@ -23,6 +23,9 @@ import {
   categoryProductServiceName,
 } from "@/Redux/Product/Actions";
 import useCart from "@/hooks/useCart";
+import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
+import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
+import { useSnackbar } from "notistack";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -30,12 +33,15 @@ const ProductCatalogPage = () => {
   const location = useLocation();
   const state = location.state;
   const initialCategory = state?.category?.toLowerCase() || "";
-
+  const { enqueueSnackbar } = useSnackbar();
   const { incrementToCart } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [categoryProductServiceName, allProductServiceName])
+    isServiceLoading(state, [
+      categoryProductServiceName,
+      allProductServiceName,
+    ]),
   );
 
   const [selectedCategory, setSelectedCategory] =
@@ -45,15 +51,15 @@ const ProductCatalogPage = () => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
-
-  const LIMIT_PER_PAGE = 10;
+  const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
+  const LIMIT_PER_PAGE = 12;
 
   const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(
     productCategory: string,
     productName: string,
-    productId: string
+    productId: string,
   ) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
@@ -72,11 +78,13 @@ const ProductCatalogPage = () => {
         type === ALL_CATEGORY
           ? AllProductService({ page, limit: LIMIT_PER_PAGE })
           : CategoryProductService({
-            category: type,
-            queryParams: { page, limit: LIMIT_PER_PAGE },
-          });
+              category: type,
+              queryParams: { page, limit: LIMIT_PER_PAGE },
+            });
 
-      const { data, pagination } = (await dispatch(action)) as ProductCatalogDetailsType;
+      const { data, pagination } = (await dispatch(
+        action,
+      )) as ProductCatalogDetailsType;
 
       setFilteredProducts(data);
       setNumberOfPages(pagination.totalPages);
@@ -86,12 +94,52 @@ const ProductCatalogPage = () => {
     }
   }
 
+  async function handleWishList(productId: string) {
+    //TODO: Replace phone number with logged in user's phone number &  Wishlist for logged in users only
+    const isCurrentlyWishlisted = wishlistMap[productId];
+    setWishlistMap((prev) => ({
+      ...prev,
+      [productId]: !isCurrentlyWishlisted,
+    }));
+
+    try {
+      const action = isCurrentlyWishlisted
+        ? removeWishlistServiceAction({
+            phoneNumber: "7632000876",
+            productId,
+          })
+        : addWishListServiceAction({
+            phoneNumber: "7632000876",
+            productId,
+          });
+
+      const result = await dispatch(action);
+      if (result) {
+        enqueueSnackbar(
+          isCurrentlyWishlisted
+            ? "Product removed from wishlist"
+            : "Product added to wishlist",
+          {
+            variant: isCurrentlyWishlisted ? "info" : "success",
+            anchorOrigin: { vertical: "top", horizontal: "right" },
+            autoHideDuration: 2000,
+          },
+        );
+      }
+    } catch (error) {
+      setWishlistMap((prev) => ({
+        ...prev,
+        [productId]: isCurrentlyWishlisted,
+      }));
+    }
+  }
+
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
 
     const totalCategoryCount = productCategory.reduce(
       (acc, curr) => acc + curr.count,
-      0
+      0,
     );
     return [
       { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
@@ -114,7 +162,10 @@ const ProductCatalogPage = () => {
     quantityAvailable: number,
   ) {
     e.stopPropagation();
-    incrementToCart(product, productId, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
+    incrementToCart(product, productId, quantityAvailable, {
+      saveToDb: true,
+      navigateTo: ROUTES.CART,
+    });
   }
 
   useEffect(() => {
@@ -134,8 +185,62 @@ const ProductCatalogPage = () => {
             accessories
           </p>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.5,
+              overflowX: "auto",
+              px: 1,
+              py: 1,
+              scrollBehavior: "smooth",
+              scrollbarWidth: "none", 
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
+            {categoryDetails.map((category, ind) => {
+              const { name, count } = category;
+              const categoryName = name.toLowerCase();
+
+              return (
+                <Button
+                  key={ind}
+                  onClick={() => handleCategoryService(categoryName)}
+                  sx={{
+                    flexShrink: 0,
+                    textTransform: "capitalize",
+                    whiteSpace: "nowrap",
+                    fontSize: { xs: "0.875rem", md: "1rem" },
+                    fontWeight: 500,
+                    borderRadius: "8px",
+                    px: 2,
+                    py: 1,
+                    bgcolor:
+                      selectedCategory === categoryName
+                        ? "#facc15"
+                        : "rgba(255,255,255,0.1)",
+                    color: selectedCategory === categoryName ? "#000" : "#fff",
+                    "&:hover": {
+                      bgcolor:
+                        selectedCategory === categoryName
+                          ? "#facc15"
+                          : "rgba(255,255,255,0.2)",
+                    },
+                  }}
+                >
+                  {categoryName === ALL_CATEGORY
+                    ? "All Products"
+                    : categoryName}{" "}
+                  ({count})
+                </Button>
+              );
+            })}
+
+            {categoryDetails.length === 0 && <CategorySkeleton />}
+          </Box>
+        {/* TO VERIFY BY RAHUL */}
+          {/* <div className="flex flex-wrap justify-center gap-3">
             {categoryDetails.map((category, ind) => {
               const { name, count, icon } = category;
               const categoryName = name.toLowerCase();
@@ -145,10 +250,11 @@ const ProductCatalogPage = () => {
                   key={ind}
                   onClick={() => handleCategoryService(categoryName)}
                   style={{ textTransform: "capitalize", cursor: "pointer" }}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
-                    ? "bg-yellow-400 text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                    selectedCategory === categoryName
+                      ? "bg-yellow-400 text-black"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
                 >
                   <span>
                     {categoryName === ALL_CATEGORY
@@ -160,7 +266,7 @@ const ProductCatalogPage = () => {
               );
             })}
             {categoryDetails.length === 0 && <CategorySkeleton />}
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -221,20 +327,24 @@ const ProductCatalogPage = () => {
                         ₹ {price.toLocaleString()}
                       </span>
                       <div className="flex gap-1 md:gap-2">
-                        {/* <button
-                          onClick={(e) => handleAddToWishlist(e, product.id)}
-                          className="p-1.5 md:p-2 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-black transition-all"
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWishList(product._id);
+                          }}
+                          className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
+                            ${
+                              wishlistMap[product._id]
+                                ? "bg-yellow-400 text-black"
+                                : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                            }
+   `}
                         >
                           <Heart size={14} className="md:w-4 md:h-4" />
-                        </button> */}
+                        </button>
                         <button
                           onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                            handleAddToCart(
-                              e,
-                              product,
-                              _id,
-                              quantityAvailable
-                            )
+                            handleAddToCart(e, product, _id, quantityAvailable)
                           }
                           className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                         >
@@ -258,9 +368,7 @@ const ProductCatalogPage = () => {
                 No products found in this category
               </p>
               <button
-                onClick={() =>
-                  handleCategoryService(ALL_CATEGORY)
-                }
+                onClick={() => handleCategoryService(ALL_CATEGORY)}
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
               >
                 View All Products

@@ -1,3 +1,5 @@
+import Wishlist from "@/pages/ProfileDetails/Wishlist"
+
 export const SUB_ROUTES = Object.freeze({
   PRODUCT: '/product',
   BIKE: '/bike',
@@ -25,5 +27,6 @@ export const ROUTES = Object.freeze({
   PAGE_NOT_FOUND: '/page-not-found',
   ORDER_DETAILS: '/order-details',
   PROFILE: '/profile',
+  WISHLIST: '/wishlist',
   ANY: '*'
 })

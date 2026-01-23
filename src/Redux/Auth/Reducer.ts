@@ -6,7 +6,7 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { addProfileDetailsActions, verifyOtpActions } from "./Actions";
+import { addProfileDetailsActions, verifyOtpActions, wishlistActions } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
   login: {
@@ -25,7 +25,8 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
     bikeOwnedByCustomer: [],
     createdAt: "",
     __v: 0
-  }
+  },
+  wishlist: [],
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -49,6 +50,12 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
       addProfileDetailsActions.success,
       (state, { payload }: any) => {
         state.profileDetails=payload
+      }
+    );
+      builder.addCase(
+      wishlistActions.success,
+      (state, { payload }: any) => {
+        state.wishlist = payload?.products || []
       }
     );
   },

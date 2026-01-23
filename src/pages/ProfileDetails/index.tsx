@@ -62,7 +62,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         return <MyProfile />;
 
       case "wishlist":
-         return null;
+         navigate("/wishlist");
 
       case "faq":
         return <Faq />;

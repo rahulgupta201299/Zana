@@ -20,4 +20,9 @@ export const getProfileDetails = createSelector(
   (profileDetails) => profileDetails
 );
 
-;
+export const WishListProducts = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].wishlist,
+  (wishlist) => wishlist
+);
+
+
