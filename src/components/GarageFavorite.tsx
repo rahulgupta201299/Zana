@@ -14,12 +14,14 @@ const GarageFavorite = () => {
   const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [garageFavoriteName]))
   const { incrementToCart, getQuantity } = useCart();
 
-  // TODO
-  function handleAddToCart(index: number) {
-    // const product = products[index] as unknown as ShopByProductDetailsType;
+  function handleAddToCart(productId: string) {
+    const product = productList.find(item => item._id === productId)
 
-    // const {_id: productId, quantityAvailable } = product
-    // incrementToCart(product, productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
+    if (!product) return;
+
+    const { quantityAvailable = 0 } = product
+
+    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
@@ -41,7 +43,7 @@ const GarageFavorite = () => {
                 <ProductCard
                   key={idx}
                   product={productList[idx]}
-                  onClick={() => handleAddToCart(idx)}
+                  onClick={() => handleAddToCart(productList[idx]._id)}
                   height={col.length === 1 ? 360 : 176}
                   count={getQuantity(productList[idx]?._id)}
                   loading={isLoading}
@@ -56,7 +58,7 @@ const GarageFavorite = () => {
             <ProductCard
               key={product._id}
               product={product}
-              onClick={() => handleAddToCart(idx)}
+              onClick={() => handleAddToCart(product._id)}
               height={150}
               count={getQuantity(productList[idx]?._id)}
               loading={isLoading}

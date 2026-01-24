@@ -13,20 +13,21 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import useCart from "@/hooks/useCart";
-import Loading from "./Loading";
 import { useSelector } from "react-redux";
-import { cartDetailSelector } from "@/Redux/Cart/Selectors";
+import { cartDetailSelector, outOfStockDetails } from "@/Redux/Cart/Selectors";
 
 export default function CartAttentionDialog() {
 
   const cartDetails = useSelector(cartDetailSelector)
-  const { cartLoading } = useCart()
+  const outOfStock = useSelector(outOfStockDetails)
+
+  const { processedItems = [] } = cartDetails
+
+  const isOpen = Boolean(false)
 
   return (
-    <Dialog open={false} maxWidth="sm" fullWidth>
+    <Dialog open={isOpen} maxWidth="sm" fullWidth>
       {/* Header */}
-      {cartLoading && <Loading />}
       <DialogTitle>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={1}>

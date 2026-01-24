@@ -23,6 +23,7 @@ const ProductDetailPage = () => {
   const { addToCart, getQuantity, incrementToCart, decrementToCart } = useCart()
   const { productCategory, productId, productItem } = useParams<ProductDetailParamsType>();
 
+  const [quantity, setQuantity] = useState<number>(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [product, setProduct] = useState<ShopByProductDetailsType | null>(null)
@@ -38,6 +39,7 @@ const ProductDetailPage = () => {
 
   async function pageOps() {
     setLoading(true)
+    setQuantity(getQuantity(productId) || 1)
     try {
       const response = await dispatch(ProductDetailService(productId)) as ShopByProductDetailsType
       setProduct(response)
@@ -165,8 +167,8 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={getQuantity(_id) === 0}
-                  onClick={() => decrementToCart(_id)}
+                  disabled={quantity === 1}
+                  onClick={() => setQuantity(p => p - 1)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Minus className="w-4 h-4" />
@@ -175,8 +177,8 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={getQuantity(_id) >= quantityAvailable}
-                  onClick={() => incrementToCart(product, _id, quantityAvailable)}
+                  disabled={quantity >= quantityAvailable}
+                  onClick={() => setQuantity(p => p + 1)}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -188,7 +190,7 @@ const ProductDetailPage = () => {
               <Button
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation()
-                  addToCart({ navigateTo: ROUTES.CART })
+                  addToCart(product, _id, quantity, quantityAvailable, { navigateTo: ROUTES.CART })
                 }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -199,7 +201,7 @@ const ProductDetailPage = () => {
               <Button
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation()
-                  addToCart({ navigateTo: ROUTES.CHECKOUT })
+                  addToCart(product, _id, quantity, quantityAvailable, { navigateTo: ROUTES.CHECKOUT })
                 }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -321,7 +323,7 @@ const ProductDetailPage = () => {
                         <button
                           onClick={(e: MouseEvent<HTMLButtonElement>) => {
                             e.stopPropagation()
-                            incrementToCart(relatedProduct, _id, quantityAvailable, { saveToDb: true, navigateTo: ROUTES.CART })
+                            incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
                           }}
                           className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
                         >

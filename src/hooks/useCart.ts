@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
@@ -7,22 +7,18 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
+import { resetCart, setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName } from "@/Redux/Cart/Action";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 export default function useCart() {
-  const cartDetail = useSelector(cartDetailSelector);
+  const cartDetail = useSelector((state: TAppStore) => state.cart.cartDetail);
 
   const { processedItems = [] } = cartDetail;
 
   const [cartItems, setCartItems] = useState<CartItemDetail[]>(processedItems);
 
-  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName]))
-  
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
@@ -32,22 +28,22 @@ export default function useCart() {
 
   const debounceFn = useMemo(() => {
     return createDebounce(handleSaveToDB, 500);
-  }, [])
+  }, []);
 
   async function getCartFromDB() {
     if (!phoneNumber) return;
 
     try {
-      const response = await dispatch(getCartDetailServiceAction()) as CartDetailResType
-      const { processedItems = [] } = response
-      setCartItems(processedItems)
+      const response = await dispatch(getCartDetailServiceAction()) as CartDetailResType;
+      const { processedItems = [] } = response;
+      setCartItems(processedItems);
     } catch (error: any) {
-      const { message = "" } = error || {};
-      enqueueSnackbar({
-        variant: "error",
-        message,
-      });
-      throw error
+      // const { message = "" } = error || {};
+      // enqueueSnackbar({
+      //   variant: "error",
+      //   message,
+      // });
+      // throw error;
     }
   }
 
@@ -55,8 +51,12 @@ export default function useCart() {
     details: CartItemDetail[],
     optional?: { easyCheckout?: boolean; navigateTo?: string },
   ): Promise<CartDetailResType> {
+    dispatch(setProcessedCart(details));
 
-    const items = details.map(item => ({productId: item.product._id, quantity: item.quantity }))
+    const items = details.map((item) => ({
+      productId: item.product._id,
+      quantity: item.quantity,
+    }));
 
     try {
       const response = (await dispatch(
@@ -66,52 +66,83 @@ export default function useCart() {
         }),
       )) as CartDetailResType;
 
-      const { unProcessedItems = [], processedItems = [] } = response;
-
-      setCartItems(processedItems);
+      const { processedItems = [], unProcessedItems = [] } = response;
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
           variant: "warning",
-          message: `Some items couldn't be processed due to unavailability.`
+          message: `Some items couldn't be processed due to unavailability.`,
         });
       }
+
+      setCartItems(processedItems);
 
       if (optional?.easyCheckout) dispatch(setOpenCart(true));
       if (optional?.navigateTo) navigate(optional.navigateTo);
 
-      return response
+      return response;
     } catch (error) {
       const { message = "" } = error || {};
       enqueueSnackbar({
         variant: "error",
         message,
       });
-      throw error
+      throw error;
     }
   }
 
   async function validateCart(): Promise<CartDetailResType> {
     try {
-      const response = await handleSaveToDB(cartItems)
-      const { unProcessedItems = [] } = response
+      const response = await handleSaveToDB(cartItems);
+      const { unProcessedItems = [] } = response;
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
           variant: "warning",
           message: "Please check the updated cart",
         });
-        throw new Error("Some items couldn't be processed")
+        throw new Error("Some items couldn't be processed");
       }
 
-      return response
+      return response;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  function addToCart(optional?: { easyCheckout?: boolean; navigateTo?: string }) {
-    handleSaveToDB(cartItems, optional)
+  function addToCart(
+    product: ShopByProductDetailsType,
+    productId: string,
+    quantity: number,
+    maxQuantityAvailable: number,
+    optional?: { easyCheckout?: boolean; navigateTo?: string },
+  ) {
+
+    if (quantity > maxQuantityAvailable) return;
+
+    let productAdded = false;
+
+    const newProductDetails = structuredClone(cartItems).map((item) => {
+      if (item.product._id === productId) {
+        item.quantity = quantity;
+        productAdded = true;
+      }
+      return item;
+    });
+
+    if (!productAdded) {
+      newProductDetails.push({
+        product,
+        quantity,
+        price: product.price,
+        totalPrice: product.price * quantity,
+        _id: Date.now().toString(),
+      });
+    }
+
+    setCartItems(newProductDetails)
+
+    handleSaveToDB(newProductDetails, optional);
   }
 
   function incrementToCart(
@@ -119,21 +150,20 @@ export default function useCart() {
     productId: string,
     maxQuantityAvailable: number,
     {
-      saveToDb = false,
       easyCheckout = false,
       navigateTo = "",
-    }: { saveToDb?: boolean; easyCheckout?: boolean; navigateTo?: string } = {},
+    }: { easyCheckout?: boolean; navigateTo?: string } = {},
   ) {
     const productQuantity = getQuantity(productId);
 
-    // if (productQuantity >= maxQuantityAvailable) return;
+    if (productQuantity >= maxQuantityAvailable) return;
 
     let productIncremented = false;
 
-    const newProductDetails = cartItems.map((item) => {
+    const newProductDetails = structuredClone(cartItems).map((item) => {
       if (item.product._id === productId) {
         item.quantity += 1;
-        productIncremented = true
+        productIncremented = true;
       }
       return item;
     });
@@ -145,42 +175,35 @@ export default function useCart() {
         price: product.price,
         totalPrice: product.price,
         _id: Date.now().toString(),
-      })
+      });
     }
 
     setCartItems(newProductDetails);
 
-    if (!saveToDb) return;
-
     debounceFn(newProductDetails, { easyCheckout, navigateTo });
   }
 
-  function decrementToCart(
-    productId: string,
-    { saveToDb = false }: { saveToDb?: boolean } = {},
-  ) {
+  function decrementToCart(productId: string) {
     const productQuantity = getQuantity(productId);
 
     if (productQuantity <= 0) return;
 
-    const newProductDetails = cartItems.map((item) => {
+    const newProductDetails = structuredClone(cartItems).map((item) => {
       if (item.product._id === productId) item.quantity -= 1;
       return item;
     });
 
     setCartItems(newProductDetails);
 
-    if (!saveToDb) return;
-
     debounceFn(newProductDetails);
   }
 
   // TODO
   function clearCart() {
-    setCartItems([]);
+    // dispatch(resetCart);
   }
 
-  function removeItemToCart(productId: string) {
+  function removeItemFromCart(productId: string) {
     const filterProducts = cartItems.filter(
       (item) => item.product._id !== productId,
     );
@@ -198,6 +221,10 @@ export default function useCart() {
     );
   }
 
+  useEffect(() => {
+    setCartItems(processedItems)
+  }, [])
+
   return {
     addToCart,
     getQuantity,
@@ -205,8 +232,7 @@ export default function useCart() {
     decrementToCart,
     incrementToCart,
     clearCart,
-    removeItemToCart,
-    cartLoading,
+    removeItemFromCart,
     validateCart,
     getCartFromDB,
   };

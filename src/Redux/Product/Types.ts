@@ -9,8 +9,8 @@ export type T_PRODUCT_REDUCER = {
 };
 
 export type QueryParamShopByBikeType = {
-  category: BikeCategoryEnum
-}
+  category: BikeCategoryEnum;
+};
 
 export type ShopByProductDetailsType = {
   _id: string;
@@ -28,6 +28,8 @@ export type ShopByProductDetailsType = {
   specifications: string;
   shippingAndReturn: string;
   isBikeSpecific: boolean;
+  isNewArrival: boolean;
+  isGarageFavorite: boolean;
 };
 
 export type ShopByBikeModelsType = {
@@ -93,6 +95,6 @@ export type SearchDataProductsType = {
 };
 
 export type SearchResponseType = {
-  data: []
-  pagination: PaginationType
+  data: [];
+  pagination: PaginationType;
 };

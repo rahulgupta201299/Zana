@@ -34,7 +34,7 @@ const ProductCatalogPage = () => {
   const state = location.state;
   const initialCategory = state?.category?.toLowerCase() || "";
   const { enqueueSnackbar } = useSnackbar();
-  const { incrementToCart } = useCart();
+  const { incrementToCart, getQuantity } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
@@ -78,9 +78,9 @@ const ProductCatalogPage = () => {
         type === ALL_CATEGORY
           ? AllProductService({ page, limit: LIMIT_PER_PAGE })
           : CategoryProductService({
-              category: type,
-              queryParams: { page, limit: LIMIT_PER_PAGE },
-            });
+            category: type,
+            queryParams: { page, limit: LIMIT_PER_PAGE },
+          });
 
       const { data, pagination } = (await dispatch(
         action,
@@ -105,13 +105,13 @@ const ProductCatalogPage = () => {
     try {
       const action = isCurrentlyWishlisted
         ? removeWishlistServiceAction({
-            phoneNumber: "7632000876",
-            productId,
-          })
+          phoneNumber: "7632000876",
+          productId,
+        })
         : addWishListServiceAction({
-            phoneNumber: "7632000876",
-            productId,
-          });
+          phoneNumber: "7632000876",
+          productId,
+        });
 
       const result = await dispatch(action);
       if (result) {
@@ -162,10 +162,7 @@ const ProductCatalogPage = () => {
     quantityAvailable: number,
   ) {
     e.stopPropagation();
-    incrementToCart(product, productId, quantityAvailable, {
-      saveToDb: true,
-      navigateTo: ROUTES.CART,
-    });
+    incrementToCart(product, productId, quantityAvailable, { navigateTo: ROUTES.CART });
   }
 
   useEffect(() => {
@@ -193,7 +190,7 @@ const ProductCatalogPage = () => {
               px: 1,
               py: 1,
               scrollBehavior: "smooth",
-              scrollbarWidth: "none", 
+              scrollbarWidth: "none",
               "&::-webkit-scrollbar": {
                 display: "none",
               },
@@ -256,6 +253,9 @@ const ProductCatalogPage = () => {
                 price,
               } = product;
 
+              const quantityAddedInCart = getQuantity(_id)
+              const isDisabled = quantityAddedInCart >= quantityAvailable
+
               return (
                 <div
                   key={_id}
@@ -305,23 +305,34 @@ const ProductCatalogPage = () => {
                             handleWishList(product._id);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${
-                              wishlistMap[product._id]
-                                ? "bg-yellow-400 text-black"
-                                : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                            ${wishlistMap[product._id]
+                              ? "bg-yellow-400 text-black"
+                              : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }
    `}
                         >
                           <Heart size={14} className="md:w-4 md:h-4" />
                         </button>
-                        <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                            handleAddToCart(e, product, _id, quantityAvailable)
-                          }
-                          className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
-                        >
-                          <ShoppingCart size={14} className="md:w-4 md:h-4" />
-                        </button>
+                        <div className="relative inline-flex">
+                          <button
+                            onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                              handleAddToCart(e, product, _id, quantityAvailable)
+                            }
+                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                            className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
+                          >
+                            <ShoppingCart size={14} className="md:w-4 md:h-4" />
+                          </button>
+                          {quantityAddedInCart > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
+                                bg-red-600 text-white text-[11px] font-bold
+                                rounded-full flex items-center justify-center
+                                leading-none shadow-md"
+                            >
+                              {quantityAddedInCart}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

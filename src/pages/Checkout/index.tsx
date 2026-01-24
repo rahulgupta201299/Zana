@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Container,
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
         anchorOrigin: { vertical: "top", horizontal: "center" },
         autoHideDuration: 3000,
       });
-      clearCart();
+      // clearCart();
       navigate(ROUTES.ORDER_DETAILS);
     } catch (err) {
       if (err.response?.status === 400)
@@ -1213,7 +1213,7 @@ export default function CheckoutPage() {
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
-                            decrementToCart(productId, { saveToDb: true })
+                            decrementToCart(productId)
                           }}
                           sx={{
                             color: "white",
@@ -1230,7 +1230,7 @@ export default function CheckoutPage() {
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
-                            incrementToCart(product, productId, quantityAvailable, { saveToDb: true })
+                            incrementToCart(product, productId, quantityAvailable)
                           }}
                           sx={{
                             color: "white",
