@@ -15,6 +15,7 @@ export async function appServiceOnMount() {
   const zProBike = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
   const initialCartLoaded = state.cart.initialCartLoaded;
+  const phoneNumber = state.auth.login.phoneNumber;
 
   const retry = autoRetry()
 
@@ -26,7 +27,7 @@ export async function appServiceOnMount() {
     if (!shopByBike.length) requests.push(retry(() => dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))))
     if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))
     if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
-    if (!initialCartLoaded) requests.push(retry(() => dispatch(getCartDetailServiceAction())))
+    if (!initialCartLoaded && phoneNumber) requests.push(retry(() => dispatch(getCartDetailServiceAction())))
     
     await Promise.allSettled(requests)
   } catch (error: any) {
@@ -38,6 +39,6 @@ export function onMountChecks() {
   const dispatch = AppStore.dispatch;
 
   if (location.pathname === ROUTES.CHECKOUT) {
-	// TODO handle open the otp login modal if not logged in
+    // TODO handle open the otp login modal if not logged in
   }
 }

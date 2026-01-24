@@ -11,7 +11,7 @@ import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName, getCartDetailServiceName } from "@/Redux/Cart/Action";
+import { cartModifyServiceName } from "@/Redux/Cart/Action";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 export default function useCart() {
@@ -19,9 +19,9 @@ export default function useCart() {
 
   const { processedItems = [] } = cartDetail;
 
-  const [cartItems, setCartItems] = useState<CartItemDetail[]>(structuredClone(processedItems));
+  const [cartItems, setCartItems] = useState<CartItemDetail[]>(processedItems);
 
-  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName, getCartDetailServiceName]))
+  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName]))
   
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
@@ -61,7 +61,7 @@ export default function useCart() {
     try {
       const response = (await dispatch(
         cartModifyServiceAction({
-          phoneNumber: "+919163277945",
+          phoneNumber,
           items,
         }),
       )) as CartDetailResType;
@@ -126,7 +126,7 @@ export default function useCart() {
   ) {
     const productQuantity = getQuantity(productId);
 
-    if (productQuantity >= maxQuantityAvailable) return;
+    // if (productQuantity >= maxQuantityAvailable) return;
 
     let productIncremented = false;
 

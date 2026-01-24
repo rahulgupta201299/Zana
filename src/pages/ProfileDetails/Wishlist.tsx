@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import getWishListServiceAction from "@/Redux/Auth/Services/WIshlist";
+import getWishListServiceAction from "@/Redux/Auth/Services/Wishlist";
 import removeWishlistServiceAction, {
   REMOVE_WISHLIST,
 } from "@/Redux/Auth/Services/RemoveWishlist";

@@ -11,22 +11,30 @@ export type T_AUTH_REDUCER = {
 
   wishlist: ShopByProductDetailsType[];
 
-  profileDetails:{
-    _id: string
-  firstName: string
-  lastName: string
-  isdCode: string
-  phoneNumber: string
-  emailId: string
-  address: string
-  notifyOffers: boolean
-  bikeOwnedByCustomer: bike_owned[]
-  createdAt: string
-  __v: number
-  }
+  isdCode: IsdCodeType[],
+
+  profileDetails: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    isdCode: string;
+    phoneNumber: string;
+    emailId: string;
+    address: string;
+    notifyOffers: boolean;
+    bikeOwnedByCustomer: bike_owned[];
+    createdAt: string;
+    __v: number;
+  };
 };
 
- type bike_owned={
-    brand: string,
-    model: string
- }
+type bike_owned = {
+  brand: string;
+  model: string;
+};
+
+export type IsdCodeType = {
+  code: string;
+  isd: string;
+  name: string;
+}

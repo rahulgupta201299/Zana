@@ -33,4 +33,6 @@ export interface CartDetailResType {
   discountAmount: number;
   totalAmount: number;
   status: string;
+  appliedCoupon: string;
+  couponCode: string;
 }

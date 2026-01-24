@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import { generateOtpName, verifyOtpName } from "@/Redux/Auth/Actions";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
 import { GEN_OTP_REQ } from "@/Redux/Auth/Services/GenerateOtpService";
 import GenerateOtpServiceAction from "@/Redux/Auth/Services/GenerateOtpService";
 import { TAppDispatch } from "@/Configurations/AppStore";
@@ -43,7 +43,6 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(30);
-  const [countries, setCountries] = useState([]);
   const [phoneError, setPhoneError] = useState("");
   const dispatch = useDispatch<TAppDispatch>();
   const isGeneratingOtp = useSelector(
@@ -56,6 +55,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, verifyOtpName) === "LOADING"
   );
+  const isdCode = useSelector(isdCodeDetails)
 
   const actions = useMemo(
     () => ({
@@ -104,8 +104,8 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
   };
 
   const getIsdCode = async () => {
-    const result = await actions.getIsdCodeList();
-    setCountries(result);
+    if (isdCode.length) return;
+    await actions.getIsdCodeList();
   };
 
   useEffect(() => {
@@ -292,7 +292,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
                           minWidth: "80px",
                         }}
                       >
-                        {countries.map((c) => (
+                        {isdCode.map((c) => (
                           <MenuItem
                             key={c.isd}
                             value={c.isd}

@@ -8,15 +8,22 @@ import BlogsSection from "@/components/BlogsSection";
 import BrandStory from "@/components/BrandStory";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CapSection from "@/components/CapSection";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { useEffect, useMemo } from "react";
 import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
 import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
+import { autoRetry } from "@/Utils/AutoRetryMechanism";
+import { getGarageFavorite, getNewArrivalsList } from "@/Redux/Landing/Selectors";
+import Loading from "@/components/Loading";
+import useCart from "@/hooks/useCart";
 
 function index() {
-    const dispatch = useDispatch<TAppDispatch>();
- const actions = useMemo(
+  const garageFavoriteList = useSelector(getGarageFavorite)
+  const newArrivalsList = useSelector(getNewArrivalsList)
+
+  const dispatch = useDispatch<TAppDispatch>();
+  const actions = useMemo(
     () => ({
       newArrivalList: () => dispatch(newArrivalsServiceAction()),
       garageFavorite: () => dispatch(garageFavoriteServiceAction()),
@@ -24,27 +31,33 @@ function index() {
     [dispatch]
   );
 
+  const { cartLoading } = useCart()
+
+  const retry = autoRetry()
+
   const fetchData = async () => {
-    const results = await Promise.allSettled([
-    actions.newArrivalList(),
-    actions.garageFavorite(),
-    ]);
-    results.forEach((result, index) => {
-    if (result.status === "fulfilled") {
-      console.log(`API ${index} succeeded:`, result.value);
-    } else {
-      console.error(`API ${index} failed:`, result.reason);
-    }
-  });
+    const requests: Promise<any>[] = []
+
+    if (!garageFavoriteList.length) requests.push(retry(() => actions.newArrivalList()))
+    if (!newArrivalsList.length) requests.push(retry(() => actions.garageFavorite()))
+
+    await Promise.allSettled(requests)
+    // results.forEach((result, index) => {
+    //   if (result.status === "fulfilled") {
+    //     console.log(`API ${index} succeeded:`, result.value);
+    //   } else {
+    //     console.error(`API ${index} failed:`, result.reason);
+    //   }
+    // });
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-
   return (
     <div className="min-h-screen">
+      {cartLoading && <Loading />}
       <OurPhilosophy />
       <GarageFavorite />
       {/* <ShopTheLook /> */}

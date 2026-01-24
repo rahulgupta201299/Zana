@@ -38,6 +38,7 @@ import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import ProductRecommendation from "./ProductRecommendation";
+import { isdCodeDetails } from "@/Redux/Auth/Selectors";
 
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, clearCart } = useCart();
@@ -47,11 +48,11 @@ export default function CheckoutPage() {
     (state) => state.auth.login.phoneNumber
   );
   const cartDetail = useSelector(cartDetailSelector)
+  const isdCode = useSelector(isdCodeDetails)
 
   // TODO
   const isLoading = false // useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartCheckOutServiceName]));
 
-  const [countries, setCountries] = useState([]);
   const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD);
 
   const dispatch = useDispatch<TAppDispatch>();
@@ -69,8 +70,8 @@ export default function CheckoutPage() {
   );
 
   const listOfCountry = async () => {
-    const result = await actions.getCountryList();
-    setCountries(result);
+    if (isdCode.length) return;
+    await actions.getCountryList();
   };
 
   useEffect(() => {
@@ -350,7 +351,7 @@ export default function CheckoutPage() {
                             </Box>
                           )}
                         >
-                          {countries.map((c) => (
+                          {isdCode.map((c) => (
                             <MenuItem
                               key={c.isd}
                               value={c.name}
@@ -826,7 +827,7 @@ export default function CheckoutPage() {
                                       </Box>
                                     )}
                                   >
-                                    {countries.map((c) => (
+                                    {isdCode.map((c) => (
                                       <MenuItem
                                         key={c.isd}
                                         value={c.name}

@@ -239,34 +239,6 @@ const ProductCatalogPage = () => {
 
             {categoryDetails.length === 0 && <CategorySkeleton />}
           </Box>
-        {/* TO VERIFY BY RAHUL */}
-          {/* <div className="flex flex-wrap justify-center gap-3">
-            {categoryDetails.map((category, ind) => {
-              const { name, count, icon } = category;
-              const categoryName = name.toLowerCase();
-
-              return (
-                <button
-                  key={ind}
-                  onClick={() => handleCategoryService(categoryName)}
-                  style={{ textTransform: "capitalize", cursor: "pointer" }}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
-                    selectedCategory === categoryName
-                      ? "bg-yellow-400 text-black"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
-                >
-                  <span>
-                    {categoryName === ALL_CATEGORY
-                      ? "All Products"
-                      : categoryName}{" "}
-                    ({count})
-                  </span>
-                </button>
-              );
-            })}
-            {categoryDetails.length === 0 && <CategorySkeleton />}
-          </div> */}
         </div>
       </div>
 
