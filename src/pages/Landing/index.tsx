@@ -15,8 +15,6 @@ import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
 import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import { getGarageFavorite, getNewArrivalsList } from "@/Redux/Landing/Selectors";
-import Loading from "@/components/Loading";
-import useCart from "@/hooks/useCart";
 
 function index() {
   const garageFavoriteList = useSelector(getGarageFavorite)
@@ -30,8 +28,6 @@ function index() {
     }),
     [dispatch]
   );
-
-  const { cartLoading } = useCart()
 
   const retry = autoRetry()
 
@@ -57,7 +53,6 @@ function index() {
 
   return (
     <div className="min-h-screen">
-      {cartLoading && <Loading />}
       <OurPhilosophy />
       <GarageFavorite />
       {/* <ShopTheLook /> */}

@@ -25,13 +25,12 @@ const CartSidebar = ({
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
-  const isOpenCart = useSelector(openCartSelector)
 
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
   const dispatch = useDispatch<TAppDispatch>()
 
-  const { getTotalQuantity, incrementToCart, decrementToCart, removeItemToCart } = useCart()
+  const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
   const { subtotal, discountAmount: discount, totalAmount: total, processedItems = [] } = cartDetail;
 
@@ -92,8 +91,9 @@ const CartSidebar = ({
           </Box>
         ) : (
           processedItems.map((item) => {
-            const { product, quantity = 0, price = 0 } = item;
+            const { product, price = 0 } = item;
             const { _id: productId = '', imageUrl = '', name = '', shortDescription = '' } = product || {}
+            const productQuantity = getQuantity(productId)
 
             return (
               <Box
@@ -185,7 +185,7 @@ const CartSidebar = ({
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          decrementToCart(productId, { saveToDb: true })
+                          decrementToCart(productId)
                         }}
                         sx={{
                           color: "white",
@@ -196,13 +196,13 @@ const CartSidebar = ({
                       </IconButton>
 
                       <Typography sx={{ width: 30, textAlign: "center" }}>
-                        {quantity}
+                        {productQuantity}
                       </Typography>
 
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          incrementToCart(product, item.product._id, item.product.quantityAvailable, { saveToDb: true })
+                          incrementToCart(product, item.product._id, item.product.quantityAvailable)
                         }}
                         sx={{
                           color: "white",
@@ -377,7 +377,7 @@ const CartSidebar = ({
   return (
     <Drawer
       anchor="right"
-      open={isOpenCart}
+      open={true}
       onClose={onClose}
       slotProps={{
         backdrop: {

@@ -7,3 +7,5 @@ export const SLICE_NAME = "cart";
 export const openCartSelector = createSelector((state: TAppStore) => state.cart.isOpenCart, data => data)
 
 export const cartDetailSelector = createSelector((state: TAppStore) => state.cart.cartDetail, data => data)
+
+export const outOfStockDetails = createSelector((state: TAppStore) => state.cart.outOfStocks, data => data)

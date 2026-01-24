@@ -2,7 +2,6 @@ import { MouseEvent, useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import useCart from "@/hooks/useCart";
 
 interface BikePartData {
   id: string;
@@ -29,8 +28,6 @@ interface BikeView {
 
 const ShopTheLook = () => {
   const navigate = useNavigate();
-
-  const { addToCart } = useCart()
 
   const [currentViewIndex, setCurrentViewIndex] = useState(0);
   const [selectedPart, setSelectedPart] = useState<BikePartData | null>(null);

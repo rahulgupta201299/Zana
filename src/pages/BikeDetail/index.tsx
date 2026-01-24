@@ -15,7 +15,6 @@ import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
-import Loading from "@/components/Loading";
 import { Skeleton } from "@mui/material";
 import useCart from "@/hooks/useCart";
 
@@ -32,7 +31,7 @@ const BikeDetailPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
-  const { addToCart } = useCart()
+  const { incrementToCart, getQuantity } = useCart()
 
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>([])
@@ -228,6 +227,8 @@ const BikeDetailPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBikeProducts.map((product) => {
               const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, quantityAvailable } = product
+              const quantityAddedInCart = getQuantity(_id)
+              const isDisabled = quantityAddedInCart >= quantityAvailable
 
               return (
                 <div
@@ -282,15 +283,27 @@ const BikeDetailPage = () => {
                         >
                           <Heart size={18} />
                         </button> */}
-                        <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                            e.stopPropagation()
-                            addToCart(_id, quantityAvailable, { navigateTo: ROUTES.CART })
-                          }}
-                          className="p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
-                        >
-                          <ShoppingCart size={18} />
-                        </button>
+                        <div className="relative inline-flex">
+                          <button
+                            onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                              e.stopPropagation()
+                              incrementToCart(product, _id, quantityAvailable, { navigateTo: ROUTES.CART })
+                            }}
+                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                            className="p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
+                          >
+                            <ShoppingCart size={18} />
+                          </button>
+                          {quantityAddedInCart > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
+                                bg-red-600 text-white text-[11px] font-bold
+                                rounded-full flex items-center justify-center
+                                leading-none shadow-md"
+                            >
+                              {quantityAddedInCart}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

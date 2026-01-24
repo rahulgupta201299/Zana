@@ -9,7 +9,7 @@ const CartCheckoutPage = () => {
 
   const cartDetail = useSelector(cartDetailSelector);
 
-  const { removeItemToCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
+  const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
   const { subtotal, discountAmount: discount, totalAmount: total, processedItems } = cartDetail
 
   const totalItems = getTotalQuantity()
@@ -97,7 +97,7 @@ const CartCheckoutPage = () => {
                             <div className="flex items-center gap-4">
                               <div className="flex items-center gap-2 bg-white/10 rounded-lg">
                                 <button
-                                  onClick={() => decrementToCart(productId, { saveToDb: true })}
+                                  onClick={() => decrementToCart(productId)}
                                   className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                                 >
                                   <Minus size={20} />
@@ -106,7 +106,7 @@ const CartCheckoutPage = () => {
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => incrementToCart(product, productId, quantityAvailable, { saveToDb: true })}
+                                  onClick={() => incrementToCart(product, productId, quantityAvailable)}
                                   className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                                 >
                                   <Plus size={20} />
@@ -115,7 +115,7 @@ const CartCheckoutPage = () => {
 
                               {/* Remove Button */}
                               <button
-                                onClick={() => removeItemToCart(productId)}
+                                onClick={() => removeItemFromCart(productId)}
                                 className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
                                 title="Remove item"
                               >
