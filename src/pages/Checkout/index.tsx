@@ -58,7 +58,7 @@ export default function CheckoutPage() {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const { subtotal, totalAmount: total, discountAmount: discount, processedItems = [] } = cartDetail
+  const { subtotal = 0, totalAmount: total = 0, discountAmount: discount = 0, processedItems = [] } = cartDetail
 
   const actions = useMemo(
     () => ({
@@ -272,7 +272,6 @@ export default function CheckoutPage() {
                 handleBlur,
                 errors,
                 touched,
-                handleSubmit,
                 setFieldValue,
                 isValid,
               }) => {
