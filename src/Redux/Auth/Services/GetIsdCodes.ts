@@ -3,11 +3,12 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { getIsdCodeActions } from "../Actions";
+import { IsdCodeType } from "../Types";
 
 
 const network = new Network();
 
-async function getIsdCodeListService(): Promise<any> {
+async function getIsdCodeListService(): Promise<IsdCodeType[]> {
   const options = {
     url: `/api/v1/country/isd-codes`,
     method: API_METHOD_ENUM.GET,

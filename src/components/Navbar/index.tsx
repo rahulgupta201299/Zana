@@ -52,7 +52,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
   const totalItems = getTotalQuantity()
 
-
   function handleMenuItemClick(
     event: React.MouseEvent<HTMLElement>,
     item: MenuItemsType
@@ -71,29 +70,29 @@ function Navbar({ isMobile }: NavbarPropsType) {
     setSelectedMenuItem(name);
   }
   const handleTopLevelClick = (item: any) => {
-  const { name } = item;
+    const { name } = item;
 
-  switch (name) {
-    case MenuItemsName.PROFILE:
-      if (verified) {
-        navigate("/profile");
-      } else {
-        setSelectedTopItem(MenuItemsName.PROFILE);
-      }
-      break;
+    switch (name) {
+      case MenuItemsName.PROFILE:
+        if (verified) {
+          navigate("/profile");
+        } else {
+          setSelectedTopItem(MenuItemsName.PROFILE);
+        }
+        break;
 
-    case MenuItemsName.SEARCH:
-      setSelectedTopItem(MenuItemsName.SEARCH);
-      break;
+      case MenuItemsName.SEARCH:
+        setSelectedTopItem(MenuItemsName.SEARCH);
+        break;
 
-    case MenuItemsName.CART:
-      dispatch(setOpenCart(true))
-      break;
+      case MenuItemsName.CART:
+        dispatch(setOpenCart(true))
+        break;
 
-    default:
-      navigate(`/${name.toLowerCase()}`);
-  }
- };
+      default:
+        navigate(`/${name.toLowerCase()}`);
+    }
+  };
 
   useEffect(() => {
     if (location.pathname !== ROUTES.BASE_URL) {
@@ -111,9 +110,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     return () => observer.disconnect()
   }, [location.pathname]);
-
-
-
 
   return (
     <Box>
@@ -253,11 +249,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
         )}
       </Box>
 
-      {selectedTopItem === MenuItemsName.PROFILE && 
-          <SignupPopup
-            type='navbar'
-            onClose={() => setSelectedTopItem(null)} />
-        }
+      {selectedTopItem === MenuItemsName.PROFILE &&
+        <SignupPopup
+          type='navbar'
+          onClose={() => setSelectedTopItem(null)} />
+      }
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />
       )}

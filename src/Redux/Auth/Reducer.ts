@@ -4,16 +4,21 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { T_AUTH_REDUCER } from "./Types";
+import { IsdCodeType, T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { addProfileDetailsActions, verifyOtpActions, wishlistActions } from "./Actions";
+import {
+  addProfileDetailsActions,
+  getIsdCodeActions,
+  verifyOtpActions,
+  wishlistActions,
+} from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
   login: {
     phoneNumber: "",
-    verified:false
+    verified: false,
   },
-  profileDetails:{
+  profileDetails: {
     _id: "",
     firstName: "",
     lastName: "",
@@ -24,9 +29,10 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
     notifyOffers: false,
     bikeOwnedByCustomer: [],
     createdAt: "",
-    __v: 0
+    __v: 0,
   },
   wishlist: [],
+  isdCode: [],
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -36,27 +42,27 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     resetAuth: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
-    builder.addCase(
-      verifyOtpActions.success,
-      (state, { payload }: any) => {
-        state.login=payload
-        state.profileDetails = payload.profile || {
-          ...state.profileDetails,
-          phoneNumber: payload.phoneNumber,
-        };
-      }
-    );
+    builder.addCase(verifyOtpActions.success, (state, { payload }: any) => {
+      state.login = payload;
+      state.profileDetails = payload.profile || {
+        ...state.profileDetails,
+        phoneNumber: payload.phoneNumber,
+      };
+    });
     builder.addCase(
       addProfileDetailsActions.success,
       (state, { payload }: any) => {
-        state.profileDetails=payload
-      }
+        state.profileDetails = payload;
+      },
     );
-      builder.addCase(
-      wishlistActions.success,
-      (state, { payload }: any) => {
-        state.wishlist = payload?.products || []
-      }
+    builder.addCase(wishlistActions.success, (state, { payload }: any) => {
+      state.wishlist = payload?.products || [];
+    });
+    builder.addCase(
+      getIsdCodeActions.success,
+      (state, action: PayloadAction<IsdCodeType[]>) => {
+        state.isdCode = action.payload;
+      },
     );
   },
 };

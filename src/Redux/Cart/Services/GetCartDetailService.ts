@@ -8,20 +8,20 @@ import AppStore from "@/Configurations/AppStore";
 const network = new Network();
 
 async function getCartDetailService(): Promise<CartDetailResType> {
-  const state = AppStore.getState()
+  const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
 
   const options = {
     url: `/api/v1/cart/active/${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
   };
-    const response = await network.request(options)
-    return response
+  const response = await network.request(options);
+  return response;
 }
 
 const getCartDetailServiceAction = serviceActionCreator(
   getCartDetailActions,
-  getCartDetailService
+  getCartDetailService,
 );
 
 export default getCartDetailServiceAction;

@@ -9,6 +9,7 @@ import { ROUTES } from '@/Constants/Routes'
 import SignupPopup from '@/components/SignupPopup'
 import CartSidebar from '@/components/CartSidebar'
 import { appServiceOnMount, onMountChecks } from '@/Configurations/Service/AppService'
+import CartAttentionDialog from '@/components/CartAttentionDialog'
 
 function PublicRoutes() {
 	const location = useLocation()
@@ -27,6 +28,7 @@ function PublicRoutes() {
 			<Outlet />
 			<Footer />
 			<WhatsAppButton />
+			<CartAttentionDialog />
 		</Box>
 	)
 }

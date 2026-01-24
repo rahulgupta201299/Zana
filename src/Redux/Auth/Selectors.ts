@@ -25,4 +25,9 @@ export const WishListProducts = createSelector(
   (wishlist) => wishlist
 );
 
+export const isdCodeDetails = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].isdCode,
+  data => data
+)
+
 

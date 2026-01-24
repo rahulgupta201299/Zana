@@ -11,17 +11,17 @@ import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName, getCartDetailServiceName } from "@/Redux/Cart/Action";
-import { autoRetry } from "@/Utils/AutoRetryMechanism";
+import { cartModifyServiceName } from "@/Redux/Cart/Action";
+import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 export default function useCart() {
   const cartDetail = useSelector(cartDetailSelector);
 
   const { processedItems = [] } = cartDetail;
 
-  const [cartItems, setCartItems] = useState<CartItemDetail[]>(structuredClone(processedItems));
+  const [cartItems, setCartItems] = useState<CartItemDetail[]>(processedItems);
 
-  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName, getCartDetailServiceName]))
+  const cartLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName]))
   
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
@@ -34,21 +34,34 @@ export default function useCart() {
     return createDebounce(handleSaveToDB, 500);
   }, [])
 
-  const retry = useMemo(() => {
-    return autoRetry()
-  }, [])
+  async function getCartFromDB() {
+    if (!phoneNumber) return;
+
+    try {
+      const response = await dispatch(getCartDetailServiceAction()) as CartDetailResType
+      const { processedItems = [] } = response
+      setCartItems(processedItems)
+    } catch (error: any) {
+      const { message = "" } = error || {};
+      enqueueSnackbar({
+        variant: "error",
+        message,
+      });
+      throw error
+    }
+  }
 
   async function handleSaveToDB(
     details: CartItemDetail[],
     optional?: { easyCheckout?: boolean; navigateTo?: string },
-  ): Promise<void> {
+  ): Promise<CartDetailResType> {
 
     const items = details.map(item => ({productId: item.product._id, quantity: item.quantity }))
 
     try {
       const response = (await dispatch(
         cartModifyServiceAction({
-          phoneNumber: "+919163277940",
+          phoneNumber,
           items,
         }),
       )) as CartDetailResType;
@@ -66,13 +79,34 @@ export default function useCart() {
 
       if (optional?.easyCheckout) dispatch(setOpenCart(true));
       if (optional?.navigateTo) navigate(optional.navigateTo);
+
+      return response
     } catch (error) {
       const { message = "" } = error || {};
       enqueueSnackbar({
         variant: "error",
         message,
       });
-      setCartItems(processedItems);
+      throw error
+    }
+  }
+
+  async function validateCart(): Promise<CartDetailResType> {
+    try {
+      const response = await handleSaveToDB(cartItems)
+      const { unProcessedItems = [] } = response
+
+      if (unProcessedItems.length) {
+        enqueueSnackbar({
+          variant: "warning",
+          message: "Please check the updated cart",
+        });
+        throw new Error("Some items couldn't be processed")
+      }
+
+      return response
+    } catch (error) {
+      throw error
     }
   }
 
@@ -92,7 +126,7 @@ export default function useCart() {
   ) {
     const productQuantity = getQuantity(productId);
 
-    if (productQuantity >= maxQuantityAvailable) return;
+    // if (productQuantity >= maxQuantityAvailable) return;
 
     let productIncremented = false;
 
@@ -173,5 +207,7 @@ export default function useCart() {
     clearCart,
     removeItemToCart,
     cartLoading,
+    validateCart,
+    getCartFromDB,
   };
 }

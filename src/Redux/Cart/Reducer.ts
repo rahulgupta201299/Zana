@@ -6,7 +6,7 @@ import type {
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { createSlice } from "@reduxjs/toolkit";
-import {SLICE_NAME as CartSliceName} from "@/Redux/Cart/Selectors";
+import { SLICE_NAME as CartSliceName } from "@/Redux/Cart/Selectors";
 import { CartDetailResType, T_CART_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import { cartModifyActions, getCartDetailActions } from "./Action";
@@ -23,7 +23,10 @@ export const INITIAL_STATE: T_CART_REDUCER = {
     discountAmount: 0,
     totalAmount: 0,
     status: "",
+    appliedCoupon: "",
+    couponCode: "",
   },
+  initialCartLoaded: false,
   isOpenCart: false,
 };
 
@@ -53,6 +56,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       getCartDetailActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
         state.cartDetail = action.payload;
+        state.initialCartLoaded = true;
       },
     );
   },
