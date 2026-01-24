@@ -144,7 +144,7 @@ const CapSection = () => {
     const product = capProducts[index] as unknown as ShopByProductDetailsType;
 
     const { _id: productId, quantityAvailable } = product
-    incrementToCart(product, productId, quantityAvailable, { saveToDb: true, easyCheckout: true })
+    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];

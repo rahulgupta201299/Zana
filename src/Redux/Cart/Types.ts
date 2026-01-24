@@ -37,3 +37,18 @@ export interface CartDetailResType {
   appliedCoupon: string;
   couponCode: string;
 }
+
+export interface GetCartDetailResType {
+  _id: string;
+  items: CartItemDetail[];
+  phoneNumber: string;
+  subtotal: number;
+  paymentStatus: string;
+  shippingCost: number;
+  taxAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+  status: string;
+  appliedCoupon: string;
+  couponCode: string;
+}
