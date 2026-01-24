@@ -6,14 +6,14 @@ import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
-import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
+import { TAppDispatch } from "@/Configurations/AppStore";
 import { resetCart, setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 export default function useCart() {
-  const cartDetail = useSelector((state: TAppStore) => state.cart.cartDetail);
+  const cartDetail = useSelector(cartDetailSelector);
 
   const { processedItems = [] } = cartDetail;
 
@@ -51,6 +51,7 @@ export default function useCart() {
     details: CartItemDetail[],
     optional?: { easyCheckout?: boolean; navigateTo?: string },
   ): Promise<CartDetailResType> {
+    
     dispatch(setProcessedCart(details));
 
     const items = details.map((item) => ({
@@ -223,7 +224,7 @@ export default function useCart() {
 
   useEffect(() => {
     setCartItems(processedItems)
-  }, [])
+  }, [processedItems.length])
 
   return {
     addToCart,

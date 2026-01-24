@@ -7,7 +7,7 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { SLICE_NAME as CartSliceName } from "@/Redux/Cart/Selectors";
-import { CartDetailResType, CartItemDetail, T_CART_REDUCER } from "./Types";
+import { CartDetailResType, CartItemDetail, GetCartDetailResType, T_CART_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import { cartModifyActions, getCartDetailActions } from "./Action";
 
@@ -45,7 +45,10 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       state.isOpenCart = action.payload;
     },
     setProcessedCart(state, action: PayloadAction<CartItemDetail[]>) {
-      state.outOfStocks = action.payload;
+      const productList = action.payload
+      state.cartDetail.processedItems = productList;
+      state.cartDetail.unProcessedItems = []
+      state.cartDetail.totalAmount = productList.reduce((acc, curr) => acc + curr.totalPrice, 0)
     },
     clearOutofStockItems(state) {
       state.outOfStocks = [];
@@ -63,10 +66,14 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     );
     builder.addCase(
       getCartDetailActions.success,
-      (state, action: PayloadAction<CartDetailResType>) => {
-        const { unProcessedItems = [] } = action.payload;
-        state.cartDetail = action.payload;
-        state.outOfStocks = unProcessedItems;
+      (state, action: PayloadAction<GetCartDetailResType>) => {
+        const { items = [], phoneNumber, ...rest } = action.payload;
+        state.cartDetail = {
+          processedItems: items,
+          unProcessedItems: [],
+          ...rest
+        };
+        state.outOfStocks = [];
         state.initialCartLoaded = true;
       },
     );

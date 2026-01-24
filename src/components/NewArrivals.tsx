@@ -48,7 +48,7 @@ const NewArrivals = () => {
             {/* Column 2 */}
             <div className="flex-1 flex flex-col gap-2">
               {
-                products.slice(2, 2).map((item, ind) => (
+                products.slice(2, 4).map((item, ind) => (
                   <ProductCard
                     key={item._id}
                     product={item}
@@ -64,7 +64,7 @@ const NewArrivals = () => {
             {/* Column 3 */}
             <div className="flex-1 flex flex-col gap-2">
               {
-                products.slice(4, 2).map((item, ind) => (
+                products.slice(4, 6).map((item, ind) => (
                   <ProductCard
                     key={item._id}
                     product={item}
