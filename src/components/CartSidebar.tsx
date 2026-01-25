@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
-import { cartDetailSelector, openCartSelector } from "@/Redux/Cart/Selectors";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
 import { ROUTES } from "@/Constants/Routes";
 
@@ -39,7 +39,6 @@ const CartSidebar = ({
   function onClose() {
     dispatch(setOpenCart(false))
   }
-
 
   const CartContent = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -92,8 +91,13 @@ const CartSidebar = ({
         ) : (
           processedItems.map((item) => {
             const { product, price = 0 } = item;
-            const { _id: productId = '', imageUrl = '', name = '', shortDescription = '' } = product || {}
+            const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
             const productQuantity = getQuantity(productId)
+
+            const isPlusDisabled = productQuantity >= quantityAvailable;
+            const isMinusDisabled = productQuantity === 0;
+
+            if (!item.quantity) return null;
 
             return (
               <Box
@@ -189,8 +193,10 @@ const CartSidebar = ({
                         }}
                         sx={{
                           color: "white",
+                          cursor: "pointer",
                           "&:hover": { color: "yellow" },
                         }}
+                        disabled={isMinusDisabled}
                       >
                         <Minus size={18} />
                       </IconButton>
@@ -206,8 +212,10 @@ const CartSidebar = ({
                         }}
                         sx={{
                           color: "white",
+                          cursor: "pointer",
                           "&:hover": { color: "yellow" },
                         }}
+                        disabled={isPlusDisabled}
                       >
                         <Plus size={18} />
                       </IconButton>

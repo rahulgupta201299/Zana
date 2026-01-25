@@ -16,7 +16,8 @@ const ProductCard = ({
   loading?: boolean
 }) => {
 
-  const isDisabled = Boolean(product && count >= product.quantityAvailable)
+  const { imageUrl = '', name = '', quantityAvailable = 0 } = product || {}
+  const isDisabled = Boolean(product && count >= quantityAvailable)
 
   return (
     <div className="relative group" style={{ height }}>
@@ -31,8 +32,8 @@ const ProductCard = ({
       ) : (
         <>
           <img
-            src={product?.imageUrl}
-            alt={product?.name}
+            src={imageUrl}
+            alt={name}
             className="w-full h-full object-cover rounded-lg shadow-lg"
           />
           <div className="absolute bottom-2 left-2 group">
@@ -59,9 +60,9 @@ const ProductCard = ({
               count > 0 && (
                 <span
                   className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
-               bg-red-500 text-white text-xs flex items-center justify-center
-               font-semibold shadow transition-all duration-300
-               group-hover:translate-x-0"
+                        bg-red-500 text-white text-xs flex items-center justify-center
+                        font-semibold shadow transition-all duration-300
+                        group-hover:translate-x-0"
                 >
                   {count}
                 </span>

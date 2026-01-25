@@ -9,7 +9,7 @@ const network = new Network();
 
 async function createPaymentOrderService(requestData: CreatePaymentOrderReqType): Promise<CreatePaymentOrderResType> {
   const options = {
-    url: '/v1/payment/create-order',
+    url: '/api/v1/payment/create-order',
     method: API_METHOD_ENUM.POST,
     data: requestData
   };
