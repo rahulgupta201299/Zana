@@ -37,14 +37,7 @@ export default function useCart() {
       const response = await dispatch(getCartDetailServiceAction()) as CartDetailResType;
       const { processedItems = [] } = response;
       setCartItems(processedItems);
-    } catch (error: any) {
-      // const { message = "" } = error || {};
-      // enqueueSnackbar({
-      //   variant: "error",
-      //   message,
-      // });
-      // throw error;
-    }
+    } catch (error: any) {}
   }
 
   async function handleSaveToDB(

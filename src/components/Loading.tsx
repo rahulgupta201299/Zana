@@ -16,7 +16,7 @@ const Loading = () => {
         alignItems: "center",
         overscrollBehavior: 'none',
         overflow: 'hidden',
-        zIndex: 100,
+        zIndex: 1500,
       }}
     >
       <CircularProgress size={55} sx={{ color: "white" }} />

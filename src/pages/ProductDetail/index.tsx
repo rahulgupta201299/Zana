@@ -1,9 +1,8 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
+import { Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
 import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
-import CartIcon from "@/components/ui/cart-icon";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
@@ -87,6 +86,9 @@ const ProductDetailPage = () => {
 
   const { _id = '', name = '', shippingAndReturn = '', shortDescription = '', longDescription = '', category = '', price = 0, imageUrl = '', images = [], quantityAvailable = 0, specifications = '', isBikeSpecific = false } = product || {}
 
+  const isPlusDisabled = quantity >= quantityAvailable;
+  const isMinusDisabled = quantity === 1;
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
       {/* Product Details */}
@@ -157,28 +159,31 @@ const ProductDetailPage = () => {
                   <span className="text-2xl font-bold text-white">
                     ₹ {price.toLocaleString()}
                   </span>
-                ) : <Box sx={{ display: 'flex', gap: 2 }}>
-                  <span style={{ margin: 'auto 0' }} className="text-2xl font-bold text-white">₹{' '}</span>
-                  <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={100} height={60} />
-                </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <span style={{ margin: 'auto 0' }} className="text-2xl font-bold text-white">₹{' '}</span>
+                    <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={100} height={60} />
+                  </Box>
+                )
               }
               <div className="flex items-center gap-2">
-                {/* TODO Add condition for disabling buttons */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity === 1}
+                  disabled={isMinusDisabled}
                   onClick={() => setQuantity(p => p - 1)}
+                  style={{ cursor: 'pointer' }}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{getQuantity(_id)}</span>
+                <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">{quantity}</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity >= quantityAvailable}
+                  disabled={isPlusDisabled}
                   onClick={() => setQuantity(p => p + 1)}
+                  style={{ cursor: 'pointer' }}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -197,7 +202,6 @@ const ProductDetailPage = () => {
               >
                 ADD TO CART
               </Button>
-              {/* TODO handle the buy now  */}
               <Button
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation()
@@ -297,14 +301,14 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* TODO handle fallback */}
-      {/* You may also like */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-4xl font-bold text-white text-center mb-8">You may also like</h2>
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {suggestedProducts.map((relatedProduct, index) => {
 
             const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
+            const productQuantity = getQuantity(_id)
+            const isDisabled = productQuantity >= quantityAvailable
 
             return (
               <div
@@ -319,25 +323,51 @@ const ProductDetailPage = () => {
                       alt={name}
                       className="max-w-full max-h-full object-contain"
                     />
-                    <div className="absolute bottom-2 left-2 group">
-                        <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                            e.stopPropagation()
-                            incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
-                          }}
-                          className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
+                     <div className="absolute bottom-2 left-2 group">
+                      <button
+                        style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                        disabled={isDisabled}
+                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                          e.stopPropagation()
+                          incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
+                        }}
+                        className="h-9 bg-white rounded-full flex items-center justify-center
+                            overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
+                            w-9 group-hover:w-auto group-hover:px-3"
+                      >
+                        <span
+                          className="whitespace-nowrap text-sm font-semibold text-black
+                              hidden translate-x-[-6px]
+                              group-hover:inline-block group-hover:translate-x-0
+                              transition-all duration-300 mr-1"
                         >
-                          <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
-                            Add to cart
+                          Add to cart
+                        </span>
+                        <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
+                      </button>
+                      {
+                        productQuantity > 0 && (
+                          <span
+                            className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
+                                bg-red-500 text-white text-xs flex items-center justify-center
+                                font-semibold shadow transition-all duration-300
+                                group-hover:translate-x-0"
+                          >
+                            {productQuantity}
                           </span>
-                          <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
-                        </button>
+                        )
+                      }
                     </div>
                   </div>
                 </div>
-                <div className="px-2 pb-2 flex justify-between items-center">
-                  <h3 className="font-bold text-black text-left text-sm">{name}</h3>
-                  <span className="font-bold text-black text-sm">₹{price}</span>
+                <div className="px-2 pb-2 flex items-center  gap-3">
+                  <h3 className="font-bold text-black text-sm leading-snug break-words flex-1">
+                    {name}
+                  </h3>
+
+                  <span className="font-bold text-black text-sm whitespace-nowrap">
+                    ₹ {price}
+                  </span>
                 </div>
               </div>
             )
