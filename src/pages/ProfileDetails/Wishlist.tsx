@@ -19,14 +19,11 @@ import removeWishlistServiceAction, {
 } from "@/Redux/Auth/Services/RemoveWishlist";
 import { WishListProducts } from "@/Redux/Auth/Selectors";
 import {
-  getServiceSelector,
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
 import { removeWishlistName, wishlistName } from "@/Redux/Auth/Actions";
 import WishlistCardSkeleton from "@/components/Skeleton/WishlistSkeleton";
 import { useSnackbar } from "notistack";
-import { PersistPartial } from "redux-persist/es/persistReducer";
-import { TReducers } from "@/Redux/Reducers";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
 import { useNavigate } from "react-router";
