@@ -18,12 +18,20 @@ import removeWishlistServiceAction, {
   REMOVE_WISHLIST,
 } from "@/Redux/Auth/Services/RemoveWishlist";
 import { WishListProducts } from "@/Redux/Auth/Selectors";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import {
+  isServiceLoading,
+} from "@/Redux/ServiceTracker/Selectors";
 import { removeWishlistName, wishlistName } from "@/Redux/Auth/Actions";
 import WishlistCardSkeleton from "@/components/Skeleton/WishlistSkeleton";
+import { useSnackbar } from "notistack";
+import Loading from "@/components/Loading";
+import { ROUTES } from "@/Constants/Routes";
+import { useNavigate } from "react-router";
 
 const Wishlist = () => {
   const dispatch = useDispatch<TAppDispatch>();
+  const { enqueueSnackbar } = useSnackbar();
+    const navigate = useNavigate()
   const actions = useMemo(
     () => ({
       fetchWishlist: () => dispatch(getWishListServiceAction()),
@@ -34,7 +42,10 @@ const Wishlist = () => {
   );
   const wishList = useSelector(WishListProducts);
   const isLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [wishlistName, removeWishlistName]),
+    isServiceLoading(state, [wishlistName]),
+  );
+  const isRemovingFromWishlist = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [removeWishlistName]),
   );
 
   const getWishList = async () => {
@@ -49,7 +60,11 @@ const Wishlist = () => {
     };
     const result = await actions.removeFromWishlist(requestData);
     if (result?.success) {
-      getWishList();
+      enqueueSnackbar("Product removed from wishlist successfully.", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -84,7 +99,7 @@ const Wishlist = () => {
           </Typography>
         </Container>
       </Box>
-
+      {isRemovingFromWishlist && <Loading />}
       <Container
         sx={{
           py: { xs: "32px", md: "64px" },
@@ -110,7 +125,8 @@ const Wishlist = () => {
                       transition: "all 0.3s ease",
 
                       "&:hover": {
-                        borderColor: "#facc15",
+                        borderColor:
+                          data?.quantityAvailable === 0 ? "" : "#facc15",
                       },
 
                       "&:hover .remove-btn": {
@@ -168,11 +184,34 @@ const Wishlist = () => {
                           objectFit: "contain",
                           borderRadius: "12px 12px 0 0",
                           transition: "transform 0.3s ease",
-                          ".MuiCard-root:hover &": {
-                            transform: "scale(1.1)",
-                          },
+                          filter:
+                            data?.quantityAvailable === 0
+                              ? "grayscale(100%)"
+                              : "none",
+                          opacity: data?.quantityAvailable === 0 ? 0.6 : 1,
                         }}
                       />
+                      {data?.quantityAvailable === 0 && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: 12,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            bgcolor: "#fff",
+                            px: 2,
+                            py: 0.5,
+                            borderRadius: "4px",
+                            fontWeight: 700,
+                            fontSize: "0.85rem",
+                            color: "#ff5722",
+                            letterSpacing: "0.5px",
+                            zIndex: 2,
+                          }}
+                        >
+                          OUT OF STOCK
+                        </Box>
+                      )}
                     </Box>
 
                     <CardContent
@@ -213,6 +252,7 @@ const Wishlist = () => {
                     </CardContent>
 
                     <Button
+                      disabled={data?.quantityAvailable === 0}
                       sx={{
                         width: "calc(100% - 48px)",
                         height: "48px",
@@ -229,6 +269,52 @@ const Wishlist = () => {
                 </Grid>
               ))}
         </Grid>
+        {wishList.length === 0 && (
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 8,
+            }}
+          >
+          
+            <Typography
+              sx={{
+                color: "rgba(251, 241, 241, 0.5)", 
+                mb:'8px'   
+              }}
+              variant='h5'
+            >
+              No items in your wishlist
+            </Typography>
+            <Typography
+              sx={{
+                color: "rgba(255,255,255,0.5)",
+                fontSize: "1.125rem",
+                mb:'24px'
+              }}
+            >
+              Discover products you love and save them here for later.
+            </Typography>
+
+            <Button
+              sx={{
+                px: 3,
+                py: 1.5,
+                bgcolor: "#facc15",
+                color: "#000",
+                borderRadius: "8px",
+                fontWeight: 500,
+                textTransform: "none",
+                "&:hover": {
+                  bgcolor: "#eab308",
+                },
+              }}
+               onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+            >
+              View All Products
+            </Button>
+          </Box>
+        )}
       </Container>
     </Box>
   );

@@ -9,6 +9,7 @@ import { SLICE_NAME } from "./Selectors";
 import {
   addProfileDetailsActions,
   getIsdCodeActions,
+  removeWishlistActions,
   verifyOtpActions,
   wishlistActions,
 } from "./Actions";
@@ -58,6 +59,12 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     builder.addCase(wishlistActions.success, (state, { payload }: any) => {
       state.wishlist = payload?.products || [];
     });
+
+    builder.addCase(removeWishlistActions.success, (state, { payload }: any) => {
+      console.log("REMOVE WISHLIST PAYLOAD", payload);
+      state.wishlist = payload?.data?.products || [];
+    });
+
     builder.addCase(
       getIsdCodeActions.success,
       (state, action: PayloadAction<IsdCodeType[]>) => {

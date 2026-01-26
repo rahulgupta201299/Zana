@@ -47,15 +47,15 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
   const dispatch = useDispatch<TAppDispatch>();
   const isGeneratingOtp = useSelector(
     (state: TReducers & PersistPartial) =>
-      getServiceSelector(state, generateOtpName) === "LOADING"
+      getServiceSelector(state, generateOtpName) === "LOADING",
   );
   const { enqueueSnackbar } = useSnackbar();
   const loginData = useSelector((state: any) => getLoginDetails(state));
   const isVerifyingOtp = useSelector(
     (state: TReducers & PersistPartial) =>
-      getServiceSelector(state, verifyOtpName) === "LOADING"
+      getServiceSelector(state, verifyOtpName) === "LOADING",
   );
-  const isdCode = useSelector(isdCodeDetails)
+  const isdCode = useSelector(isdCodeDetails);
 
   const actions = useMemo(
     () => ({
@@ -65,8 +65,13 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
         dispatch(VerifyOtpServiceAction(state)),
       getIsdCodeList: () => dispatch(getIsdListServiceAction()),
     }),
-    [dispatch]
+    [dispatch],
   );
+
+  const getIsdCode = async () => {
+    if (isdCode.length) return;
+    await actions.getIsdCodeList();
+  };
 
   useEffect(() => {
     const hasShownPopup = sessionStorage.getItem("landing_popup_shown");
@@ -90,22 +95,28 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       setPhoneError("Enter a valid 10-digit phone number");
       return;
     } else {
-      // const body = {
-      //   isdCode: countryCode,
-      //   phoneNumber: phone,
-      // };
-      // const result = await actions.generateOtp(body);
-      // if (result.statusCode === 200) {
-      setPhoneError("");
-      setTimer(30);
-      setOtpSent(true);
-      // }
+      const body = {
+        isdCode: countryCode,
+        phoneNumber: phone,
+      };
+      const result = await actions.generateOtp(body);
+      if (result.success) {
+        setPhoneError("");
+        setTimer(30);
+        setOtpSent(true);
+        enqueueSnackbar("Otp sent successfully.", {
+          variant: "success",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+          autoHideDuration: 3000,
+        });
+      } else {
+        enqueueSnackbar("Failed to generate OTP. Please try again.", {
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+          autoHideDuration: 3000,
+        });
+      }
     }
-  };
-
-  const getIsdCode = async () => {
-    if (isdCode.length) return;
-    await actions.getIsdCodeList();
   };
 
   useEffect(() => {
@@ -142,17 +153,11 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
   };
 
   const handleSubmitOtp = async (otp: any) => {
-    if (otp.length !== 6) {
-      alert("Enter a valid 6-digit OTP");
-      return;
-    }
-
     const reqBody = {
       isdCode: countryCode,
       phoneNumber: phone,
       otp: otp,
     };
-
     try {
       await actions.verifyOtp(reqBody);
       enqueueSnackbar("You have logged in successfully.", {
@@ -241,7 +246,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
         <CloseIcon />
       </IconButton>
 
-      <DialogTitle sx={{ p: { md: "32px 32px 24px", xs: "16px" } }}>
+      <DialogTitle sx={{ p: { md: "32px 32px 0px", xs: "16px" } }}>
         Login With OTP
       </DialogTitle>
       {(isVerifyingOtp || isGeneratingOtp) && <Loading />}
@@ -250,7 +255,8 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          p: { md: "64px 32px", xs: "32px 16px" },
+          mt: "24px",
+          p: { md: "0px 32px 32px 32px", xs: "16px" },
           overflowY: "auto",
           flex: 1,
         }}
