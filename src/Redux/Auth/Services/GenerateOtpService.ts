@@ -19,8 +19,7 @@ async function generateOtpService(
     data:requestData
   };
     const response = await network.request(options)
-    const { data } = response
-    return data 
+    return response 
 }
 
 const GenerateOtpServiceAction = serviceActionCreator(
