@@ -8,13 +8,26 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { newArrivalsName } from "@/Redux/Landing/Actions";
 
 const NewArrivals = () => {
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [newArrivalsName]))
-  const products = useSelector((state: TAppStore) => getNewArrivalsList(state))
+  const isLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [newArrivalsName]),
+  );
+  const products = useSelector((state: TAppStore) => getNewArrivalsList(state));
 
-  const { incrementToCart, getQuantity } = useCart()
+  const { incrementToCart, getQuantity } = useCart();
+
+    function handleAddToCart(productId: string) {
+    const product = products.find(item => item._id === productId)
+
+    if (!product) return;
+
+    const { quantityAvailable = 0 } = product
+
+    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
+  }
+  const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
 
   return (
-    <div className="py-8 md:py-16" style={{ backgroundColor: '#181818' }}>
+    <div className="py-8 md:py-16" style={{ backgroundColor: "#181818" }}>
       <div className="px-4 md:px-6">
         {/* Header */}
         <div className="text-center mb-6 md:mb-12">
@@ -26,57 +39,21 @@ const NewArrivals = () => {
           </p>
         </div>
 
-        {/* Desktop Grid */}
-        <div className="hidden md:block max-w-7xl mx-auto">
-          <div className="flex gap-2">
-            {/* Column 1 */}
-            <div className="flex-[1.5] flex flex-col gap-2">
-              {
-                products.slice(0, 2).map((item, ind) => (
-                  <ProductCard
-                    key={item._id}
-                    product={item}
-                    onClick={() => incrementToCart(item, item._id, item.quantityAvailable, { easyCheckout: true })}
-                    height={295}
-                    count={getQuantity(item._id)}
-                    loading={isLoading}
-                  />
-                ))
-              }
+        <div className="hidden md:grid grid-cols-5 gap-2">
+            {desktopColumns.map((col, colIdx) => (
+            <div key={colIdx} className="flex flex-col gap-2">
+              {col.map((idx) => (
+                <ProductCard
+                  key={idx}
+                  product={products[idx]}
+                  onClick={() => handleAddToCart(products[idx]._id)}
+                  height={col.length === 1 ? 360 : 176}
+                  count={getQuantity(products[idx]?._id)}
+                  loading={isLoading}
+                />
+              ))}
             </div>
-
-            {/* Column 2 */}
-            <div className="flex-1 flex flex-col gap-2">
-              {
-                products.slice(2, 4).map((item, ind) => (
-                  <ProductCard
-                    key={item._id}
-                    product={item}
-                    onClick={() => incrementToCart(item, item._id, item.quantityAvailable, { easyCheckout: true })}
-                    height={295}
-                    count={getQuantity(item._id)}
-                    loading={isLoading}
-                  />
-                ))
-              }
-            </div>
-
-            {/* Column 3 */}
-            <div className="flex-1 flex flex-col gap-2">
-              {
-                products.slice(4, 6).map((item, ind) => (
-                  <ProductCard
-                    key={item._id}
-                    product={item}
-                    onClick={() => incrementToCart(item, item._id, item.quantityAvailable, { easyCheckout: true })}
-                    height={295}
-                    count={getQuantity(item._id)}
-                    loading={isLoading}
-                  />
-                ))
-              }
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Mobile Grid */}
@@ -86,7 +63,11 @@ const NewArrivals = () => {
               <ProductCard
                 key={item._id}
                 product={item}
-                onClick={() => incrementToCart(item, item._id, item.quantityAvailable, { easyCheckout: true })}
+                onClick={() =>
+                  incrementToCart(item, item._id, item.quantityAvailable, {
+                    easyCheckout: true,
+                  })
+                }
                 height={150}
                 count={getQuantity(item._id)}
                 loading={isLoading}
