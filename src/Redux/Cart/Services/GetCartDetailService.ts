@@ -10,6 +10,8 @@ const network = new Network();
 async function getCartDetailService(): Promise<GetCartDetailResType> {
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
+  
+  if (!phoneNumber) return;
 
   const options = {
     url: `/api/v1/cart/active/${phoneNumber}`,

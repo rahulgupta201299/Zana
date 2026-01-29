@@ -32,7 +32,7 @@ const CartSidebar = ({
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
-  const { subtotal, discountAmount: discount, totalAmount: total, processedItems = [] } = cartDetail;
+  const { subtotal = 0, discountAmount: discount = 0, totalAmount: total = 0, processedItems = [] } = cartDetail;
 
   const totalItems = getTotalQuantity()
 

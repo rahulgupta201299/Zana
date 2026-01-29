@@ -56,7 +56,7 @@ export default function useCart() {
         }),
       )) as CartDetailResType;
 
-      const { unProcessedItems = [] } = response;
+      const { unProcessedItems = [] } = response || {};
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
@@ -134,6 +134,11 @@ export default function useCart() {
     dispatch(setProcessedCart([...newProductDetails]));
 
     handleSaveToDB(newProductDetails, optional);
+  }
+
+  function saveCartToDB() {
+    if (!cartItems.length) return
+    handleSaveToDB(cartItems)
   }
 
   function incrementToCart(
@@ -229,5 +234,6 @@ export default function useCart() {
     removeItemFromCart,
     validateCart,
     getCartFromDB,
+    saveCartToDB,
   };
 }

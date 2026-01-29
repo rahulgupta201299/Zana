@@ -59,7 +59,11 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     builder.addCase(
       cartModifyActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
-        const { unProcessedItems = [] } = action.payload;
+
+        const data = action.payload;
+        if (!data) return state;
+
+        const { unProcessedItems = [] } = data;
         state.cartDetail = action.payload;
         state.outOfStocks = unProcessedItems;
       },
@@ -67,7 +71,11 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     builder.addCase(
       getCartDetailActions.success,
       (state, action: PayloadAction<GetCartDetailResType>) => {
-        const { items = [], phoneNumber, ...rest } = action.payload;
+
+        const data = action.payload;
+        if (!data) return state;
+
+        const { items = [], phoneNumber, ...rest } = data;
         state.cartDetail = {
           processedItems: items,
           unProcessedItems: [],
