@@ -26,7 +26,6 @@ import {
 } from "@/Redux/ServiceTracker/Selectors";
 
 import { useSnackbar } from "notistack";
-import { resetAuth } from "@/Redux/Auth/Reducer";
 import updateProfileDetailServiceAction, {
   UPDATE_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/UpdateProfileDetails";
@@ -36,6 +35,7 @@ import Loading from "@/components/Loading";
 import MyProfile from "./components/MyProfile";
 import Faq from "./components/Faq";
 import { ROUTES } from "@/Constants/Routes";
+import { logout } from "./Utils";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -49,8 +49,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const actions = useMemo(
     () => ({
-      //@ts-ignore
-      logout: () => dispatch(resetAuth()),
+      logout,
     }),
     [dispatch],
   );
