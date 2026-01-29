@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { X, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useCartContext } from "@/Context/CartProvider";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
-import { openCartSelector } from "@/Redux/Cart/Selectors";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
+import useCart from "@/hooks/useCart";
+import { ROUTES } from "@/Constants/Routes";
 
 interface CartSidebarProps {
-  variant?: "drawer" | "checkout"; 
+  variant?: "drawer" | "checkout";
 }
 
 const CartSidebar = ({
@@ -23,22 +24,21 @@ const CartSidebar = ({
 }: CartSidebarProps) => {
   const navigate = useNavigate();
 
-  const isOpenCart = useSelector(openCartSelector)
+  const cartDetail = useSelector(cartDetailSelector);
 
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const { cartItems, updateQuantity, removeItem } = useCartContext();
 
   const dispatch = useDispatch<TAppDispatch>()
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
-  const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
-  const total = subtotal - discount;
+  const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
+
+  const { subtotal, discountAmount: discount, totalAmount: total, processedItems = [] } = cartDetail;
+
+  const totalItems = getTotalQuantity()
 
   function onClose() {
     dispatch(setOpenCart(false))
   }
-
 
   const CartContent = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -70,7 +70,7 @@ const CartSidebar = ({
         )}
       </Box>
 
-    
+
       <Box
         sx={{
           flex: 1,
@@ -81,7 +81,7 @@ const CartSidebar = ({
           gap: 2,
         }}
       >
-        {cartItems.length === 0 ? (
+        {processedItems.length === 0 ? (
           <Box sx={{ textAlign: "center", opacity: 0.5, mt: 10 }}>
             <Typography>Your cart is empty</Typography>
             <Typography sx={{ opacity: 0.6, mt: 1 }}>
@@ -89,134 +89,147 @@ const CartSidebar = ({
             </Typography>
           </Box>
         ) : (
-          cartItems.map((item) => (
-            <Box
-              key={item.id}
-              onClick={() => setActiveItem(item.id)}
-              sx={{
-                border: "2px solid",
-                borderColor:
-                  activeItem === item.id ? "yellow" : "transparent",
-                bgcolor: "rgba(255,255,255,0.05)",
-                borderRadius: 2,
-                transition: "0.2s",
-                p: 2,
-                display: "flex",
-                gap: 2,
-              }}
-            >
-           
-              <Box
-                sx={{
-                  width: { xs: 80, md: 110 },
-                  height: { xs: 80, md: 110 },
-                  bgcolor: "white",
-                  borderRadius: 2,
-                  overflow: "hidden",
-                  flexShrink: 0,
-                }}
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    padding: 8,
-                  }}
-                />
-              </Box>
+          processedItems.map((item) => {
+            const { product, price = 0 } = item;
+            const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+            const productQuantity = getQuantity(productId)
 
-        
+            const isPlusDisabled = productQuantity >= quantityAvailable;
+            const isMinusDisabled = productQuantity === 0;
+
+            if (!item.quantity) return null;
+
+            return (
               <Box
+                key={item.product._id}
+                onClick={() => setActiveItem(productId)}
                 sx={{
-                  flex: 1,
+                  border: "2px solid",
+                  borderColor:
+                    activeItem === item.product._id ? "yellow" : "transparent",
+                  bgcolor: "rgba(255,255,255,0.05)",
+                  borderRadius: 2,
+                  transition: "0.2s",
+                  p: 2,
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  gap: 2,
                 }}
               >
-                <Box>
-                  <Typography
-                    fontWeight="bold"
-                    fontSize={{ xs: 16, md: 18 }}
-                    sx={{ mb: 0.5 }}
-                  >
-                    {item.name}
-                  </Typography>
-                  <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
-                    {item.description || "Premium motorcycle accessory"}
-                  </Typography>
-                </Box>
 
                 <Box
                   sx={{
-                    mt: 1.5,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    width: { xs: 80, md: 110 },
+                    height: { xs: 80, md: 110 },
+                    bgcolor: "white",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    flexShrink: 0,
                   }}
                 >
-             
-                  <Typography
-                    color="yellow"
-                    fontWeight={700}
-                    fontSize={{ xs: 18, md: 22 }}
-                  >
-                    ₹ {item.price.toLocaleString()}
-                  </Typography>
+                  <img
+                    src={imageUrl}
+                    alt={name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      padding: 8,
+                    }}
+                  />
+                </Box>
 
-               
+
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      fontWeight="bold"
+                      fontSize={{ xs: 16, md: 18 }}
+                      sx={{ mb: 0.5 }}
+                    >
+                      {name}
+                    </Typography>
+                    <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
+                      {shortDescription || "Premium motorcycle accessory"}
+                    </Typography>
+                  </Box>
+
                   <Box
                     sx={{
+                      mt: 1.5,
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      borderRadius: 2,
                     }}
                   >
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        item.quantity > 1
-                          ? updateQuantity(item.id, item.quantity - 1)
-                          : removeItem(item.id);
-                      }}
-                      sx={{
-                        color: "white",
-                        "&:hover": { color: "yellow" },
-                      }}
-                    >
-                      <Minus size={18} />
-                    </IconButton>
 
-                    <Typography sx={{ width: 30, textAlign: "center" }}>
-                      {item.quantity}
+                    <Typography
+                      color="yellow"
+                      fontWeight={700}
+                      fontSize={{ xs: 18, md: 22 }}
+                    >
+                      ₹ {price.toLocaleString()}
                     </Typography>
 
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateQuantity(item.id, item.quantity + 1);
-                      }}
+
+                    <Box
                       sx={{
-                        color: "white",
-                        "&:hover": { color: "yellow" },
+                        display: "flex",
+                        alignItems: "center",
+                        bgcolor: "rgba(255,255,255,0.1)",
+                        borderRadius: 2,
                       }}
                     >
-                      <Plus size={18} />
-                    </IconButton>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          decrementToCart(productId)
+                        }}
+                        sx={{
+                          color: "white",
+                          cursor: "pointer",
+                          "&:hover": { color: "yellow" },
+                        }}
+                        disabled={isMinusDisabled}
+                      >
+                        <Minus size={18} />
+                      </IconButton>
+
+                      <Typography sx={{ width: 30, textAlign: "center" }}>
+                        {productQuantity}
+                      </Typography>
+
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          incrementToCart(product, item.product._id, item.product.quantityAvailable)
+                        }}
+                        sx={{
+                          color: "white",
+                          cursor: "pointer",
+                          "&:hover": { color: "yellow" },
+                        }}
+                        disabled={isPlusDisabled}
+                      >
+                        <Plus size={18} />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          ))
+            )
+          })
         )}
       </Box>
 
-   
-      {cartItems.length > 0 && (
+
+      {processedItems.length > 0 && (
         <Box
           sx={{
             borderTop: "1px solid rgba(255,255,255,0.1)",
@@ -244,7 +257,7 @@ const CartSidebar = ({
             + Add more products
           </Button>
 
-          
+
           <Box
             sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
           >
@@ -256,7 +269,7 @@ const CartSidebar = ({
             </Typography>
           </Box>
 
-        
+
           {discount > 0 && (
             <Box
               sx={{
@@ -276,7 +289,7 @@ const CartSidebar = ({
             </Box>
           )}
 
-          
+
           {subtotal > 8000 && subtotal <= 10000 && (
             <Box
               sx={{
@@ -295,7 +308,7 @@ const CartSidebar = ({
             </Box>
           )}
 
-       
+
           <Box
             sx={{
               display: "flex",
@@ -335,11 +348,11 @@ const CartSidebar = ({
               color: "black",
               borderRadius: "10px",
               fontWeight: 800,
-              fontSize: 18,           
+              fontSize: 18,
             }}
             onClick={() => {
               onClose?.();
-              navigate("/checkout");
+              navigate(ROUTES.CHECKOUT);
             }}
           >
             CHECKOUT
@@ -349,7 +362,7 @@ const CartSidebar = ({
     </Box>
   );
 
- 
+
   if (variant === "checkout") {
     return (
       <Box
@@ -372,7 +385,7 @@ const CartSidebar = ({
   return (
     <Drawer
       anchor="right"
-      open={isOpenCart}
+      open={true}
       onClose={onClose}
       slotProps={{
         backdrop: {

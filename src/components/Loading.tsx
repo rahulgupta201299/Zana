@@ -1,15 +1,6 @@
-import { useEffect } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 const Loading = () => {
-
-  // Disable scroll while loader is open
-  // useEffect(() => {
-  //   document.body.style.overflow = "hidden";
-  //   return () => {
-  //     document.body.style.overflow = "auto";
-  //   };
-  // }, []);
 
   return (
     <Box
@@ -25,7 +16,7 @@ const Loading = () => {
         alignItems: "center",
         overscrollBehavior: 'none',
         overflow: 'hidden',
-        zIndex: 100,
+        zIndex: 1500,
       }}
     >
       <CircularProgress size={55} sx={{ color: "white" }} />

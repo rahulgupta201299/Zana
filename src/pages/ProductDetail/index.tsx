@@ -1,33 +1,32 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
+import { Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
 import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
-import CartIcon from "@/components/ui/cart-icon";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCartContext } from "@/Context/CartProvider";
 import { ProductDetailParamsType } from "./Types";
 import { ProductCatalogDetailsType, ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import { handleSocialMedia, replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
-import { CartQuantityEnum, SocialMediaPlatformEnum } from "@/Constants/AppConstant";
+import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { Box, Skeleton } from "@mui/material";
+import useCart from "@/hooks/useCart";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
-  const { addToCart } = useCartContext()
+  const { addToCart, getQuantity, incrementToCart, decrementToCart } = useCart()
   const { productCategory, productId, productItem } = useParams<ProductDetailParamsType>();
 
+  const [quantity, setQuantity] = useState<number>(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [product, setProduct] = useState<ShopByProductDetailsType | null>(null)
   const [suggestedProducts, setSuggestedProducts] = useState<ShopByProductDetailsType[]>([])
-  const [quantity, setQuantity] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
 
   const dispatch = useDispatch<TAppDispatch>()
@@ -39,6 +38,7 @@ const ProductDetailPage = () => {
 
   async function pageOps() {
     setLoading(true)
+    setQuantity(getQuantity(productId) || 1)
     try {
       const response = await dispatch(ProductDetailService(productId)) as ShopByProductDetailsType
       setProduct(response)
@@ -64,12 +64,6 @@ const ProductDetailPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  function handleAddToCart(e: MouseEvent<HTMLButtonElement>, productId: string, productName: string, price: number, image: string, quantityAvailable: number, navigateTo?: string, description?: string, quantity?: number) {
-    e.stopPropagation()
-    addToCart(productId, productName, price, image, quantityAvailable, description, quantity)
-    navigateTo && navigate(navigateTo)
-  }
-
   useEffect(() => {
     pageOps()
   }, [])
@@ -91,6 +85,9 @@ const ProductDetailPage = () => {
   }
 
   const { _id = '', name = '', shippingAndReturn = '', shortDescription = '', longDescription = '', category = '', price = 0, imageUrl = '', images = [], quantityAvailable = 0, specifications = '', isBikeSpecific = false } = product || {}
+
+  const isPlusDisabled = quantity >= quantityAvailable;
+  const isMinusDisabled = quantity === 1;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -162,18 +159,20 @@ const ProductDetailPage = () => {
                   <span className="text-2xl font-bold text-white">
                     ₹ {price.toLocaleString()}
                   </span>
-                ) : <Box sx={{ display: 'flex', gap: 2 }}>
-                  <span style={{ margin: 'auto 0' }} className="text-2xl font-bold text-white">₹{' '}</span>
-                  <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={100} height={60} />
-                </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <span style={{ margin: 'auto 0' }} className="text-2xl font-bold text-white">₹{' '}</span>
+                    <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={100} height={60} />
+                  </Box>
+                )
               }
               <div className="flex items-center gap-2">
-                {/* TODO Add condition for disabling buttons */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity === 1}
-                  onClick={() => setQuantity(p => p > 1 ? p - 1 : p)}
+                  disabled={isMinusDisabled}
+                  onClick={() => setQuantity(p => p - 1)}
+                  style={{ cursor: 'pointer' }}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Minus className="w-4 h-4" />
@@ -182,8 +181,9 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={quantity === quantityAvailable}
-                  onClick={() => setQuantity(p => quantityAvailable > p ? p + 1 : p)}
+                  disabled={isPlusDisabled}
+                  onClick={() => setQuantity(p => p + 1)}
+                  style={{ cursor: 'pointer' }}
                   className="text-white hover:bg-white/10 w-10 h-10 border border-white"
                 >
                   <Plus className="w-4 h-4" />
@@ -193,15 +193,20 @@ const ProductDetailPage = () => {
 
             <div className="flex gap-4 mb-6">
               <Button
-                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation()
+                  addToCart(product, _id, quantity, quantityAvailable, { navigateTo: ROUTES.CART })
+                }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
                 ADD TO CART
               </Button>
-              {/* TODO handle the buy now  */}
               <Button
-                onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CHECKOUT, shortDescription, quantity)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation()
+                  addToCart(product, _id, quantity, quantityAvailable, { navigateTo: ROUTES.CHECKOUT })
+                }}
                 disabled={!price}
                 className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
               >
@@ -296,14 +301,14 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* TODO handle fallback */}
-      {/* You may also like */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-4xl font-bold text-white text-center mb-8">You may also like</h2>
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {suggestedProducts.map((relatedProduct, index) => {
 
-            const { _id, name, imageUrl, price, category, shortDescription } = relatedProduct
+            const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
+            const productQuantity = getQuantity(_id)
+            const isDisabled = productQuantity >= quantityAvailable
 
             return (
               <div
@@ -318,22 +323,51 @@ const ProductDetailPage = () => {
                       alt={name}
                       className="max-w-full max-h-full object-contain"
                     />
-                    <div className="absolute bottom-2 left-2 group">
-                        <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => handleAddToCart(e, _id, name, price, imageUrl, quantityAvailable, ROUTES.CART)}
-                          className="absolute bottom-0 left-0 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-10 hover:w-auto hover:px-4 hover:justify-start group"
+                     <div className="absolute bottom-2 left-2 group">
+                      <button
+                        style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                        disabled={isDisabled}
+                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                          e.stopPropagation()
+                          incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
+                        }}
+                        className="h-9 bg-white rounded-full flex items-center justify-center
+                            overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
+                            w-9 group-hover:w-auto group-hover:px-3"
+                      >
+                        <span
+                          className="whitespace-nowrap text-sm font-semibold text-black
+                              hidden translate-x-[-6px]
+                              group-hover:inline-block group-hover:translate-x-0
+                              transition-all duration-300 mr-1"
                         >
-                          <span className="whitespace-nowrap font-semibold text-black text-base opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-2 transition-all duration-300">
-                            Add to cart
+                          Add to cart
+                        </span>
+                        <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
+                      </button>
+                      {
+                        productQuantity > 0 && (
+                          <span
+                            className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
+                                bg-red-500 text-white text-xs flex items-center justify-center
+                                font-semibold shadow transition-all duration-300
+                                group-hover:translate-x-0"
+                          >
+                            {productQuantity}
                           </span>
-                          <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
-                        </button>
+                        )
+                      }
                     </div>
                   </div>
                 </div>
-                <div className="px-2 pb-2 flex justify-between items-center">
-                  <h3 className="font-bold text-black text-left text-sm">{name}</h3>
-                  <span className="font-bold text-black text-sm">₹{price}</span>
+                <div className="px-2 pb-2 flex items-center  gap-3">
+                  <h3 className="font-bold text-black text-sm leading-snug break-words flex-1">
+                    {name}
+                  </h3>
+
+                  <span className="font-bold text-black text-sm whitespace-nowrap">
+                    ₹ {price}
+                  </span>
                 </div>
               </div>
             )

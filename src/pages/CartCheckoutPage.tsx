@@ -1,12 +1,27 @@
+import { useSelector } from "react-redux";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import useCart from "@/hooks/useCart";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Minus, Plus, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useCartContext } from "@/Context/CartProvider";
+import { useNavigate } from "react-router-dom";
 
 const CartCheckoutPage = () => {
   const navigate = useNavigate();
-  
-  // Use cart hook
-  const { cartItems, updateQuantity, removeItem, subtotal, discount, total, totalItems } = useCartContext();
+
+  const cartDetail = useSelector(cartDetailSelector);
+
+  const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
+  const { subtotal, discountAmount: discount, totalAmount: total, processedItems } = cartDetail
+
+  const totalItems = getTotalQuantity()
+
+  function handleProductClick(productCategory: string, productName: string, productId: string) {
+    const category = replaceSpacesWithHiphen(productCategory);
+    const name = replaceSpacesWithHiphen(productName);
+
+    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -14,12 +29,12 @@ const CartCheckoutPage = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <h1 className="text-white text-3xl md:text-5xl font-black mb-6 md:mb-8">YOUR CART</h1>
 
-        {cartItems.length === 0 ? (
+        {processedItems.length === 0 ? (
           /* Empty Cart State */
           <div className="flex flex-col items-center justify-center py-16 md:py-32">
             <div className="w-32 h-32 md:w-48 md:h-48 mb-6 opacity-20">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 2L7.17 4H3C1.9 4 1 4.9 1 6V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V6C23 4.9 22.1 4 21 4H16.83L15 2H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z" fill="currentColor" className="text-yellow-400"/>
+                <path d="M9 2L7.17 4H3C1.9 4 1 4.9 1 6V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V6C23 4.9 22.1 4 21 4H16.83L15 2H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z" fill="currentColor" className="text-yellow-400" />
               </svg>
             </div>
             <p className="text-white text-2xl md:text-3xl font-bold mb-2">Your cart is empty</p>
@@ -37,97 +52,102 @@ const CartCheckoutPage = () => {
             {/* Left: Cart Items */}
             <div className="lg:col-span-8">
               <div className="space-y-4">
-                {cartItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:border-yellow-400 transition-colors"
-                  >
-                    <div className="flex gap-4 p-4">
-                      {/* Product Image */}
-                      <Link to={`/product/${item.id}`} className="flex-shrink-0">
+                {processedItems.map((item) => {
+                  const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
+                  const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+
+                  return (
+                    <div
+                      key={productId}
+                      className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:border-yellow-400 transition-colors"
+                      onClick={() => handleProductClick(category, name, productId)}
+                    >
+                      <div style={{ cursor: 'pointer' }} className="flex gap-4 p-4">
+                        {/* Product Image */}
                         <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden">
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={imageUrl}
+                            alt={name}
                             className="w-full h-full object-contain p-2"
                             onError={(e) => {
                               e.currentTarget.src = '/bike-placeholder.svg';
                             }}
                           />
                         </div>
-                      </Link>
 
-                      {/* Product Info */}
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div>
-                          <Link to={`/product/${item.id}`}>
-                            <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
-                              {item.name}
-                            </h3>
-                          </Link>
-                          <p className="text-white/60 text-sm md:text-base">
-                            {item.description || 'Premium motorcycle accessory'}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center justify-between mt-4">
-                          {/* Price */}
+                        {/* Product Info */}
+                        <div className="flex-1 flex flex-col justify-between">
                           <div>
-                            <span className="text-yellow-400 font-bold text-xl md:text-2xl">
-                              ₹ {item.price.toLocaleString()}
-                            </span>
-                            {item.quantity > 1 && (
-                              <p className="text-white/40 text-sm">
-                                ₹ {(item.price * item.quantity).toLocaleString()} total
-                              </p>
-                            )}
+                            <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
+                              {name}
+                            </h3>
+                            <p className="text-white/60 text-sm md:text-base">
+                              {shortDescription || 'Premium motorcycle accessory'}
+                            </p>
                           </div>
 
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 bg-white/10 rounded-lg">
-                              <button
-                                onClick={() => {
-                                  if (item.quantity > 1) {
-                                    updateQuantity(item.id, item.quantity - 1);
-                                  } else {
-                                    removeItem(item.id);
-                                  }
-                                }}
-                                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
-                              >
-                                <Minus size={20} />
-                              </button>
-                              <span className="text-white font-medium w-8 text-center text-lg">
-                                {item.quantity}
+                          <div className="flex items-center justify-between mt-4">
+                            {/* Price */}
+                            <div>
+                              <span className="text-yellow-400 font-bold text-xl md:text-2xl">
+                                ₹ {price.toLocaleString()}
                               </span>
-                              <button
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
-                              >
-                                <Plus size={20} />
-                              </button>
+                              {quantity > 1 && (
+                                <p className="text-white/40 text-sm">
+                                  ₹ {(totalPrice).toLocaleString()} total
+                                </p>
+                              )}
                             </div>
 
-                            {/* Remove Button */}
-                            <button
-                              onClick={() => removeItem(item.id)}
-                              className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
-                              title="Remove item"
-                            >
-                              <X size={24} />
-                            </button>
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-2 bg-white/10 rounded-lg">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    decrementToCart(productId)
+                                  }}
+                                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
+                                >
+                                  <Minus size={20} />
+                                </button>
+                                <span className="text-white font-medium w-8 text-center text-lg">
+                                  {item.quantity}
+                                </span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    incrementToCart(product, productId, quantityAvailable)
+                                  }}
+                                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
+                                >
+                                  <Plus size={20} />
+                                </button>
+                              </div>
+
+                              {/* Remove Button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  removeItemFromCart(productId)
+                                }}
+                                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
+                                title="Remove item"
+                              >
+                                <X size={24} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               {/* Continue Shopping Button */}
               <button
-                onClick={() => navigate('/product-catalog')}
+                onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
                 className="mt-6 w-full bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300"
               >
                 + Continue Shopping

@@ -1,134 +1,233 @@
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
+import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
+import { createDebounce } from "@/Utils/Debounce";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  description?: string;
-}
+export default function useCart() {
+  const cartDetail = useSelector(cartDetailSelector);
 
-const CART_STORAGE_KEY = "zana_cart_items";
+  const { processedItems = [] } = cartDetail;
 
-export const useCart = () => {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const cartItems: CartItemDetail[] = processedItems || []
 
-  // Initialize cart from localStorage
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch<TAppDispatch>();
+  const navigate = useNavigate();
+
+  const loginDetails = useSelector(getLoginDetails);
+  const { phoneNumber = "" } = loginDetails;
+
+  const debounceFn = useMemo(() => {
+    return createDebounce(handleSaveToDB, 500);
+  }, []);
+
+  async function getCartFromDB() {
+    if (!phoneNumber) return;
+
     try {
-      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-      return storedCart ? JSON.parse(storedCart) : [];
-    } catch (error) {
-      console.error("Error loading cart from localStorage:", error);
-      return [];
-    }
-  });
+      await dispatch(getCartDetailServiceAction()) as CartDetailResType;
+    } catch (error: any) {}
+  }
 
-  // Persist cart to localStorage whenever it changes
-  useEffect(() => {
+  async function handleSaveToDB(
+    details: CartItemDetail[],
+    optional?: { easyCheckout?: boolean; navigateTo?: string },
+  ): Promise<CartDetailResType> {
+
+    const items = details.map((item) => ({
+      productId: item.product._id,
+      quantity: item.quantity,
+    }));
+
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-    } catch (error) {
-      console.error("Error saving cart to localStorage:", error);
-    }
-  }, [cartItems]);
+      const response = (await dispatch(
+        cartModifyServiceAction({
+          phoneNumber,
+          items,
+        }),
+      )) as CartDetailResType;
 
-  // Add item to cart
-  const addToCart = (
-    productId: string,
-    productName: string,
-    price: number,
-    image: string,
-    quantityAvailable: number,
-    description?: string,
-    quantity: number = 1,
-  ) => {
-    const currentQuantity =
-      cartItems.find((item) => item.id === productId)?.quantity || 0;
+      const { unProcessedItems = [] } = response;
 
-    if (currentQuantity + quantity > quantityAvailable) {
-      enqueueSnackbar("Out Of Stock!", {
-        variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-      });
-      return;
-    }
-
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === productId);
-
-      if (existingItem) {
-        // Update quantity if item exists
-        return prevItems.map((item) =>
-          item.id === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      } else {
-        // Add new item
-        return [
-          ...prevItems,
-          {
-            id: productId,
-            name: productName,
-            price,
-            quantity,
-            image,
-            description,
-          },
-        ];
+      if (unProcessedItems.length) {
+        enqueueSnackbar({
+          variant: "warning",
+          message: `Some items couldn't be processed due to unavailability.`,
+        });
       }
-    });
-  };
 
-  // Update quantity
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) {
-      removeItem(id);
-      return;
+      if (optional?.easyCheckout) dispatch(setOpenCart(true));
+      if (optional?.navigateTo) navigate(optional.navigateTo);
+
+      return response;
+    } catch (error) {
+      const { message = "" } = error || {};
+      enqueueSnackbar({
+        variant: "error",
+        message,
+      });
+      throw error;
+    }
+  }
+
+  async function validateCart(): Promise<CartDetailResType> {
+    try {
+      const response = await handleSaveToDB(cartItems);
+      const { unProcessedItems = [] } = response;
+
+      if (unProcessedItems.length) {
+        enqueueSnackbar({
+          variant: "warning",
+          message: "Please check the updated cart",
+        });
+        throw new Error("Some items couldn't be processed");
+      }
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  function addToCart(
+    product: ShopByProductDetailsType,
+    productId: string,
+    quantity: number,
+    maxQuantityAvailable: number,
+    optional?: { easyCheckout?: boolean; navigateTo?: string },
+  ) {
+
+    if (quantity > maxQuantityAvailable) return;
+
+    let productAdded = false;
+
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) {
+        productAdded = true;
+        return {
+          ...item,
+          quantity
+        }
+      }
+      return item;
+    });
+
+    if (!productAdded) {
+      newProductDetails.push({
+        product,
+        quantity,
+        price: product.price,
+        totalPrice: product.price * quantity,
+        _id: Date.now().toString(),
+      });
     }
 
-    setCartItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
+    dispatch(setProcessedCart([...newProductDetails]));
+
+    handleSaveToDB(newProductDetails, optional);
+  }
+
+  function incrementToCart(
+    product: ShopByProductDetailsType,
+    productId: string,
+    maxQuantityAvailable: number,
+    {
+      easyCheckout = false,
+      navigateTo = "",
+    }: { easyCheckout?: boolean; navigateTo?: string } = {},
+  ) {
+    const productQuantity = getQuantity(productId);
+
+    if (productQuantity >= maxQuantityAvailable) return;
+
+    let productIncremented = false;
+
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) {
+        productIncremented = true;
+        return {
+          ...item,
+          quantity: item.quantity + 1
+        }
+      }
+      return item;
+    });
+
+    if (!productIncremented) {
+      newProductDetails.push({
+        product,
+        quantity: 1,
+        price: product.price,
+        totalPrice: product.price,
+        _id: Date.now().toString(),
+      });
+    }
+
+    dispatch(setProcessedCart([...newProductDetails]));
+
+    debounceFn(newProductDetails, { easyCheckout, navigateTo });
+  }
+
+  function decrementToCart(productId: string) {
+    const productQuantity = getQuantity(productId);
+
+    if (productQuantity <= 0) return;
+
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) return { ...item, quantity: item.quantity - 1 }
+      return item;
+    });
+
+    const newFilterProducts = newProductDetails.filter(it => it.quantity)
+
+    dispatch(setProcessedCart(newFilterProducts));
+
+    debounceFn(newProductDetails);
+  }
+
+  // TODO
+  function clearCart() {
+    // dispatch(resetCart);
+  }
+
+  function removeItemFromCart(productId: string) {
+    const newProductDetails = cartItems.map(item => {
+      if (item.product._id === productId) return {...item, quantity: 0}
+      return item
+    })
+    const filterProducts = newProductDetails.filter(item => item.quantity);
+    dispatch(setProcessedCart([...filterProducts]))
+    debounceFn(newProductDetails);
+  }
+
+  function getTotalQuantity() {
+    return cartItems.reduce((acc, curr) => acc + curr.quantity, 0);
+  }
+
+  function getQuantity(productId: string) {
+    return (
+      cartItems.find((item) => item.product._id === productId)?.quantity || 0
     );
-  };
-
-  // Remove item
-  const removeItem = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
-
-  // Clear cart
-  const clearCart = () => {
-    setCartItems([]);
-  };
-
-  // Calculate subtotal
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  // Calculate discount (10% if subtotal > 10,000)
-  const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
-
-  // Calculate total
-  const total = subtotal - discount;
-
-  // Total items count
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }
 
   return {
-    cartItems,
     addToCart,
-    updateQuantity,
-    removeItem,
+    getQuantity,
+    getTotalQuantity,
+    decrementToCart,
+    incrementToCart,
     clearCart,
-    subtotal,
-    discount,
-    total,
-    totalItems,
+    removeItemFromCart,
+    validateCart,
+    getCartFromDB,
   };
-};
+}

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
@@ -17,10 +17,10 @@ import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
 import SignupPopup from "../SignupPopup";
-import { useCartContext } from "@/Context/CartProvider";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
+import useCart from "@/hooks/useCart";
 
 
 type NavbarPropsType = {
@@ -32,7 +32,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const location = useLocation();
   const params = useParams()
   const bikeType = params?.bikeType?.toLowerCase() || ''
-
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(
@@ -45,12 +44,13 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLDivElement>(null);
 
-  const { totalItems } = useCartContext();
+  const { getTotalQuantity } = useCart();
 
   const isZProPath = bikeType === BikeCategoryEnum.ZPRO
 
   const dispatch = useDispatch<TAppDispatch>()
 
+  const totalItems = getTotalQuantity()
 
   function handleMenuItemClick(
     event: React.MouseEvent<HTMLElement>,
@@ -69,20 +69,32 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     setSelectedMenuItem(name);
   }
-
-  function handleTopLevelClick(item: TopLevelItemsType) {
+  const handleTopLevelClick = (item: any) => {
     const { name } = item;
 
-    if (name === MenuItemsName.CART) {
-      dispatch(setOpenCart(true))
-      return
-    }
+    switch (name) {
+      case MenuItemsName.PROFILE:
+        if (verified) {
+          navigate("/profile");
+        } else {
+          setSelectedTopItem(MenuItemsName.PROFILE);
+        }
+        break;
 
-    setSelectedTopItem(name);
-  }
+      case MenuItemsName.SEARCH:
+        setSelectedTopItem(MenuItemsName.SEARCH);
+        break;
+
+      case MenuItemsName.CART:
+        dispatch(setOpenCart(true))
+        break;
+
+      default:
+        navigate(`/${name.toLowerCase()}`);
+    }
+  };
 
   useEffect(() => {
-
     if (location.pathname !== ROUTES.BASE_URL) {
       containerRef.current!.style.position = 'fixed';
       return;
@@ -238,13 +250,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
       </Box>
 
       {selectedTopItem === MenuItemsName.PROFILE &&
-        (verified ? (
-          <ProfileModal onClose={() => setSelectedTopItem(null)} />
-        ) : (
-          <SignupPopup
-            type='navbar'
-            onClose={() => setSelectedTopItem(null)} />
-        ))}
+        <SignupPopup
+          type='navbar'
+          onClose={() => setSelectedTopItem(null)} />
+      }
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />
       )}

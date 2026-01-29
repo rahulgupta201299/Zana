@@ -1,7 +1,3 @@
-import { useDispatch } from "react-redux";
-import { TAppDispatch } from "@/Configurations/AppStore";
-import { useCartContext } from "@/Context/CartProvider";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { PlusIcon } from "lucide-react";
 import CapImg1 from '@/Assets/Images/CapSection/IMG_1234.jpg'
 import CapImg2 from '@/Assets/Images/CapSection/IMG_7994.jpg'
@@ -13,73 +9,75 @@ import CapImg7 from '@/Assets/Images/CapSection/IMG_8137.jpg'
 import CapImg8 from '@/Assets/Images/CapSection/IMG_8139.jpg'
 import CapImg9 from '@/Assets/Images/CapSection/IMG_8140.jpg'
 import CapImg10 from '@/Assets/Images/CapSection/IMG_8142.jpg'
+import useCartX from "@/hooks/useCart";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export const capProducts = [
   {
-    id: "cap-1",
+    _id: "cap-1",
     name: "Throttle Up",
     price: 1500,
     quantityAvailable: 6,
     image: CapImg1,
   },
   {
-    id: "cap-2",
+    _id: "cap-2",
     name: "Love Speed",
     price: 1600,
     quantityAvailable: 7,
     image: CapImg2,
   },
   {
-    id: "cap-3",
+    _id: "cap-3",
     name: "Pure Love",
     price: 1800,
     quantityAvailable: 8,
     image: CapImg3,
   },
   {
-    id: "cap-4",
+    _id: "cap-4",
     name: "Godzilla",
     price: 2000,
     quantityAvailable: 9,
     image: CapImg4,
   },
   {
-    id: "cap-5",
+    _id: "cap-5",
     name: "Devil",
     price: 1500,
     quantityAvailable: 10,
     image: CapImg5,
   },
   {
-    id: "cap-6",
+    _id: "cap-6",
     name: "Hard Tuned",
     price: 1700,
     quantityAvailable: 11,
     image: CapImg6,
   },
   {
-    id: "cap-7",
+    _id: "cap-7",
     name: "Ride Easy",
     price: 1900,
     quantityAvailable: 12,
     image: CapImg7,
   },
   {
-    id: "cap-8",
+    _id: "cap-8",
     name: "Decimo",
     price: 2000,
     quantityAvailable: 5,
     image: CapImg8,
   },
   {
-    id: "cap-9",
+    _id: "cap-9",
     name: "Super veloce",
     price: 1600,
     quantityAvailable: 5,
     image: CapImg9,
   },
   {
-    id: "cap-10",
+    _id: "cap-10",
     name: "Super Charged",
     price: 1800,
     quantityAvailable: 5,
@@ -91,9 +89,11 @@ const ProductCard = ({
   product,
   onClick,
   height = 176,
+  count = 0,
 }: {
   product: (typeof capProducts)[0];
   onClick: () => void;
+  count: number,
   height?: number;
 }) => (
   <div className="relative group" style={{ height }}>
@@ -102,29 +102,49 @@ const ProductCard = ({
       alt={product.name}
       className="w-full h-full object-cover rounded-lg shadow-lg"
     />
-    <button
-      onClick={onClick}
-      className="absolute bottom-2 left-2 h-9 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-9 hover:w-auto hover:px-3 hover:justify-start group"
-    >
-      <span className="whitespace-nowrap text-sm font-semibold text-black opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto group-hover:mr-1.5 transition-all duration-300">
-        Add to cart
-      </span>
-      <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
-    </button>
+    <div className="absolute bottom-2 left-2 group">
+      <button
+        onClick={onClick}
+        className="h-9 bg-white rounded-full flex items-center justify-center
+               overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
+               w-9 group-hover:w-auto group-hover:px-3"
+      >
+        <span
+          className="whitespace-nowrap text-sm font-semibold text-black
+                 hidden translate-x-[-6px]
+                 group-hover:inline-block group-hover:translate-x-0
+                 transition-all duration-300 mr-1"
+        >
+          Add to cart
+        </span>
+        <PlusIcon className="w-4 h-4 text-black flex-shrink-0" />
+      </button>
+
+      {
+        count > 0 && (
+          <span
+            className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
+               bg-red-500 text-white text-xs flex items-center justify-center
+               font-semibold shadow transition-all duration-300
+               group-hover:translate-x-0"
+          >
+            {count}
+          </span>
+        )
+      }
+    </div>
   </div>
 );
 
 const CapSection = () => {
 
-  const { addToCart } = useCartContext()
-  const dispatch = useDispatch<TAppDispatch>()
+  const { incrementToCart, getQuantity } = useCartX()
 
   function handleAddToCart(index: number) {
-    const product = capProducts[index];
+    const product = capProducts[index] as unknown as ShopByProductDetailsType;
 
-    const { id: productId, name: productName, price, image, quantityAvailable } = product
-    addToCart(productId, productName, price, image, quantityAvailable)
-    dispatch(setOpenCart(true))
+    const { _id: productId, quantityAvailable } = product
+    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
@@ -150,6 +170,7 @@ const CapSection = () => {
                   product={capProducts[idx]}
                   onClick={() => handleAddToCart(idx)}
                   height={col.length === 1 ? 360 : 176}
+                  count={getQuantity(capProducts[idx]._id)}
                 />
               ))}
             </div>
@@ -159,10 +180,11 @@ const CapSection = () => {
         <div className="grid lg:hidden grid-cols-2 gap-2">
           {capProducts.slice(0, 4).map((product, idx) => (
             <ProductCard
-              key={product.id}
+              key={product._id}
               product={product}
               onClick={() => handleAddToCart(idx)}
               height={150}
+              count={getQuantity(product._id)}
             />
           ))}
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Container,
@@ -23,41 +23,43 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import PaymentImg from "@/Assets/Images/Payment.svg";
-import { useCartContext } from "@/Context/CartProvider";
 import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import cartCheckoutServiceAction from "@/Redux/Cart/Services/Checkout";
+import cartCheckoutServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
+// import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
+import useCart from "@/hooks/useCart";
+import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import ProductRecommendation from "./ProductRecommendation";
+import { isdCodeDetails } from "@/Redux/Auth/Selectors";
 
 export default function CheckoutPage() {
-  const { cartItems, updateQuantity, removeItem, clearCart } = useCartContext();
+  const { decrementToCart, incrementToCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   const phoneNumber = useSelector<TAppStore, string>(
     (state) => state.auth.login.phoneNumber
   );
-  const isLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [cartCheckOutServiceName])
-  );
+  const cartDetail = useSelector(cartDetailSelector)
+  const isdCode = useSelector(isdCodeDetails)
 
-  const [countries, setCountries] = useState([]);
+  // TODO
+  const isLoading = false // useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartCheckOutServiceName]));
+
   const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD);
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
-  const discount = subtotal > 10000 ? subtotal * 0.1 : 0;
-  const total = subtotal - discount;
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const { subtotal = 0, totalAmount: total = 0, discountAmount: discount = 0, processedItems = [] } = cartDetail
+
   const actions = useMemo(
     () => ({
       saveCartDetails: (state: any) =>
@@ -68,8 +70,8 @@ export default function CheckoutPage() {
   );
 
   const listOfCountry = async () => {
-    const result = await actions.getCountryList();
-    setCountries(result);
+    if (isdCode.length) return;
+    await actions.getCountryList();
   };
 
   useEffect(() => {
@@ -134,24 +136,25 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-            .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
-            .required("Billing pincode is required")
+          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+          .required("Billing pincode is required")
     ),
-    billingPhone:Yup.string().when("sameAsDelivery", (same, schema) =>
-    same
-      ? schema
-      : schema
+    billingPhone: Yup.string().when("sameAsDelivery", (same, schema) =>
+      same
+        ? schema
+        : schema
           .required("Billing phone number is required")
-  ),
+    ),
   });
 
+  // TODO change the API contract completely
   const handleSubmit = async (values) => {
     if (paymentType !== PaymentTypeEnum.COD) {
       displayRazorpay();
       return;
     }
-    const mappedItems = cartItems.map((item) => ({
-      productId: item.id,
+    const mappedItems = processedItems.map((item) => ({
+      productId: item.product._id,
       quantity: item.quantity,
     }));
     const body = {
@@ -170,25 +173,25 @@ export default function CheckoutPage() {
 
       billingAddress: values.sameAsDelivery
         ? {
-            fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-            addressLine1: values.shippingAddress,
-            addressLine2: values.shippingApartment,
-            city: values.shippingCity,
-            state: values.shippingState,
-            postalCode: values.shippingPincode,
-            country: values.shippingCountry,
-            phone:values.phone
-          }
+          fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
+          addressLine1: values.shippingAddress,
+          addressLine2: values.shippingApartment,
+          city: values.shippingCity,
+          state: values.shippingState,
+          postalCode: values.shippingPincode,
+          country: values.shippingCountry,
+          phone: values.phone
+        }
         : {
-            fullName: `${values.billingFirstName} ${values.billingLastName}`,
-            addressLine1: values.billingAddress,
-            addressLine2: values.billingApartment,
-            city: values.billingCity,
-            state: values.billingState,
-            postalCode: values.billingPincode,
-            country: values.billingCountry,
-            phone: values.billingPhone
-          },
+          fullName: `${values.billingFirstName} ${values.billingLastName}`,
+          addressLine1: values.billingAddress,
+          addressLine2: values.billingApartment,
+          city: values.billingCity,
+          state: values.billingState,
+          postalCode: values.billingPincode,
+          country: values.billingCountry,
+          phone: values.billingPhone
+        },
     };
 
     try {
@@ -198,7 +201,7 @@ export default function CheckoutPage() {
         anchorOrigin: { vertical: "top", horizontal: "center" },
         autoHideDuration: 3000,
       });
-      clearCart();
+      // clearCart();
       navigate(ROUTES.ORDER_DETAILS);
     } catch (err) {
       if (err.response?.status === 400)
@@ -269,7 +272,6 @@ export default function CheckoutPage() {
                 handleBlur,
                 errors,
                 touched,
-                handleSubmit,
                 setFieldValue,
                 isValid,
               }) => {
@@ -348,7 +350,7 @@ export default function CheckoutPage() {
                             </Box>
                           )}
                         >
-                          {countries.map((c) => (
+                          {isdCode.map((c) => (
                             <MenuItem
                               key={c.isd}
                               value={c.name}
@@ -824,7 +826,7 @@ export default function CheckoutPage() {
                                       </Box>
                                     )}
                                   >
-                                    {countries.map((c) => (
+                                    {isdCode.map((c) => (
                                       <MenuItem
                                         key={c.isd}
                                         value={c.name}
@@ -1054,7 +1056,7 @@ export default function CheckoutPage() {
                                 label="Phone"
                                 value={values.billingPhone}
                                 sx={{
-                                  mt:'16px'
+                                  mt: '16px'
                                 }}
                                 onChange={(e) => {
                                   if (e.target.value.match(/[^0-9]/)) return;
@@ -1078,7 +1080,7 @@ export default function CheckoutPage() {
                                     },
                                     inputProps: { maxLength: 10 },
                                   },
-                               
+
                                   inputLabel: {
                                     sx: {
                                       color: "#000",
@@ -1132,113 +1134,116 @@ export default function CheckoutPage() {
               gap: "16px",
             }}
           >
-            {cartItems.map((item) => (
-              <Box
-                key={item.id}
-                sx={{
-                  color: "#FFFFFF",
-                  borderRadius: "10px",
-                  transition: "0.2s",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "24px",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: { xs: 80, md: 110 },
-                    height: { xs: 80, md: 110 },
-                    bgcolor: "#FFFFFF",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                      padding: 8,
-                    }}
-                  />
-                </Box>
+            {processedItems.map((item) => {
+              const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
+              const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
+              return (
                 <Box
+                  key={productId}
                   sx={{
-                    flex: 1,
+                    color: "#FFFFFF",
+                    borderRadius: "10px",
+                    transition: "0.2s",
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
+                    alignItems: "center",
+                    gap: "24px",
                   }}
                 >
-                  <Box>
-                    <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
-                      {item.name}
-                    </Typography>
+                  <Box
+                    sx={{
+                      width: { xs: 80, md: 110 },
+                      height: { xs: 80, md: 110 },
+                      bgcolor: "#FFFFFF",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        padding: 8,
+                      }}
+                    />
                   </Box>
 
                   <Box
                     sx={{
+                      flex: 1,
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      flexDirection: "column",
+                      gap: "16px",
                     }}
                   >
-                    <Typography
-                      color="#FFFFFF"
-                      fontWeight={300}
-                      fontSize={{ xs: 18, md: 22 }}
-                    >
-                      ₹ {item.price.toLocaleString()}
-                    </Typography>
+                    <Box>
+                      <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
+                        {name}
+                      </Typography>
+                    </Box>
 
                     <Box
                       sx={{
                         display: "flex",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        bgcolor: "rgba(255,255,255,0.1)",
-                        borderRadius: 2,
                       }}
                     >
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          item.quantity > 1
-                            ? updateQuantity(item.id, item.quantity - 1)
-                            : removeItem(item.id);
-                        }}
-                        sx={{
-                          color: "white",
-                          "&:hover": { color: "yellow" },
-                        }}
+                      <Typography
+                        color="#FFFFFF"
+                        fontWeight={300}
+                        fontSize={{ xs: 18, md: 22 }}
                       >
-                        <Minus size={18} />
-                      </IconButton>
-
-                      <Typography sx={{ width: 30, textAlign: "center" }}>
-                        {item.quantity}
+                        ₹ {price.toLocaleString()}
                       </Typography>
 
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateQuantity(item.id, item.quantity + 1);
-                        }}
+                      <Box
                         sx={{
-                          color: "white",
-                          "&:hover": { color: "yellow" },
+                          display: "flex",
+                          alignItems: "center",
+                          bgcolor: "rgba(255,255,255,0.1)",
+                          borderRadius: 2,
                         }}
                       >
-                        <Plus size={18} />
-                      </IconButton>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            decrementToCart(productId)
+                          }}
+                          sx={{
+                            color: "white",
+                            "&:hover": { color: "yellow" },
+                          }}
+                        >
+                          <Minus size={18} />
+                        </IconButton>
+
+                        <Typography sx={{ width: 30, textAlign: "center" }}>
+                          {quantity}
+                        </Typography>
+
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementToCart(product, productId, quantityAvailable)
+                          }}
+                          sx={{
+                            color: "white",
+                            "&:hover": { color: "yellow" },
+                          }}
+                        >
+                          <Plus size={18} />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              )
+            })}
           </Box>
           {discount > 0 && (
             <>
@@ -1345,7 +1350,7 @@ export default function CheckoutPage() {
             </Typography>
           </Box>
 
-          <ProductRecommendation />
+          {/* <ProductRecommendation /> */}
         </Grid>
       </Grid>
     </Container>

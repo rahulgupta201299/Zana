@@ -2,7 +2,6 @@ import { MouseEvent, useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import { useCartContext } from "@/Context/CartProvider";
 
 interface BikePartData {
   id: string;
@@ -29,8 +28,6 @@ interface BikeView {
 
 const ShopTheLook = () => {
   const navigate = useNavigate();
-
-  const { addToCart } = useCartContext()
 
   const [currentViewIndex, setCurrentViewIndex] = useState(0);
   const [selectedPart, setSelectedPart] = useState<BikePartData | null>(null);
@@ -224,10 +221,11 @@ const ShopTheLook = () => {
     }
   };
 
+  // TODO handle in future (currently not using this component)
   function handleAddToCart(e: MouseEvent<HTMLButtonElement>, data: BikePartData, navigateTo: string) {
     const { id, name, price, description, quantityAvailable, image } = data
     e.stopPropagation()
-    addToCart(id, name, price, image, quantityAvailable, description)
+    // addToCart(id, name, price, image, quantityAvailable, description)
     navigate(navigateTo)
   }
 

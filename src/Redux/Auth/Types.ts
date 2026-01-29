@@ -1,3 +1,5 @@
+import { ShopByProductDetailsType } from "../Product/Types";
+
 export type T_AUTH_REDUCER = {
   login: {
     phoneNumber: string;
@@ -6,23 +8,33 @@ export type T_AUTH_REDUCER = {
     lastName?: string;
     address?: string;
   };
-  
-  profileDetails:{
-    _id: string
-  firstName: string
-  lastName: string
-  isdCode: string
-  phoneNumber: string
-  emailId: string
-  address: string
-  notifyOffers: boolean
-  bikeOwnedByCustomer: bike_owned[]
-  createdAt: string
-  __v: number
-  }
+
+  wishlist: ShopByProductDetailsType[];
+
+  isdCode: IsdCodeType[],
+
+  profileDetails: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    isdCode: string;
+    phoneNumber: string;
+    emailId: string;
+    address: string;
+    notifyOffers: boolean;
+    bikeOwnedByCustomer: bike_owned[];
+    createdAt: string;
+    __v: number;
+  };
 };
 
- type bike_owned={
-    brand: string,
-    model: string
- }
+type bike_owned = {
+  brand: string;
+  model: string;
+};
+
+export type IsdCodeType = {
+  code: string;
+  isd: string;
+  name: string;
+}

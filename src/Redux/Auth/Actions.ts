@@ -30,3 +30,11 @@ export const getProfileDetailsActions = traceActionsCreator(getProfileDetailName
 export const updateProfileDetailName = `${SLICE_NAME}/updateProfileDetail`;
 export const updateProfileDetailsActions = traceActionsCreator(updateProfileDetailName);
 
+export const wishlistName = `${SLICE_NAME}/wishlist`;
+export const wishlistActions = traceActionsCreator(wishlistName);
+
+export const addWishlistName = `${SLICE_NAME}/addWishlist`;
+export const addWishlistActions = traceActionsCreator(addWishlistName);
+
+export const removeWishlistName = `${SLICE_NAME}/removeWishlist`;
+export const removeWishlistActions = traceActionsCreator(removeWishlistName);

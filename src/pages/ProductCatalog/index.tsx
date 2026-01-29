@@ -1,6 +1,6 @@
 import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Pagination } from "@mui/material";
+import { Box, Button, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { Heart, ShoppingCart } from "lucide-react";
@@ -22,7 +22,10 @@ import {
   allProductServiceName,
   categoryProductServiceName,
 } from "@/Redux/Product/Actions";
-import { useCartContext } from "@/Context/CartProvider";
+import useCart from "@/hooks/useCart";
+import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
+import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
+import { useSnackbar } from "notistack";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -30,12 +33,15 @@ const ProductCatalogPage = () => {
   const location = useLocation();
   const state = location.state;
   const initialCategory = state?.category?.toLowerCase() || "";
-
-  const { addToCart } = useCartContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const { incrementToCart, getQuantity } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [categoryProductServiceName, allProductServiceName])
+    isServiceLoading(state, [
+      categoryProductServiceName,
+      allProductServiceName,
+    ]),
   );
 
   const [selectedCategory, setSelectedCategory] =
@@ -45,15 +51,15 @@ const ProductCatalogPage = () => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
-
-  const LIMIT_PER_PAGE = 10;
+  const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
+  const LIMIT_PER_PAGE = 12;
 
   const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(
     productCategory: string,
     productName: string,
-    productId: string
+    productId: string,
   ) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
@@ -76,7 +82,9 @@ const ProductCatalogPage = () => {
             queryParams: { page, limit: LIMIT_PER_PAGE },
           });
 
-      const { data, pagination } = (await dispatch(action)) as ProductCatalogDetailsType;
+      const { data, pagination } = (await dispatch(
+        action,
+      )) as ProductCatalogDetailsType;
 
       setFilteredProducts(data);
       setNumberOfPages(pagination.totalPages);
@@ -86,12 +94,52 @@ const ProductCatalogPage = () => {
     }
   }
 
+  async function handleWishList(productId: string) {
+    //TODO: Replace phone number with logged in user's phone number &  Wishlist for logged in users only
+    const isCurrentlyWishlisted = wishlistMap[productId];
+    setWishlistMap((prev) => ({
+      ...prev,
+      [productId]: !isCurrentlyWishlisted,
+    }));
+
+    try {
+      const action = isCurrentlyWishlisted
+        ? removeWishlistServiceAction({
+          phoneNumber: "7632000876",
+          productId,
+        })
+        : addWishListServiceAction({
+          phoneNumber: "7632000876",
+          productId,
+        });
+
+      const result = await dispatch(action);
+      if (result) {
+        enqueueSnackbar(
+          isCurrentlyWishlisted
+            ? "Product removed from wishlist"
+            : "Product added to wishlist",
+          {
+            variant: isCurrentlyWishlisted ? "info" : "success",
+            anchorOrigin: { vertical: "top", horizontal: "right" },
+            autoHideDuration: 2000,
+          },
+        );
+      }
+    } catch (error) {
+      setWishlistMap((prev) => ({
+        ...prev,
+        [productId]: isCurrentlyWishlisted,
+      }));
+    }
+  }
+
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
 
     const totalCategoryCount = productCategory.reduce(
       (acc, curr) => acc + curr.count,
-      0
+      0,
     );
     return [
       { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
@@ -109,25 +157,12 @@ const ProductCatalogPage = () => {
 
   function handleAddToCart(
     e: MouseEvent<HTMLButtonElement>,
+    product: ShopByProductDetailsType,
     productId: string,
-    productName: string,
-    price: number,
-    image: string,
     quantityAvailable: number,
-    description?: string,
-    quantity?: number
   ) {
     e.stopPropagation();
-    addToCart(
-      productId,
-      productName,
-      price,
-      image,
-      quantityAvailable,
-      description,
-      quantity
-    );
-    navigate(ROUTES.CART);
+    incrementToCart(product, productId, quantityAvailable, { navigateTo: ROUTES.CART });
   }
 
   useEffect(() => {
@@ -147,33 +182,60 @@ const ProductCatalogPage = () => {
             accessories
           </p>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.5,
+              overflowX: "auto",
+              px: 1,
+              py: 1,
+              scrollBehavior: "smooth",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
             {categoryDetails.map((category, ind) => {
-              const { name, count, icon } = category;
+              const { name, count } = category;
               const categoryName = name.toLowerCase();
 
               return (
-                <button
+                <Button
                   key={ind}
                   onClick={() => handleCategoryService(categoryName)}
-                  style={{ textTransform: "capitalize", cursor: "pointer" }}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedCategory === categoryName
-                    ? "bg-yellow-400 text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
+                  sx={{
+                    flexShrink: 0,
+                    textTransform: "capitalize",
+                    whiteSpace: "nowrap",
+                    fontSize: { xs: "0.875rem", md: "1rem" },
+                    fontWeight: 500,
+                    borderRadius: "8px",
+                    px: 2,
+                    py: 1,
+                    bgcolor:
+                      selectedCategory === categoryName
+                        ? "#facc15"
+                        : "rgba(255,255,255,0.1)",
+                    color: selectedCategory === categoryName ? "#000" : "#fff",
+                    "&:hover": {
+                      bgcolor:
+                        selectedCategory === categoryName
+                          ? "#facc15"
+                          : "rgba(255,255,255,0.2)",
+                    },
+                  }}
                 >
-                  <span>
-                    {categoryName === ALL_CATEGORY
-                      ? "All Products"
-                      : categoryName}{" "}
-                    ({count})
-                  </span>
-                </button>
+                  {categoryName === ALL_CATEGORY
+                    ? "All Products"
+                    : categoryName}{" "}
+                  ({count})
+                </Button>
               );
             })}
+
             {categoryDetails.length === 0 && <CategorySkeleton />}
-          </div>
+          </Box>
         </div>
       </div>
 
@@ -190,6 +252,9 @@ const ProductCatalogPage = () => {
                 isBikeSpecific,
                 price,
               } = product;
+
+              const quantityAddedInCart = getQuantity(_id)
+              const isDisabled = quantityAddedInCart >= quantityAvailable
 
               return (
                 <div
@@ -234,27 +299,40 @@ const ProductCatalogPage = () => {
                         ₹ {price.toLocaleString()}
                       </span>
                       <div className="flex gap-1 md:gap-2">
-                        {/* <button
-                          onClick={(e) => handleAddToWishlist(e, product.id)}
-                          className="p-1.5 md:p-2 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-black transition-all"
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWishList(product._id);
+                          }}
+                          className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
+                            ${wishlistMap[product._id]
+                              ? "bg-yellow-400 text-black"
+                              : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                            }
+   `}
                         >
                           <Heart size={14} className="md:w-4 md:h-4" />
-                        </button> */}
-                        <button
-                          onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                            handleAddToCart(
-                              e,
-                              _id,
-                              name,
-                              price,
-                              imageUrl,
-                              quantityAvailable
-                            )
-                          }
-                          className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
-                        >
-                          <ShoppingCart size={14} className="md:w-4 md:h-4" />
                         </button>
+                        <div className="relative inline-flex">
+                          <button
+                            onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                              handleAddToCart(e, product, _id, quantityAvailable)
+                            }
+                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                            className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
+                          >
+                            <ShoppingCart size={14} className="md:w-4 md:h-4" />
+                          </button>
+                          {quantityAddedInCart > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
+                                bg-red-600 text-white text-[11px] font-bold
+                                rounded-full flex items-center justify-center
+                                leading-none shadow-md"
+                            >
+                              {quantityAddedInCart}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -273,9 +351,7 @@ const ProductCatalogPage = () => {
                 No products found in this category
               </p>
               <button
-                onClick={() =>
-                  handleCategoryService(ALL_CATEGORY)
-                }
+                onClick={() => handleCategoryService(ALL_CATEGORY)}
                 className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
               >
                 View All Products
