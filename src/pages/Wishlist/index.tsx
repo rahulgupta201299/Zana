@@ -16,7 +16,7 @@ import getWishListServiceAction from "@/Redux/Auth/Services/Wishlist";
 import removeWishlistServiceAction, {
   REMOVE_WISHLIST,
 } from "@/Redux/Auth/Services/RemoveWishlist";
-import { WishListProducts } from "@/Redux/Auth/Selectors";
+import { getProfileDetails, WishListProducts } from "@/Redux/Auth/Selectors";
 import {
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
@@ -46,13 +46,14 @@ const Wishlist = () => {
   const isRemovingFromWishlist = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [removeWishlistName]),
   );
+   const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   const getWishList = async () => {
     const result = actions.fetchWishlist();
   };
 
   const handleRemoveFromWishlist = async (productId: string) => {
-    const phoneNumber = "7632000876";
+    const phoneNumber = profileDetails?.phoneNumber;
     const requestData: REMOVE_WISHLIST = {
       phoneNumber,
       productId,
