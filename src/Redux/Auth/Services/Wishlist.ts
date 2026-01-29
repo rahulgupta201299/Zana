@@ -7,10 +7,10 @@ const network = new Network();
 
 async function getWishListService(): Promise<any> {
   const state = AppStore.getState();
-  const phoneNumber = state.auth.profileDetails._id;
+  const phoneNumber = state.auth.login.phoneNumber;
   //TODO
   const options = {
-    url: `/api/v1/wishlist/7632000876`,
+    url: `/api/v1/wishlist/${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
   };
   const response = await network.request(options);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
@@ -7,7 +7,7 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { resetCart, setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
+import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
@@ -17,7 +17,7 @@ export default function useCart() {
 
   const { processedItems = [] } = cartDetail;
 
-  const [cartItems, setCartItems] = useState<CartItemDetail[]>(processedItems);
+  const cartItems: CartItemDetail[] = processedItems || []
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
@@ -34,9 +34,7 @@ export default function useCart() {
     if (!phoneNumber) return;
 
     try {
-      const response = await dispatch(getCartDetailServiceAction()) as CartDetailResType;
-      const { processedItems = [] } = response;
-      setCartItems(processedItems);
+      await dispatch(getCartDetailServiceAction()) as CartDetailResType;
     } catch (error: any) {}
   }
 
@@ -44,8 +42,6 @@ export default function useCart() {
     details: CartItemDetail[],
     optional?: { easyCheckout?: boolean; navigateTo?: string },
   ): Promise<CartDetailResType> {
-    
-    dispatch(setProcessedCart(details));
 
     const items = details.map((item) => ({
       productId: item.product._id,
@@ -60,7 +56,7 @@ export default function useCart() {
         }),
       )) as CartDetailResType;
 
-      const { processedItems = [], unProcessedItems = [] } = response;
+      const { unProcessedItems = [] } = response;
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
@@ -68,8 +64,6 @@ export default function useCart() {
           message: `Some items couldn't be processed due to unavailability.`,
         });
       }
-
-      setCartItems(processedItems);
 
       if (optional?.easyCheckout) dispatch(setOpenCart(true));
       if (optional?.navigateTo) navigate(optional.navigateTo);
@@ -116,10 +110,13 @@ export default function useCart() {
 
     let productAdded = false;
 
-    const newProductDetails = structuredClone(cartItems).map((item) => {
+    const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) {
-        item.quantity = quantity;
         productAdded = true;
+        return {
+          ...item,
+          quantity
+        }
       }
       return item;
     });
@@ -134,7 +131,7 @@ export default function useCart() {
       });
     }
 
-    setCartItems(newProductDetails)
+    dispatch(setProcessedCart([...newProductDetails]));
 
     handleSaveToDB(newProductDetails, optional);
   }
@@ -154,10 +151,13 @@ export default function useCart() {
 
     let productIncremented = false;
 
-    const newProductDetails = structuredClone(cartItems).map((item) => {
+    const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) {
-        item.quantity += 1;
         productIncremented = true;
+        return {
+          ...item,
+          quantity: item.quantity + 1
+        }
       }
       return item;
     });
@@ -172,7 +172,7 @@ export default function useCart() {
       });
     }
 
-    setCartItems(newProductDetails);
+    dispatch(setProcessedCart([...newProductDetails]));
 
     debounceFn(newProductDetails, { easyCheckout, navigateTo });
   }
@@ -182,12 +182,14 @@ export default function useCart() {
 
     if (productQuantity <= 0) return;
 
-    const newProductDetails = structuredClone(cartItems).map((item) => {
-      if (item.product._id === productId) item.quantity -= 1;
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) return { ...item, quantity: item.quantity - 1 }
       return item;
     });
 
-    setCartItems(newProductDetails);
+    const newFilterProducts = newProductDetails.filter(it => it.quantity)
+
+    dispatch(setProcessedCart(newFilterProducts));
 
     debounceFn(newProductDetails);
   }
@@ -198,11 +200,13 @@ export default function useCart() {
   }
 
   function removeItemFromCart(productId: string) {
-    const filterProducts = cartItems.filter(
-      (item) => item.product._id !== productId,
-    );
-    setCartItems(filterProducts);
-    debounceFn(filterProducts);
+    const newProductDetails = cartItems.map(item => {
+      if (item.product._id === productId) return {...item, quantity: 0}
+      return item
+    })
+    const filterProducts = newProductDetails.filter(item => item.quantity);
+    dispatch(setProcessedCart([...filterProducts]))
+    debounceFn(newProductDetails);
   }
 
   function getTotalQuantity() {
@@ -214,10 +218,6 @@ export default function useCart() {
       cartItems.find((item) => item.product._id === productId)?.quantity || 0
     );
   }
-
-  useEffect(() => {
-    setCartItems(processedItems)
-  }, [processedItems.length])
 
   return {
     addToCart,

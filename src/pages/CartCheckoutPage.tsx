@@ -1,8 +1,10 @@
+import { useSelector } from "react-redux";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Minus, Plus, X } from "lucide-react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CartCheckoutPage = () => {
   const navigate = useNavigate();
@@ -13,6 +15,13 @@ const CartCheckoutPage = () => {
   const { subtotal, discountAmount: discount, totalAmount: total, processedItems } = cartDetail
 
   const totalItems = getTotalQuantity()
+
+  function handleProductClick(productCategory: string, productName: string, productId: string) {
+    const category = replaceSpacesWithHiphen(productCategory);
+    const name = replaceSpacesWithHiphen(productName);
+
+    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
@@ -45,36 +54,33 @@ const CartCheckoutPage = () => {
               <div className="space-y-4">
                 {processedItems.map((item) => {
                   const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
-                  const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+                  const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
                   return (
                     <div
                       key={productId}
                       className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:border-yellow-400 transition-colors"
+                      onClick={() => handleProductClick(category, name, productId)}
                     >
-                      <div className="flex gap-4 p-4">
+                      <div style={{ cursor: 'pointer' }} className="flex gap-4 p-4">
                         {/* Product Image */}
-                        <Link to={`/product/${productId}`} className="flex-shrink-0">
-                          <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden">
-                            <img
-                              src={imageUrl}
-                              alt={name}
-                              className="w-full h-full object-contain p-2"
-                              onError={(e) => {
-                                e.currentTarget.src = '/bike-placeholder.svg';
-                              }}
-                            />
-                          </div>
-                        </Link>
+                        <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden">
+                          <img
+                            src={imageUrl}
+                            alt={name}
+                            className="w-full h-full object-contain p-2"
+                            onError={(e) => {
+                              e.currentTarget.src = '/bike-placeholder.svg';
+                            }}
+                          />
+                        </div>
 
                         {/* Product Info */}
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
-                            <Link to={`/product/${productId}`}>
-                              <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
-                                {name}
-                              </h3>
-                            </Link>
+                            <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
+                              {name}
+                            </h3>
                             <p className="text-white/60 text-sm md:text-base">
                               {shortDescription || 'Premium motorcycle accessory'}
                             </p>
@@ -97,7 +103,10 @@ const CartCheckoutPage = () => {
                             <div className="flex items-center gap-4">
                               <div className="flex items-center gap-2 bg-white/10 rounded-lg">
                                 <button
-                                  onClick={() => decrementToCart(productId)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    decrementToCart(productId)
+                                  }}
                                   className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                                 >
                                   <Minus size={20} />
@@ -106,7 +115,10 @@ const CartCheckoutPage = () => {
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => incrementToCart(product, productId, quantityAvailable)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    incrementToCart(product, productId, quantityAvailable)
+                                  }}
                                   className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                                 >
                                   <Plus size={20} />
@@ -115,7 +127,10 @@ const CartCheckoutPage = () => {
 
                               {/* Remove Button */}
                               <button
-                                onClick={() => removeItemFromCart(productId)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  removeItemFromCart(productId)
+                                }}
                                 className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
                                 title="Remove item"
                               >
@@ -132,7 +147,7 @@ const CartCheckoutPage = () => {
 
               {/* Continue Shopping Button */}
               <button
-                onClick={() => navigate('/product-catalog')}
+                onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
                 className="mt-6 w-full bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300"
               >
                 + Continue Shopping
