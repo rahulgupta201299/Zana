@@ -19,7 +19,7 @@ import useCart from "@/hooks/useCart";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
-  const { addToCart, getQuantity, incrementToCart, decrementToCart } = useCart()
+  const { addToCart, getQuantity, incrementToCart } = useCart()
   const { productCategory, productId, productItem } = useParams<ProductDetailParamsType>();
 
   const [quantity, setQuantity] = useState<number>(1)
