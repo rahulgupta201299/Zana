@@ -23,7 +23,6 @@ export function useNetwork() {
   const retry = autoRetry()
 
   async function performOps() {
-    window.scrollTo(0, 0);
     const requests: Promise<any>[] = []
   
     try {

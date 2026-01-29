@@ -28,7 +28,7 @@ const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"),
 const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
 const OrderDetails = lazyLoadPage(() => import("@/pages/OrderDetails"), Loading )
 const ProfileDetails = lazyLoadPage(() => import("@/pages/ProfileDetails"), Loading)
-const Wishlist = lazyLoadPage(() => import("@/pages/ProfileDetails/Wishlist"), Loading)
+const Wishlist = lazyLoadPage(() => import("@/pages/Wishlist"), Loading)
 
 
 export const routeObj: RouteObject[] = [

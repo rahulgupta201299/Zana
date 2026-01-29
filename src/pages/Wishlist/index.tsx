@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardContent,
-  Chip,
   Container,
   Grid,
   IconButton,
@@ -62,7 +61,6 @@ const Wishlist = () => {
     if (result?.success) {
       enqueueSnackbar("Product removed from wishlist successfully.", {
         variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
         autoHideDuration: 3000,
       });
     }

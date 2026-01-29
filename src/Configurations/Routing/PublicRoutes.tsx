@@ -26,6 +26,7 @@ function PublicRoutes() {
 	useNetwork()
 
 	useEffect(() => {
+		window.scrollTo(0, 0);
 		onMountChecks()
 	}, [location.pathname])
 

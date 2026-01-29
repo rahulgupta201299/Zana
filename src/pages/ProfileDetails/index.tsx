@@ -35,6 +35,7 @@ import { useNavigate } from "react-router";
 import Loading from "@/components/Loading";
 import MyProfile from "./components/MyProfile";
 import Faq from "./components/Faq";
+import { ROUTES } from "@/Constants/Routes";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -62,7 +63,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         return <MyProfile />;
 
       case "wishlist":
-         navigate("/wishlist");
+         navigate(ROUTES.WISHLIST);
 
       case "faq":
         return <Faq />;
