@@ -4,6 +4,9 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+import { persistReducer } from "redux-persist";
+import { SLICE_NAME as AuthSliceName } from "@/Redux/Auth/Selectors";
+import storage from "redux-persist/lib/storage";
 import { IsdCodeType, T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
@@ -34,6 +37,11 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
   },
   wishlist: [],
   isdCode: [],
+};
+
+const cartPersistConfig = {
+  key: AuthSliceName,
+  storage,
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -78,4 +86,4 @@ const slice = createSlice(sliceOptions);
 
 export const { resetAuth } = slice.actions;
 
-export default slice.reducer;
+export default persistReducer(cartPersistConfig, slice.reducer);

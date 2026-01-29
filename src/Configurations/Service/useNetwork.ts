@@ -41,7 +41,7 @@ export function useNetwork() {
 
   useEffect(() => {
     performOps()
-  }, [])
+  }, [phoneNumber])
 
   return null;
 }
