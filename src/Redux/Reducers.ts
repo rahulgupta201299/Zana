@@ -51,4 +51,4 @@ const reducers: ReducersMapObject<TReducers> = {
 
 export default combineReducers<ReducersMapObject<TReducers>>(reducers);
 
-export const persistedReducers: (keyof TReducers)[] = [AuthSliceName];
+export const persistedReducers: (keyof TReducers)[] = [];
