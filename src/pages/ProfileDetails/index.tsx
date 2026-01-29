@@ -26,7 +26,6 @@ import {
 } from "@/Redux/ServiceTracker/Selectors";
 
 import { useSnackbar } from "notistack";
-import { resetAuth } from "@/Redux/Auth/Reducer";
 import updateProfileDetailServiceAction, {
   UPDATE_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/UpdateProfileDetails";
@@ -36,6 +35,7 @@ import Loading from "@/components/Loading";
 import MyProfile from "./components/MyProfile";
 import Faq from "./components/Faq";
 import { ROUTES } from "@/Constants/Routes";
+import { logout } from "./Utils";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -49,8 +49,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const actions = useMemo(
     () => ({
-      //@ts-ignore
-      logout: () => dispatch(resetAuth()),
+      logout,
     }),
     [dispatch],
   );
@@ -83,13 +82,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     ]),
   );
 
-  // TODO later need to check if the data needs to be persisted or not
-  // const fetchProfileData = async () => {
-  //   const result = await actions.fetchProfileDetails({
-  //     isdCode: "91",
-  //     phoneNumber: "7632000876",
-  //   });
-  // };
+
 
   const handleMenuClick = (key: string) => {
     if (key === "logout") {

@@ -26,7 +26,7 @@ const Faq = ({ isMobile }) => {
       <Box
         sx={{
           width: "100%",
-          bgcolor: "#fff",
+          color: "#fff",
           borderRadius: "10px",
           height: "100%",
           p: isMobile ? "20px" : "32px 40px 32px 40px",
@@ -66,7 +66,7 @@ const Faq = ({ isMobile }) => {
                   px: 0,
                   borderBottom: "1px solid #e5e7eb",
                   "&:hover .MuiTypography-root": {
-                    color: "#111827",
+                    color: "#f5f7fbff",
                   },
                 }}
               >
@@ -74,7 +74,7 @@ const Faq = ({ isMobile }) => {
                   sx={{
                     fontSize: "18px",
                     fontWeight: 600,
-                    color: "#1f2937", // darker for question
+                    color: "#fff",
                   }}
                 >
                   {item.question}
@@ -84,7 +84,7 @@ const Faq = ({ isMobile }) => {
               <AccordionDetails sx={{ px: 0, pt: 1, pb: 2 }}>
                 <Typography
                   sx={{
-                    color: "#4b5563", // softer for answer
+                    color: "#fff",
                     fontSize: "15px",
                     lineHeight: 1.75,
                   }}

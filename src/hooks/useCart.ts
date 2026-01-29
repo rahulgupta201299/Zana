@@ -7,7 +7,7 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
+import { resetCart, setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
@@ -199,9 +199,9 @@ export default function useCart() {
     debounceFn(newProductDetails);
   }
 
-  // TODO
   function clearCart() {
-    // dispatch(resetCart);
+    // @ts-ignore
+    dispatch(resetCart);
   }
 
   function removeItemFromCart(productId: string) {

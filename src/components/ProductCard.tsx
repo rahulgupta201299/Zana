@@ -1,6 +1,9 @@
+import { SUB_ROUTES } from "@/Constants/Routes";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Skeleton } from "@mui/material";
 import { PlusIcon } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const ProductCard = ({
   product,
@@ -16,8 +19,21 @@ const ProductCard = ({
   loading?: boolean
 }) => {
 
-  const { imageUrl = '', name = '', quantityAvailable = 0 } = product || {}
+  const { imageUrl = '', name = '', quantityAvailable = 0, category, _id } = product || {}
   const isDisabled = Boolean(product && count >= quantityAvailable)
+
+    const navigate = useNavigate();
+
+    function handleProductClick(
+      productCategory: string,
+      productName: string,
+      productId: string,
+    ) {
+      const category = replaceSpacesWithHiphen(productCategory);
+      const name = replaceSpacesWithHiphen(productName);
+      
+      navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
+    }
 
   return (
     <div className="relative group" style={{ height }}>
@@ -32,10 +48,12 @@ const ProductCard = ({
       ) : (
         <>
           <img
+            onClick={() => handleProductClick(category, name, _id)}
             src={imageUrl}
             alt={name}
-            className="w-full h-full object-cover rounded-lg shadow-lg"
+            className="w-full h-full object-fit rounded-lg shadow-lg cursor-pointer"
           />
+        
           <div className="absolute bottom-2 left-2 group">
             <button
               style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}

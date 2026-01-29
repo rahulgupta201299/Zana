@@ -28,6 +28,7 @@ import addProfileDetailServiceAction, {
 } from "@/Redux/Auth/Services/AddProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import { TAppDispatch } from "@/Configurations/AppStore";
+import { logout } from "../Utils";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   const [brands, setBrands] = useState([]);
@@ -44,8 +45,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         dispatch(updateProfileDetailServiceAction(state)),
       fetchProfileDetails: (state: any) =>
         dispatch(getProfileDetailsServiceAction(state)),
-      //@ts-ignore
-      logout: () => dispatch(resetAuth()),
+      logout,
     }),
     [dispatch],
   );

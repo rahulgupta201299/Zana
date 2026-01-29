@@ -42,8 +42,8 @@ import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector, isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import Loading from "./Loading";
 import { useSnackbar } from "notistack";
-import { resetAuth } from "@/Redux/Auth/Reducer";
 import updateProfileDetailServiceAction, { UPDATE_PROFILE_DETAILS } from "@/Redux/Auth/Services/UpdateProfileDetails";
+import { logout } from "@/pages/ProfileDetails/Utils";
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -68,8 +68,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) => dispatch(updateProfileDetailServiceAction(state)),
       fetchProfileDetails: (state: any) =>
         dispatch(getProfileDetailsServiceAction(state)),
-      //@ts-ignore
-      logout: () => dispatch(resetAuth())
+      logout
     }),
     [dispatch]
   );
@@ -137,11 +136,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       setTimeout(() => {
         actions.logout();
         onClose();
-        enqueueSnackbar("You have been logged Out!", {
-          variant: "info",
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          autoHideDuration: 2000,
-        })
         setLoading(false)
       }, 2000);
     } else {
