@@ -13,7 +13,8 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
-import { ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 
 interface CartSidebarProps {
   variant?: "drawer" | "checkout";
@@ -26,8 +27,6 @@ const CartSidebar = ({
 
   const cartDetail = useSelector(cartDetailSelector);
 
-  const [activeItem, setActiveItem] = useState<string | null>(null);
-
   const dispatch = useDispatch<TAppDispatch>()
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
@@ -38,6 +37,14 @@ const CartSidebar = ({
 
   function onClose() {
     dispatch(setOpenCart(false))
+  }
+
+  function handleProductClick(productCategory: string, productName: string, productId: string) {
+    const category = replaceSpacesWithHiphen(productCategory);
+    const name = replaceSpacesWithHiphen(productName);
+
+    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+    onClose()
   }
 
   const CartContent = (
@@ -91,7 +98,7 @@ const CartSidebar = ({
         ) : (
           processedItems.map((item) => {
             const { product, price = 0 } = item;
-            const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+            const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
             const productQuantity = getQuantity(productId)
 
             const isPlusDisabled = productQuantity >= quantityAvailable;
@@ -101,19 +108,20 @@ const CartSidebar = ({
 
             return (
               <Box
-                key={item.product._id}
-                onClick={() => setActiveItem(productId)}
+                key={productId}
                 sx={{
                   border: "2px solid",
-                  borderColor:
-                    activeItem === item.product._id ? "yellow" : "transparent",
+                  borderColor: "transparent",
                   bgcolor: "rgba(255,255,255,0.05)",
                   borderRadius: 2,
                   transition: "0.2s",
                   p: 2,
                   display: "flex",
                   gap: 2,
+                  cursor: 'pointer',
+                  ":hover": { borderColor: "yellow" },
                 }}
+                onClick={() => handleProductClick(category, name, productId)}
               >
 
                 <Box
@@ -151,7 +159,10 @@ const CartSidebar = ({
                     <Typography
                       fontWeight="bold"
                       fontSize={{ xs: 16, md: 18 }}
-                      sx={{ mb: 0.5 }}
+                      sx={{
+                        mb: 0.5,
+                        ":hover": { color: "yellow" },
+                      }}
                     >
                       {name}
                     </Typography>
