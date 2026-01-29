@@ -29,6 +29,7 @@ import VerifyOtpServiceAction, {
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
 import Loading from "./Loading";
+import useCart from "@/hooks/useCart";
 interface SIGN_UP_TYPE {
   isMobile: boolean;
   type?: string;
@@ -56,6 +57,8 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       getServiceSelector(state, verifyOtpName) === "LOADING",
   );
   const isdCode = useSelector(isdCodeDetails);
+
+  const { saveCartToDB } = useCart()
 
   const actions = useMemo(
     () => ({
@@ -160,6 +163,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     };
     try {
       await actions.verifyOtp(reqBody);
+      saveCartToDB();
       enqueueSnackbar("You have logged in successfully.", {
         variant: "success",
         anchorOrigin: { vertical: "top", horizontal: "center" },

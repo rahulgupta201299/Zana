@@ -3,10 +3,11 @@ import AppStore from "../AppStore";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import ZProBikeService from "@/Redux/Product/Services/ZProBikeService";
 import ProductCategoryCountService from "@/Redux/Product/Services/ProductCategoryCountService";
-import { ROUTES } from "@/Constants/Routes";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import useCart from "@/hooks/useCart";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 
 export function useNetwork() {
   const state = AppStore.getState();
@@ -16,7 +17,9 @@ export function useNetwork() {
   const zProBike = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
   const initialCartLoaded = state.cart.initialCartLoaded;
-  const phoneNumber = state.auth.login.phoneNumber;
+
+  const loginDetails = useSelector(getLoginDetails);
+  const { phoneNumber = "" } = loginDetails;
 
   const { getCartFromDB } = useCart()
 
@@ -38,7 +41,7 @@ export function useNetwork() {
 
   useEffect(() => {
     performOps()
-  }, [])
+  }, [phoneNumber])
 
   return null;
 }

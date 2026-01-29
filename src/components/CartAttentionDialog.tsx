@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogTitle,
@@ -6,152 +6,198 @@ import {
   DialogActions,
   Box,
   Typography,
-  Button,
   IconButton,
+  Button,
   Divider,
   Stack,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { useSelector } from "react-redux";
-import { cartDetailSelector, outOfStockDetails } from "@/Redux/Cart/Selectors";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import { outOfStockDetails } from "@/Redux/Cart/Selectors";
+import { useMemo } from "react";
+import { OutOfStockDetail } from "@/Redux/Cart/Types";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { clearOutofStockItems } from "@/Redux/Cart/Reducer";
 
-export default function CartAttentionDialog() {
-  const cartDetails = useSelector(cartDetailSelector);
-  const outOfStock = useSelector(outOfStockDetails);
+type ItemCardType = {
+  productDetail: OutOfStockDetail
+  isAvailable: boolean
+}
 
-  const { processedItems = [] } = cartDetails;
+function ItemCard(props: ItemCardType) {
+  const { productDetail, isAvailable } = props;
 
-  const data = useMemo(() => {
-
-  }, [outOfStock.length])
-
-  const isOpen = false;
+  const { availableQuantity, quantity: unavailableQuantity, product } = productDetail
+  const { imageUrl = '', name = '' } = product
 
   return (
-    <Dialog open={isOpen} maxWidth="sm" fullWidth>
-      {/* Header */}
+    <Box
+      sx={{
+        bgcolor: "#181818",
+        border: "1px solid #1f1f1f",
+        borderRadius: 2,
+        p: 2,
+        mb: 2,
+      }}
+    >
+      <Stack direction="row" spacing={2}>
+        <Box
+          component="img"
+          src={imageUrl}
+          alt={name}
+          sx={{
+            width: 70,
+            height: 70,
+            borderRadius: 1.5,
+            objectFit: "cover",
+          }}
+        />
+
+        <Box flex={1}>
+          <Typography fontWeight={600}>{name}</Typography>
+
+          {!isAvailable ? (
+            <Stack direction="row" spacing={1} alignItems="center" mt={0.5}>
+              <WarningAmberRoundedIcon sx={{ fontSize: 18, color: "#f59e0b" }} />
+              <Typography color="#f59e0b" fontSize={13}>
+                {unavailableQuantity} not added — out of stock
+              </Typography>
+            </Stack>
+          ) : (
+            <Stack direction="row" spacing={1} alignItems="center" mt={0.5}>
+              <CheckCircleRoundedIcon sx={{ fontSize: 18, color: "#22c55e" }} />
+              <Typography color="#22c55e" fontSize={13}>
+                {availableQuantity}/{availableQuantity + unavailableQuantity} added
+              </Typography>
+            </Stack>
+          )}
+        </Box>
+      </Stack>
+    </Box>
+  );
+}
+
+
+export default function CartAttentionDialog() {
+
+  const outOfStock = useSelector(outOfStockDetails)
+
+  const dispatch = useDispatch<TAppDispatch>()
+
+  const open = outOfStock.length;
+
+  if (!open) return null;
+
+  const unavailableStockCount = useMemo(() => {
+    return outOfStock.reduce((acc, curr) => acc + curr.quantity, 0)
+  }, [outOfStock.length])
+
+  const availableStockCount = useMemo(() => {
+    return outOfStock.reduce((acc, curr) => acc + curr.availableQuantity, 0)
+  }, [outOfStock.length])
+
+  function handleClose() {
+    // @ts-ignore
+    dispatch(clearOutofStockItems())
+  }
+
+  async function handleMoveToWishlist() {
+    const data = outOfStock.map(item => item.product._id);
+    try {
+
+    } catch (error: any) {
+      
+    }
+  }
+
+  return (
+    <Dialog
+      open={true}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          bgcolor: "#121212",
+          color: "#fff",
+          borderRadius: 3,
+          border: '1px solid #ccc'
+        },
+      }}
+    >
       <DialogTitle>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Box display="flex" alignItems="center" gap={1}>
-            <WarningAmberIcon color="warning" />
-            <Typography fontWeight={600}>
-              Some items need your attention
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <WarningAmberRoundedIcon sx={{ color: "#f59e0b" }} />
+          <Box flex={1}>
+            <Typography fontWeight={700}>
+              Limited availability — adjustments needed
+            </Typography>
+            <Typography variant="body2" color="grey.400">
+              Only {availableStockCount} out of {availableStockCount + unavailableStockCount} requested items were added
             </Typography>
           </Box>
-
-          <IconButton>
-            <CloseIcon />
+          <IconButton onClick={handleClose}>
+            <CloseIcon sx={{ color: "#aaa" }} />
           </IconButton>
-        </Box>
+        </Stack>
       </DialogTitle>
 
-      <Divider />
-
-      {/* Body */}
       <DialogContent>
-        <Stack spacing={3} mt={1}>
-          {/* OUT OF STOCK */}
-          {outOfStock.map((item) => (
-            <Box
-              key={item.product._id}
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              border="1px solid #eee"
-              borderRadius={2}
-              p={2}
-            >
-              <Box>
-                <img src={item.product.imageUrl} />
-              </Box>
-              <Box>
-                <Typography fontWeight={600}>
-                  {item.product.name}
-                </Typography>
+        <Typography fontWeight={600} mb={1}>
+          Available Items
+        </Typography>
 
-                <Typography
-                  variant="body2"
-                  color="error"
-                  display="flex"
-                  alignItems="center"
-                  gap={0.5}
-                  mt={0.5}
-                >
-                  ❌ Out of stock
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+        {
+          outOfStock.map(product => (
+            <ItemCard productDetail={product} isAvailable={true} />
+          ))
+        }
 
-          {/* LIMITED STOCK */}
-          {processedItems
-            // .filter((item: any) => item.available && item.available < item.quantity)
-            .map((item: any) => (
-              <Box
-                key={item._id}
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                border="1px solid #eee"
-                borderRadius={2}
-                p={2}
-              >
-                <Box>
-                  <Typography fontWeight={600}>
-                    {item.product?.name}
-                  </Typography>
+        <Divider sx={{ my: 3, borderColor: "#1f1f1f" }} />
 
-                  <Typography
-                    variant="body2"
-                    color="warning.main"
-                    display="flex"
-                    alignItems="center"
-                    gap={0.5}
-                    mt={0.5}
-                  >
-                    ⚠️ Only {item.available} left
-                  </Typography>
-                </Box>
+        <Typography fontWeight={600} mb={1}>
+          Unavailable Items
+        </Typography>
 
-                {/* Quantity controller */}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  border="1px solid #ddd"
-                  borderRadius={2}
-                  overflow="hidden"
-                >
-                  <IconButton size="small">
-                    <RemoveIcon fontSize="small" />
-                  </IconButton>
+        {
+          outOfStock.map(product => (
+            <ItemCard productDetail={product} isAvailable={false} />
+          ))
+        }
 
-                  <Typography px={2} fontWeight={600}>
-                    {item.quantity}
-                  </Typography>
-
-                  <IconButton
-                    size="small"
-                    disabled={item.quantity >= item.available}
-                  >
-                    <AddIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              </Box>
-            ))}
-        </Stack>
       </DialogContent>
 
-      <Divider />
-
-      {/* Footer */}
-      <DialogActions sx={{ p: 2 }}>
-        <Button variant="outlined">Cancel</Button>
-        <Button variant="contained">Update cart</Button>
+      <DialogActions
+        sx={{ p: 2, width: '90%', display: 'flex', justifyContent: 'center', margin: 'auto', gap: '10px' }}
+      >
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{
+            bgcolor: "#2563eb",
+            borderRadius: 2,
+            py: 1.2,
+            fontWeight: 600,
+            ":hover": { bgcolor: "#1d4ed8" },
+          }}
+          onClick={handleMoveToWishlist}
+        >
+          Move To Wishlist
+        </Button>
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{
+            bgcolor: 'gray',
+            borderRadius: 2,
+            py: 1.2,
+            fontWeight: 600,
+            ":hover": { opacity: 0.5 },
+          }}
+          onClick={handleClose}
+        >
+          Continue Shopping
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -9,6 +9,11 @@ const network = new Network();
 async function cartModifyService(
   requestData: CartModifyReqType
 ): Promise<CartDetailResType> {
+
+  const { phoneNumber = '' } = requestData;
+
+  if (!phoneNumber) return;
+
   const options = {
     url: `/api/v1/cart/item`,
     method: API_METHOD_ENUM.POST,

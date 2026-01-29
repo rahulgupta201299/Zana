@@ -26,6 +26,7 @@ import useCart from "@/hooks/useCart";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const ProductCatalogPage = () => {
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
   const LIMIT_PER_PAGE = 12;
-
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
   const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(
@@ -63,7 +64,7 @@ const ProductCatalogPage = () => {
   ) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
-
+    
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
@@ -105,11 +106,11 @@ const ProductCatalogPage = () => {
     try {
       const action = isCurrentlyWishlisted
         ? removeWishlistServiceAction({
-          phoneNumber: "7632000876",
+          phoneNumber: profileDetails?.phoneNumber,
           productId,
         })
         : addWishListServiceAction({
-          phoneNumber: "7632000876",
+          phoneNumber: profileDetails?.phoneNumber,
           productId,
         });
 
