@@ -33,10 +33,10 @@ const GarageFavorite = () => {
     >
       <div className="max-w-7xl mx-auto">
         <h2 className="text-white text-lg md:text-4xl lg:text-5xl font-black text-center mb-4 md:mb-8">
-          GARAGE Favorite
+          GARAGE FAVORITE
         </h2>
 
-        <div className="hidden lg:grid grid-cols-5 gap-2">
+        <div className="hidden md:grid grid-cols-5 gap-2">
           {desktopColumns.map((col, colIdx) => (
             <div key={colIdx} className="flex flex-col gap-2">
               {col.map((idx) => (
@@ -53,7 +53,7 @@ const GarageFavorite = () => {
           ))}
         </div>
 
-        <div className="grid lg:hidden grid-cols-2 gap-2">
+        <div className="grid md:hidden grid-cols-2 gap-2">
           {productList.slice(0, 4).map((product, idx) => (
             <ProductCard
               key={product._id}

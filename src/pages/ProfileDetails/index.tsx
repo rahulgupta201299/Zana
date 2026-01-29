@@ -83,13 +83,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     ]),
   );
 
-  // TODO later need to check if the data needs to be persisted or not
-  // const fetchProfileData = async () => {
-  //   const result = await actions.fetchProfileDetails({
-  //     isdCode: "91",
-  //     phoneNumber: "7632000876",
-  //   });
-  // };
+
 
   const handleMenuClick = (key: string) => {
     if (key === "logout") {
