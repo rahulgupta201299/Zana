@@ -26,6 +26,8 @@ export type T_AUTH_REDUCER = {
     createdAt: string;
     __v: number;
   };
+
+  openPopup: boolean;
 };
 
 type bike_owned = {

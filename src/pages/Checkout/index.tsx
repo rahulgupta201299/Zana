@@ -11,7 +11,6 @@ import {
   FormControlLabel,
   Checkbox,
   MenuItem,
-  InputLabel,
   FormControl,
   Select,
   Radio,
@@ -28,17 +27,14 @@ import { displayRazorpay } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import cartCheckoutServiceAction from "@/Redux/Cart/Services/CartModifyService";
-import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-// import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
-import ProductRecommendation from "./ProductRecommendation";
 import { isdCodeDetails } from "@/Redux/Auth/Selectors";
+import { setOpenPopup } from "@/Redux/Auth/Reducer";
 
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, clearCart } = useCart();
@@ -64,18 +60,16 @@ export default function CheckoutPage() {
     () => ({
       saveCartDetails: (state: any) =>
         dispatch(cartCheckoutServiceAction(state)),
-      getCountryList: () => dispatch(getIsdListServiceAction()),
     }),
     [dispatch]
   );
 
-  const listOfCountry = async () => {
-    if (isdCode.length) return;
-    await actions.getCountryList();
-  };
+  function performOps() {
+    if (!phoneNumber) dispatch(setOpenPopup(true))
+  }
 
   useEffect(() => {
-    listOfCountry();
+    performOps()
   }, []);
 
   const CheckoutSchema = Yup.object({

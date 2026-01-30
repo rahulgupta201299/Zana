@@ -1,10 +1,8 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { getIsdCodeActions } from "../Actions";
 import { IsdCodeType } from "../Types";
-
 
 const network = new Network();
 

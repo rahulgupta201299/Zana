@@ -37,17 +37,22 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
   },
   wishlist: [],
   isdCode: [],
+  openPopup: false,
 };
 
 const cartPersistConfig = {
   key: AuthSliceName,
   storage,
+  blacklist: ["openPopup"]
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
   reducers: {
+    setOpenPopup: (state, action: PayloadAction<boolean>) => {
+      state.openPopup = action.payload;
+    },
     resetAuth: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
@@ -84,6 +89,6 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
 
 const slice = createSlice(sliceOptions);
 
-export const { resetAuth } = slice.actions;
+export const { resetAuth, setOpenPopup } = slice.actions;
 
 export default persistReducer(cartPersistConfig, slice.reducer);

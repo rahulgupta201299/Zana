@@ -1,17 +1,21 @@
-export const ALL_CATEGORY = 'all'
+export const ALL_CATEGORY = "all";
 
 export enum SocialMediaPlatformEnum {
-	FACEBOOK = 'FACEBOOK',
-	INSTAGRAM = 'INSTAGRAM',
-	WHATSAPP = 'WHATSAPP'
+  FACEBOOK = "FACEBOOK",
+  INSTAGRAM = "INSTAGRAM",
+  WHATSAPP = "WHATSAPP",
 }
 
 export enum CartQuantityEnum {
-	INCREMENT = 'INCREMENT',
-	DECREMENT = 'DECREMENT'
+  INCREMENT = "INCREMENT",
+  DECREMENT = "DECREMENT",
 }
 
 export enum BikeCategoryEnum {
-	ZANA = 'zana',
-	ZPRO = 'zpro'
+  ZANA = "zana",
+  ZPRO = "zpro",
+}
+
+export enum SESSION_STORAGE {
+  LANDING_POPUP_SHOWN = "landing_popup_shown",
 }
