@@ -28,7 +28,7 @@ const NewArrivals = () => {
 
   return (
     <div className="py-8 md:py-16" style={{ backgroundColor: "#181818" }}>
-      <div className="px-4 md:px-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6 md:mb-12">
           <h2 className="text-lg md:text-5xl font-black text-white mb-1 md:mb-2">
@@ -56,24 +56,26 @@ const NewArrivals = () => {
           ))}
         </div>
 
-        {/* Mobile Grid */}
-        <div className="md:hidden max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 gap-2">
-            {products.slice(0, 4).map((item, idx) => (
-              <ProductCard
-                key={item._id}
-                product={item}
-                onClick={() =>
-                  incrementToCart(item, item._id, item.quantityAvailable, {
-                    easyCheckout: true,
-                  })
-                }
-                height={150}
-                count={getQuantity(item._id)}
-                loading={isLoading}
-              />
-            ))}
-          </div>
+      
+          <div className="md:hidden grid grid-cols-3 grid-rows-3 gap-2">
+          {products.slice(0, 8).map((product, idx) => {
+            const isCenterFeatured = idx === 1;
+
+            return (
+              <div
+                key={product._id}
+                className={isCenterFeatured ? "row-span-2 col-start-2" : ""}
+              >
+                <ProductCard
+                  product={product}
+                  height={isCenterFeatured ? 310 : 150}
+                  count={getQuantity(product._id)}
+                  loading={isLoading}
+                  onClick={() => handleAddToCart(product._id)}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

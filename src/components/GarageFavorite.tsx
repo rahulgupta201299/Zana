@@ -11,17 +11,21 @@ const GarageFavorite = () => {
   const productList = useSelector((state: TAppStore) =>
     getGarageFavorite(state),
   );
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [garageFavoriteName]))
+  const isLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [garageFavoriteName]),
+  );
   const { incrementToCart, getQuantity } = useCart();
 
   function handleAddToCart(productId: string) {
-    const product = productList.find(item => item._id === productId)
+    const product = productList.find((item) => item._id === productId);
 
     if (!product) return;
 
-    const { quantityAvailable = 0 } = product
+    const { quantityAvailable = 0 } = product;
 
-    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
+    incrementToCart(product, productId, quantityAvailable, {
+      easyCheckout: true,
+    });
   }
 
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
@@ -53,17 +57,25 @@ const GarageFavorite = () => {
           ))}
         </div>
 
-        <div className="grid md:hidden grid-cols-2 gap-2">
-          {productList.slice(0, 4).map((product, idx) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              onClick={() => handleAddToCart(product._id)}
-              height={150}
-              count={getQuantity(productList[idx]?._id)}
-              loading={isLoading}
-            />
-          ))}
+        <div className="md:hidden grid grid-cols-3 grid-rows-3 gap-2">
+          {productList.slice(0, 8).map((product, idx) => {
+            const isCenterFeatured = idx === 1;
+
+            return (
+              <div
+                key={product._id}
+                className={isCenterFeatured ? "row-span-2 col-start-2" : ""}
+              >
+                <ProductCard
+                  product={product}
+                  height={isCenterFeatured ? 310 : 150}
+                  count={getQuantity(product._id)}
+                  loading={isLoading}
+                  onClick={() => handleAddToCart(product._id)}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -103,9 +103,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     }
   };
 
-  if (isLoading || loading) {
-    return <Loading />;
-  }
+  
   return (
     <Box
       sx={{
@@ -115,6 +113,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         backgroundColor: "#2A2A2A",
       }}
     >
+    { (isLoading || loading)  &&  <Loading />
+     }
       <Box
         sx={{
           width: "100%",
