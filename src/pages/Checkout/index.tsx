@@ -27,11 +27,9 @@ import { Minus, Plus } from "lucide-react";
 import { displayRazorpay } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import cartCheckoutServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
-import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { isdCodeDetails } from "@/Redux/Auth/Selectors";
@@ -40,8 +38,6 @@ import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddr
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
-import { COUNTRY_MAPPER } from "@/Constants/AppConstant";
-import { IsdCodeType } from "@/Redux/Auth/Types";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -110,7 +106,7 @@ export default function CheckoutPage() {
   }, [isdCode.length])
 
   useEffect(() => {
-    // performOps()
+    performOps()
   }, []);
 
   const CheckoutSchema = Yup.object({
