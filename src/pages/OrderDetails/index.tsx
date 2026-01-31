@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Box, Stack, Typography, Button, Divider } from "@mui/material";
-import orderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { orderDetailSelector } from "@/Redux/Order/Selectors";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
@@ -13,30 +11,28 @@ import { addDays, format } from "date-fns";
 
 const OrderDetails = () => {
   const dispatch = useDispatch<TAppDispatch>();
-  const actions = useMemo(
-    () => ({
-      getOrderDetails: (state) => dispatch(orderDetailServiceAction(state)),
-    }),
-    [dispatch]
-  );
+  // const actions = useMemo(
+  //   () => ({
+  //     getOrderDetails: (state) => dispatch(orderDetailServiceAction(state)),
+  //   }),
+  //   [dispatch]
+  // );
   const phoneNumber = useSelector<TAppStore, string>(
     (state) => state.auth.login.phoneNumber
   );
-  const orderList = useSelector((state: TAppStore) =>
-    orderDetailSelector(state)
-  );
+  const orderList = []
   const isDetailsLoading = useSelector(
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, orderDetailName) === "LOADING"
   );
 
-  const fetchOrderDetails = async () => {
-    const result = await actions.getOrderDetails(phoneNumber);
-    console.log(result);
-  };
-  useEffect(() => {
-    fetchOrderDetails();
-  }, []);
+  // const fetchOrderDetails = async () => {
+  //   const result = await actions.getOrderDetails(phoneNumber);
+  //   console.log(result);
+  // };
+  // useEffect(() => {
+  //   fetchOrderDetails();
+  // }, []);
 
   return (
     <Box

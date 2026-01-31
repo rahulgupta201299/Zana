@@ -27,7 +27,7 @@ export type T_AUTH_REDUCER = {
     __v: number;
   };
 
-  openPopup: boolean;
+  openSignupPopup: boolean;
 };
 
 type bike_owned = {

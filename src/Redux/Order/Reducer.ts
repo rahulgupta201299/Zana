@@ -4,50 +4,40 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { T_ORDER_REDUCER } from "./Types";
+import { T_ORDER_REDUCER, VerifyPaymentOrderResType } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { orderDetailActions } from "./Action";
+import { verifyPaymentOrdeActions } from "./Action";
 
 export const INITIAL_STATE: T_ORDER_REDUCER = {
-  orderDetails: [],
-  shippingAddress: {
-    fullName: "",
-    phone: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  },
-  billingAddress: {
-    fullName: "",
-    phone: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  },
+  openOrderPopup: false,
+  newOrderPlaced: {
+    orderId: '',
+    orderNumber: '',
+    orderStatus: '',
+    paymentId: ''
+  }
 };
 
 const sliceOptions: CreateSliceOptions<T_ORDER_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
-  reducers: {},
+  reducers: {
+    setOpenOrder(state, action: PayloadAction<boolean>) {
+      state.openOrderPopup = action.payload;
+    },
+  },
   extraReducers: (builder: ActionReducerMapBuilder<T_ORDER_REDUCER>): void => {
     builder.addCase(
-      orderDetailActions.success,
-      (state, action: PayloadAction<any>) => {
-        state.orderDetails = action.payload;
-      }
+      verifyPaymentOrdeActions.success,
+      (state, action: PayloadAction<VerifyPaymentOrderResType>) => {
+        state.newOrderPlaced = action.payload;
+      },
     );
   },
 };
 
 const slice = createSlice(sliceOptions);
 
-export const { } = slice.actions;
+export const { setOpenOrder } = slice.actions;
 
 export default slice.reducer;

@@ -31,7 +31,7 @@ import { useLocation } from "react-router";
 import Loading from "./Loading";
 import useCart from "@/hooks/useCart";
 import { SESSION_STORAGE } from "@/Constants/AppConstant";
-import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { ROUTES } from "@/Constants/Routes";
 
 interface SIGN_UP_TYPE {
@@ -56,7 +56,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, verifyOtpName) === "LOADING",
   );
-  const open = useSelector((state: TAppStore) => state.auth.openPopup);
+  const open = useSelector((state: TAppStore) => state.auth.openSignupPopup);
   const isdCode = useSelector(isdCodeDetails);
 
   const location = useLocation()
@@ -186,7 +186,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
 
   function handleClose() {
     sessionStorage.setItem(SESSION_STORAGE.LANDING_POPUP_SHOWN, "true");
-    dispatch(setOpenPopup(false))
+    dispatch(setOpenSignupPopup(false))
   }
 
   useEffect(() => {
