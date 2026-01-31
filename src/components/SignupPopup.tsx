@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, ChangeEvent, ClipboardEvent, KeyboardEvent } from "react";
 
 import {
   Box,
@@ -16,28 +16,29 @@ import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import { generateOtpName, verifyOtpName } from "@/Redux/Auth/Actions";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { getLoginDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
+import { isdCodeDetails } from "@/Redux/Auth/Selectors";
 import { GEN_OTP_REQ } from "@/Redux/Auth/Services/GenerateOtpService";
 import GenerateOtpServiceAction from "@/Redux/Auth/Services/GenerateOtpService";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { TReducers } from "@/Redux/Reducers";
 import { PersistPartial } from "redux-persist/lib/persistReducer";
 import VerifyOtpServiceAction, {
   VERIFY_OTP_REQ,
 } from "@/Redux/Auth/Services/VerifyOtpService";
-import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
+import { useLocation } from "react-router";
 import Loading from "./Loading";
 import useCart from "@/hooks/useCart";
+import { SESSION_STORAGE } from "@/Constants/AppConstant";
+import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { ROUTES } from "@/Constants/Routes";
+
 interface SIGN_UP_TYPE {
   isMobile: boolean;
-  type?: string;
-  onClose?: () => void;
 }
 
-const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
-  const [isOpen, setIsOpen] = useState(false);
+const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -51,12 +52,16 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       getServiceSelector(state, generateOtpName) === "LOADING",
   );
   const { enqueueSnackbar } = useSnackbar();
-  const loginData = useSelector((state: any) => getLoginDetails(state));
   const isVerifyingOtp = useSelector(
     (state: TReducers & PersistPartial) =>
       getServiceSelector(state, verifyOtpName) === "LOADING",
   );
+  const open = useSelector((state: TAppStore) => state.auth.openPopup);
   const isdCode = useSelector(isdCodeDetails);
+
+  const location = useLocation()
+
+  const timerId = useRef(null)
 
   const { saveCartToDB } = useCart()
 
@@ -66,76 +71,51 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
         dispatch(GenerateOtpServiceAction(state)),
       verifyOtp: (state: VERIFY_OTP_REQ) =>
         dispatch(VerifyOtpServiceAction(state)),
-      getIsdCodeList: () => dispatch(getIsdListServiceAction()),
     }),
     [dispatch],
   );
 
-  const getIsdCode = async () => {
-    if (isdCode.length) return;
-    await actions.getIsdCodeList();
-  };
-
-  useEffect(() => {
-    const hasShownPopup = sessionStorage.getItem("landing_popup_shown");
-    getIsdCode();
-    if (type === "navbar") {
-      setIsOpen(true);
-      return;
-    }
-    if (!loginData?.verified && !hasShownPopup) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [loginData, type]);
+  function handleTimer(t: number) {
+    if (t === 0) return;
+    timerId.current = setTimeout(() => {
+      setTimer(t - 1);
+      handleTimer(t - 1);
+    }, 1000)
+  }
 
   const handleRequestOtp = async () => {
     const phoneRegex = /^[6-9]\d{9}$/;
+
     if (!phoneRegex.test(phone)) {
       setPhoneError("Enter a valid 10-digit phone number");
       return;
-    } else {
-      const body = {
-        isdCode: countryCode,
-        phoneNumber: phone,
-      };
+    }
+
+    const body = {
+      isdCode: countryCode,
+      phoneNumber: phone,
+    };
+
+    try {
       const result = await actions.generateOtp(body);
-      if (result.success) {
-        setPhoneError("");
-        setTimer(30);
-        setOtpSent(true);
-        enqueueSnackbar("Otp sent successfully.", {
-          variant: "success",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 3000,
-        });
-      } else {
-        enqueueSnackbar("Failed to generate OTP. Please try again.", {
-          variant: "error",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 3000,
-        });
-      }
+      if (!result.success) throw Error();
+      setPhoneError("");
+      clearTimeout(timerId.current)
+      handleTimer(30);
+      setOtpSent(true);
+      enqueueSnackbar({
+        variant: "success",
+        message: "Otp sent successfully."
+      });
+    } catch (error: any) {
+      enqueueSnackbar({
+        variant: "error",
+        message: "Failed to generate OTP. Please try again."
+      });
     }
-  };
+  }
 
-  useEffect(() => {
-    if (otpSent && timer > 0) {
-      const interval = setInterval(() => setTimer((t) => t - 1), 1000);
-      return () => clearInterval(interval);
-    }
-  }, [otpSent, timer]);
-
-  useEffect(() => {
-    if (otpArray.every((digit) => digit !== "")) {
-      setOtp(otpArray.join(""));
-    }
-  }, [otpArray]);
-
-  const handleOtpChange = (value, index) => {
+  const handleOtpChange = (value: string, index: number) => {
     if (!/^\d*$/.test(value)) return;
 
     const newArr = [...otpArray];
@@ -146,41 +126,44 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       const next = document.getElementById(`otp-box-${index + 1}`);
       next?.focus();
     }
+
+    setOtp(newArr.join(""))
   };
 
-  const handleKeyDown = (e, index) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace" && !otpArray[index] && index > 0) {
       const prev = document.getElementById(`otp-box-${index - 1}`);
       prev?.focus();
     }
   };
 
-  const handleSubmitOtp = async (otp: any) => {
+  const handleSubmitOtp = async (otp: string) => {
+
+    if (otp.length !== 6) return;
+
     const reqBody = {
       isdCode: countryCode,
       phoneNumber: phone,
-      otp: otp,
+      otp,
     };
+
     try {
       await actions.verifyOtp(reqBody);
       saveCartToDB();
-      enqueueSnackbar("You have logged in successfully.", {
+      enqueueSnackbar({
         variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 3000,
+        message: "You have logged in successfully."
       });
-      onClose && onClose();
-      setIsOpen(false);
+      handleClose();
     } catch (error: any) {
-      enqueueSnackbar("Failed to verify OTP. Please try again.", {
+      enqueueSnackbar({
         variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 3000,
+        message: "Failed to verify OTP. Please try again."
       });
     }
   };
 
-  const handleOtpPaste = (e, index) => {
+  const handleOtpPaste = (e: ClipboardEvent<HTMLInputElement>, index: number) => {
     e.preventDefault();
 
     const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
@@ -192,17 +175,31 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
     digits.forEach((d, i) => {
       if (index + i < 6) newArr[index + i] = d;
     });
+
     setOtpArray(newArr);
+    setOtp(newArr.join(""));
+
     const lastIndex = Math.min(index + digits.length - 1, 5);
     const next = document.getElementById(`otp-box-${lastIndex}`);
     next?.focus();
   };
 
-  if (!isOpen) return null;
+  function handleClose() {
+    sessionStorage.setItem(SESSION_STORAGE.LANDING_POPUP_SHOWN, "true");
+    dispatch(setOpenPopup(false))
+  }
+
+  useEffect(() => {
+    return () => clearTimeout(timerId.current)
+  }, [])
+
+  const showClose = location.pathname !== ROUTES.CHECKOUT;
+
+  if (!open) return null;
 
   return (
     <Dialog
-      open={isOpen}
+      open={true}
       fullWidth
       maxWidth="sm"
       fullScreen={isMobile}
@@ -233,22 +230,22 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
       }}
       disableEscapeKeyDown
     >
-      <IconButton
-        onClick={() => {
-          setIsOpen(false);
-          onClose && onClose();
-          sessionStorage.setItem("landing_popup_shown", "true");
-        }}
-        sx={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          color: "white",
-          zIndex: 1,
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
+      {
+        showClose && (
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              top: 16,
+              right: 16,
+              color: "white",
+              zIndex: 1,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        )
+      }
 
       <DialogTitle sx={{ p: { md: "32px 32px 0px", xs: "16px" } }}>
         Login With OTP
@@ -268,7 +265,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
         {!otpSent ? (
           <>
             <Typography>
-              Enter your phone number and we’ll send you a 6-digit OTP
+              Enter your phone number and we'll send you a 6-digit OTP
             </Typography>
 
             <TextField
@@ -370,9 +367,9 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
                   key={index}
                   id={`otp-box-${index}`}
                   value={digit}
-                  onPaste={(e) => handleOtpPaste(e, index)}
-                  onChange={(e) => handleOtpChange(e.target.value, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={(e: ClipboardEvent<HTMLInputElement>) => handleOtpPaste(e, index)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtpChange(e.target.value, index)}
+                  onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => handleKeyDown(e, index)}
                   slotProps={{
                     input: {
                       sx: {
@@ -403,7 +400,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
                 <Button
                   variant="text"
                   onClick={handleRequestOtp}
-                  sx={{ color: "white" }}
+                  sx={{ color: "white", cursor: 'pointer' }}
                   disabled={isVerifyingOtp || isGeneratingOtp}
                 >
                   Resend OTP
@@ -412,7 +409,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
             </Typography>
 
             <Button
-              disabled={otpArray.some((d) => d === "") || isVerifyingOtp}
+              disabled={otp.length !== 6 || isVerifyingOtp}
               size="large"
               onClick={() => handleSubmitOtp(otp)}
               sx={{
@@ -421,6 +418,7 @@ const SignupPopup = ({ isMobile, onClose, type }: SIGN_UP_TYPE) => {
                 border: "2px solid white",
                 mt: 2,
                 borderRadius: "10px",
+                cursor: 'pointer'
               }}
             >
               Submit OTP
