@@ -1,11 +1,17 @@
-import { ROUTES } from "@/Constants/Routes";
 import AppStore from "../AppStore";
+import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { SESSION_STORAGE } from "@/Constants/AppConstant";
 
 export function onMountChecks() {
   const location = window.location;
   const dispatch = AppStore.dispatch;
 
-  if (location.pathname === ROUTES.CHECKOUT) {
-    // TODO handle open the otp login modal if not logged in
+  const openPopup = !sessionStorage.getItem(SESSION_STORAGE.LANDING_POPUP_SHOWN);
+
+  if (openPopup) {
+    setTimeout(() => {
+      dispatch(setOpenPopup(true))
+    }, 1000)
   }
+
 }

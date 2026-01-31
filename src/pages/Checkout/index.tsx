@@ -11,13 +11,13 @@ import {
   FormControlLabel,
   Checkbox,
   MenuItem,
-  InputLabel,
   FormControl,
   Select,
   Radio,
   Divider,
   RadioGroup,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -28,20 +28,49 @@ import { displayRazorpay } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import cartCheckoutServiceAction from "@/Redux/Cart/Services/CartModifyService";
-import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import { useSnackbar } from "notistack";
 import { paymentOptions, PaymentTypeEnum } from "./Constant";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-// import { cartCheckOutServiceName } from "@/Redux/Cart/Action";
 import Loading from "@/components/Loading";
 import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
-import { cartDetailSelector } from "@/Redux/Cart/Selectors";
-import ProductRecommendation from "./ProductRecommendation";
+import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { isdCodeDetails } from "@/Redux/Auth/Selectors";
+import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
+import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
+import { COUNTRY_MAPPER } from "@/Constants/AppConstant";
+import { IsdCodeType } from "@/Redux/Auth/Types";
+
+interface CheckoutFormValues {
+  shippingCountry: string;
+  email: string;
+  shippingFirstName: string;
+  shippingLastName: string;
+  shippingAddress: string;
+  shippingApartment: string;
+  shippingCity: string;
+  shippingState: string;
+  shippingPincode: string;
+  shippingPhone: string;
+
+  saveInfo: boolean;
+  sameAsDelivery: boolean;
+
+  billingCountry: string;
+  billingFirstName: string;
+  billingLastName: string;
+  billingAddress: string;
+  billingApartment: string;
+  billingCity: string;
+  billingState: string;
+  billingPincode: string;
+  billingPhone: string;
+}
 
 export default function CheckoutPage() {
-  const { decrementToCart, incrementToCart, clearCart } = useCart();
+  const { decrementToCart, incrementToCart, validateCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   const phoneNumber = useSelector<TAppStore, string>(
@@ -49,33 +78,39 @@ export default function CheckoutPage() {
   );
   const cartDetail = useSelector(cartDetailSelector)
   const isdCode = useSelector(isdCodeDetails)
+  const cartAddressSelector = useSelector(cartAddressDetails)
+  const {
+    shippingAddress: shippingAddressSelector,
+    billingAddress: billingAddressSelector
+  } = cartAddressSelector
 
   // TODO
-  const isLoading = false // useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartCheckOutServiceName]));
+  const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
+    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName
+  ]));
 
-  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.COD);
+  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.RAZORPAY);
+  const [shippingIsdCode, setShippingIsdCode] = useState<string>('')
+  const [billingIsdCode, setBillingIsdCode] = useState<string>('')
 
   const dispatch = useDispatch<TAppDispatch>();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const { subtotal = 0, totalAmount: total = 0, discountAmount: discount = 0, processedItems = [] } = cartDetail
 
-  const actions = useMemo(
-    () => ({
-      saveCartDetails: (state: any) =>
-        dispatch(cartCheckoutServiceAction(state)),
-      getCountryList: () => dispatch(getIsdListServiceAction()),
-    }),
-    [dispatch]
-  );
-
-  const listOfCountry = async () => {
-    if (isdCode.length) return;
-    await actions.getCountryList();
-  };
+  function performOps() {
+    if (!phoneNumber) dispatch(setOpenPopup(true))
+  }
 
   useEffect(() => {
-    listOfCountry();
+    const shippingIsdCode = isdCode.find(c => c.name === shippingAddressSelector.country)?.isd || ''
+    const billingIsdCode = isdCode.find(c => c.name === billingAddressSelector.country)?.isd || ''
+    setShippingIsdCode(shippingIsdCode)
+    setBillingIsdCode(billingIsdCode)
+  }, [isdCode.length])
+
+  useEffect(() => {
+    // performOps()
   }, []);
 
   const CheckoutSchema = Yup.object({
@@ -88,17 +123,16 @@ export default function CheckoutPage() {
           return true;
         else return false;
       }),
-    phone: Yup.string().required("Phone Number is required"),
-    // TODO once BE is fixed with double + issue
-    // .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
-    //   if (/^[6-9]\d{9}$/.test(value)) return true;
-    //   else return false;
-    // }),
+    shippingPhone: Yup.string().required("Phone Number is required")
+      .test("shippingPhone", "Please enter valid 10 digit Phone Number", (value) => {
+        if (/^[6-9]\d{9}$/.test(value)) return true;
+        else return false;
+      }),
 
     shippingFirstName: Yup.string().required("First name is required"),
     shippingLastName: Yup.string().required("Last name is required"),
     shippingAddress: Yup.string().required("Address is required"),
-    shippingApartment: Yup.string(), // TODO .required("Address is required"),
+    shippingApartment: Yup.string(),
     shippingCity: Yup.string().required("City is required"),
     shippingState: Yup.string().required("State is required"),
     shippingPincode: Yup.string()
@@ -144,73 +178,117 @@ export default function CheckoutPage() {
         ? schema
         : schema
           .required("Billing phone number is required")
+          .test("billingPhone", "Please enter valid 10 digit Phone Number", (value) => {
+            if (/^[6-9]\d{9}$/.test(value)) return true;
+            else return false;
+          }),
     ),
   });
 
   // TODO change the API contract completely
-  const handleSubmit = async (values) => {
-    if (paymentType !== PaymentTypeEnum.COD) {
-      displayRazorpay();
-      return;
-    }
-    const mappedItems = processedItems.map((item) => ({
-      productId: item.product._id,
-      quantity: item.quantity,
-    }));
-    const body = {
-      phoneNumber: phoneNumber,
-      items: mappedItems,
-      shippingAddress: {
-        fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-        addressLine1: values.shippingAddress,
-        addressLine2: values.shippingApartment,
-        city: values.shippingCity,
-        state: values.shippingState,
-        phone: values.phone,
-        postalCode: values.shippingPincode,
-        country: values.shippingCountry,
-      },
+  async function handleSubmit(values: CheckoutFormValues) {
 
-      billingAddress: values.sameAsDelivery
-        ? {
-          fullName: `${values.shippingFirstName} ${values.shippingLastName}`,
-          addressLine1: values.shippingAddress,
-          addressLine2: values.shippingApartment,
-          city: values.shippingCity,
-          state: values.shippingState,
-          postalCode: values.shippingPincode,
-          country: values.shippingCountry,
-          phone: values.phone
-        }
-        : {
-          fullName: `${values.billingFirstName} ${values.billingLastName}`,
-          addressLine1: values.billingAddress,
-          addressLine2: values.billingApartment,
-          city: values.billingCity,
-          state: values.billingState,
-          postalCode: values.billingPincode,
-          country: values.billingCountry,
-          phone: values.billingPhone
-        },
-    };
+    const {
+      shippingCountry = "",
+      email = "",
+      shippingFirstName = "",
+      shippingLastName = "",
+      shippingAddress = "",
+      shippingApartment = "",
+      shippingCity = "",
+      shippingState = "",
+      shippingPincode = "",
+      shippingPhone = "",
+
+      saveInfo = true,
+      sameAsDelivery = true,
+
+      billingCountry = "",
+      billingFirstName = "",
+      billingLastName = "",
+      billingAddress = "",
+      billingApartment = "",
+      billingCity = "",
+      billingState = "",
+      billingPincode = "",
+      billingPhone = "",
+    } = values;
+
+    const shippingAddressData = {
+      fullName: `${shippingFirstName} ${shippingLastName}`,
+      phone: shippingPhone,
+      addressLine1: shippingAddress,
+      addressLine2: shippingApartment,
+      city: shippingCity,
+      state: shippingState,
+      postalCode: shippingPincode,
+      country: shippingCountry,
+    }
+
+    const billingAddressData = {
+      fullName: `${billingFirstName} ${billingLastName}`,
+      phone: billingPhone,
+      addressLine1: billingAddress,
+      addressLine2: billingApartment,
+      city: billingCity,
+      state: billingState,
+      postalCode: billingPincode,
+      country: billingCountry,
+    }
+
+    if (!phoneNumber || !processedItems.length) return;
 
     try {
-      await actions.saveCartDetails(body);
-      enqueueSnackbar("Order Placed successfully!", {
-        variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 3000,
+      await validateCart(processedItems);
+
+      await dispatch(updateCartAddressServiceAction({
+        phoneNumber,
+        shippingAddress: shippingAddressData,
+        billingAddress: sameAsDelivery ? shippingAddressData : billingAddressData
+      }))
+
+      if (paymentType !== PaymentTypeEnum.COD) {
+        displayRazorpay();
+        return;
+      }
+
+    } catch (error: any) {
+      const { message = '' } = error
+      enqueueSnackbar({
+        variant: "error",
+        message
       });
-      // clearCart();
-      navigate(ROUTES.ORDER_DETAILS);
-    } catch (err) {
-      if (err.response?.status === 400)
-        enqueueSnackbar(err.response?.data?.error, {
-          variant: "error",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-        });
     }
-  };
+
+    // try {
+    //   await actions.saveCartDetails(body);
+    //   enqueueSnackbar("Order Placed successfully!", {
+    //     variant: "success",
+    //     anchorOrigin: { vertical: "top", horizontal: "center" },
+    //     autoHideDuration: 3000,
+    //   });
+    //   // clearCart();
+    //   navigate(ROUTES.ORDER_DETAILS);
+    // } catch (error: any) {
+    //   const { message = '' } = error
+    //   enqueueSnackbar({
+    //     variant: "error",
+    //     message
+    //   });
+    // };
+  }
+
+  const { shippingFirstName, shippingLastName, billingFirstName, billingLastName } = useMemo(() => {
+    const shippingSplitName = shippingAddressSelector.fullName.split(' ').filter(Boolean);
+    const shippingLastName = shippingSplitName.pop() || ""
+    const shippingFirstName = shippingSplitName.join(' ').trim();
+
+    const billingSplitName = billingAddressSelector.fullName.split(' ').filter(Boolean);
+    const billingLastName = billingSplitName.pop() || ""
+    const billingFirstName = billingSplitName.join(' ').trim();
+
+    return { shippingFirstName, shippingLastName, billingFirstName, billingLastName }
+  }, [shippingAddressSelector.fullName, billingAddressSelector.fullName])
 
   return (
     <Container sx={{ py: 6 }}>
@@ -238,29 +316,30 @@ export default function CheckoutPage() {
               Contact
             </Typography>
 
-            <Formik
+            <Formik<CheckoutFormValues>
               enableReinitialize
               validateOnMount
               initialValues={{
-                shippingCountry: "",
                 email: "",
-                shippingFirstName: "",
-                shippingLastName: "",
-                shippingAddress: "",
-                shippingApartment: "",
-                shippingCity: "",
-                shippingState: "",
-                shippingPincode: "",
-                phone: "",
+                shippingCountry: shippingAddressSelector.country,
+                shippingFirstName: shippingFirstName,
+                shippingLastName: shippingLastName,
+                shippingAddress: shippingAddressSelector.addressLine1,
+                shippingApartment: shippingAddressSelector.addressLine2,
+                shippingCity: shippingAddressSelector.city,
+                shippingState: shippingAddressSelector.state,
+                shippingPincode: shippingAddressSelector.postalCode,
+                shippingPhone: shippingAddressSelector.phone,
                 saveInfo: true,
-                billingFirstName: "",
-                billingLastName: "",
-                billingAddress: "",
-                billingApartment: "",
-                billingCity: "",
-                billingState: "",
-                billingPincode: "",
-                billingPhone: "",
+                billingCountry: billingAddressSelector.country,
+                billingFirstName: billingFirstName,
+                billingLastName: billingLastName,
+                billingAddress: billingAddressSelector.addressLine1,
+                billingApartment: billingAddressSelector.addressLine2,
+                billingCity: billingAddressSelector.city,
+                billingState: billingAddressSelector.state,
+                billingPincode: billingAddressSelector.postalCode,
+                billingPhone: billingAddressSelector.phone,
                 sameAsDelivery: true,
               }}
               validationSchema={CheckoutSchema}
@@ -273,8 +352,12 @@ export default function CheckoutPage() {
                 errors,
                 touched,
                 setFieldValue,
+                setFieldTouched,
                 isValid,
               }) => {
+
+                const isSubmitDisabled = !isValid || !processedItems.length
+
                 return (
                   <Form>
                     <Box
@@ -317,42 +400,38 @@ export default function CheckoutPage() {
                       <FormControl fullWidth>
                         <Select
                           name="shippingCountry"
-                          // label='Country/Region'
                           value={values.shippingCountry}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            const countryName = e.target.value as string;
+
+                            const selected = isdCode.find(
+                              (c) => c.name === countryName
+                            );
+
+                            setFieldValue("shippingCountry", countryName, true);
+                            setFieldTouched("shippingCountry", true);
+
+                            if (selected) {
+                              setShippingIsdCode(selected.isd);
+                            }
+                          }}
                           displayEmpty
                           IconComponent={() => null}
-                          sx={{
-                            p: 0,
-                            borderRadius: "10px",
-                          }}
-                          renderValue={() => (
+                          sx={{ p: 0, borderRadius: "10px" }}
+                          renderValue={(value) => (
                             <Box>
-                              <Typography
-                                sx={{
-                                  fontSize: "14px",
-                                  color: "#1D1D1D",
-                                }}
-                              >
+                              <Typography sx={{ fontSize: "14px", color: "#1D1D1D" }}>
                                 Country/Region
                               </Typography>
-                              <Typography
-                                sx={{
-                                  fontSize: "20px",
-                                  fontWeight: 400,
-                                  color: "#1D1D1D",
-                                }}
-                              >
-                                {values.shippingCountry === "india"
-                                  ? "India"
-                                  : values.shippingCountry}
+                              <Typography sx={{ fontSize: "20px", fontWeight: 400 }}>
+                                {value || "Select country"}
                               </Typography>
                             </Box>
                           )}
                         >
                           {isdCode.map((c) => (
                             <MenuItem
-                              key={c.isd}
+                              key={c.name}
                               value={c.name}
                               sx={{
                                 display: "flex",
@@ -361,11 +440,10 @@ export default function CheckoutPage() {
                                 justifyContent: "space-between",
                               }}
                             >
-                              <span>{c.name}</span>
+                              {c.name}
                             </MenuItem>
                           ))}
                         </Select>
-                        {/* </Box> */}
                       </FormControl>
 
                       <Grid container spacing={2}>
@@ -603,35 +681,36 @@ export default function CheckoutPage() {
 
                       <TextField
                         fullWidth
-                        name="phone"
+                        name="shippingPhone"
                         label="Phone"
-                        value={values.phone}
-                        // disabled={true}
+                        value={values.shippingPhone}
                         onChange={(e) => {
                           if (e.target.value.match(/[^0-9]/)) return;
                           handleChange(e);
                         }}
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "phone")}
+                        error={getFieldErrorState({ errors, touched }, "shippingPhone")}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
-                          "phone"
+                          "shippingPhone"
                         )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#fff",
-                              color: "#000",
-                              borderRadius: "10px",
-                            },
-                            inputProps: { maxLength: 10 },
-                          },
-                          inputLabel: {
-                            sx: {
-                              color: "#000",
-                            },
-                          },
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Typography
+                                sx={{
+                                  px: 1,
+                                  borderRight: "1px solid #ccc",
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {shippingIsdCode || "+"}
+                              </Typography>
+                            </InputAdornment>
+                          ),
                         }}
+                        inputProps={{ maxLength: 10 }}
                       />
 
                       <FormControlLabel
@@ -787,48 +866,44 @@ export default function CheckoutPage() {
                             }
                           />
 
-                          {!values?.sameAsDelivery && (
+                          {!values.sameAsDelivery && (
                             <Box sx={{ mt: "32px" }}>
                               <Grid container spacing={2}>
                                 <FormControl fullWidth>
                                   <Select
                                     name="billingCountry"
-                                    // label='Country/Region'
                                     value={values.billingCountry}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                      const countryName = e.target.value as string;
+
+                                      const selected = isdCode.find(
+                                        (c) => c.name === countryName
+                                      );
+
+                                      setFieldValue("billingCountry", countryName, true);
+                                      setFieldTouched("billingCountry", true);
+
+                                      if (selected) {
+                                        setBillingIsdCode(selected.isd);
+                                      }
+                                    }}
                                     displayEmpty
                                     IconComponent={() => null}
-                                    sx={{
-                                      p: 0,
-                                      borderRadius: "10px",
-                                    }}
-                                    renderValue={() => (
+                                    sx={{ p: 0, borderRadius: "10px" }}
+                                    renderValue={(value) => (
                                       <Box>
-                                        <Typography
-                                          sx={{
-                                            fontSize: "14px",
-                                            color: "#1D1D1D",
-                                          }}
-                                        >
+                                        <Typography sx={{ fontSize: "14px", color: "#1D1D1D" }}>
                                           Country/Region
                                         </Typography>
-                                        <Typography
-                                          sx={{
-                                            fontSize: "20px",
-                                            fontWeight: 400,
-                                            color: "#1D1D1D",
-                                          }}
-                                        >
-                                          {values.billingCountry === "india"
-                                            ? "India"
-                                            : values.billingCountry}
+                                        <Typography sx={{ fontSize: "20px", fontWeight: 400 }}>
+                                          {value || "Select country"}
                                         </Typography>
                                       </Box>
                                     )}
                                   >
                                     {isdCode.map((c) => (
                                       <MenuItem
-                                        key={c.isd}
+                                        key={c.name}
                                         value={c.name}
                                         sx={{
                                           display: "flex",
@@ -837,12 +912,12 @@ export default function CheckoutPage() {
                                           justifyContent: "space-between",
                                         }}
                                       >
-                                        <span>{c.name}</span>
+                                        {c.name}
                                       </MenuItem>
                                     ))}
                                   </Select>
-                                  {/* </Box> */}
                                 </FormControl>
+
                                 <Grid size={6}>
                                   <TextField
                                     fullWidth
@@ -1071,22 +1146,23 @@ export default function CheckoutPage() {
                                   { errors, touched },
                                   "billingPhone"
                                 )}
-                                slotProps={{
-                                  input: {
-                                    sx: {
-                                      backgroundColor: "#fff",
-                                      color: "#000",
-                                      borderRadius: "10px",
-                                    },
-                                    inputProps: { maxLength: 10 },
-                                  },
-
-                                  inputLabel: {
-                                    sx: {
-                                      color: "#000",
-                                    },
-                                  },
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <Typography
+                                        sx={{
+                                          px: 1,
+                                          borderRight: "1px solid #ccc",
+                                          fontSize: "14px",
+                                          fontWeight: 500,
+                                        }}
+                                      >
+                                        {billingIsdCode || "+"}
+                                      </Typography>
+                                    </InputAdornment>
+                                  ),
                                 }}
+                                inputProps={{ maxLength: 10 }}
                               />
                             </Box>
                           )}
@@ -1095,22 +1171,20 @@ export default function CheckoutPage() {
                       <Button
                         fullWidth
                         type="submit"
-                        disabled={!isValid}
+                        disabled={isSubmitDisabled}
                         variant="outlined"
                         size="large"
                         sx={{
-                          backgroundColor: !isValid ? "#00000033" : "black",
+                          backgroundColor: isSubmitDisabled ? "#00000033" : "black",
                           opacity: 1,
-                          color: !isValid ? "black" : "white",
+                          color: isSubmitDisabled ? "black" : "white",
                           mb: "32px",
                           py: "16px",
                           borderRadius: "10px",
                           textTransform: "none",
                         }}
                       >
-                        {PaymentTypeEnum.COD === paymentType
-                          ? "Place Order"
-                          : "Pay Now"}
+                        Place Order
                       </Button>
                     </Box>
                   </Form>
@@ -1349,8 +1423,6 @@ export default function CheckoutPage() {
               })}
             </Typography>
           </Box>
-
-          {/* <ProductRecommendation /> */}
         </Grid>
       </Grid>
     </Container>

@@ -17,7 +17,7 @@ export default function useCart() {
 
   const { processedItems = [] } = cartDetail;
 
-  const cartItems: CartItemDetail[] = processedItems || []
+  const cartItems: CartItemDetail[] = processedItems || [];
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
@@ -34,7 +34,7 @@ export default function useCart() {
     if (!phoneNumber) return;
 
     try {
-      await dispatch(getCartDetailServiceAction()) as CartDetailResType;
+      (await dispatch(getCartDetailServiceAction())) as CartDetailResType;
     } catch (error: any) {}
   }
 
@@ -42,7 +42,6 @@ export default function useCart() {
     details: CartItemDetail[],
     optional?: { easyCheckout?: boolean; navigateTo?: string },
   ): Promise<CartDetailResType> {
-
     const items = details.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
@@ -79,21 +78,23 @@ export default function useCart() {
     }
   }
 
-  async function validateCart(): Promise<CartDetailResType> {
+  async function validateCart(
+    cartItems: CartItemDetail[],
+  ): Promise<CartDetailResType> {
     try {
       const response = await handleSaveToDB(cartItems);
       const { unProcessedItems = [] } = response;
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
-          variant: "warning",
+          variant: "info",
           message: "Please check the updated cart",
         });
         throw new Error("Some items couldn't be processed");
       }
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   }
@@ -105,7 +106,6 @@ export default function useCart() {
     maxQuantityAvailable: number,
     optional?: { easyCheckout?: boolean; navigateTo?: string },
   ) {
-
     if (quantity > maxQuantityAvailable) return;
 
     let productAdded = false;
@@ -115,8 +115,8 @@ export default function useCart() {
         productAdded = true;
         return {
           ...item,
-          quantity
-        }
+          quantity,
+        };
       }
       return item;
     });
@@ -137,8 +137,8 @@ export default function useCart() {
   }
 
   function saveCartToDB() {
-    if (!cartItems.length) return
-    handleSaveToDB(cartItems)
+    if (!cartItems.length) return;
+    handleSaveToDB(cartItems);
   }
 
   function incrementToCart(
@@ -161,8 +161,8 @@ export default function useCart() {
         productIncremented = true;
         return {
           ...item,
-          quantity: item.quantity + 1
-        }
+          quantity: item.quantity + 1,
+        };
       }
       return item;
     });
@@ -188,11 +188,12 @@ export default function useCart() {
     if (productQuantity <= 0) return;
 
     const newProductDetails = cartItems.map((item) => {
-      if (item.product._id === productId) return { ...item, quantity: item.quantity - 1 }
+      if (item.product._id === productId)
+        return { ...item, quantity: item.quantity - 1 };
       return item;
     });
 
-    const newFilterProducts = newProductDetails.filter(it => it.quantity)
+    const newFilterProducts = newProductDetails.filter((it) => it.quantity);
 
     dispatch(setProcessedCart(newFilterProducts));
 
@@ -205,12 +206,12 @@ export default function useCart() {
   }
 
   function removeItemFromCart(productId: string) {
-    const newProductDetails = cartItems.map(item => {
-      if (item.product._id === productId) return {...item, quantity: 0}
-      return item
-    })
-    const filterProducts = newProductDetails.filter(item => item.quantity);
-    dispatch(setProcessedCart([...filterProducts]))
+    const newProductDetails = cartItems.map((item) => {
+      if (item.product._id === productId) return { ...item, quantity: 0 };
+      return item;
+    });
+    const filterProducts = newProductDetails.filter((item) => item.quantity);
+    dispatch(setProcessedCart([...filterProducts]));
     debounceFn(newProductDetails);
   }
 

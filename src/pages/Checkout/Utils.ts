@@ -10,6 +10,8 @@ export async function displayRazorpay() {
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
 
+  if (!phoneNumber) return;
+
   const loaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
   if (!loaded) {
@@ -28,15 +30,16 @@ export async function displayRazorpay() {
     order_id: orderId,
 
     handler: (response: any) => {
-      console.log("Success", response);
-      cleanupUI();
+      console.log("1111", response);
     },
 
     modal: {
       ondismiss: function () {
         console.log("Modal dismissed");
-        cleanupUI();
       },
+      onerror: function (err) {
+        console.log(1111, err)
+      }
     },
   };
 
@@ -45,20 +48,14 @@ export async function displayRazorpay() {
   // 100% guaranteed callback on failure
   rzp.on("payment.failed", function (response: any) {
     console.log("Payment failed", response);
-    cleanupUI();
     alert("Payment failed");
   });
 
   rzp.open();
-
-  // Razorpay locks scroll → manually unlock after timeout fallback
-  setTimeout(() => {
-    cleanupUI()
-  }, 3000);
 }
 
-function cleanupUI() {
-  document.body.style.overflow = "auto";
-  document.body.style.pointerEvents = "auto";
-  document.querySelectorAll(".razorpay-container").forEach(el => el.remove());
-}
+// function cleanupUI() {
+//   document.body.style.overflow = "auto";
+//   document.body.style.pointerEvents = "auto";
+//   document.querySelectorAll(".razorpay-container").forEach(el => el.remove());
+// }

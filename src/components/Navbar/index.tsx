@@ -16,11 +16,11 @@ import MobileNavMenu from "./MobileNavMenu";
 import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
-import SignupPopup from "../SignupPopup";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import useCart from "@/hooks/useCart";
+import { setOpenPopup } from "@/Redux/Auth/Reducer";
 
 
 type NavbarPropsType = {
@@ -39,7 +39,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const { verified } = useSelector((state: any) => getLoginDetails(state))
+  const { verified } = useSelector(getLoginDetails)
 
   const containerRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLDivElement>(null);
@@ -75,9 +75,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
     switch (name) {
       case MenuItemsName.PROFILE:
         if (verified) {
-          navigate("/profile");
+          navigate(ROUTES.PROFILE);
         } else {
-          setSelectedTopItem(MenuItemsName.PROFILE);
+          // setSelectedTopItem(MenuItemsName.PROFILE);
+          dispatch(setOpenPopup(true))
         }
         break;
 
@@ -249,11 +250,12 @@ function Navbar({ isMobile }: NavbarPropsType) {
         )}
       </Box>
 
-      {selectedTopItem === MenuItemsName.PROFILE &&
+      {/* {selectedTopItem === MenuItemsName.PROFILE &&
         <SignupPopup
           type='navbar'
-          onClose={() => setSelectedTopItem(null)} />
-      }
+          onClose={() => setSelectedTopItem(null)}
+        />
+      } */}
       {selectedTopItem === MenuItemsName.SEARCH && (
         <Search onClose={() => setSelectedTopItem(null)} />
       )}

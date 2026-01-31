@@ -7,7 +7,8 @@ import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import useCart from "@/hooks/useCart";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
+import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 
 export function useNetwork() {
   const state = AppStore.getState();
@@ -19,6 +20,8 @@ export function useNetwork() {
   const initialCartLoaded = state.cart.initialCartLoaded;
 
   const loginDetails = useSelector(getLoginDetails);
+  const isdCode = useSelector(isdCodeDetails);
+
   const { phoneNumber = "" } = loginDetails;
 
   const { getCartFromDB } = useCart()
@@ -33,6 +36,7 @@ export function useNetwork() {
       if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))
       if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
       if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB()))
+      if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
       
       await Promise.allSettled(requests)
     } catch (error: any) {
