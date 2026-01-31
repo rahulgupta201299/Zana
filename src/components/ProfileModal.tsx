@@ -68,7 +68,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) => dispatch(updateProfileDetailServiceAction(state)),
       fetchProfileDetails: (state: any) =>
         dispatch(getProfileDetailsServiceAction(state)),
-      logout
     }),
     [dispatch]
   );
@@ -134,7 +133,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     if (label === "Logout") {
       setLoading(true)
       setTimeout(() => {
-        actions.logout();
+        logout();
         onClose();
         setLoading(false)
       }, 2000);

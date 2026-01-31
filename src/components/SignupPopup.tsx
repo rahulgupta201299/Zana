@@ -148,8 +148,9 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
     };
 
     try {
-      await actions.verifyOtp(reqBody);
-      saveCartToDB();
+      const response = await actions.verifyOtp(reqBody);
+      const { phoneNumber = '' } = response
+      saveCartToDB(phoneNumber);
       enqueueSnackbar({
         variant: "success",
         message: "You have logged in successfully."

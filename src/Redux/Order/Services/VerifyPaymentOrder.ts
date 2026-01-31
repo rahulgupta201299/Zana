@@ -8,7 +8,7 @@ const network = new Network();
 
 async function verifyPaymentOrderService(requestData: VerifyPaymentOrderReqType): Promise<VerifyPaymentOrderResType> {
   const options = {
-    url: '/v1/payment/verify',
+    url: '/api/v1/payment/verify',
     method: API_METHOD_ENUM.POST,
     data: requestData
   };

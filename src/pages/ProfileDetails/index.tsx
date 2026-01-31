@@ -47,13 +47,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
-  const actions = useMemo(
-    () => ({
-      logout,
-    }),
-    [dispatch],
-  );
-
   const navigate = useNavigate();
 
   const renderContent = () => {
@@ -88,7 +81,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     if (key === "logout") {
       setLoading(true);
       setTimeout(() => {
-        actions.logout();
+        logout();
         navigate("/");
         // onClose();
         enqueueSnackbar("You have been logged Out!", {
