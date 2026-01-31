@@ -1,5 +1,5 @@
 import AppStore from "../AppStore";
-import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { SESSION_STORAGE } from "@/Constants/AppConstant";
 
 export function onMountChecks() {
@@ -10,7 +10,7 @@ export function onMountChecks() {
 
   if (openPopup) {
     setTimeout(() => {
-      dispatch(setOpenPopup(true))
+      dispatch(setOpenSignupPopup(true))
     }, 1000)
   }
 
