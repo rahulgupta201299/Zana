@@ -17,6 +17,7 @@ import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors'
 import { cartModifyServiceName } from '@/Redux/Cart/Action'
 import { openCartSelector } from '@/Redux/Cart/Selectors'
 import { onMountChecks } from '../Service/Service'
+import OrderConfirmDialog from '@/pages/OrderDetails/OrderConfirmModal'
 
 function PublicRoutes() {
 	const location = useLocation()
@@ -41,6 +42,7 @@ function PublicRoutes() {
 			<Footer />
 			<WhatsAppButton />
 			<CartAttentionDialog />
+			<OrderConfirmDialog />
 		</Box>
 	)
 }

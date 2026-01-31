@@ -20,7 +20,7 @@ import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import useCart from "@/hooks/useCart";
-import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 
 type NavbarPropsType = {
@@ -78,7 +78,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
           navigate(ROUTES.PROFILE);
         } else {
           // setSelectedTopItem(MenuItemsName.PROFILE);
-          dispatch(setOpenPopup(true))
+          dispatch(setOpenSignupPopup(true))
         }
         break;
 

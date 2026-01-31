@@ -33,7 +33,7 @@ import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { isdCodeDetails } from "@/Redux/Auth/Selectors";
-import { setOpenPopup } from "@/Redux/Auth/Reducer";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
@@ -67,7 +67,6 @@ interface CheckoutFormValues {
 
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, validateCart, clearCart } = useCart();
-  const navigate = useNavigate();
 
   const phoneNumber = useSelector<TAppStore, string>(
     (state) => state.auth.login.phoneNumber
@@ -80,7 +79,6 @@ export default function CheckoutPage() {
     billingAddress: billingAddressSelector
   } = cartAddressSelector
 
-  // TODO
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
     cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName
   ]));
@@ -95,7 +93,7 @@ export default function CheckoutPage() {
   const { subtotal = 0, totalAmount: total = 0, discountAmount: discount = 0, processedItems = [] } = cartDetail
 
   function performOps() {
-    if (!phoneNumber) dispatch(setOpenPopup(true))
+    if (!phoneNumber) dispatch(setOpenSignupPopup(true))
   }
 
   useEffect(() => {
@@ -255,23 +253,6 @@ export default function CheckoutPage() {
         message
       });
     }
-
-    // try {
-    //   await actions.saveCartDetails(body);
-    //   enqueueSnackbar("Order Placed successfully!", {
-    //     variant: "success",
-    //     anchorOrigin: { vertical: "top", horizontal: "center" },
-    //     autoHideDuration: 3000,
-    //   });
-    //   // clearCart();
-    //   navigate(ROUTES.ORDER_DETAILS);
-    // } catch (error: any) {
-    //   const { message = '' } = error
-    //   enqueueSnackbar({
-    //     variant: "error",
-    //     message
-    //   });
-    // };
   }
 
   const { shippingFirstName, shippingLastName, billingFirstName, billingLastName } = useMemo(() => {
