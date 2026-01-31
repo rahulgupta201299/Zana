@@ -19,3 +19,7 @@ export enum BikeCategoryEnum {
 export enum SESSION_STORAGE {
   LANDING_POPUP_SHOWN = "landing_popup_shown",
 }
+
+export enum COUNTRY_MAPPER {
+  INDIA = 'India'
+}

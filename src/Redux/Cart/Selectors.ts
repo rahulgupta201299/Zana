@@ -9,3 +9,5 @@ export const openCartSelector = createSelector((state: TAppStore) => state.cart.
 export const cartDetailSelector = createSelector((state: TAppStore) => state.cart.cartDetail, data => data)
 
 export const outOfStockDetails = createSelector((state: TAppStore) => state.cart.outOfStocks, data => data)
+
+export const cartAddressDetails = createSelector((state: TAppStore) => state.cart.cartAddress, data => data)

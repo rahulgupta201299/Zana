@@ -10,10 +10,10 @@ export const paymentOptions = [
     label: "Razorpay Secure (UPI, Cards, Wallets, Net Banking)",
     showRazorpayInfo: true,
   },
-  {
-    value: PaymentTypeEnum.PHONE_PE,
-    label: "PhonePe Payment Gateway (UPI, Cards & Net Banking)",
-  },
+  // {
+  //   value: PaymentTypeEnum.PHONE_PE,
+  //   label: "PhonePe Payment Gateway (UPI, Cards & Net Banking)",
+  // },
   {
     value: PaymentTypeEnum.COD,
     label: "COD (Cash On Delivery)",
