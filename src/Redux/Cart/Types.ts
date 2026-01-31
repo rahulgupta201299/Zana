@@ -3,6 +3,10 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 export type T_CART_REDUCER = {
   cartDetail: CartDetailResType;
   outOfStocks: OutOfStockDetail[];
+  cartAddress: {
+    shippingAddress: CartAddressType;
+    billingAddress: CartAddressType;
+  };
   initialCartLoaded: boolean;
   isOpenCart: boolean;
 };
@@ -60,4 +64,22 @@ export interface GetCartDetailResType {
   status: string;
   appliedCoupon: string;
   couponCode: string;
+}
+
+export interface CartAddressType {
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export type UpdateCartAddressReqType = UpdateCartAddressResType & { phoneNumber: string }
+
+export interface UpdateCartAddressResType {
+  shippingAddress: CartAddressType;
+  billingAddress: CartAddressType;
 }
