@@ -40,17 +40,19 @@ export default function useCart() {
 
   async function handleSaveToDB(
     details: CartItemDetail[],
-    optional?: { easyCheckout?: boolean; navigateTo?: string },
+    optional?: { easyCheckout?: boolean; navigateTo?: string, phoneNumber?: string },
   ): Promise<CartDetailResType> {
     const items = details.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
     }));
 
+    const _phoneNumber = optional?.phoneNumber || phoneNumber
+
     try {
       const response = (await dispatch(
         cartModifyServiceAction({
-          phoneNumber,
+          phoneNumber: _phoneNumber,
           items,
         }),
       )) as CartDetailResType;
@@ -136,9 +138,9 @@ export default function useCart() {
     handleSaveToDB(newProductDetails, optional);
   }
 
-  function saveCartToDB() {
+  function saveCartToDB(phoneNumber?: string) {
     if (!cartItems.length) return;
-    handleSaveToDB(cartItems);
+    handleSaveToDB(cartItems, { phoneNumber });
   }
 
   function incrementToCart(
