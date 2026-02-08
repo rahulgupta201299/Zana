@@ -17,6 +17,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
 import { Skeleton } from "@mui/material";
 import useCart from "@/hooks/useCart";
+import ProductsSection from "@/components/ProductSection";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
@@ -219,117 +220,13 @@ const BikeDetailPage = () => {
               )
             })}
             {
-              categoriesWithCount.length === 0 && <CategorySkeleton />
+              categoriesWithCount.length === 0 && isLoading && <CategorySkeleton />
             }
           </div>
-
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBikeProducts.map((product) => {
-              const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, quantityAvailable } = product
-              const quantityAddedInCart = getQuantity(_id)
-              const isDisabled = quantityAddedInCart >= quantityAvailable
-
-              return (
-                <div
-                  key={_id}
-                  className="bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-yellow-400 transition-all duration-300 cursor-pointer group"
-                  onClick={() => handleProductClick(category, name, _id)}
-                >
-                  {/* Product Image */}
-                  <div className="relative bg-white p-6 h-64 flex items-center justify-center">
-                    <img
-                      src={imageUrl}
-                      alt={name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => e.currentTarget.src = BikePlaceholderImage}
-                    />
-                    {isBikeSpecific && (
-                      <div className="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">
-                        FEATURED
-                      </div>
-                    )}
-                    {!isBikeSpecific && (
-                      <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                        UNIVERSAL
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-4 md:p-6">
-                    <div className="mb-2">
-                      <span className="text-xs text-yellow-400 font-medium">
-                        {category}
-                      </span>
-                    </div>
-                    <h3 className="text-white text-lg md:text-xl font-bold mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors">
-                      {name}
-                    </h3>
-                    <p className="text-white/60 text-sm mb-4 line-clamp-2">
-                      {shortDescription}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-yellow-400 text-xl md:text-2xl font-bold">
-                        ₹ {price.toLocaleString()}
-                      </span>
-                      <div className="flex gap-2">
-                        {/* <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add to wishlist logic
-                          }}
-                          className="p-2 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-black transition-all"
-                        >
-                          <Heart size={18} />
-                        </button> */}
-                        <div className="relative inline-flex">
-                          <button
-                            onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                              e.stopPropagation()
-                              incrementToCart(product, _id, quantityAvailable, { navigateTo: ROUTES.CART })
-                            }}
-                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
-                            className="p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
-                          >
-                            <ShoppingCart size={18} />
-                          </button>
-                          {quantityAddedInCart > 0 && (
-                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
-                                bg-red-600 text-white text-[11px] font-bold
-                                rounded-full flex items-center justify-center
-                                leading-none shadow-md"
-                            >
-                              {quantityAddedInCart}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {
-            filteredBikeProducts.length === 0 && isLoading && <ProductSkeleton gridSize="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" />
-          }
-
-          {/* No Products Found */}
-          {filteredBikeProducts.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-white/50 text-lg mb-4">
-                No products found in this category
-              </p>
-              <button
-                onClick={() => setSelectedCategory(ALL_CATEGORY)}
-                className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
-              >
-                View All Products
-              </button>
-            </div>
-          )}
+            <ProductsSection
+              filteredBikeProducts={filteredBikeProducts}
+              setSelectedCategory={setSelectedCategory}
+             />
         </div>
       </div>
     </div>
