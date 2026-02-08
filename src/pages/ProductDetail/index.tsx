@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Facebook, Instagram, PlusIcon } from "lucide-react";
+import { Minus, Plus, Facebook, Instagram, PlusIcon, Heart } from "lucide-react";
 import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,8 +14,12 @@ import { handleSocialMedia, replaceHiphenWithSpaces, replaceSpacesWithHiphen } f
 import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
-import { Box, Skeleton } from "@mui/material";
+import { Box, Skeleton, Tooltip } from "@mui/material";
 import useCart from "@/hooks/useCart";
+import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
+import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { useSnackbar } from "notistack";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -28,13 +32,49 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState<ShopByProductDetailsType | null>(null)
   const [suggestedProducts, setSuggestedProducts] = useState<ShopByProductDetailsType[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const dispatch = useDispatch<TAppDispatch>()
-
+  const { enqueueSnackbar } = useSnackbar();
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
   function handleBackToProducts() {
     const category = replaceHiphenWithSpaces(productCategory)
     navigate(ROUTES.PRODUCT_CATALOG, { state: { category } })
   }
+
+ async function handleWishList(productId: string) {
+  const prevValue = isWishlisted;
+  
+  setIsWishlisted(!prevValue);
+  try {
+    const action = prevValue
+      ? removeWishlistServiceAction({
+          phoneNumber: profileDetails?.phoneNumber,
+          productId,
+        })
+      : addWishListServiceAction({
+          phoneNumber: profileDetails?.phoneNumber,
+          productId,
+        });
+
+    const result = await dispatch(action);
+
+    if (result) {
+      enqueueSnackbar(
+        prevValue
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+        {
+          variant: prevValue ? "info" : "success",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+          autoHideDuration: 2000,
+        }
+      );
+    }
+  } catch (error) {
+    setIsWishlisted(prevValue);
+  }
+}
+
 
   async function pageOps() {
     setLoading(true)
@@ -213,9 +253,9 @@ const ProductDetailPage = () => {
                 BUY NOW
               </Button>
             </div>
-
+           <div className="flex items-center justify-between gap-4 mb-6">
             {/* Share Section */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4">
               <span className="text-white font-semibold">Share:</span>
               <Button
                 variant="ghost"
@@ -244,6 +284,24 @@ const ProductDetailPage = () => {
                 </svg>
               </Button>
             </div>
+              <div className="flex gap-1 md:gap-2">
+                <Tooltip title="Add to Wishlist">
+                  <button
+                    onClick={(e) => {
+                     e.stopPropagation();
+                      handleWishList(product._id);
+                      }}
+                    className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
+                     ${isWishlisted
+                      ? "bg-yellow-400 text-black"
+                      : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                     }`}
+                   >
+                          <Heart size={20} className="md:w-6 md:h-6" />
+                        </button>     
+                        </Tooltip> 
+                      </div>
+                    </div>
 
             <Separator className="bg-white/20 mb-6" />
 

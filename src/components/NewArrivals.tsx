@@ -27,7 +27,7 @@ const NewArrivals = () => {
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
 
   return (
-    <div className="py-8 md:py-16" style={{ backgroundColor: "#181818" }}>
+    <div  className="py-6 md:py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#181818" }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6 md:mb-12">
