@@ -235,7 +235,7 @@ const ProductCatalogPage = () => {
               );
             })}
 
-            {categoryDetails.length === 0 && <CategorySkeleton />}
+            {categoryDetails.length === 0 && isProductCategoryLoading && <CategorySkeleton />}
           </Box>
         </div>
       </div>
