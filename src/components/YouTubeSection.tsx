@@ -3,7 +3,7 @@ import { Play } from "lucide-react";
 
 const YouTubeSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const videoId = "B8yyIfaY_NM";
+  const videoId = "IaMy7mlG0FY";
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   const handlePlayClick = () => {

@@ -19,7 +19,7 @@ function ProductSkeleton({ gridSize }: ProductSkeletonProps) {
 						</div>
 
 						{/* Info Section */}
-						<div className="bg-gradient-to-br from-yellow-400 to-yellow-500 text-black p-4 md:p-6">
+						<div className="bg-gradient-to-br from-white/5 to-white/10 text-black p-4 md:p-6">
 							<div className="mb-2">
 								<span className="text-xs md:text-sm font-medium opacity-80">
 									<Skeleton width={40} />
