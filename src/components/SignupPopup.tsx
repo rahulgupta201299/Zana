@@ -162,7 +162,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
       enqueueSnackbar({
         variant: "success",
         message: "You have logged in successfully.",
-        
+
       });
       handleClose();
     } catch (error: any) {
@@ -367,7 +367,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
               direction="row"
               sx={{
                 gap: "4px",
-                alignItems:'center'
+                alignItems: 'center'
               }}
             >
               <Typography variant="body2">
@@ -375,20 +375,20 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
               </Typography>
 
               <Stack direction="row" alignItems="center">
-                <Typography variant="body2">{phone}</Typography>
+                <Typography variant="body2">{countryCode}-{phone}</Typography>
 
                 <IconButton
                   sx={{
-                    color:'#facc15'
+                    color: '#facc15'
                   }}
-                  onClick={()=>setOtpSent(false)}
+                  onClick={() => setOtpSent(false)}
                 >
                   <EditIcon
-                  fontSize='small'
+                    fontSize='small'
                   />
                 </IconButton>
-               
-              
+
+
               </Stack>
             </Stack>
             <Box
@@ -443,7 +443,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
                 <Button
                   variant="text"
                   onClick={handleRequestOtp}
-                  sx={{ color: "#facc15", cursor: "pointer", p:0 }}
+                  sx={{ color: "#facc15", cursor: "pointer", p: 0 }}
                   disabled={isVerifyingOtp || isGeneratingOtp}
                 >
                   Resend OTP

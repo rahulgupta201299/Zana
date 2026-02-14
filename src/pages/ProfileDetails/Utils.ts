@@ -13,6 +13,5 @@ export function logout() {
   enqueueSnackbar({
     variant: "info",
     message: "You have been logged Out!",
-    autoHideDuration: 2000,
   });
 }
