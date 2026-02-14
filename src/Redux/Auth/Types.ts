@@ -1,5 +1,13 @@
 import { ShopByProductDetailsType } from "../Product/Types";
 
+export type BIKE_LIST={
+  _id: string
+  name: string
+  description: string
+  createdAt: string
+  __v: number
+}
+
 export type T_AUTH_REDUCER = {
   login: {
     phoneNumber: string;
@@ -8,6 +16,8 @@ export type T_AUTH_REDUCER = {
     lastName?: string;
     address?: string;
   };
+
+ bikeList: BIKE_LIST[],
 
   wishlist: ShopByProductDetailsType[];
 

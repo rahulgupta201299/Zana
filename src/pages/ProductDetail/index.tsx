@@ -348,7 +348,7 @@ const ProductDetailPage = () => {
       </div>
 
       {/* See It. Hear It. Shop It. */}
-      <div className="max-w-7xl mx-auto px-2 py-16">
+      {/* <div className="max-w-7xl mx-auto px-2 py-16">
         <h2 className="text-4xl font-bold text-white text-center mb-8">See It. Hear It. Shop It.</h2>
         <div className="w-full">
           <img
@@ -357,7 +357,7 @@ const ProductDetailPage = () => {
             className="w-full h-80 object-cover rounded-lg"
           />
         </div>
-      </div>
+      </div> */}
 
       <div className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-4xl font-bold text-white text-center mb-8">You may also like</h2>

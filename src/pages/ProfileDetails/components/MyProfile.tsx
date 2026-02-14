@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   MenuItem,
@@ -15,7 +16,7 @@ import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getProfileDetails, listOfBikes } from "@/Redux/Auth/Selectors";
 import PersonIcon from "@mui/icons-material/Person";
 import { enqueueSnackbar } from "notistack";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
@@ -29,9 +30,11 @@ import addProfileDetailServiceAction, {
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { logout } from "../Utils";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
-  const [brands, setBrands] = useState([]);
+ 
   const [models, setModels] = useState([]);
   const formikRef = useRef(null);
   const dispatch = useDispatch<TAppDispatch>();
@@ -43,18 +46,14 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         dispatch(addProfileDetailServiceAction(state)),
       updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) =>
         dispatch(updateProfileDetailServiceAction(state)),
-      fetchProfileDetails: (state: any) =>
-        dispatch(getProfileDetailsServiceAction(state)),
+   
       logout,
     }),
     [dispatch],
   );
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
-
-//   useEffect(() => {
-//     fetchBrandList();
-//   }, []);
-
+  const bikeList = useSelector ((state:any) => listOfBikes(state))
+ 
   useEffect(() => {
     if (!formikRef.current) return;
     const { brand, model } = formikRef.current.values;
@@ -62,11 +61,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
       fetchBrandModels(brand);
     }
   }, [formikRef.current?.values.brand]);
-
-  const fetchBrandList = async () => {
-    const result = await actions.getBrandList();
-    setBrands(result);
-  };
+  
 
   const fetchBrandModels = async (bikeId: string) => {
     const result = await actions.getBrandModel(bikeId);
@@ -75,24 +70,28 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
 
   const handleSubmit = async (values) => {
     try {
-      // const [isd, phone] = values.phoneNumber.split("-");
+      const [isd, phone] = values.phoneNumber.split("-");
       const reqBody = {
-        phoneNumber: values.phoneNumber,
-        isdCode: "+91", // TODO hardcoded
+        phoneNumber: phone,
+        isdCode: isd,
         emailId: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
         address: values.address,
         notifyOffers: values.notifyOffers,
-        bikeOwnedByCustomer: [
-          {
-            brand: values.brand,
-            model: values.model,
-          },
-        ],
-      };
+        bikeOwnedByCustomer:
+          values.brand || values.model
+          ? [
+            {
+             ...(values.brand && { brand: values.brand }),
+             ...(values.model && { model: values.model }),
+            },
+            ]
+        : [],
+       };
       let result;
-      if (profileDetails?._id) {
+      console.log(profileDetails)
+      if (profileDetails._id) {
         result = await actions.updateProfileDetails(reqBody);
       } else {
         result = await actions.addProfileDetails(reqBody);
@@ -231,11 +230,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
               }}
               enableReinitialize
               validationSchema={ProfileSchema}
-              validate={(values) => {
-                if (values.brand && models.length === 0) {
-                  fetchBrandModels(values.brand);
-                }
-              }}
+             
               onSubmit={handleSubmit}
             >
               {({
@@ -421,7 +416,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                               );
                             }
 
-                            const foundModel = brands.find(
+                            const foundModel = bikeList.find(
                               (m) => m._id === selected,
                             );
 
@@ -453,8 +448,8 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             color: "#8A8A8A",
                           }}
                         >
-                          {brands &&
-                            brands.map((bike) => (
+                          {bikeList &&
+                            bikeList.map((bike) => (
                               <MenuItem
                                 key={bike?._id}
                                 value={bike?._id}
@@ -518,17 +513,20 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         </Select>
                       </FormControl>
                     </Box>
-
                     <FormControlLabel
                       control={
-                        <Radio
+                        <Checkbox
                           name="notifyOffers"
+                          value={values.notifyOffers}
                           checked={values.notifyOffers === true}
-                          onChange={() =>
-                            setFieldValue("notifyOffers", !values.notifyOffers)
-                          }
+                          onChange={(e) =>
+                               setFieldValue("notifyOffers", e.target.checked)
+                              }
                           sx={{ transform: "scale(0.6)" }}
+                          icon={<RadioButtonUncheckedIcon />}
+                          checkedIcon={<RadioButtonCheckedIcon />}
                         />
+     
                       }
                       label="Notify me with offers and updates"
                     />
