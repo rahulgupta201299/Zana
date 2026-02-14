@@ -23,6 +23,7 @@ function PublicRoutes() {
 	const location = useLocation()
 	const isLoadig = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [cartModifyServiceName]))
 	const isOpenCart = useSelector(openCartSelector)
+	const isOpenSignupPopup = useSelector((state: TAppStore) => state.auth.openSignupPopup)
 
 	useNetwork()
 
@@ -36,7 +37,7 @@ function PublicRoutes() {
 			{isLoadig && <Loading />}
 			<Navbar />
 			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: { md: 20.5, xs: 10.5 } }} />}
-			<SignupPopup />
+			{isOpenSignupPopup && <SignupPopup />}
 			{isOpenCart && <CartSidebar />}
 			<Outlet />
 			<Footer />

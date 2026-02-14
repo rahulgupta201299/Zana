@@ -39,14 +39,14 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
   },
   wishlist: [],
   isdCode: [],
-  bikeList:[],
+  bikeList: [],
   openSignupPopup: false,
 };
 
 const cartPersistConfig = {
   key: AuthSliceName,
   storage,
-  blacklist: ["openSignupPopup"]
+  blacklist: ["openSignupPopup", "wishlist"],
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -56,7 +56,7 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     setOpenSignupPopup: (state, action: PayloadAction<boolean>) => {
       state.openSignupPopup = action.payload;
     },
-    resetAuth: () => INITIAL_STATE
+    resetAuth: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
     builder.addCase(verifyOtpActions.success, (state, { payload }: any) => {
@@ -72,7 +72,7 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         state.profileDetails = payload;
       },
     );
-     builder.addCase(
+    builder.addCase(
       updateProfileDetailsActions.success,
       (state, { payload }: any) => {
         state.profileDetails = payload;
@@ -82,15 +82,17 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
       state.wishlist = payload?.products || [];
     });
 
-    builder.addCase(removeWishlistActions.success, (state, { payload }: any) => {
-      console.log("REMOVE WISHLIST PAYLOAD", payload);
-      state.wishlist = payload?.data?.products || [];
-    });
+    builder.addCase(
+      removeWishlistActions.success,
+      (state, { payload }: any) => {
+        console.log("REMOVE WISHLIST PAYLOAD", payload);
+        state.wishlist = payload?.data?.products || [];
+      },
+    );
 
     builder.addCase(getBikeBrandActions.success, (state, { payload }: any) => {
-    state.bikeList = payload || [];
+      state.bikeList = payload || [];
     });
-    
 
     builder.addCase(
       getIsdCodeActions.success,
