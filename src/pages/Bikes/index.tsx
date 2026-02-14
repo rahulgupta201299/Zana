@@ -73,7 +73,7 @@ function Bikes() {
 	}, [allBrandDetails.length])
 
 	return (
-		<div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
+		<div className="min-h-screen" style={{ backgroundColor:  "#2a2a2a" }}>
 			<div className="py-8 md:py-16 px-4 md:px-6">
 				<div className="max-w-7xl mx-auto">
 					{/* Header */}
@@ -84,7 +84,7 @@ function Bikes() {
 						</p>
 					</div>
 
-					<div className="mb-8 flex flex-wrap gap-3 justify-center items-center">
+				<div className="mb-8 flex gap-3 justify-start items-center overflow-x-auto whitespace-nowrap scrollbar-hide">
 						{categoriesWithCount.map((brand) => {
 							const { name, count } = brand
 							const brandName = name.toLowerCase()
@@ -117,7 +117,7 @@ function Bikes() {
 									key={_id}
 									style={{ textTransform: 'capitalize', cursor: 'pointer' }}
 									onClick={() => handleBikeClick(brandName, name, _id)}
-									className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
+									className="border-2 border-white/10 hover:border-yellow-400  rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
 								>
 									{/* Image Section */}
 									<div className="bg-white p-6 md:p-8 h-48 md:h-64 flex items-center justify-center">
@@ -131,7 +131,7 @@ function Bikes() {
 									</div>
 
 									{/* Info Section */}
-									<div className="bg-gradient-to-br from-yellow-400 to-yellow-500 text-black p-4 md:p-6">
+									<div className="bg-gradient-to-br text-yellow-400 p-4 md:p-6">
 										<div className="mb-2">
 											<span className="text-xs md:text-sm font-medium opacity-80">
 												{brandName.toUpperCase()}

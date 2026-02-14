@@ -129,7 +129,7 @@ const BikeDetailPage = () => {
   const { name = '', description = '', type = '', imageUrl = '' } = bikeDetails || {}
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#181818' }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
 
       {/* Hero Section with Bike Info */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">

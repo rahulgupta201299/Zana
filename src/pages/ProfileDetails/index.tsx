@@ -46,8 +46,38 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [selectedMenu, setSelectedMenu] = useState<string>("profile");
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
+    const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const actions = useMemo(
+      () => ({
+        getBrandList: () => dispatch(getBikeBrandServiceAction()),
+        fetchProfileDetails: (state: any) =>
+                dispatch(getProfileDetailsServiceAction(state))
+      }),
+      [dispatch],
+    );
 
   const navigate = useNavigate();
+
+  
+  const fetchDetails = async () => {
+    //Need to confirm
+  // const [isd, phone] = profileDetails.phoneNumber.split("-");
+  // const body = {
+  //   isdCode: isd,
+  //   phoneNumber: phone,
+  // };
+  try {
+    // const profileRes = await actions.fetchProfileDetails(body);
+    const brandRes = await actions.getBrandList();
+  } catch (error) {
+    console.error("Error fetching details:", error);
+  }
+};
+
+
+    useEffect(() => {
+      fetchDetails();
+    }, []);
 
   const renderContent = () => {
     switch (selectedMenu) {
@@ -111,7 +141,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       <Box
         sx={{
           width: "100%",
-          height: isMobile ? "100%" : "675px",
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           px: { lg: "80px", xs: "0" },

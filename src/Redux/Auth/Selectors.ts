@@ -30,4 +30,9 @@ export const isdCodeDetails = createSelector(
   data => data
 )
 
+export const listOfBikes = createSelector(
+  (state: TAppStore) => state[SLICE_NAME].bikeList,
+  data => data
+)
+
 
