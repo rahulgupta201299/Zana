@@ -8,7 +8,7 @@ const network = new Network();
 
 export interface REMOVE_WISHLIST {
   phoneNumber: string;
-  productId: string;
+  productIds: string[];
 }
 
 async function removeWishlistService(
