@@ -29,6 +29,9 @@ const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
 const OrderDetails = lazyLoadPage(() => import("@/pages/OrderDetails"), Loading)
 const ProfileDetails = lazyLoadPage(() => import("@/pages/ProfileDetails"), Loading)
 const Wishlist = lazyLoadPage(() => import("@/pages/Wishlist"), Loading)
+const TermsAndCondition = lazyLoadPage(() => import("@/pages/QuickLinks/TermsConditions"), Loading);
+const Disclaimer = lazyLoadPage(() => import("@/pages/QuickLinks/Disclaimer"), Loading);
+const PrivacyPolicy = lazyLoadPage(() => import("@/pages/QuickLinks/PrivacyPolicy"), Loading);
 
 export const routeObj: RouteObject[] = [
   {
@@ -53,6 +56,10 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.CHECKOUT, element: Checkout },
       { path: ROUTES.PAGE_NOT_FOUND, element: NotFound },
       { path: ROUTES.ANY, element: NotFound },
+      { path: ROUTES.TERMSANDCONDITIONS, element: TermsAndCondition },
+      { path: ROUTES.DISCLAIMER, element: Disclaimer },
+      { path: ROUTES.PRIVACYPOLICY, element: PrivacyPolicy },
+      
     ],
   },
   {
