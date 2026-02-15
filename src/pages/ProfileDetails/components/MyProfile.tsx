@@ -1,10 +1,10 @@
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   MenuItem,
-  Radio,
   Select,
   TextField,
   Typography,
@@ -13,9 +13,9 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getProfileDetails, listOfBikes } from "@/Redux/Auth/Selectors";
 import PersonIcon from "@mui/icons-material/Person";
 import { enqueueSnackbar } from "notistack";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
@@ -26,14 +26,14 @@ import updateProfileDetailServiceAction, {
 import addProfileDetailServiceAction, {
   ADD_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/AddProfileDetails";
-import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { logout } from "../Utils";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
-  const [brands, setBrands] = useState([]);
+
   const [models, setModels] = useState([]);
-  const formikRef = useRef(null);
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
@@ -43,56 +43,43 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         dispatch(addProfileDetailServiceAction(state)),
       updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) =>
         dispatch(updateProfileDetailServiceAction(state)),
-      fetchProfileDetails: (state: any) =>
-        dispatch(getProfileDetailsServiceAction(state)),
       logout,
     }),
     [dispatch],
   );
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
-
-//   useEffect(() => {
-//     fetchBrandList();
-//   }, []);
-
-  useEffect(() => {
-    if (!formikRef.current) return;
-    const { brand, model } = formikRef.current.values;
-    if (brand && models.length === 0) {
-      fetchBrandModels(brand);
-    }
-  }, [formikRef.current?.values.brand]);
-
-  const fetchBrandList = async () => {
-    const result = await actions.getBrandList();
-    setBrands(result);
-  };
+  const profileDetails = useSelector(getProfileDetails);
+  const bikeList = useSelector(listOfBikes);
 
   const fetchBrandModels = async (bikeId: string) => {
+    if (!bikeId) return;
     const result = await actions.getBrandModel(bikeId);
     setModels(result);
   };
 
   const handleSubmit = async (values) => {
     try {
-      // const [isd, phone] = values.phoneNumber.split("-");
+      const [isd, phone] = values.phoneNumber.split("-");
       const reqBody = {
-        phoneNumber: values.phoneNumber,
-        isdCode: "+91", // TODO hardcoded
+        phoneNumber: phone,
+        isdCode: isd,
         emailId: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
         address: values.address,
         notifyOffers: values.notifyOffers,
-        bikeOwnedByCustomer: [
-          {
-            brand: values.brand,
-            model: values.model,
-          },
-        ],
+        bikeOwnedByCustomer:
+          values.brand || values.model
+            ? [
+              {
+                ...(values.brand && { brand: values.brand }),
+                ...(values.model && { model: values.model }),
+              },
+            ]
+            : [],
       };
       let result;
-      if (profileDetails?._id) {
+      console.log(profileDetails)
+      if (profileDetails._id) {
         result = await actions.updateProfileDetails(reqBody);
       } else {
         result = await actions.addProfileDetails(reqBody);
@@ -127,7 +114,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
       // })
       // .min(10, "Please enter valid 10 digit Phone Number")
       // .max(10, "Please enter valid 10 digit Phone Number"),
-      .notRequired(),
+      .required(),
     email: Yup.string()
       .email("Invalid email format")
       .test("email", "Invalid email format", (value) => {
@@ -145,7 +132,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
     <Box
       sx={{
         width: isMobile ? "100%" : "60%",
-        // bgcolor: "#00000080",
         p: isMobile ? "16px" : "48px 48px 48px 0",
         height: "100%",
       }}
@@ -218,7 +204,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
             }}
           >
             <Formik
-              innerRef={formikRef}
               initialValues={{
                 phoneNumber: profileDetails?.phoneNumber || "",
                 email: profileDetails?.emailId || "",
@@ -231,11 +216,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
               }}
               enableReinitialize
               validationSchema={ProfileSchema}
-              validate={(values) => {
-                if (values.brand && models.length === 0) {
-                  fetchBrandModels(values.brand);
-                }
-              }}
+
               onSubmit={handleSubmit}
             >
               {({
@@ -247,125 +228,158 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                 setFieldValue,
                 dirty,
                 isValid,
-              }) => (
-                <Form>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "20px",
-                    }}
-                  >
-                    <TextField
-                      fullWidth
-                      name="phoneNumber"
-                      value={values.phoneNumber}
-                      disabled={true}
-                      onChange={(e) => {
-                        if (e.target.value.match(/[^0-9]/)) return;
-                        handleChange(e);
-                      }}
-                      placeholder="Phone Number"
-                      onBlur={handleBlur}
-                      error={getFieldErrorState(
-                        { errors, touched },
-                        "phoneNumber",
-                      )}
-                      helperText={getHelperOrErrorText(
-                        { errors, touched },
-                        "phoneNumber",
-                      )}
-                      slotProps={{
-                        input: {
-                          sx: {
-                            backgroundColor: "#FFFFFF",
-                            color: "#000",
-                            borderRadius: "10px",
-                          },
-                          inputProps: { maxLength: 10 },
-                        },
-                      }}
-                    />
+              }) => {
 
-                    <TextField
-                      fullWidth
-                      name="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      placeholder="Email"
-                      onBlur={handleBlur}
-                      error={getFieldErrorState({ errors, touched }, "email")}
-                      helperText={getHelperOrErrorText(
-                        { errors, touched },
-                        "email",
-                      )}
-                      slotProps={{
-                        input: {
-                          sx: {
-                            backgroundColor: "#FFFFFF",
-                            color: "#000",
-                            borderRadius: "10px",
-                          },
-                        },
-                      }}
-                    />
+                const { brand = '' } = values;
 
-                    <Box sx={{ display: "flex", gap: "16px" }}>
+                useEffect(() => {
+                  fetchBrandModels(brand);
+                }, [])
+
+                return (
+                  <Form>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "20px",
+                      }}
+                    >
                       <TextField
                         fullWidth
-                        name="firstName"
-                        value={values.firstName}
-                        onChange={(e) =>
-                          setFieldValue(
+                        name="phoneNumber"
+                        value={values.phoneNumber}
+                        disabled={true}
+                        onChange={(e) => {
+                          if (e.target.value.match(/[^0-9]/)) return;
+                          handleChange(e);
+                        }}
+                        placeholder="Phone Number"
+                        onBlur={handleBlur}
+                        error={getFieldErrorState(
+                          { errors, touched },
+                          "phoneNumber",
+                        )}
+                        helperText={getHelperOrErrorText(
+                          { errors, touched },
+                          "phoneNumber",
+                        )}
+                        slotProps={{
+                          input: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                            inputProps: { maxLength: 10 },
+                          },
+                        }}
+                      />
+
+                      <TextField
+                        fullWidth
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        placeholder="Email"
+                        onBlur={handleBlur}
+                        error={getFieldErrorState({ errors, touched }, "email")}
+                        helperText={getHelperOrErrorText(
+                          { errors, touched },
+                          "email",
+                        )}
+                        slotProps={{
+                          input: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                          },
+                        }}
+                      />
+
+                      <Box sx={{ display: "flex", gap: "16px" }}>
+                        <TextField
+                          fullWidth
+                          name="firstName"
+                          value={values.firstName}
+                          onChange={(e) =>
+                            setFieldValue(
+                              "firstName",
+                              e.target.value
+                                .replace(/[^A-Za-z]/g, "")
+                                .toUpperCase(),
+                            )
+                          }
+                          placeholder="First Name"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
                             "firstName",
-                            e.target.value
-                              .replace(/[^A-Za-z]/g, "")
-                              .toUpperCase(),
-                          )
-                        }
-                        placeholder="First Name"
-                        onBlur={handleBlur}
-                        error={getFieldErrorState(
-                          { errors, touched },
-                          "firstName",
-                        )}
-                        helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "firstName",
-                        )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#000",
-                              borderRadius: "10px",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "firstName",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: { maxLength: 10 },
                             },
-                            inputProps: { maxLength: 10 },
-                          },
-                        }}
-                      />
+                          }}
+                        />
+
+                        <TextField
+                          fullWidth
+                          name="lastName"
+                          value={values.lastName}
+                          onChange={(e) =>
+                            setFieldValue(
+                              "lastName",
+                              e.target.value
+                                .replace(/[^A-Za-z]/g, "")
+                                .toUpperCase(),
+                            )
+                          }
+                          placeholder="Last Name"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "lastName",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "lastName",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: { maxLength: 10 },
+                            },
+                          }}
+                        />
+                      </Box>
 
                       <TextField
                         fullWidth
-                        name="lastName"
-                        value={values.lastName}
-                        onChange={(e) =>
-                          setFieldValue(
-                            "lastName",
-                            e.target.value
-                              .replace(/[^A-Za-z]/g, "")
-                              .toUpperCase(),
-                          )
-                        }
-                        placeholder="Last Name"
+                        name="address"
+                        value={values.address}
+                        onChange={handleChange}
+                        placeholder="Address"
                         onBlur={handleBlur}
-                        error={getFieldErrorState(
-                          { errors, touched },
-                          "lastName",
-                        )}
+                        error={getFieldErrorState({ errors, touched }, "address")}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
-                          "lastName",
+                          "address",
                         )}
                         slotProps={{
                           input: {
@@ -374,125 +388,32 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                               color: "#000",
                               borderRadius: "10px",
                             },
-                            inputProps: { maxLength: 10 },
                           },
                         }}
                       />
-                    </Box>
+                      <Box sx={{ display: "flex", gap: "16px" }}>
+                        <FormControl fullWidth>
+                          <Select
+                            name="brand"
+                            value={values.brand}
+                            renderValue={(selected: string) => {
+                              if (!selected) {
+                                return (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "16px",
+                                      color: "#8A8A8A",
+                                    }}
+                                  >
+                                    Bike Brand
+                                  </Typography>
+                                );
+                              }
 
-                    <TextField
-                      fullWidth
-                      name="address"
-                      value={values.address}
-                      onChange={handleChange}
-                      placeholder="Address"
-                      onBlur={handleBlur}
-                      error={getFieldErrorState({ errors, touched }, "address")}
-                      helperText={getHelperOrErrorText(
-                        { errors, touched },
-                        "address",
-                      )}
-                      slotProps={{
-                        input: {
-                          sx: {
-                            backgroundColor: "#FFFFFF",
-                            color: "#000",
-                            borderRadius: "10px",
-                          },
-                        },
-                      }}
-                    />
-                    <Box sx={{ display: "flex", gap: "16px" }}>
-                      <FormControl fullWidth>
-                        <Select
-                          name="brand"
-                          value={values.brand}
-                          renderValue={(selected: string) => {
-                            if (!selected) {
-                              return (
-                                <Typography
-                                  sx={{
-                                    fontSize: "16px",
-                                    color: "#8A8A8A",
-                                  }}
-                                >
-                                  Bike Brand
-                                </Typography>
+                              const foundModel = bikeList.find(
+                                (m) => m._id === selected,
                               );
-                            }
 
-                            const foundModel = brands.find(
-                              (m) => m._id === selected,
-                            );
-
-                            return (
-                              <Typography
-                                sx={{
-                                  fontSize: "16px",
-                                  fontWeight: 400,
-                                  color: "#1D1D1D",
-                                }}
-                              >
-                                {foundModel?.name}
-                              </Typography>
-                            );
-                          }}
-                          onChange={(e) => {
-                            const brand = e.target.value;
-                            setFieldValue("brand", brand);
-                            setFieldValue("model", "");
-                            setModels([]);
-                            fetchBrandModels(brand);
-                            handleChange(e);
-                          }}
-                          displayEmpty
-                          IconComponent={() => null}
-                          sx={{
-                            p: 0,
-                            borderRadius: "10px",
-                            color: "#8A8A8A",
-                          }}
-                        >
-                          {brands &&
-                            brands.map((bike) => (
-                              <MenuItem
-                                key={bike?._id}
-                                value={bike?._id}
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "8px",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <span>{bike.name}</span>
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>{" "}
-                      <FormControl fullWidth>
-                        <Select
-                          name="model"
-                          value={values.model}
-                          displayEmpty
-                          IconComponent={() => null}
-                          sx={{ p: 0, borderRadius: "10px" }}
-                          renderValue={(selected: string) => {
-                            const foundModel = models.find(
-                              (m) => m._id === selected,
-                            );
-                            if (!foundModel) {
-                              return (
-                                <Typography
-                                  sx={{
-                                    fontSize: "16px",
-                                    color: "#8A8A8A",
-                                  }}
-                                >
-                                  Bike Model
-                                </Typography>
-                              );
-                            } else {
                               return (
                                 <Typography
                                   sx={{
@@ -504,56 +425,128 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                                   {foundModel?.name}
                                 </Typography>
                               );
+                            }}
+                            onChange={(e) => {
+                              const brand = e.target.value;
+                              setFieldValue("brand", brand);
+                              setFieldValue("model", "");
+                              setModels([]);
+                              fetchBrandModels(brand);
+                              handleChange(e);
+                            }}
+                            displayEmpty
+                            IconComponent={() => null}
+                            sx={{
+                              p: 0,
+                              borderRadius: "10px",
+                              color: "#8A8A8A",
+                            }}
+                          >
+                            {bikeList &&
+                              bikeList.map((bike) => (
+                                <MenuItem
+                                  key={bike?._id}
+                                  value={bike?._id}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <span>{bike.name}</span>
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>{" "}
+                        <FormControl fullWidth>
+                          <Select
+                            name="model"
+                            value={values.model}
+                            displayEmpty
+                            IconComponent={() => null}
+                            sx={{ p: 0, borderRadius: "10px" }}
+                            renderValue={(selected: string) => {
+                              const foundModel = models.find(
+                                (m) => m._id === selected,
+                              );
+                              if (!foundModel) {
+                                return (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "16px",
+                                      color: "#8A8A8A",
+                                    }}
+                                  >
+                                    Bike Model
+                                  </Typography>
+                                );
+                              } else {
+                                return (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "16px",
+                                      fontWeight: 400,
+                                      color: "#1D1D1D",
+                                    }}
+                                  >
+                                    {foundModel?.name}
+                                  </Typography>
+                                );
+                              }
+                            }}
+                            onChange={(e) =>
+                              setFieldValue("model", e.target.value)
                             }
-                          }}
-                          onChange={(e) =>
-                            setFieldValue("model", e.target.value)
-                          }
-                        >
-                          {models.map((m) => (
-                            <MenuItem key={m._id} value={m._id}>
-                              {m.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                          >
+                            {models.map((m) => (
+                              <MenuItem key={m._id} value={m._id}>
+                                {m.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Box>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="notifyOffers"
+                            value={values.notifyOffers}
+                            checked={values.notifyOffers === true}
+                            onChange={(e) =>
+                              setFieldValue("notifyOffers", e.target.checked)
+                            }
+                            sx={{ transform: "scale(0.6)" }}
+                            icon={<RadioButtonUncheckedIcon />}
+                            checkedIcon={<RadioButtonCheckedIcon />}
+                          />
+
+                        }
+                        label="Notify me with offers and updates"
+                      />
+
+                      <Button
+                        type="submit"
+                        size="medium"
+                        sx={{
+                          backgroundColor: !(dirty && isValid)
+                            ? "#00000033"
+                            : "black",
+                          opacity: 1,
+                          color: !(dirty && isValid) ? "black" : "white",
+                          mb: "32px",
+                          py: "16px",
+                          borderRadius: "10px",
+                          textTransform: "none",
+                        }}
+                        disabled={!(dirty && isValid)}
+                      >
+                        UPDATE
+                      </Button>
                     </Box>
-
-                    <FormControlLabel
-                      control={
-                        <Radio
-                          name="notifyOffers"
-                          checked={values.notifyOffers === true}
-                          onChange={() =>
-                            setFieldValue("notifyOffers", !values.notifyOffers)
-                          }
-                          sx={{ transform: "scale(0.6)" }}
-                        />
-                      }
-                      label="Notify me with offers and updates"
-                    />
-
-                    <Button
-                      type="submit"
-                      size="medium"
-                      sx={{
-                        backgroundColor: !(dirty && isValid)
-                          ? "#00000033"
-                          : "black",
-                        opacity: 1,
-                        color: !(dirty && isValid) ? "black" : "white",
-                        mb: "32px",
-                        py: "16px",
-                        borderRadius: "10px",
-                        textTransform: "none",
-                      }}
-                      disabled={!(dirty && isValid)}
-                    >
-                      UPDATE
-                    </Button>
-                  </Box>
-                </Form>
-              )}
+                  </Form>
+                )
+              }}
             </Formik>
             <Box
               sx={{

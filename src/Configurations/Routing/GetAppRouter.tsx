@@ -26,10 +26,9 @@ const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"), Loading);
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"), Loading);
 const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"), Loading);
 const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
-const OrderDetails = lazyLoadPage(() => import("@/pages/OrderDetails"), Loading )
+const OrderDetails = lazyLoadPage(() => import("@/pages/OrderDetails"), Loading)
 const ProfileDetails = lazyLoadPage(() => import("@/pages/ProfileDetails"), Loading)
 const Wishlist = lazyLoadPage(() => import("@/pages/Wishlist"), Loading)
-
 
 export const routeObj: RouteObject[] = [
   {
@@ -54,16 +53,15 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.CHECKOUT, element: Checkout },
       { path: ROUTES.PAGE_NOT_FOUND, element: NotFound },
       { path: ROUTES.ANY, element: NotFound },
-      { path: ROUTES.ORDER_DETAILS, element: OrderDetails },
-      { path: ROUTES.PROFILE, element: ProfileDetails },
-      { path: ROUTES.WISHLIST, element: Wishlist }
     ],
   },
   {
     element: <ProtectedRoutes />,
     errorElement: <Navigate to={ROUTES.ANY} replace />,
     children: [
-      // { path: ROUTES.ORDER_DETAILS, element: OrderDetails  },
+      { path: ROUTES.PROFILE, element: ProfileDetails },
+      { path: ROUTES.WISHLIST, element: Wishlist },
+      { path: ROUTES.ORDER_DETAILS, element: OrderDetails },
     ]
   }
 ];

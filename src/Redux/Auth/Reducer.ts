@@ -11,8 +11,10 @@ import { IsdCodeType, T_AUTH_REDUCER } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
   addProfileDetailsActions,
+  getBikeBrandActions,
   getIsdCodeActions,
   removeWishlistActions,
+  updateProfileDetailsActions,
   verifyOtpActions,
   wishlistActions,
 } from "./Actions";
@@ -37,13 +39,14 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
   },
   wishlist: [],
   isdCode: [],
+  bikeList: [],
   openSignupPopup: false,
 };
 
 const cartPersistConfig = {
   key: AuthSliceName,
   storage,
-  blacklist: ["openSignupPopup"]
+  blacklist: ["openSignupPopup", "wishlist"],
 };
 
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
@@ -69,13 +72,26 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         state.profileDetails = payload;
       },
     );
+    builder.addCase(
+      updateProfileDetailsActions.success,
+      (state, { payload }: any) => {
+        state.profileDetails = payload;
+      },
+    );
     builder.addCase(wishlistActions.success, (state, { payload }: any) => {
       state.wishlist = payload?.products || [];
     });
 
-    builder.addCase(removeWishlistActions.success, (state, { payload }: any) => {
-      console.log("REMOVE WISHLIST PAYLOAD", payload);
-      state.wishlist = payload?.data?.products || [];
+    builder.addCase(
+      removeWishlistActions.success,
+      (state, { payload }: any) => {
+        console.log("REMOVE WISHLIST PAYLOAD", payload);
+        state.wishlist = payload?.data?.products || [];
+      },
+    );
+
+    builder.addCase(getBikeBrandActions.success, (state, { payload }: any) => {
+      state.bikeList = payload || [];
     });
 
     builder.addCase(

@@ -5,13 +5,13 @@ import { enqueueSnackbar } from "notistack";
 
 export function logout() {
   const dispatch = AppStore.dispatch;
-
-  dispatch(resetAuth);
-  dispatch(resetCart);
+  //@ts-ignore
+  dispatch(resetAuth());
+  //@ts-ignore
+  dispatch(resetCart());
 
   enqueueSnackbar({
     variant: "info",
     message: "You have been logged Out!",
-    autoHideDuration: 2000,
   });
 }

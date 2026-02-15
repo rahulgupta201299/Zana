@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Paper } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getProfileDetails, listOfBikes } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
@@ -19,13 +19,11 @@ import {
   updateProfileDetailName,
 } from "@/Redux/Auth/Actions";
 import { PersistPartial } from "redux-persist/es/persistReducer";
-import { TReducers } from "@/Redux/Reducers";
 import {
   getServiceSelector,
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
 
-import { useSnackbar } from "notistack";
 import updateProfileDetailServiceAction, {
   UPDATE_PROFILE_DETAILS,
 } from "@/Redux/Auth/Services/UpdateProfileDetails";
@@ -44,10 +42,41 @@ interface PROFILE_PROPS_TYPE {
 const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedMenu, setSelectedMenu] = useState<string>("profile");
+
   const dispatch = useDispatch<TAppDispatch>();
-  const { enqueueSnackbar } = useSnackbar();
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const bikeDetails = useSelector(listOfBikes)
+
+  const actions = useMemo(
+    () => ({
+      getBrandList: () => dispatch(getBikeBrandServiceAction()),
+      fetchProfileDetails: (data: any) =>
+        dispatch(getProfileDetailsServiceAction(data))
+    }),
+    [dispatch],
+  );
 
   const navigate = useNavigate();
+
+
+  const fetchDetails = async () => {
+    //Need to confirm
+    // const [isd, phone] = profileDetails.phoneNumber.split("-");
+    // const body = {
+    //   isdCode: isd,
+    //   phoneNumber: phone,
+    // };
+    try {
+      // const profileRes = await actions.fetchProfileDetails(body);
+      if (!bikeDetails.length) await actions.getBrandList();
+    } catch (error) {
+      console.error("Error fetching details:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDetails();
+  }, []);
 
   const renderContent = () => {
     switch (selectedMenu) {
@@ -55,7 +84,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         return <MyProfile />;
 
       case "wishlist":
-         navigate(ROUTES.WISHLIST);
+        navigate(ROUTES.WISHLIST);
 
       case "faq":
         return <Faq />;
@@ -75,8 +104,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     ]),
   );
 
-
-
   const handleMenuClick = (key: string) => {
     if (key === "logout") {
       setLoading(true);
@@ -84,11 +111,6 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         logout();
         navigate("/");
         // onClose();
-        enqueueSnackbar("You have been logged Out!", {
-          variant: "info",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 2000,
-        });
         setLoading(false);
       }, 2000);
     } else {
@@ -96,7 +118,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     }
   };
 
-  
+
   return (
     <Box
       sx={{
@@ -106,12 +128,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
         backgroundColor: "#2A2A2A",
       }}
     >
-    { (isLoading || loading)  &&  <Loading />
-     }
+      {(isLoading || loading) && <Loading />
+      }
       <Box
         sx={{
           width: "100%",
-          height: isMobile ? "100%" : "675px",
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           px: { lg: "80px", xs: "0" },
