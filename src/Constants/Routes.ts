@@ -26,5 +26,8 @@ export const ROUTES = Object.freeze({
   ORDER_DETAILS: '/order-details',
   PROFILE: '/profile',
   WISHLIST: '/wishlist',
+  TERMSANDCONDITIONS:'/terms-and-conditions',
+  DISCLAIMER: '/disclaimer',
+  PRIVACYPOLICY: '/privacy-policy',
   ANY: '*'
 })
