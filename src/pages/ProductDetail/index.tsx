@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Facebook, Instagram, PlusIcon, Heart, ShoppingBag } from "lucide-react";
 // import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
-import { TAppDispatch } from "@/Configurations/AppStore";
+
+
+import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,6 +23,8 @@ import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { useSnackbar } from "notistack";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { categoryProductServiceName } from "@/Redux/Product/Actions";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -34,13 +39,17 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const profileDetails = useSelector(getProfileDetails);
+
 
   const dispatch = useDispatch<TAppDispatch>()
   const { enqueueSnackbar } = useSnackbar();
 
   const getQuantityValue = getQuantity(productId);
 
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+   const isLoading = useSelector<TAppStore, boolean>((state) =>
+      isServiceLoading(state, [categoryProductServiceName]),
+    );
   function handleBackToProducts() {
     const category = replaceHiphenWithSpaces(productCategory)
     navigate(ROUTES.PRODUCT_CATALOG, { state: { category } })
@@ -388,12 +397,24 @@ const ProductDetailPage = () => {
       <div className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="text-4xl font-bold text-white text-center mb-8">You may also like</h2>
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-          {suggestedProducts.map((relatedProduct, index) => {
-
+          {
+          isLoading?
+          Array.from({ length: 5 }).map((_, index) => (
+         <Skeleton
+           key={index}
+           variant="rectangular"
+           width={240}
+           height={280}
+           sx={{
+            borderRadius: 2,
+            backgroundColor: "rgba(235, 228, 228, 0.1)",
+           }}
+          />
+          ))
+          : suggestedProducts.map((relatedProduct, index) => {
             const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
             const productQuantity = getQuantity(_id)
             const isDisabled = productQuantity >= quantityAvailable
-
             return (
               <div
                 key={index}
