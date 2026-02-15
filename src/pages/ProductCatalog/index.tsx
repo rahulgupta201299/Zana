@@ -55,7 +55,7 @@ const ProductCatalogPage = () => {
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
   const LIMIT_PER_PAGE = 12;
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const profileDetails = useSelector(getProfileDetails);
   const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(
@@ -65,7 +65,7 @@ const ProductCatalogPage = () => {
   ) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
-    
+
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
@@ -78,10 +78,10 @@ const ProductCatalogPage = () => {
 
       const action =
         type === ALL_CATEGORY
-          ? AllProductService({ page, limit: LIMIT_PER_PAGE,  phoneNumber: profileDetails?.phoneNumber })
+          ? AllProductService({ page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber })
           : CategoryProductService({
             category: type,
-            queryParams: { page, limit: LIMIT_PER_PAGE,  phoneNumber: profileDetails?.phoneNumber },
+            queryParams: { page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber },
           });
 
       const { data, pagination } = (await dispatch(
@@ -96,47 +96,42 @@ const ProductCatalogPage = () => {
     }
   }
 
- async function handleWishList(product: ShopByProductDetailsType) {
-  const { _id: productId, isWishlist } = product;
-  const currentValue =
-    wishlistMap[productId] ?? isWishlist;
-  setWishlistMap((prev) => ({
-    ...prev,
-    [productId]: !currentValue,
-  }));
+  async function handleWishList(product: ShopByProductDetailsType) {
+    const { _id: productId, isWishlist } = product;
+    const { phoneNumber = '' } = profileDetails;
+    const currentValue =
+      wishlistMap[productId] ?? isWishlist;
+    setWishlistMap((prev) => ({
+      ...prev,
+      [productId]: !currentValue,
+    }));
 
-  try {
-    const action = currentValue
-      ? removeWishlistServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
+    try {
+      const action = currentValue
+        ? removeWishlistServiceAction({
+          phoneNumber,
           productIds: [productId],
         })
-      : addWishListServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
+        : addWishListServiceAction({
+          phoneNumber,
           productIds: [productId],
         });
 
-    const result = await dispatch(action);
+      const result = await dispatch(action);
 
-    if (result) {
-      enqueueSnackbar(
-        currentValue
-          ? "Product removed from wishlist"
-          : "Product added to wishlist",
-        {
+      if (result) {
+        enqueueSnackbar({
+          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
           variant: currentValue ? "info" : "success",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
-          autoHideDuration: 2000,
-        }
-      );
+        });
+      }
+    } catch (error) {
+      setWishlistMap((prev) => ({
+        ...prev,
+        [productId]: currentValue,
+      }));
     }
-  } catch (error) {
-    setWishlistMap((prev) => ({
-      ...prev,
-      [productId]: currentValue,
-    }));
   }
-}
 
 
   const categoryDetails = useMemo(() => {
@@ -310,7 +305,7 @@ const ProductCatalogPage = () => {
                             handleWishList(product);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${ (wishlistMap[product._id] ?? product.isWishlist)
+                            ${(wishlistMap[product._id] ?? product.isWishlist)
                               ? "bg-yellow-400 text-black"
                               : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }

@@ -3,12 +3,14 @@ import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { wishlistActions } from "../Actions";
 import AppStore from "@/Configurations/AppStore";
+import { WishListResType } from "../Types";
+
 const network = new Network();
 
-async function getWishListService(): Promise<any> {
+async function getWishListService(): Promise<WishListResType> {
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
-  //TODO
+  
   const options = {
     url: `/api/v1/wishlist/${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
