@@ -8,7 +8,7 @@ const network = new Network();
 
 export interface ADD_WISHLIST {
   phoneNumber: string;
-  productId: string;
+  productIds: string[];
 }
 
 async function addWishListService(requestData: ADD_WISHLIST): Promise<any> {

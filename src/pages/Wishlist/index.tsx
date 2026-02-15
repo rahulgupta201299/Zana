@@ -56,7 +56,7 @@ const Wishlist = () => {
     const phoneNumber = profileDetails?.phoneNumber;
     const requestData: REMOVE_WISHLIST = {
       phoneNumber,
-      productId,
+      productIds:[productId],
     };
     const result = await actions.removeFromWishlist(requestData);
     if (result?.success) {

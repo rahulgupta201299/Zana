@@ -27,6 +27,7 @@ import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { ProductDetailParamsType } from "../ProductDetail/Types";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -77,10 +78,10 @@ const ProductCatalogPage = () => {
 
       const action =
         type === ALL_CATEGORY
-          ? AllProductService({ page, limit: LIMIT_PER_PAGE })
+          ? AllProductService({ page, limit: LIMIT_PER_PAGE,  phoneNumber: profileDetails?.phoneNumber })
           : CategoryProductService({
             category: type,
-            queryParams: { page, limit: LIMIT_PER_PAGE },
+            queryParams: { page, limit: LIMIT_PER_PAGE,  phoneNumber: profileDetails?.phoneNumber },
           });
 
       const { data, pagination } = (await dispatch(
@@ -95,45 +96,48 @@ const ProductCatalogPage = () => {
     }
   }
 
-  async function handleWishList(productId: string) {
-    //TODO: Replace phone number with logged in user's phone number &  Wishlist for logged in users only
-    const isCurrentlyWishlisted = wishlistMap[productId];
-    setWishlistMap((prev) => ({
-      ...prev,
-      [productId]: !isCurrentlyWishlisted,
-    }));
+ async function handleWishList(product: ShopByProductDetailsType) {
+  const { _id: productId, isWishlist } = product;
+  const currentValue =
+    wishlistMap[productId] ?? isWishlist;
+  setWishlistMap((prev) => ({
+    ...prev,
+    [productId]: !currentValue,
+  }));
 
-    try {
-      const action = isCurrentlyWishlisted
-        ? removeWishlistServiceAction({
+  try {
+    const action = currentValue
+      ? removeWishlistServiceAction({
           phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          productIds: [productId],
         })
-        : addWishListServiceAction({
+      : addWishListServiceAction({
           phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          productIds: [productId],
         });
 
-      const result = await dispatch(action);
-      if (result) {
-        enqueueSnackbar(
-          isCurrentlyWishlisted
-            ? "Product removed from wishlist"
-            : "Product added to wishlist",
-          {
-            variant: isCurrentlyWishlisted ? "info" : "success",
-            anchorOrigin: { vertical: "top", horizontal: "right" },
-            autoHideDuration: 2000,
-          },
-        );
-      }
-    } catch (error) {
-      setWishlistMap((prev) => ({
-        ...prev,
-        [productId]: isCurrentlyWishlisted,
-      }));
+    const result = await dispatch(action);
+
+    if (result) {
+      enqueueSnackbar(
+        currentValue
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+        {
+          variant: currentValue ? "info" : "success",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+          autoHideDuration: 2000,
+        }
+      );
     }
+  } catch (error) {
+    setWishlistMap((prev) => ({
+      ...prev,
+      [productId]: currentValue,
+    }));
   }
+}
+
 
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -303,10 +307,10 @@ const ProductCatalogPage = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleWishList(product._id);
+                            handleWishList(product);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${wishlistMap[product._id]
+                            ${ (wishlistMap[product._id] ?? product.isWishlist)
                               ? "bg-yellow-400 text-black"
                               : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }

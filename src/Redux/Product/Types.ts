@@ -30,6 +30,7 @@ export type ShopByProductDetailsType = {
   isBikeSpecific: boolean;
   isNewArrival: boolean;
   isGarageFavorite: boolean;
+  isWishlist: boolean
 };
 
 export type ShopByBikeModelsType = {
@@ -52,6 +53,7 @@ export type ShopByBikeType = {
 export type QueryParamsType = {
   page?: number;
   limit?: number;
+  phoneNumber?: string
 };
 
 export type CategoryProductReqType = {

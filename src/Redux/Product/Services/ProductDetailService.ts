@@ -6,11 +6,18 @@ import { productDetailTraceActions } from "../Actions";
 
 const network = new Network();
 
-async function productDetailService(
+export type Product_Detail_Type = {
   productId: string
+  phoneNumber:string
+}
+
+
+
+async function productDetailService({productId, phoneNumber}:Product_Detail_Type
 ): Promise<ShopByProductDetailsType> {
+  console.log(phoneNumber)
   const options = {
-    url: `/api/v1/product/${productId}`,
+    url: `/api/v1/product/${productId}?phoneNumber=${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
   };
   

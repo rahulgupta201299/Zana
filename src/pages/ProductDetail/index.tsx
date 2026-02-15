@@ -59,32 +59,32 @@ const ProductDetailPage = () => {
     const prevValue = isWishlisted;
 
     setIsWishlisted(!prevValue);
-    try {
-      const action = prevValue
-        ? removeWishlistServiceAction({
+   try {
+    const action = prevValue
+      ? removeWishlistServiceAction({
           phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          productIds: [productId],
         })
-        : addWishListServiceAction({
+      : addWishListServiceAction({
           phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          productIds: [productId],
         });
 
-      const result = await dispatch(action);
+    const result = await dispatch(action);
 
-      if (result) {
-        enqueueSnackbar(
-          prevValue
-            ? "Product removed from wishlist"
-            : "Product added to wishlist",
-          {
-            variant: prevValue ? "info" : "success",
-            anchorOrigin: { vertical: "top", horizontal: "right" },
-            autoHideDuration: 2000,
-          }
-        );
-      }
-    } catch (error) {
+    if (result) {
+      enqueueSnackbar(
+        prevValue
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+        {
+          variant: prevValue ? "info" : "success",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+          autoHideDuration: 2000,
+        }
+      );
+    }
+  }  catch (error) {
       setIsWishlisted(prevValue);
     }
   }
@@ -93,7 +93,7 @@ const ProductDetailPage = () => {
     setLoading(true)
     setQuantity(getQuantityValue || 1)
     try {
-      const response = await dispatch(ProductDetailService(productId)) as ShopByProductDetailsType
+      const response = await dispatch(ProductDetailService({productId:productId, phoneNumber: profileDetails?.phoneNumber})) as ShopByProductDetailsType
       setProduct(response)
 
       const { category } = response
@@ -327,7 +327,7 @@ const ProductDetailPage = () => {
                       handleWishList(product._id);
                     }}
                     className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                     ${isWishlisted
+                     ${(isWishlisted ?? product.isWishlist)
                         ? "bg-yellow-400 text-black"
                         : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                       }`}
