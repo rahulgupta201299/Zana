@@ -76,10 +76,12 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       const productList = action.payload;
       state.cartDetail.processedItems = productList;
       state.cartDetail.unProcessedItems = [];
-      state.cartDetail.totalAmount = productList.reduce(
+      const subtotal = productList.reduce(
         (acc, curr) => acc + curr.totalPrice,
         0,
       );
+      state.cartDetail.subtotal = subtotal;
+      state.cartDetail.totalAmount = subtotal + state.cartDetail.shippingCost - state.cartDetail.discountAmount;
     },
     clearOutofStockItems(state) {
       state.outOfStocks = [];

@@ -1,7 +1,8 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import AppStore from '@/Configurations/AppStore'
 import { ROUTES } from '@/Constants/Routes'
 import { setOpenSignupPopup } from '@/Redux/Auth/Reducer'
+import Wrapper from './Wrapper'
 
 function ProtectedRoutes() {
   const location = useLocation()
@@ -23,7 +24,7 @@ function ProtectedRoutes() {
     )
   }
 
-  return <Outlet />
+  return <Wrapper />
 }
 
 export default ProtectedRoutes

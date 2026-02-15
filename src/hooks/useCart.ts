@@ -40,14 +40,18 @@ export default function useCart() {
 
   async function handleSaveToDB(
     details: CartItemDetail[],
-    optional?: { easyCheckout?: boolean; navigateTo?: string, phoneNumber?: string },
+    optional?: {
+      easyCheckout?: boolean;
+      navigateTo?: string;
+      phoneNumber?: string;
+    },
   ): Promise<CartDetailResType> {
     const items = details.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
     }));
 
-    const _phoneNumber = optional?.phoneNumber || phoneNumber
+    const _phoneNumber = optional?.phoneNumber || phoneNumber;
 
     try {
       const response = (await dispatch(
@@ -118,6 +122,7 @@ export default function useCart() {
         return {
           ...item,
           quantity,
+          totalPrice: product.price * quantity,
         };
       }
       return item;
@@ -164,6 +169,7 @@ export default function useCart() {
         return {
           ...item,
           quantity: item.quantity + 1,
+          totalPrice: (item.quantity + 1) * item.price,
         };
       }
       return item;
@@ -190,8 +196,13 @@ export default function useCart() {
     if (productQuantity <= 0) return;
 
     const newProductDetails = cartItems.map((item) => {
-      if (item.product._id === productId)
-        return { ...item, quantity: item.quantity - 1 };
+      if (item.product._id === productId) {
+        return {
+          ...item,
+          quantity: item.quantity - 1,
+          totalPrice: item.price * (item.quantity - 1),
+        };
+      }
       return item;
     });
 
