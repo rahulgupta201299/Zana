@@ -1,12 +1,24 @@
-import { ShopByProductDetailsType } from "../Product/Types";
+import {
+  ShopByBikeBrandType,
+  ShopByBikeModelsType,
+  ShopByProductDetailsType,
+} from "../Product/Types";
 
-export type BIKE_LIST={
-  _id: string
-  name: string
-  description: string
-  createdAt: string
-  __v: number
-}
+export type BIKE_LIST = {
+  _id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  __v: number;
+};
+
+export type WishlistProductType = Omit<
+  ShopByProductDetailsType,
+  "brand" | "model"
+> & {
+  brand: ShopByBikeBrandType;
+  model: ShopByBikeModelsType;
+};
 
 export type T_AUTH_REDUCER = {
   login: {
@@ -17,11 +29,11 @@ export type T_AUTH_REDUCER = {
     address?: string;
   };
 
- bikeList: BIKE_LIST[],
+  bikeList: BIKE_LIST[];
 
-  wishlist: ShopByProductDetailsType[];
+  wishlist: WishlistProductType[];
 
-  isdCode: IsdCodeType[],
+  isdCode: IsdCodeType[];
 
   profileDetails: {
     _id: string;
@@ -49,4 +61,10 @@ export type IsdCodeType = {
   code: string;
   isd: string;
   name: string;
-}
+};
+
+export type WishListResType = {
+  _id: string | null;
+  phoneNumber: string;
+  products: WishlistProductType[];
+};

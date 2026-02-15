@@ -11,11 +11,8 @@ export type Product_Detail_Type = {
   phoneNumber:string
 }
 
-
-
 async function productDetailService({productId, phoneNumber}:Product_Detail_Type
 ): Promise<ShopByProductDetailsType> {
-  console.log(phoneNumber)
   const options = {
     url: `/api/v1/product/${productId}?phoneNumber=${phoneNumber}`,
     method: API_METHOD_ENUM.GET,

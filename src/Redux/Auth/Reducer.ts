@@ -7,10 +7,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import { SLICE_NAME as AuthSliceName } from "@/Redux/Auth/Selectors";
 import storage from "redux-persist/lib/storage";
-import { IsdCodeType, T_AUTH_REDUCER } from "./Types";
+import { IsdCodeType, T_AUTH_REDUCER, WishListResType } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
   addProfileDetailsActions,
+  addWishlistActions,
   getBikeBrandActions,
   getIsdCodeActions,
   removeWishlistActions,
@@ -78,15 +79,21 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         state.profileDetails = payload;
       },
     );
-    builder.addCase(wishlistActions.success, (state, { payload }: any) => {
-      state.wishlist = payload?.products || [];
+    builder.addCase(wishlistActions.success, (state, action: PayloadAction<WishListResType>) => {
+      state.wishlist = action.payload.products || [];
     });
 
     builder.addCase(
       removeWishlistActions.success,
-      (state, { payload }: any) => {
-        console.log("REMOVE WISHLIST PAYLOAD", payload);
-        state.wishlist = payload?.data?.products || [];
+      (state, action: PayloadAction<WishListResType>) => {
+        state.wishlist = action.payload.products || [];
+      },
+    );
+
+    builder.addCase(
+      addWishlistActions.success,
+      (state, action: PayloadAction<WishListResType>) => {
+        state.wishlist = action.payload.products || [];
       },
     );
 

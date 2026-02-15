@@ -48,8 +48,8 @@ const ProductsSection = ({
     ]),
   );
   const dispatch = useDispatch<TAppDispatch>()
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
-   const { enqueueSnackbar } = useSnackbar();
+  const profileDetails = useSelector(getProfileDetails);
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { incrementToCart, getQuantity } = useCart();
 
@@ -66,47 +66,42 @@ const ProductsSection = ({
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${subCategory}/${productId}`);
   }
 
-   async function handleWishList(product: ShopByProductDetailsType) {
-  const { _id: productId, isWishlist } = product;
-  const currentValue =
-    wishlistMap[productId] ?? isWishlist;
-  setWishlistMap((prev) => ({
-    ...prev,
-    [productId]: !currentValue,
-  }));
+  async function handleWishList(product: ShopByProductDetailsType) {
+    const { _id: productId, isWishlist } = product;
+    const { phoneNumber = '' } = profileDetails;
+    const currentValue = wishlistMap[productId] ?? isWishlist;
 
-  try {
-    const action = currentValue
-      ? removeWishlistServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
+    setWishlistMap((prev) => ({
+      ...prev,
+      [productId]: !currentValue,
+    }));
+
+    try {
+      const action = currentValue
+        ? removeWishlistServiceAction({
+          phoneNumber,
           productIds: [productId],
         })
-      : addWishListServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
+        : addWishListServiceAction({
+          phoneNumber,
           productIds: [productId],
         });
 
-    const result = await dispatch(action);
+      const result = await dispatch(action);
 
-    if (result) {
-      enqueueSnackbar(
-        currentValue
-          ? "Product removed from wishlist"
-          : "Product added to wishlist",
-        {
+      if (result) {
+        enqueueSnackbar({
+          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
           variant: currentValue ? "info" : "success",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
-          autoHideDuration: 2000,
-        }
-      );
+        });
+      }
+    } catch (error) {
+      setWishlistMap((prev) => ({
+        ...prev,
+        [productId]: currentValue,
+      }));
     }
-  } catch (error) {
-    setWishlistMap((prev) => ({
-      ...prev,
-      [productId]: currentValue,
-    }));
   }
-}
 
   return (
     <>
@@ -278,8 +273,8 @@ const ProductsSection = ({
                           width: { xs: 28, md: 36 },
                           height: { xs: 28, md: 36 },
                           borderRadius: 2,
-                          color:    (wishlistMap[product._id] ?? product.isWishlist) ?'black':"white",
-                          bgcolor:   (wishlistMap[product._id] ?? product.isWishlist) ? "#FACC15":"rgba(255,255,255,0.1)",
+                          color: (wishlistMap[product._id] ?? product.isWishlist) ? 'black' : "white",
+                          bgcolor: (wishlistMap[product._id] ?? product.isWishlist) ? "#FACC15" : "rgba(255,255,255,0.1)",
                           transition: "all 0.2s",
                           "&:hover": {
                             bgcolor: "#FACC15",
