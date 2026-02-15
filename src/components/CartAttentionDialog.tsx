@@ -87,8 +87,6 @@ export default function CartAttentionDialog() {
 
   const open = outOfStock.length;
 
-  if (!open) return null;
-
   const unavailableStockCount = useMemo(() => {
     return outOfStock.reduce((acc, curr) => acc + curr.quantity, 0)
   }, [outOfStock.length])
@@ -110,6 +108,8 @@ export default function CartAttentionDialog() {
       
     }
   }
+
+  if (!open) return null;
 
   return (
     <Dialog
@@ -149,7 +149,7 @@ export default function CartAttentionDialog() {
 
         {
           outOfStock.map(product => (
-            <ItemCard productDetail={product} isAvailable={true} />
+            <ItemCard key={product.product._id} productDetail={product} isAvailable={true} />
           ))
         }
 
@@ -161,7 +161,7 @@ export default function CartAttentionDialog() {
 
         {
           outOfStock.map(product => (
-            <ItemCard productDetail={product} isAvailable={false} />
+            <ItemCard key={product.product._id} productDetail={product} isAvailable={false} />
           ))
         }
 
