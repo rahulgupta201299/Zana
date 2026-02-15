@@ -24,13 +24,18 @@ import { removeWishlistName, wishlistName } from "@/Redux/Auth/Actions";
 import WishlistCardSkeleton from "@/components/Skeleton/WishlistSkeleton";
 import { useSnackbar } from "notistack";
 import Loading from "@/components/Loading";
-import { ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { useNavigate } from "react-router";
+import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import useCart from "@/hooks/useCart";
 
 const Wishlist = () => {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate()
+  const navigate = useNavigate()
+
+  const { addToCart, getQuantity } = useCart();
+
   const actions = useMemo(
     () => ({
       fetchWishlist: () => dispatch(getWishListServiceAction()),
@@ -46,26 +51,58 @@ const Wishlist = () => {
   const isRemovingFromWishlist = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [removeWishlistName]),
   );
-   const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   const getWishList = async () => {
-    const result = actions.fetchWishlist();
+    actions.fetchWishlist();
   };
 
   const handleRemoveFromWishlist = async (productId: string) => {
-    const phoneNumber = profileDetails?.phoneNumber;
+    const { phoneNumber = '' } = profileDetails;
     const requestData: REMOVE_WISHLIST = {
       phoneNumber,
-      productId,
+      productIds: [productId],
     };
-    const result = await actions.removeFromWishlist(requestData);
-    if (result?.success) {
-      enqueueSnackbar("Product removed from wishlist successfully.", {
+    try {
+      await actions.removeFromWishlist(requestData);
+      enqueueSnackbar({
+        message: "Product removed from wishlist successfully.",
         variant: "success",
-        autoHideDuration: 3000,
+      });
+    } catch (error: any) {
+      enqueueSnackbar({
+        message: "Failed to remove from wishlist.",
+        variant: "error",
       });
     }
   };
+
+  function handleProductClick(productCategory: string, productName: string, productId: string) {
+    const category = replaceSpacesWithHiphen(productCategory)
+    const name = replaceSpacesWithHiphen(productName)
+
+    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
+  }
+
+  async function handleMoveToBag(e: React.MouseEvent<HTMLButtonElement>, productId: string) {
+    e.stopPropagation();
+    try {
+      // TODO
+      // await
+
+      enqueueSnackbar({
+        message: "Product moved to bag successfully.",
+        variant: "success",
+      });
+
+      await handleRemoveFromWishlist(productId);
+    } catch (error: any) {
+      enqueueSnackbar({
+        message: "Failed to move item to bag.",
+        variant: "error",
+      });
+    }
+  }
 
   useEffect(() => {
     getWishList();
@@ -109,10 +146,15 @@ const Wishlist = () => {
         <Grid container spacing={3}>
           {isLoading
             ? Array.from({ length: 8 }).map((_, index) => (
-                <WishlistCardSkeleton key={index} />
-              ))
-            : wishList.map((data, index) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }}>
+              <WishlistCardSkeleton key={index} />
+            ))
+            : wishList.map((product) => {
+              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '' } = product;
+
+              const quantityInCart = getQuantity(_id);
+
+              return (
+                <Grid key={_id} size={{ xs: 6, sm: 6, md: 4, lg: 3 }}>
                   <Card
                     sx={{
                       position: "relative",
@@ -125,7 +167,7 @@ const Wishlist = () => {
 
                       "&:hover": {
                         borderColor:
-                          data?.quantityAvailable === 0 ? "" : "#facc15",
+                          quantityAvailable === 0 ? "" : "#facc15",
                       },
 
                       "&:hover .remove-btn": {
@@ -138,7 +180,7 @@ const Wishlist = () => {
                       className="remove-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemoveFromWishlist(data?._id);
+                        handleRemoveFromWishlist(_id);
                       }}
                       sx={{
                         position: "absolute",
@@ -161,6 +203,7 @@ const Wishlist = () => {
                     >
                       <CloseIcon fontSize="small" />
                     </IconButton>
+
                     <Box
                       sx={{
                         position: "relative",
@@ -172,10 +215,11 @@ const Wishlist = () => {
                         justifyContent: "center",
                         borderRadius: "12px 12px 0 0",
                       }}
+                      onClick={() => handleProductClick(category, name, _id)}
                     >
                       <Box
                         component="img"
-                        src={data?.imageUrl}
+                        src={imageUrl}
                         alt="product"
                         sx={{
                           maxHeight: "100%",
@@ -184,13 +228,13 @@ const Wishlist = () => {
                           borderRadius: "12px 12px 0 0",
                           transition: "transform 0.3s ease",
                           filter:
-                            data?.quantityAvailable === 0
+                            quantityAvailable === 0
                               ? "grayscale(100%)"
                               : "none",
-                          opacity: data?.quantityAvailable === 0 ? 0.6 : 1,
+                          opacity: quantityAvailable === 0 ? 0.6 : 1,
                         }}
                       />
-                      {data?.quantityAvailable === 0 && (
+                      {quantityAvailable === 0 && (
                         <Box
                           sx={{
                             position: "absolute",
@@ -218,24 +262,26 @@ const Wishlist = () => {
                         display: "flex",
                         flexDirection: "column",
                         overflow: "hidden",
-                        // justifyContent: "space-between",
                         p: { xs: "8px", md: "12px" },
                         borderBottom: "1px solid rgba(255,255,255,0.1)",
                       }}
+                      onClick={() => handleProductClick(category, name, _id)}
                     >
                       <Typography
                         variant="body1"
                         sx={{
                           color: "#fff",
-
                           fontWeight: 500,
                           display: "-webkit-box",
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: "vertical",
                           overflow: "hidden",
+                          "&:hover": {
+                            color: "#facc15",
+                          },
                         }}
                       >
-                        {data?.name}
+                        {name}
                       </Typography>
 
                       <Typography
@@ -246,12 +292,12 @@ const Wishlist = () => {
                           alignSelf: "flex-end",
                         }}
                       >
-                        {`₹${data?.price}`}
+                        {`₹${price}`}
                       </Typography>
                     </CardContent>
 
                     <Button
-                      disabled={data?.quantityAvailable === 0}
+                      disabled={quantityAvailable === 0 || quantityAvailable <= quantityInCart}
                       sx={{
                         width: "calc(100% - 48px)",
                         height: "48px",
@@ -261,12 +307,14 @@ const Wishlist = () => {
                         color: "#000",
                         fontWeight: 700,
                       }}
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleMoveToBag(e, _id)}
                     >
                       Move to Bag
                     </Button>
                   </Card>
                 </Grid>
-              ))}
+              )
+            })}
         </Grid>
         {wishList.length === 0 && (
           <Box
@@ -275,11 +323,11 @@ const Wishlist = () => {
               py: 8,
             }}
           >
-          
+
             <Typography
               sx={{
-                color: "rgba(251, 241, 241, 0.5)", 
-                mb:'8px'   
+                color: "rgba(251, 241, 241, 0.5)",
+                mb: '8px'
               }}
               variant='h5'
             >
@@ -289,7 +337,7 @@ const Wishlist = () => {
               sx={{
                 color: "rgba(255,255,255,0.5)",
                 fontSize: "1.125rem",
-                mb:'24px'
+                mb: '24px'
               }}
             >
               Discover products you love and save them here for later.
@@ -308,7 +356,7 @@ const Wishlist = () => {
                   bgcolor: "#eab308",
                 },
               }}
-               onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+              onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
             >
               View All Products
             </Button>

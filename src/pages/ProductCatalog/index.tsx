@@ -27,6 +27,7 @@ import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { ProductDetailParamsType } from "../ProductDetail/Types";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const ProductCatalogPage = () => {
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
   const LIMIT_PER_PAGE = 12;
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const profileDetails = useSelector(getProfileDetails);
   const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(
@@ -64,7 +65,7 @@ const ProductCatalogPage = () => {
   ) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
-    
+
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
@@ -77,10 +78,10 @@ const ProductCatalogPage = () => {
 
       const action =
         type === ALL_CATEGORY
-          ? AllProductService({ page, limit: LIMIT_PER_PAGE })
+          ? AllProductService({ page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber })
           : CategoryProductService({
             category: type,
-            queryParams: { page, limit: LIMIT_PER_PAGE },
+            queryParams: { page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber },
           });
 
       const { data, pagination } = (await dispatch(
@@ -95,45 +96,43 @@ const ProductCatalogPage = () => {
     }
   }
 
-  async function handleWishList(productId: string) {
-    //TODO: Replace phone number with logged in user's phone number &  Wishlist for logged in users only
-    const isCurrentlyWishlisted = wishlistMap[productId];
+  async function handleWishList(product: ShopByProductDetailsType) {
+    const { _id: productId, isWishlist } = product;
+    const { phoneNumber = '' } = profileDetails;
+    const currentValue =
+      wishlistMap[productId] ?? isWishlist;
     setWishlistMap((prev) => ({
       ...prev,
-      [productId]: !isCurrentlyWishlisted,
+      [productId]: !currentValue,
     }));
 
     try {
-      const action = isCurrentlyWishlisted
+      const action = currentValue
         ? removeWishlistServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         })
         : addWishListServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         });
 
       const result = await dispatch(action);
+
       if (result) {
-        enqueueSnackbar(
-          isCurrentlyWishlisted
-            ? "Product removed from wishlist"
-            : "Product added to wishlist",
-          {
-            variant: isCurrentlyWishlisted ? "info" : "success",
-            anchorOrigin: { vertical: "top", horizontal: "right" },
-            autoHideDuration: 2000,
-          },
-        );
+        enqueueSnackbar({
+          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
+          variant: currentValue ? "info" : "success",
+        });
       }
     } catch (error) {
       setWishlistMap((prev) => ({
         ...prev,
-        [productId]: isCurrentlyWishlisted,
+        [productId]: currentValue,
       }));
     }
   }
+
 
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -303,10 +302,10 @@ const ProductCatalogPage = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleWishList(product._id);
+                            handleWishList(product);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${wishlistMap[product._id]
+                            ${(wishlistMap[product._id] ?? product.isWishlist)
                               ? "bg-yellow-400 text-black"
                               : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }

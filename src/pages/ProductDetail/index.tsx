@@ -39,49 +39,44 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-
-
   const dispatch = useDispatch<TAppDispatch>()
   const { enqueueSnackbar } = useSnackbar();
 
   const getQuantityValue = getQuantity(productId);
 
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
-   const isLoading = useSelector<TAppStore, boolean>((state) =>
-      isServiceLoading(state, [categoryProductServiceName]),
-    );
+  const profileDetails = useSelector(getProfileDetails);
+  const isLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [categoryProductServiceName]),
+  );
   function handleBackToProducts() {
     const category = replaceHiphenWithSpaces(productCategory)
     navigate(ROUTES.PRODUCT_CATALOG, { state: { category } })
   }
 
   async function handleWishList(productId: string) {
+    const { phoneNumber = '' } = profileDetails;
     const prevValue = isWishlisted;
 
-    setIsWishlisted(!prevValue);
+    setIsWishlisted(p => !p);
+
     try {
       const action = prevValue
         ? removeWishlistServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         })
         : addWishListServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         });
 
       const result = await dispatch(action);
 
       if (result) {
-        enqueueSnackbar(
-          prevValue
-            ? "Product removed from wishlist"
-            : "Product added to wishlist",
-          {
-            variant: prevValue ? "info" : "success",
-            anchorOrigin: { vertical: "top", horizontal: "right" },
-            autoHideDuration: 2000,
-          }
+        enqueueSnackbar({
+          variant: prevValue ? "info" : "success",
+          message: prevValue ? "Removed from wishlist" : "Added to wishlist",
+        }
         );
       }
     } catch (error) {
@@ -93,7 +88,7 @@ const ProductDetailPage = () => {
     setLoading(true)
     setQuantity(getQuantityValue || 1)
     try {
-      const response = await dispatch(ProductDetailService(productId)) as ShopByProductDetailsType
+      const response = await dispatch(ProductDetailService({ productId: productId, phoneNumber: profileDetails?.phoneNumber })) as ShopByProductDetailsType
       setProduct(response)
 
       const { category } = response
@@ -150,25 +145,27 @@ const ProductDetailPage = () => {
           {/* Left - Product Images List */}
           <div className="lg:col-span-2">
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
-              {images.map((image, index) => (
-                <>
-                  {
-                    image ? (
-                      <div
-                        key={index}
-                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index ? 'border-white' : 'border-gray-600'
-                          }`}
-                        onClick={() => setSelectedImageIndex(index)}
-                      >
-                        <img src={image} alt={`${name} ${index + 1}`} className="w-full h-full object-contain p-2" />
-                      </div>
-                    ) : (
-                      <Skeleton sx={{ backgroundColor: 'grey' }} width={180} height={160} />
-                    )
-                  }
-                </>
+              {images.map((image, index) => {
 
-              ))}
+                return (
+                  <>
+                    {
+                      image ? (
+                        <div
+                          key={index}
+                          className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index ? 'border-white' : 'border-gray-600'
+                            }`}
+                          onClick={() => setSelectedImageIndex(index)}
+                        >
+                          <img src={image} alt={`${name} ${index + 1}`} className="w-full h-full object-contain p-2" />
+                        </div>
+                      ) : (
+                        <Skeleton key={index} sx={{ backgroundColor: 'grey' }} width={180} height={160} />
+                      )
+                    }
+                  </>
+                )
+              })}
             </div>
           </div>
 
@@ -327,7 +324,7 @@ const ProductDetailPage = () => {
                       handleWishList(product._id);
                     }}
                     className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                     ${isWishlisted
+                     ${(isWishlisted ?? product.isWishlist)
                         ? "bg-yellow-400 text-black"
                         : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                       }`}
@@ -398,85 +395,85 @@ const ProductDetailPage = () => {
         <h2 className="text-4xl font-bold text-white text-center mb-8">You may also like</h2>
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {
-          isLoading?
-          Array.from({ length: 5 }).map((_, index) => (
-         <Skeleton
-           key={index}
-           variant="rectangular"
-           width={240}
-           height={280}
-           sx={{
-            borderRadius: 2,
-            backgroundColor: "rgba(235, 228, 228, 0.1)",
-           }}
-          />
-          ))
-          : suggestedProducts.map((relatedProduct, index) => {
-            const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
-            const productQuantity = getQuantity(_id)
-            const isDisabled = productQuantity >= quantityAvailable
-            return (
-              <div
-                key={index}
-                className="flex-shrink-0 w-64 bg-gradient-to-b from-[#7B7575] to-white rounded-lg overflow-hidden cursor-pointer"
-                onClick={() => handleSuggestedProductClick(category, name, _id)}
-              >
-                <div className="relative p-2">
-                  <div className="aspect-square bg-white/10 overflow-hidden rounded-lg relative flex items-center justify-center">
-                    <img
-                      src={imageUrl}
-                      alt={name}
-                      className="max-w-full max-h-full object-contain"
-                    />
-                    <div className="absolute bottom-2 left-2 group">
-                      <button
-                        style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
-                        disabled={isDisabled}
-                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                          e.stopPropagation()
-                          incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
-                        }}
-                        className="h-9 bg-white rounded-full flex items-center justify-center
+            isLoading ?
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rectangular"
+                  width={240}
+                  height={280}
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: "rgba(235, 228, 228, 0.1)",
+                  }}
+                />
+              ))
+              : suggestedProducts.map((relatedProduct, index) => {
+                const { _id, name, imageUrl, price, category, quantityAvailable } = relatedProduct
+                const productQuantity = getQuantity(_id)
+                const isDisabled = productQuantity >= quantityAvailable
+                return (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 w-64 bg-gradient-to-b from-[#7B7575] to-white rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => handleSuggestedProductClick(category, name, _id)}
+                  >
+                    <div className="relative p-2">
+                      <div className="aspect-square bg-white/10 overflow-hidden rounded-lg relative flex items-center justify-center">
+                        <img
+                          src={imageUrl}
+                          alt={name}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                        <div className="absolute bottom-2 left-2 group">
+                          <button
+                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                            disabled={isDisabled}
+                            onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                              e.stopPropagation()
+                              incrementToCart(relatedProduct, _id, quantityAvailable, { navigateTo: ROUTES.CART })
+                            }}
+                            className="h-9 bg-white rounded-full flex items-center justify-center
                             overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
                             w-9 group-hover:w-auto group-hover:px-3"
-                      >
-                        <span
-                          className="whitespace-nowrap text-sm font-semibold text-black
+                          >
+                            <span
+                              className="whitespace-nowrap text-sm font-semibold text-black
                               hidden translate-x-[-6px]
                               group-hover:inline-block group-hover:translate-x-0
                               transition-all duration-300 mr-1"
-                        >
-                          Add to cart
-                        </span>
-                        <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
-                      </button>
-                      {
-                        productQuantity > 0 && (
-                          <span
-                            className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
+                            >
+                              Add to cart
+                            </span>
+                            <PlusIcon className="w-5 h-5 text-black flex-shrink-0" />
+                          </button>
+                          {
+                            productQuantity > 0 && (
+                              <span
+                                className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full
                                 bg-red-500 text-white text-xs flex items-center justify-center
                                 font-semibold shadow transition-all duration-300
                                 group-hover:translate-x-0"
-                          >
-                            {productQuantity}
-                          </span>
-                        )
-                      }
+                              >
+                                {productQuantity}
+                              </span>
+                            )
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-2 pb-2 flex items-center  gap-3">
+                      <h3 className="font-bold text-black text-sm leading-snug break-words flex-1">
+                        {name}
+                      </h3>
+
+                      <span className="font-bold text-black text-sm whitespace-nowrap">
+                        ₹ {price}
+                      </span>
                     </div>
                   </div>
-                </div>
-                <div className="px-2 pb-2 flex items-center  gap-3">
-                  <h3 className="font-bold text-black text-sm leading-snug break-words flex-1">
-                    {name}
-                  </h3>
-
-                  <span className="font-bold text-black text-sm whitespace-nowrap">
-                    ₹ {price}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
+                )
+              })}
         </div>
       </div>
 

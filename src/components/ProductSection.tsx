@@ -30,6 +30,7 @@ import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { useState } from "react";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 type Props = {
   filteredBikeProducts: any[];
   setSelectedCategory: (cat: string) => void;
@@ -47,8 +48,8 @@ const ProductsSection = ({
     ]),
   );
   const dispatch = useDispatch<TAppDispatch>()
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
-   const { enqueueSnackbar } = useSnackbar();
+  const profileDetails = useSelector(getProfileDetails);
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { incrementToCart, getQuantity } = useCart();
 
@@ -65,42 +66,39 @@ const ProductsSection = ({
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${subCategory}/${productId}`);
   }
 
-  async function handleWishList(productId: string) { 
-    const isCurrentlyWishlisted = wishlistMap[productId];
-      //This whole logic will change after Be changes//
+  async function handleWishList(product: ShopByProductDetailsType) {
+    const { _id: productId, isWishlist } = product;
+    const { phoneNumber = '' } = profileDetails;
+    const currentValue = wishlistMap[productId] ?? isWishlist;
+
     setWishlistMap((prev) => ({
       ...prev,
-      [productId]: !isCurrentlyWishlisted,
+      [productId]: !currentValue,
     }));
 
     try {
-      const action = isCurrentlyWishlisted
+      const action = currentValue
         ? removeWishlistServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         })
         : addWishListServiceAction({
-          phoneNumber: profileDetails?.phoneNumber,
-          productId,
+          phoneNumber,
+          productIds: [productId],
         });
 
       const result = await dispatch(action);
+
       if (result) {
-        enqueueSnackbar(
-          isCurrentlyWishlisted
-            ? "Product removed from wishlist"
-            : "Product added to wishlist",
-          {
-            variant: isCurrentlyWishlisted ? "info" : "success",
-            anchorOrigin: { vertical: "top", horizontal: "right" },
-            autoHideDuration: 2000,
-          },
-        );
+        enqueueSnackbar({
+          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
+          variant: currentValue ? "info" : "success",
+        });
       }
     } catch (error) {
       setWishlistMap((prev) => ({
         ...prev,
-        [productId]: isCurrentlyWishlisted,
+        [productId]: currentValue,
       }));
     }
   }
@@ -269,14 +267,14 @@ const ProductsSection = ({
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleWishList(product._id);
+                          handleWishList(product);
                         }}
                         sx={{
                           width: { xs: 28, md: 36 },
                           height: { xs: 28, md: 36 },
                           borderRadius: 2,
-                          color:  wishlistMap[product._id]?'black':"white",
-                          bgcolor:  wishlistMap[product._id]? "#FACC15":"rgba(255,255,255,0.1)",
+                          color: (wishlistMap[product._id] ?? product.isWishlist) ? 'black' : "white",
+                          bgcolor: (wishlistMap[product._id] ?? product.isWishlist) ? "#FACC15" : "rgba(255,255,255,0.1)",
                           transition: "all 0.2s",
                           "&:hover": {
                             bgcolor: "#FACC15",

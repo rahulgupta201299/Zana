@@ -1,4 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { useSnackbar } from "notistack";
 import {
   Dialog,
   DialogTitle,
@@ -17,8 +19,14 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { outOfStockDetails } from "@/Redux/Cart/Selectors";
 import { useMemo } from "react";
 import { OutOfStockDetail } from "@/Redux/Cart/Types";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { clearOutofStockItems } from "@/Redux/Cart/Reducer";
+import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { ROUTES } from "@/Constants/Routes";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { addWishlistName } from "@/Redux/Auth/Actions";
+import Loading from "./Loading";
 
 type ItemCardType = {
   productDetail: OutOfStockDetail
@@ -82,8 +90,12 @@ function ItemCard(props: ItemCardType) {
 export default function CartAttentionDialog() {
 
   const outOfStock = useSelector(outOfStockDetails)
+  const profileDetails = useSelector(getProfileDetails)
+  const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [addWishlistName]));
 
   const dispatch = useDispatch<TAppDispatch>()
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const open = outOfStock.length;
 
@@ -101,11 +113,20 @@ export default function CartAttentionDialog() {
   }
 
   async function handleMoveToWishlist() {
-    const data = outOfStock.map(item => item.product._id);
+    const { phoneNumber = '' } = profileDetails;
+    const productIds = outOfStock.map(item => item.product._id);
     try {
-
+      await dispatch(addWishListServiceAction({
+        phoneNumber,
+        productIds
+      }))
+      navigate(ROUTES.WISHLIST)
+      handleClose();
     } catch (error: any) {
-      
+      enqueueSnackbar({
+        message: "Failed to move items to wishlist",
+        variant: "error",
+      })
     }
   }
 
@@ -125,6 +146,7 @@ export default function CartAttentionDialog() {
         },
       }}
     >
+      {isLoading && <Loading />}
       <DialogTitle>
         <Stack direction="row" alignItems="center" spacing={1}>
           <WarningAmberRoundedIcon sx={{ color: "#f59e0b" }} />
