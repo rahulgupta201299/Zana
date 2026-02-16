@@ -28,13 +28,16 @@ import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { useNavigate } from "react-router";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import useCart from "@/hooks/useCart";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
+import { CartDetailResType } from "@/Redux/Cart/Types";
+import { cartModifyServiceName } from "@/Redux/Cart/Action";
 
 const Wishlist = () => {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate()
 
-  const { addToCart, getQuantity } = useCart();
+  const { getQuantity } = useCart();
 
   const actions = useMemo(
     () => ({
@@ -51,6 +54,10 @@ const Wishlist = () => {
   const isRemovingFromWishlist = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [removeWishlistName]),
   );
+  const isMovingToCart = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [cartModifyServiceName]),
+  );
+
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
 
   const getWishList = async () => {
@@ -86,9 +93,24 @@ const Wishlist = () => {
 
   async function handleMoveToBag(e: React.MouseEvent<HTMLButtonElement>, productId: string) {
     e.stopPropagation();
+
+    const { phoneNumber = '' } = profileDetails;
+    const quantityInCart = getQuantity(productId);
+
+    const items = [{
+      productId,
+      quantity: quantityInCart + 1,
+    }]
+
     try {
-      // TODO
-      // await
+      const response = await dispatch(cartModifyServiceAction({
+        phoneNumber,
+        items
+      })) as CartDetailResType
+
+      const { unProcessedItems = [] } = response || {};
+
+      if (unProcessedItems.length) throw new Error();
 
       enqueueSnackbar({
         message: "Product moved to bag successfully.",
@@ -135,7 +157,7 @@ const Wishlist = () => {
           </Typography>
         </Container>
       </Box>
-      {isRemovingFromWishlist && <Loading />}
+      {(isRemovingFromWishlist || isMovingToCart) && <Loading />}
       <Container
         sx={{
           py: { xs: "32px", md: "64px" },
