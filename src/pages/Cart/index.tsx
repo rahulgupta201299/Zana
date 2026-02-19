@@ -6,7 +6,7 @@ import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const CartCheckoutPage = () => {
+export default function Cart() {
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
@@ -227,6 +227,3 @@ const CartCheckoutPage = () => {
     </div>
   );
 };
-
-export default CartCheckoutPage;
-

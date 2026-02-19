@@ -1,3 +1,4 @@
+import { COUPON_TYPE_ENUM } from "@/Constants/AppConstant";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export type T_CART_REDUCER = {
@@ -9,6 +10,7 @@ export type T_CART_REDUCER = {
   };
   initialCartLoaded: boolean;
   isOpenCart: boolean;
+  isOpenCouponDialog: boolean;
 };
 
 export interface CartItemDetail {
@@ -77,9 +79,61 @@ export interface CartAddressType {
   country: string;
 }
 
-export type UpdateCartAddressReqType = UpdateCartAddressResType & { phoneNumber: string }
+export type UpdateCartAddressReqType = UpdateCartAddressResType & {
+  phoneNumber: string;
+};
 
 export interface UpdateCartAddressResType {
   shippingAddress: CartAddressType;
   billingAddress: CartAddressType;
 }
+
+export type DiscountType = COUPON_TYPE_ENUM.PERCENTAGE | COUPON_TYPE_ENUM.FIXED;
+
+export type CouponDetailsType = {
+  _id: string;
+  code: string;
+  type: DiscountType;
+  discount: number;
+  maxDiscount: number;
+  minCartAmount: number;
+  usageLimit: number;
+  usedCount: number;
+  isActive: boolean;
+  expiresAt: string;
+  description: string;
+  usedBy: string[];
+};
+
+export type AllCouponResType = {
+  coupons: CouponDetailsType[];
+  pagination: {
+    page: boolean;
+    limit: boolean;
+    total: boolean;
+    pages: boolean;
+  };
+};
+
+export type ApplyCouponReqType = {
+  couponCode: string;
+  phoneNumber: string;
+};
+
+export type ApplyCouponResType = {
+  couponCode: string;
+  couponType: COUPON_TYPE_ENUM;
+  discountAmount: number;
+  totalAmount: number;
+  subtotal: number;
+  shippingCost: number;
+  taxAmount: number;
+};
+
+export type RemoveCouponResType = {
+  totalAmount: number;
+  subtotal: number;
+  shippingCost: number;
+  taxAmount: number;
+  discountAmount: number;
+};

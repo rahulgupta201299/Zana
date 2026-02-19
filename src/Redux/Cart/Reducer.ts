@@ -57,6 +57,7 @@ export const INITIAL_STATE: T_CART_REDUCER = {
   outOfStocks: [],
   initialCartLoaded: false,
   isOpenCart: false,
+  isOpenCouponDialog: false,
 };
 
 const cartPersistConfig = {
@@ -71,6 +72,9 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
   reducers: {
     setOpenCart(state, action: PayloadAction<boolean>) {
       state.isOpenCart = action.payload;
+    },
+    setOpenCouponDialog(state, action: PayloadAction<boolean>) {
+      state.isOpenCouponDialog = action.payload;
     },
     setProcessedCart(state, action: PayloadAction<CartItemDetail[]>) {
       const productList = action.payload;
@@ -129,6 +133,7 @@ const slice = createSlice(sliceOptions);
 export const {
   resetCart,
   setOpenCart,
+  setOpenCouponDialog,
   setProcessedCart,
   clearOutofStockItems,
 } = slice.actions;
