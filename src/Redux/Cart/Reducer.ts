@@ -8,14 +8,22 @@ import storage from "redux-persist/lib/storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { SLICE_NAME as CartSliceName } from "@/Redux/Cart/Selectors";
 import {
+  ApplyCouponResType,
   CartDetailResType,
   CartItemDetail,
   GetCartDetailResType,
+  RemoveCouponResType,
   T_CART_REDUCER,
   UpdateCartAddressResType,
 } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { cartModifyActions, getCartDetailActions, updateCartAddressActions } from "./Action";
+import {
+  applyCouponActions,
+  cartModifyActions,
+  getCartDetailActions,
+  removeCouponActions,
+  updateCartAddressActions,
+} from "./Action";
 
 export const INITIAL_STATE: T_CART_REDUCER = {
   cartDetail: {
@@ -57,6 +65,7 @@ export const INITIAL_STATE: T_CART_REDUCER = {
   outOfStocks: [],
   initialCartLoaded: false,
   isOpenCart: false,
+  isOpenCouponDialog: false,
 };
 
 const cartPersistConfig = {
@@ -72,6 +81,9 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     setOpenCart(state, action: PayloadAction<boolean>) {
       state.isOpenCart = action.payload;
     },
+    setOpenCouponDialog(state, action: PayloadAction<boolean>) {
+      state.isOpenCouponDialog = action.payload;
+    },
     setProcessedCart(state, action: PayloadAction<CartItemDetail[]>) {
       const productList = action.payload;
       state.cartDetail.processedItems = productList;
@@ -81,7 +93,10 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
         0,
       );
       state.cartDetail.subtotal = subtotal;
-      state.cartDetail.totalAmount = subtotal + state.cartDetail.shippingCost - state.cartDetail.discountAmount;
+      state.cartDetail.totalAmount =
+        subtotal +
+        state.cartDetail.shippingCost -
+        state.cartDetail.discountAmount;
     },
     clearOutofStockItems(state) {
       state.outOfStocks = [];
@@ -116,11 +131,61 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
         state.initialCartLoaded = true;
       },
     );
-    builder.addCase(updateCartAddressActions.success, (state, action: PayloadAction<UpdateCartAddressResType>) => {
-      const { shippingAddress, billingAddress } = action.payload
-      state.cartAddress.shippingAddress = shippingAddress;
-      state.cartAddress.billingAddress = billingAddress;
-    })
+    builder.addCase(
+      updateCartAddressActions.success,
+      (state, action: PayloadAction<UpdateCartAddressResType>) => {
+        const { shippingAddress, billingAddress } = action.payload;
+        state.cartAddress.shippingAddress = shippingAddress;
+        state.cartAddress.billingAddress = billingAddress;
+      },
+    );
+    builder.addCase(
+      removeCouponActions.success,
+      (state, action: PayloadAction<RemoveCouponResType>) => {
+        const {
+          totalAmount = 0,
+          discountAmount = 0,
+          subtotal = 0,
+          shippingCost = 0,
+          taxAmount = 0,
+        } = action.payload;
+
+        state.cartDetail = {
+          ...state.cartDetail,
+          appliedCoupon: "",
+          couponCode: "",
+          discountAmount,
+          totalAmount,
+          subtotal,
+          shippingCost,
+          taxAmount,
+        };
+      },
+    );
+    builder.addCase(
+      applyCouponActions.success,
+      (state, action: PayloadAction<ApplyCouponResType>) => {
+        const {
+          couponCode = "",
+          totalAmount = 0,
+          discountAmount = 0,
+          subtotal = 0,
+          shippingCost = 0,
+          taxAmount = 0,
+        } = action.payload;
+
+        state.cartDetail = {
+          ...state.cartDetail,
+          appliedCoupon: "",
+          couponCode,
+          discountAmount,
+          totalAmount,
+          subtotal,
+          shippingCost,
+          taxAmount,
+        };
+      },
+    );
   },
 };
 
@@ -129,6 +194,7 @@ const slice = createSlice(sliceOptions);
 export const {
   resetCart,
   setOpenCart,
+  setOpenCouponDialog,
   setProcessedCart,
   clearOutofStockItems,
 } = slice.actions;

@@ -23,3 +23,8 @@ export enum SESSION_STORAGE {
 export enum COUNTRY_MAPPER {
   INDIA = 'India'
 }
+
+export const COUPON_TYPE = {
+  PERCENTAGE: "PERCENTAGE",
+  FIXED: "FIXED",
+}

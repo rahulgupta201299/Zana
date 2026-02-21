@@ -97,8 +97,6 @@ export default function CartAttentionDialog() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const open = outOfStock.length;
-
   const unavailableStockCount = useMemo(() => {
     return outOfStock.reduce((acc, curr) => acc + curr.quantity, 0)
   }, [outOfStock.length])
@@ -129,8 +127,6 @@ export default function CartAttentionDialog() {
       })
     }
   }
-
-  if (!open) return null;
 
   return (
     <Dialog

@@ -4,12 +4,13 @@ import {
   Typography,
   IconButton,
   Button,
+  Stack,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { X, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { setOpenCart } from "@/Redux/Cart/Reducer";
+import { setOpenCart, setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
@@ -30,7 +31,7 @@ const CartSidebar = ({
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
-  const { subtotal = 0, discountAmount: discount = 0, totalAmount: total = 0, processedItems = [] } = cartDetail;
+  const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [] } = cartDetail;
 
   const totalItems = getTotalQuantity()
 
@@ -44,6 +45,10 @@ const CartSidebar = ({
 
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
     onClose()
+  }
+
+  function handleApplyCoupon() {
+    dispatch(setOpenCouponDialog(true))
   }
 
   const CartContent = (
@@ -184,7 +189,7 @@ const CartSidebar = ({
                       fontWeight={700}
                       fontSize={{ xs: 18, md: 22 }}
                     >
-                      ₹ {price.toLocaleString()}
+                      ₹ {price}
                     </Typography>
 
 
@@ -280,7 +285,7 @@ const CartSidebar = ({
           </Box>
 
 
-          {discount > 0 && (
+          {discountAmount > 0 && (
             <Box
               sx={{
                 display: "flex",
@@ -289,35 +294,30 @@ const CartSidebar = ({
                 mb: 1,
               }}
             >
-              <Typography>Discount (10%)</Typography>
+              <Typography>Discount ({couponCode})</Typography>
               <Typography>
-                - ₹{" "}
-                {discount.toLocaleString("en-IN", {
-                  minimumFractionDigits: 2,
-                })}
+                - ₹{discountAmount}
               </Typography>
             </Box>
           )}
 
-
-          {subtotal > 8000 && subtotal <= 10000 && (
-            <Box
+          <Stack direction="row" justifyContent="flex-end">
+            <Typography
               sx={{
-                bgcolor: "rgba(255,255,0,0.1)",
-                border: "1px solid rgba(255,255,0,0.3)",
-                p: 1.5,
-                borderRadius: 1,
-                textAlign: "center",
-                mb: 2,
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: '#3B82F6',
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.8,
+                },
               }}
+              onClick={handleApplyCoupon}
             >
-              <Typography sx={{ color: "yellow", fontSize: 12 }}>
-                Add ₹ {(10000 - subtotal).toLocaleString()} more to get 10%
-                discount!
-              </Typography>
-            </Box>
-          )}
-
+              {discountAmount > 0 ? "update" : "apply"} coupon
+            </Typography>
+          </Stack>
 
           <Box
             sx={{

@@ -1,26 +1,35 @@
-import { useSelector } from "react-redux";
+import { Stack, Typography } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { TAppDispatch } from "@/Configurations/AppStore";
+import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 
-const CartCheckoutPage = () => {
+export default function Cart() {
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
 
   const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
-  const { subtotal, discountAmount: discount, totalAmount: total, processedItems } = cartDetail
+  const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '' } = cartDetail
 
   const totalItems = getTotalQuantity()
+
+  const dispatch = useDispatch<TAppDispatch>();
 
   function handleProductClick(productCategory: string, productName: string, productId: string) {
     const category = replaceSpacesWithHiphen(productCategory);
     const name = replaceSpacesWithHiphen(productName);
 
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+  }
+
+  function handleApplyCoupon() {
+    dispatch(setOpenCouponDialog(true))
   }
 
   return (
@@ -163,46 +172,55 @@ const CartCheckoutPage = () => {
                   {/* Items Count */}
                   <div className="flex justify-between text-white/80">
                     <span>Items ({totalItems})</span>
-                    <span>₹ {subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span>₹ {subtotal}</span>
                   </div>
 
                   {/* Subtotal */}
                   <div className="flex justify-between text-white">
                     <span className="font-semibold">Subtotal</span>
-                    <span className="font-semibold">₹ {subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span className="font-semibold">₹ {subtotal}</span>
                   </div>
 
                   {/* Discount (if applicable) */}
-                  {discount > 0 && (
+                  {discountAmount > 0 && (
                     <div className="flex justify-between text-green-400">
-                      <span className="font-semibold">Discount (10%)</span>
-                      <span className="font-semibold">- ₹ {discount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                    </div>
-                  )}
-
-                  {/* Discount threshold notification */}
-                  {subtotal > 8000 && subtotal <= 10000 && (
-                    <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-3">
-                      <p className="text-yellow-400 text-sm text-center">
-                        🎉 Add ₹ {(10000 - subtotal).toLocaleString()} more to get 10% discount!
-                      </p>
+                      <span className="font-semibold">Discount ({couponCode})</span>
+                      <span className="font-semibold">- ₹ {discountAmount}</span>
                     </div>
                   )}
 
                   {/* Discount success message */}
-                  {discount > 0 && (
+                  {discountAmount > 0 && (
                     <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3">
                       <p className="text-green-400 text-sm text-center">
-                        🎉 You saved ₹ {discount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}!
+                        🎉 You saved ₹ {discountAmount}!
                       </p>
                     </div>
                   )}
+
+                  <Stack direction="row" justifyContent="flex-end">
+                    <Typography
+                      sx={{
+                        textTransform: 'uppercase',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: '#3B82F6',
+                        cursor: "pointer",
+                        "&:hover": {
+                          opacity: 0.8,
+                        },
+                      }}
+                      onClick={handleApplyCoupon}
+                    >
+                      {discountAmount > 0 ? "update" : "apply"} coupon
+                    </Typography>
+                  </Stack>
 
                   <div className="border-t border-white/20 pt-4">
                     <div className="flex justify-between items-center">
                       <span className="text-white text-xl font-bold">Total</span>
                       <span className="text-yellow-400 text-2xl font-bold">
-                        ₹ {total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        ₹ {totalAmount}
                       </span>
                     </div>
                   </div>
@@ -227,6 +245,3 @@ const CartCheckoutPage = () => {
     </div>
   );
 };
-
-export default CartCheckoutPage;
-

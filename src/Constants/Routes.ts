@@ -7,10 +7,8 @@ export const SUB_ROUTES = Object.freeze({
 
 export const ROUTES = Object.freeze({
   BASE_URL: '/',
-  TOP_SELLING_PRODUCTS: '/top-selling-products',
   PRODUCT_DETAIL: `${SUB_ROUTES.PRODUCT}/:productCategory/:productItem/:productId`,
   PRODUCT_CATALOG: '/product-catalog',
-  ACCESSORIES: '/accessories',
   BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
   BIKE_DETAIL: `/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
   BIKE_ACCESSORIES: '/bike-accessories',
