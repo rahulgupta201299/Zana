@@ -9,6 +9,7 @@ export type T_CART_REDUCER = {
   };
   initialCartLoaded: boolean;
   isOpenCart: boolean;
+  isOpenCouponDialog: boolean;
 };
 
 export interface CartItemDetail {
@@ -77,9 +78,59 @@ export interface CartAddressType {
   country: string;
 }
 
-export type UpdateCartAddressReqType = UpdateCartAddressResType & { phoneNumber: string }
+export type UpdateCartAddressReqType = UpdateCartAddressResType & {
+  phoneNumber: string;
+};
 
 export interface UpdateCartAddressResType {
   shippingAddress: CartAddressType;
   billingAddress: CartAddressType;
 }
+
+export type CouponDetailsType = {
+  _id: string;
+  code: string;
+  type: string;
+  discount: number;
+  maxDiscount: number;
+  minCartAmount: number;
+  usageLimit: number;
+  usedCount: number;
+  isActive: boolean;
+  expiresAt: string;
+  description: string;
+  usedBy: string[];
+};
+
+export type AllCouponResType = {
+  coupons: CouponDetailsType[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+};
+
+export type ApplyCouponReqType = {
+  couponCode: string;
+  phoneNumber: string;
+};
+
+export type ApplyCouponResType = {
+  couponCode: string;
+  couponType: string;
+  discountAmount: number;
+  totalAmount: number;
+  subtotal: number;
+  shippingCost: number;
+  taxAmount: number;
+};
+
+export type RemoveCouponResType = {
+  totalAmount: number;
+  subtotal: number;
+  shippingCost: number;
+  taxAmount: number;
+  discountAmount: number;
+};

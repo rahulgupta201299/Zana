@@ -10,9 +10,7 @@ import { lazyLoadPage } from '@/Helpers/Route'
 import Loading from '@/components/Loading'
 
 const Landing = lazyLoadPage(() => import("@/pages/Landing"), Loading);
-const TopSellingProductsPage = lazyLoadPage(() => import("@/pages/TopSellingProductsPage"), Loading);
 const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"), Loading);
-const AccessoriesPage = lazyLoadPage(() => import("@/pages/AccessoriesPage"), Loading);
 const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"), Loading);
 const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"), Loading);
 const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"), Loading);
@@ -21,8 +19,7 @@ const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"), Loading);
 const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"), Loading);
 const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"), Loading);
 const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"), Loading);
-const CartCheckoutPage = lazyLoadPage(() => import("@/pages/CartCheckoutPage"), Loading);
-const SearchPage = lazyLoadPage(() => import("@/pages/SearchPage"), Loading);
+const Cart = lazyLoadPage(() => import("@/pages/Cart"), Loading);
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"), Loading);
 const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"), Loading);
 const Checkout = lazyLoadPage(() => import("@/pages/Checkout"), Loading);
@@ -39,9 +36,7 @@ export const routeObj: RouteObject[] = [
     errorElement: <Navigate to={ROUTES.ANY} replace />,
     children: [
       { path: ROUTES.BASE_URL, element: Landing },
-      { path: ROUTES.TOP_SELLING_PRODUCTS, element: TopSellingProductsPage },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
-      { path: ROUTES.ACCESSORIES, element: AccessoriesPage },
       { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
       { path: ROUTES.BIKES, element: BikesPage },
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
@@ -50,8 +45,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },
       { path: ROUTES.OUR_STORIES, element: OurStoriesPage },
       { path: ROUTES.BIKE_VIEW, element: BikeViewPage },
-      { path: ROUTES.CART, element: CartCheckoutPage },
-      { path: ROUTES.SEARCH, element: SearchPage },
+      { path: ROUTES.CART, element: Cart },
       { path: ROUTES.CONTACT_US, element: ContactUsForm },
       { path: ROUTES.CHECKOUT, element: Checkout },
       { path: ROUTES.PAGE_NOT_FOUND, element: NotFound },
