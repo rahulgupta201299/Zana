@@ -18,6 +18,7 @@ import {
   RadioGroup,
   IconButton,
   InputAdornment,
+  Stack,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -32,12 +33,13 @@ import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
-import { isdCodeDetails } from "@/Redux/Auth/Selectors";
+import { getProfileDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
+import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -68,12 +70,10 @@ interface CheckoutFormValues {
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, validateCart, clearCart } = useCart();
 
-  const phoneNumber = useSelector<TAppStore, string>(
-    (state) => state.auth.login.phoneNumber
-  );
   const cartDetail = useSelector(cartDetailSelector)
   const isdCode = useSelector(isdCodeDetails)
   const cartAddressSelector = useSelector(cartAddressDetails)
+  const profileDetails = useSelector(getProfileDetails);
   const {
     shippingAddress: shippingAddressSelector,
     billingAddress: billingAddressSelector
@@ -91,9 +91,14 @@ export default function CheckoutPage() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0 } = cartDetail
+  const { phoneNumber = '' } = profileDetails;
 
   function performOps() {
     if (!phoneNumber) dispatch(setOpenSignupPopup(true))
+  }
+
+  function handleApplyCoupon() {
+    dispatch(setOpenCouponDialog(true))
   }
 
   useEffect(() => {
@@ -1296,6 +1301,7 @@ export default function CheckoutPage() {
               )
             })}
           </Box>
+
           {discountAmount > 0 && (
             <>
               <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6">
@@ -1319,6 +1325,28 @@ export default function CheckoutPage() {
               </Box>
             </>
           )}
+
+          {
+            phoneNumber && (
+              <Stack mt={discountAmount > 0 ? 0 : 4} direction="row" justifyContent="flex-end">
+                <Typography
+                  sx={{
+                    textTransform: 'uppercase',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: '#3B82F6',
+                    cursor: "pointer",
+                    "&:hover": {
+                      opacity: 0.8,
+                    },
+                  }}
+                  onClick={handleApplyCoupon}
+                >
+                  {discountAmount > 0 ? "update" : "apply"} coupon
+                </Typography>
+              </Stack>
+            )
+          }
 
           <Box
             sx={{

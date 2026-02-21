@@ -15,6 +15,7 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
 import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
 
 interface CartSidebarProps {
   variant?: "drawer" | "checkout";
@@ -26,12 +27,14 @@ const CartSidebar = ({
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
+  const profileDetails = useSelector(getProfileDetails);
 
   const dispatch = useDispatch<TAppDispatch>()
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
   const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [] } = cartDetail;
+  const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
 
@@ -301,23 +304,27 @@ const CartSidebar = ({
             </Box>
           )}
 
-          <Stack direction="row" justifyContent="flex-end">
-            <Typography
-              sx={{
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: '#3B82F6',
-                cursor: "pointer",
-                "&:hover": {
-                  opacity: 0.8,
-                },
-              }}
-              onClick={handleApplyCoupon}
-            >
-              {discountAmount > 0 ? "update" : "apply"} coupon
-            </Typography>
-          </Stack>
+          {
+            phoneNumber && (
+              <Stack direction="row" justifyContent="flex-end">
+                <Typography
+                  sx={{
+                    textTransform: 'uppercase',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: '#3B82F6',
+                    cursor: "pointer",
+                    "&:hover": {
+                      opacity: 0.8,
+                    },
+                  }}
+                  onClick={handleApplyCoupon}
+                >
+                  {discountAmount > 0 ? "update" : "apply"} coupon
+                </Typography>
+              </Stack>
+            )
+          }
 
           <Box
             sx={{

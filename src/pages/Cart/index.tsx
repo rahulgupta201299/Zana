@@ -8,14 +8,18 @@ import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
+import { getProfileDetails } from "@/Redux/Auth/Selectors";
 
 export default function Cart() {
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
+  const profileDetails = useSelector(getProfileDetails);
 
   const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
+
   const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '' } = cartDetail
+  const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
 
@@ -198,23 +202,27 @@ export default function Cart() {
                     </div>
                   )}
 
-                  <Stack direction="row" justifyContent="flex-end">
-                    <Typography
-                      sx={{
-                        textTransform: 'uppercase',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        color: '#3B82F6',
-                        cursor: "pointer",
-                        "&:hover": {
-                          opacity: 0.8,
-                        },
-                      }}
-                      onClick={handleApplyCoupon}
-                    >
-                      {discountAmount > 0 ? "update" : "apply"} coupon
-                    </Typography>
-                  </Stack>
+                  {
+                    phoneNumber && (
+                      <Stack direction="row" justifyContent="flex-end">
+                        <Typography
+                          sx={{
+                            textTransform: 'uppercase',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            color: '#3B82F6',
+                            cursor: "pointer",
+                            "&:hover": {
+                              opacity: 0.8,
+                            },
+                          }}
+                          onClick={handleApplyCoupon}
+                        >
+                          {discountAmount > 0 ? "update" : "apply"} coupon
+                        </Typography>
+                      </Stack>
+                    )
+                  }
 
                   <div className="border-t border-white/20 pt-4">
                     <div className="flex justify-between items-center">
