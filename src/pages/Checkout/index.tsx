@@ -90,7 +90,7 @@ export default function CheckoutPage() {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { subtotal = 0, totalAmount: total = 0, discountAmount: discount = 0, processedItems = [] } = cartDetail
+  const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0 } = cartDetail
 
   function performOps() {
     if (!phoneNumber) dispatch(setOpenSignupPopup(true))
@@ -1249,7 +1249,7 @@ export default function CheckoutPage() {
                         fontWeight={300}
                         fontSize={{ xs: 18, md: 22 }}
                       >
-                        ₹ {price.toLocaleString()}
+                        ₹ {price}
                       </Typography>
 
                       <Box
@@ -1296,15 +1296,11 @@ export default function CheckoutPage() {
               )
             })}
           </Box>
-          {discount > 0 && (
+          {discountAmount > 0 && (
             <>
               <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6">
                 <p className="text-green-400 text-sm text-center">
-                  🎉 You saved ₹{" "}
-                  {discount.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                  })}
-                  !
+                  🎉 You saved ₹ {discountAmount}!
                 </p>
               </div>
               <Box
@@ -1316,12 +1312,9 @@ export default function CheckoutPage() {
                   mt: 3,
                 }}
               >
-                <Typography>Discount (10%)</Typography>
+                <Typography>Discount ({couponCode})</Typography>
                 <Typography>
-                  - ₹{" "}
-                  {discount.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                  })}
+                  - ₹ {discountAmount}
                 </Typography>
               </Box>
             </>
@@ -1337,10 +1330,7 @@ export default function CheckoutPage() {
           >
             <Typography>Subtotal</Typography>
             <Typography fontWeight={600}>
-              ₹{" "}
-              {subtotal.toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-              })}
+              ₹ {subtotal}
             </Typography>
           </Box>
           <Box
@@ -1352,28 +1342,8 @@ export default function CheckoutPage() {
             }}
           >
             <Typography>Shipping</Typography>
-            <Typography fontWeight={600}>{0}</Typography>
+            <Typography fontWeight={600}>{shippingCost}</Typography>
           </Box>
-
-          {subtotal > 8000 && subtotal <= 10000 && (
-            <Box
-              sx={{
-                bgcolor: "rgba(255,255,0,0.1)",
-                color: "#F5F4F4",
-                border: "1px solid rgba(255,255,0,0.3)",
-                p: 1.5,
-                mt: 3,
-                borderRadius: 1,
-                textAlign: "center",
-                mb: 2,
-              }}
-            >
-              <Typography sx={{ color: "yellow", fontSize: 12 }}>
-                Add ₹ {(10000 - subtotal).toLocaleString()} more to get 10%
-                discount!
-              </Typography>
-            </Box>
-          )}
 
           <Box
             sx={{
@@ -1390,14 +1360,11 @@ export default function CheckoutPage() {
                 Total
               </Typography>
               <Typography fontWeight={700} fontSize={12}>
-                Including Rs 100.00 in taxes
+                Including {"Rs"} {taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
               </Typography>
             </Box>
             <Typography color="#F5F4F4" fontWeight={500} fontSize={32}>
-              ₹{" "}
-              {total.toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-              })}
+              ₹ {totalAmount}
             </Typography>
           </Box>
         </Grid>

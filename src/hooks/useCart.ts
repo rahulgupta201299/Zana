@@ -35,7 +35,9 @@ export default function useCart() {
 
     try {
       (await dispatch(getCartDetailServiceAction())) as CartDetailResType;
-    } catch (error: any) {}
+    } catch (error: any) {
+      throw error;
+    }
   }
 
   async function handleSaveToDB(

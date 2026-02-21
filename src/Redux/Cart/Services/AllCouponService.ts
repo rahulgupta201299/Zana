@@ -3,15 +3,17 @@ import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { allCouponActions } from "../Action";
 import { AllCouponResType } from "../Types";
+import { QueryParamsType } from "@/Redux/Product/Types";
 
 const network = new Network();
 
-async function allCouponService(): Promise<AllCouponResType> {
+async function allCouponService(queryParams: QueryParamsType): Promise<AllCouponResType> {
   const options = {
     url: "/api/v1/coupon",
     method: API_METHOD_ENUM.GET,
     params: {
       isActive: true,
+      ...queryParams,
     },
   };
   const response = await network.request(options);

@@ -56,8 +56,6 @@ function InfoRow({ label, value }: { label: string; value: string; }) {
 }
 
 export default function OrderConfirmDialog() {
-
-	const open = useSelector((state: TAppStore) => state.order.openOrderPopup)
 	const newOrderPlaced = useSelector(newOrderPlacedDetails)
 
 	const navigate = useNavigate()
@@ -72,8 +70,6 @@ export default function OrderConfirmDialog() {
 		navigate(ROUTES.PRODUCT_CATALOG)
 		dispatch(setOpenOrder(false))
 	}
-
-	if (!open) return null
 
 	const { orderId = '', orderNumber='', orderStatus='', paymentId='' } = newOrderPlaced;
 

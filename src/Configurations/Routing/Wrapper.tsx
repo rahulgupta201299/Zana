@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux'
 import { TAppStore } from '../AppStore'
 import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors'
 import { cartModifyServiceName } from '@/Redux/Cart/Action'
-import { openCartSelector } from '@/Redux/Cart/Selectors'
+import { openCartSelector, outOfStockDetails } from '@/Redux/Cart/Selectors'
 import OrderConfirmDialog from '@/pages/OrderDetails/OrderConfirmModal'
 import CouponDialog from '@/components/CoupounDialog'
 import { onMountChecks } from '../Service/Service'
@@ -26,6 +26,8 @@ function Wrapper() {
 	const isOpenCart = useSelector(openCartSelector)
 	const isOpenSignupPopup = useSelector((state: TAppStore) => state.auth.openSignupPopup)
 	const isOpenCouponDialog = useSelector((state: TAppStore) => state.cart.isOpenCouponDialog)
+	const isOpenOrderPopup = useSelector((state: TAppStore) => state.order.openOrderPopup)
+	const outOfStock = useSelector(outOfStockDetails)
 
 	useNetwork()
 
@@ -45,8 +47,8 @@ function Wrapper() {
 			<Outlet />
 			<Footer />
 			<WhatsAppButton />
-			<CartAttentionDialog />
-			<OrderConfirmDialog />
+			{outOfStock.length > 0 && <CartAttentionDialog />}
+			{isOpenOrderPopup && <OrderConfirmDialog />}
 		</Box>
 	)
 }

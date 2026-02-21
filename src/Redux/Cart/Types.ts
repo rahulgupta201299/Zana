@@ -1,4 +1,3 @@
-import { COUPON_TYPE_ENUM } from "@/Constants/AppConstant";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export type T_CART_REDUCER = {
@@ -88,12 +87,10 @@ export interface UpdateCartAddressResType {
   billingAddress: CartAddressType;
 }
 
-export type DiscountType = COUPON_TYPE_ENUM.PERCENTAGE | COUPON_TYPE_ENUM.FIXED;
-
 export type CouponDetailsType = {
   _id: string;
   code: string;
-  type: DiscountType;
+  type: string;
   discount: number;
   maxDiscount: number;
   minCartAmount: number;
@@ -108,10 +105,10 @@ export type CouponDetailsType = {
 export type AllCouponResType = {
   coupons: CouponDetailsType[];
   pagination: {
-    page: boolean;
-    limit: boolean;
-    total: boolean;
-    pages: boolean;
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
   };
 };
 
@@ -122,7 +119,7 @@ export type ApplyCouponReqType = {
 
 export type ApplyCouponResType = {
   couponCode: string;
-  couponType: COUPON_TYPE_ENUM;
+  couponType: string;
   discountAmount: number;
   totalAmount: number;
   subtotal: number;
