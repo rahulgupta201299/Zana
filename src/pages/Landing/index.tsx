@@ -16,6 +16,7 @@ import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourit
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import { getGarageFavorite, getNewArrivalsList } from "@/Redux/Landing/Selectors";
 
+
 function index() {
   const garageFavoriteList = useSelector(getGarageFavorite)
   const newArrivalsList = useSelector(getNewArrivalsList)
@@ -25,6 +26,7 @@ function index() {
     () => ({
       newArrivalList: () => dispatch(newArrivalsServiceAction()),
       garageFavorite: () => dispatch(garageFavoriteServiceAction()),
+ 
     }),
     [dispatch]
   );
@@ -36,8 +38,7 @@ function index() {
 
     if (!garageFavoriteList.length) requests.push(retry(() => actions.newArrivalList()))
     if (!newArrivalsList.length) requests.push(retry(() => actions.garageFavorite()))
-
-    await Promise.allSettled(requests)
+        await Promise.allSettled(requests)
     // results.forEach((result, index) => {
     //   if (result.status === "fulfilled") {
     //     console.log(`API ${index} succeeded:`, result.value);

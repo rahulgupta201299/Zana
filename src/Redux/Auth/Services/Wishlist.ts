@@ -10,10 +10,14 @@ const network = new Network();
 async function getWishListService(): Promise<WishListResType> {
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
+  const currency = state.landing.selectedCurrency;
   
   const options = {
     url: `/api/v1/wishlist/${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
+     params: {
+      currency: currency,
+    },
   };
   const response = await network.request(options);
   const { data } = response;

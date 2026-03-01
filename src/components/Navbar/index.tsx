@@ -1,7 +1,20 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { Box, Button } from "@mui/material";
-import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
@@ -21,7 +34,11 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import useCart from "@/hooks/useCart";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
-
+import {
+  getCurrencyList,
+  getSelectedCurrency,
+} from "@/Redux/Landing/Selectors";
+import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 
 type NavbarPropsType = {
   isMobile: boolean;
@@ -30,31 +47,32 @@ type NavbarPropsType = {
 function Navbar({ isMobile }: NavbarPropsType) {
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams()
-  const bikeType = params?.bikeType?.toLowerCase() || ''
+  const params = useParams();
+  const bikeType = params?.bikeType?.toLowerCase() || "";
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(
-    null
+    null,
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const { verified } = useSelector(getLoginDetails)
-
+  const { verified } = useSelector(getLoginDetails);
+  const currencies = useSelector(getCurrencyList);
+  const selectedCurrency = useSelector(getSelectedCurrency);
   const containerRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLDivElement>(null);
 
   const { getTotalQuantity } = useCart();
 
-  const isZProPath = bikeType === BikeCategoryEnum.ZPRO
+  const isZProPath = bikeType === BikeCategoryEnum.ZPRO;
 
-  const dispatch = useDispatch<TAppDispatch>()
+  const dispatch = useDispatch<TAppDispatch>();
 
-  const totalItems = getTotalQuantity()
+  const totalItems = getTotalQuantity();
 
   function handleMenuItemClick(
     event: React.MouseEvent<HTMLElement>,
-    item: MenuItemsType
+    item: MenuItemsType,
   ) {
     const { name, route } = item;
 
@@ -78,7 +96,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
           navigate(ROUTES.PROFILE);
         } else {
           // setSelectedTopItem(MenuItemsName.PROFILE);
-          dispatch(setOpenSignupPopup(true))
+          dispatch(setOpenSignupPopup(true));
         }
         break;
 
@@ -87,7 +105,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
         break;
 
       case MenuItemsName.CART:
-        dispatch(setOpenCart(true))
+        dispatch(setOpenCart(true));
         break;
 
       default:
@@ -97,20 +115,25 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
   useEffect(() => {
     if (location.pathname !== ROUTES.BASE_URL) {
-      containerRef.current!.style.position = 'fixed';
+      containerRef.current!.style.position = "fixed";
       return;
     }
 
-    const observer = new IntersectionObserver(entries => {
+    const observer = new IntersectionObserver((entries) => {
       const entry = entries[0];
-      if (!entry.isIntersecting && entry.intersectionRatio === 0) containerRef.current.style.position = 'fixed';
-      else containerRef.current.style.position = 'sticky';
-    })
+      if (!entry.isIntersecting && entry.intersectionRatio === 0)
+        containerRef.current.style.position = "fixed";
+      else containerRef.current.style.position = "sticky";
+    });
 
-    observer.observe(heroSectionRef.current)
+    observer.observe(heroSectionRef.current);
 
-    return () => observer.disconnect()
+    return () => observer.disconnect();
   }, [location.pathname]);
+
+  const handleChange = (value) => {
+    dispatch(selectedCurrencyActions(value));
+  };
 
   return (
     <Box>
@@ -154,7 +177,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
           {/* LOGO CENTER */}
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-            <Link to={ROUTES.BASE_URL} style={{ display: "flex", cursor: 'pointer' }}>
+            <Link
+              to={ROUTES.BASE_URL}
+              style={{ display: "flex", cursor: "pointer" }}
+            >
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
@@ -176,9 +202,68 @@ function Navbar({ isMobile }: NavbarPropsType) {
               flex: 1,
               display: "flex",
               justifyContent: "flex-end",
-              gap: isMobile ? 3 : 6,
+              gap: isMobile ? 1 : 3,
             }}
           >
+            <FormControl
+              size="small"
+              sx={{
+                borderRadius: 1,
+                // minWidth: isMobile ? 20 : 80, // 👈 smaller width on mobile
+              }}
+            >
+              <Select
+                value={selectedCurrency}
+                onChange={(e) => handleChange(e.target.value)}
+                sx={{
+                  color: "white",
+                  fontSize: isMobile ? "0.8rem" : "0.9rem",
+                  height: isMobile ? 32 : 40, 
+                  ".MuiSelect-select": {
+                    py: isMobile ? 0.5 : 1, 
+                    paddingRight: isMobile ? "24px !important" : "32px !important",                 
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white",
+                  },
+                  ".MuiSvgIcon-root": {
+                    color: "white",
+                    fontSize: isMobile ? "1rem" : "1.25rem", 
+                  },
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: "#1e1e1e",
+                      color: "white",
+                    },
+                  },
+                }}
+                renderValue={(selected) => {
+                  const selectedCurrency = currencies.find(
+                    (item) => item.code === selected,
+                  );
+                  return selectedCurrency
+                    ? isMobile
+                      ? selectedCurrency.symbol
+                      : `${selectedCurrency.symbol} ${selectedCurrency.code}`
+                    : "";
+                }}
+              >
+                {currencies.map((item) => (
+                  <MenuItem key={item.code} value={item.code}>
+                    {isMobile ? item.symbol : `${item.symbol} - ${item.code}`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             {TopLevelItems.map((item, ind) => {
               const { name, Component } = item;
               return (

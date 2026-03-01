@@ -28,6 +28,8 @@ import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { ProductDetailParamsType } from "../ProductDetail/Types";
+import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -57,6 +59,8 @@ const ProductCatalogPage = () => {
   const LIMIT_PER_PAGE = 12;
   const profileDetails = useSelector(getProfileDetails);
   const dispatch = useDispatch<TAppDispatch>();
+  const selectedCurrency = useSelector(getSelectedCurrency);
+  console.log(selectedCurrency)
 
   function handleProductClick(
     productCategory: string,
@@ -78,11 +82,19 @@ const ProductCatalogPage = () => {
 
       const action =
         type === ALL_CATEGORY
-          ? AllProductService({ page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber })
+          ? AllProductService({
+              page,
+              limit: LIMIT_PER_PAGE,
+              phoneNumber: profileDetails?.phoneNumber,
+            })
           : CategoryProductService({
-            category: type,
-            queryParams: { page, limit: LIMIT_PER_PAGE, phoneNumber: profileDetails?.phoneNumber },
-          });
+              category: type,
+              queryParams: {
+                page,
+                limit: LIMIT_PER_PAGE,
+                phoneNumber: profileDetails?.phoneNumber,
+              },
+            });
 
       const { data, pagination } = (await dispatch(
         action,
@@ -98,9 +110,17 @@ const ProductCatalogPage = () => {
 
   async function handleWishList(product: ShopByProductDetailsType) {
     const { _id: productId, isWishlist } = product;
-    const { phoneNumber = '' } = profileDetails;
-    const currentValue =
-      wishlistMap[productId] ?? isWishlist;
+    const { phoneNumber = "" } = profileDetails;
+    
+    const currentValue = wishlistMap[productId] ?? isWishlist;
+    if(!phoneNumber){
+       enqueueSnackbar({
+          message:  "Login required to save products to your wishlist.",
+          variant: "info",
+        });
+      dispatch(setOpenSignupPopup(true));
+      return
+    }
     setWishlistMap((prev) => ({
       ...prev,
       [productId]: !currentValue,
@@ -109,13 +129,13 @@ const ProductCatalogPage = () => {
     try {
       const action = currentValue
         ? removeWishlistServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        })
+            phoneNumber,
+            productIds: [productId],
+          })
         : addWishListServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        });
+            phoneNumber,
+            productIds: [productId],
+          });
 
       const result = await dispatch(action);
 
@@ -132,7 +152,6 @@ const ProductCatalogPage = () => {
       }));
     }
   }
-
 
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -162,7 +181,9 @@ const ProductCatalogPage = () => {
     quantityAvailable: number,
   ) {
     e.stopPropagation();
-    incrementToCart(product, productId, quantityAvailable, { navigateTo: ROUTES.CART });
+    incrementToCart(product, productId, quantityAvailable, {
+      navigateTo: ROUTES.CART,
+    });
   }
 
   useEffect(() => {
@@ -234,7 +255,9 @@ const ProductCatalogPage = () => {
               );
             })}
 
-            {categoryDetails.length === 0 && isProductCategoryLoading && <CategorySkeleton />}
+            {categoryDetails.length === 0 && isProductCategoryLoading && (
+              <CategorySkeleton />
+            )}
           </Box>
         </div>
       </div>
@@ -251,10 +274,11 @@ const ProductCatalogPage = () => {
                 quantityAvailable,
                 isBikeSpecific,
                 price,
+                currencySymbol,
               } = product;
 
-              const quantityAddedInCart = getQuantity(_id)
-              const isDisabled = quantityAddedInCart >= quantityAvailable
+              const quantityAddedInCart = getQuantity(_id);
+              const isDisabled = quantityAddedInCart >= quantityAvailable;
 
               return (
                 <div
@@ -263,7 +287,10 @@ const ProductCatalogPage = () => {
                   className="bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-yellow-400 transition-all duration-300 cursor-pointer group"
                 >
                   {/* Product Image */}
-                  <div className="relative bg-white p-4 md:p-6 h-48 md:h-64 flex items-center justify-center">
+                  <div
+                    className="relative bg-white p-4 md:p-6 h-48 md:h-64 flex items-center justify-center"
+                   
+                  >
                     <img
                       src={imageUrl}
                       alt={name}
@@ -271,6 +298,11 @@ const ProductCatalogPage = () => {
                       onError={(e) =>
                         (e.currentTarget.src = BikePlaceholderImage)
                       }
+                       style={{
+                      filter:
+                        quantityAvailable === 0 ? "grayscale(100%)" : "none",
+                      opacity: quantityAvailable === 0 ? 0.6 : 1,
+                    }}
                     />
                     {isBikeSpecific && (
                       <div className="absolute top-2 right-2 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
@@ -280,6 +312,13 @@ const ProductCatalogPage = () => {
                     {!isBikeSpecific && (
                       <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                         UNIVERSAL
+                      </div>
+                    )}
+                    {quantityAvailable === 0 && (
+                      <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+                        <div className="bg-white px-4 py-1 rounded text-[13px] font-semibold text-orange-500 shadow-sm">
+                          OUT OF STOCK
+                        </div>
                       </div>
                     )}
                   </div>
@@ -296,7 +335,7 @@ const ProductCatalogPage = () => {
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className="text-yellow-400 text-lg md:text-xl font-bold">
-                        ₹ {price.toLocaleString()}
+                        {currencySymbol || "₹"} {price.toLocaleString()}
                       </span>
                       <div className="flex gap-1 md:gap-2">
                         <button
@@ -305,9 +344,10 @@ const ProductCatalogPage = () => {
                             handleWishList(product);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${(wishlistMap[product._id] ?? product.isWishlist)
-                              ? "bg-yellow-400 text-black"
-                              : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                            ${
+                              (wishlistMap[product._id] ?? product.isWishlist)
+                                ? "bg-yellow-400 text-black"
+                                : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }
    `}
                         >
@@ -316,15 +356,24 @@ const ProductCatalogPage = () => {
                         <div className="relative inline-flex">
                           <button
                             onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                              handleAddToCart(e, product, _id, quantityAvailable)
+                              handleAddToCart(
+                                e,
+                                product,
+                                _id,
+                                quantityAvailable,
+                              )
                             }
-                            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.7 : 1 }}
+                            style={{
+                              cursor: isDisabled ? "not-allowed" : "pointer",
+                              opacity: isDisabled ? 0.7 : 1,
+                            }}
                             className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
                           >
                             <ShoppingCart size={14} className="md:w-4 md:h-4" />
                           </button>
                           {quantityAddedInCart > 0 && (
-                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
+                            <span
+                              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
                                 bg-red-600 text-white text-[11px] font-bold
                                 rounded-full flex items-center justify-center
                                 leading-none shadow-md"

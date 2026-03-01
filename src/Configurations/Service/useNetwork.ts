@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getLoginDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
+import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
+import { getCurrencyList } from "@/Redux/Landing/Selectors";
 
 export function useNetwork() {
   const state = AppStore.getState();
@@ -18,7 +20,7 @@ export function useNetwork() {
   const zProBike = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
   const initialCartLoaded = state.cart.initialCartLoaded;
-
+  const currencies = state.landing.currencyList
   const loginDetails = useSelector(getLoginDetails);
   const isdCode = useSelector(isdCodeDetails);
 
@@ -37,7 +39,7 @@ export function useNetwork() {
       if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
       if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB()))
       if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
-      
+      if (!currencies.length) requests.push(retry(()  => dispatch(currencyListServiceAction())))
       await Promise.allSettled(requests)
     } catch (error: any) {
     }

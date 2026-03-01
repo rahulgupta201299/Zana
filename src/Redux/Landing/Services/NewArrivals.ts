@@ -2,14 +2,20 @@ import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { newArrivalsActions } from "../Actions";
+import AppStore from "@/Configurations/AppStore";
 
 
 const network = new Network();
 
 async function newArrivalsService(): Promise<any> {
+  const state = AppStore.getState();
+  const currency = state.landing.selectedCurrency;
   const options = {
-    url: `/api/v1/product/new-arrivals`,
+    url: `/api/v1/product/new-arrivals/`,
     method: API_METHOD_ENUM.GET,
+    params: {
+      currency: currency,
+    },
   };
 
   const response = await network.request(options);

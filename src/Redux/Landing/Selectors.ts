@@ -14,3 +14,14 @@ export const getGarageFavorite = createSelector(
     (newArrivalsList) => newArrivalsList
   );
 
+  export const getCurrencyList = createSelector(
+    (state:TAppStore) => state[SLICE_NAME].currencyList,
+    (currencyList) => currencyList
+  ) 
+
+
+  export const getSelectedCurrency = createSelector(
+    (state:TAppStore) => state[SLICE_NAME].selectedCurrency,
+    (selectedCurrency) => selectedCurrency
+  ) 
+
