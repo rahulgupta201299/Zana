@@ -3,15 +3,21 @@ import { ProductCatergoryCountType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { productCategoryCountTraceActions } from "../Actions";
+import AppStore from "@/Configurations/AppStore";
 
 const network = new Network();
 
 async function productCategoryCountService(): Promise<
   ProductCatergoryCountType[]
 > {
+   const state = AppStore.getState();
+  const currency = state.landing.selectedCurrency;
   const options = {
     url: `/api/v1/product/categories/count`,
     method: API_METHOD_ENUM.GET,
+    params: {
+      currency: currency,
+    },
   };
 
   const response = await network.request(options);

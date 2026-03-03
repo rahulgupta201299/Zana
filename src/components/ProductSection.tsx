@@ -31,6 +31,7 @@ import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { useState } from "react";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 type Props = {
   filteredBikeProducts: any[];
   setSelectedCategory: (cat: string) => void;
@@ -47,7 +48,7 @@ const ProductsSection = ({
       productCategoryCountServiceName,
     ]),
   );
-  const dispatch = useDispatch<TAppDispatch>()
+  const dispatch = useDispatch<TAppDispatch>();
   const profileDetails = useSelector(getProfileDetails);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -68,9 +69,16 @@ const ProductsSection = ({
 
   async function handleWishList(product: ShopByProductDetailsType) {
     const { _id: productId, isWishlist } = product;
-    const { phoneNumber = '' } = profileDetails;
+    const { phoneNumber = "" } = profileDetails;
     const currentValue = wishlistMap[productId] ?? isWishlist;
-
+    if(!phoneNumber){
+           enqueueSnackbar({
+              message:  "Login required to save products to your wishlist.",
+              variant: "info",
+            });
+          dispatch(setOpenSignupPopup(true));
+          return
+        }
     setWishlistMap((prev) => ({
       ...prev,
       [productId]: !currentValue,
@@ -79,13 +87,13 @@ const ProductsSection = ({
     try {
       const action = currentValue
         ? removeWishlistServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        })
+            phoneNumber,
+            productIds: [productId],
+          })
         : addWishListServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        });
+            phoneNumber,
+            productIds: [productId],
+          });
 
       const result = await dispatch(action);
 
@@ -115,6 +123,7 @@ const ProductsSection = ({
             imageUrl,
             isBikeSpecific,
             price,
+            currencySymbol,
             quantityAvailable,
           } = product;
 
@@ -164,8 +173,37 @@ const ProductsSection = ({
                       ".MuiCard-root:hover &": {
                         transform: "scale(1.1)",
                       },
+                      filter:
+                        quantityAvailable === 0 ? "grayscale(100%)" : "none",
+                      opacity: quantityAvailable === 0 ? 0.6 : 1,
                     }}
                   />
+                  {quantityAvailable === 0 && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 12,
+                        left: 0,
+                        right: 0,
+                        minWidth:'150px',
+                        width: "150px", 
+                        display:'flex',
+                        alignSelf:'center',
+                        margin: "0 auto",
+                        bgcolor: "#fff",
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: "4px",
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        color: "#ff5722",
+                        letterSpacing: "0.5px",
+                        zIndex: 2,
+                      }}
+                    >
+                      OUT OF STOCK
+                    </Box>
+                  )}
 
                   {isBikeSpecific && (
                     <Chip
@@ -255,7 +293,7 @@ const ProductsSection = ({
                         fontWeight: "bold",
                       }}
                     >
-                      ₹ {price.toLocaleString()}
+                      {currencySymbol || "₹"} {price.toLocaleString()}
                     </Typography>
 
                     <Box
@@ -273,8 +311,14 @@ const ProductsSection = ({
                           width: { xs: 28, md: 36 },
                           height: { xs: 28, md: 36 },
                           borderRadius: 2,
-                          color: (wishlistMap[product._id] ?? product.isWishlist) ? 'black' : "white",
-                          bgcolor: (wishlistMap[product._id] ?? product.isWishlist) ? "#FACC15" : "rgba(255,255,255,0.1)",
+                          color:
+                            (wishlistMap[product._id] ?? product.isWishlist)
+                              ? "black"
+                              : "white",
+                          bgcolor:
+                            (wishlistMap[product._id] ?? product.isWishlist)
+                              ? "#FACC15"
+                              : "rgba(255,255,255,0.1)",
                           transition: "all 0.2s",
                           "&:hover": {
                             bgcolor: "#FACC15",

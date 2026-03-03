@@ -22,6 +22,8 @@ export type ShopByProductDetailsType = {
   category: string;
   categoryIcon: string;
   price: number;
+  currencySymbol:string;
+  currency:string;
   imageUrl: string;
   images: string[];
   quantityAvailable: number;

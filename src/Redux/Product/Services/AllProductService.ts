@@ -6,16 +6,22 @@ import {
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { allProductTraceActions } from "../Actions";
+import AppStore from "@/Configurations/AppStore";
 
 const network = new Network();
 
 async function allProductService(
-  params: QueryParamsType = {}
+  params: QueryParamsType = {},
 ): Promise<ProductCatalogDetailsType> {
+  const state = AppStore.getState();
+  const currency = state.landing.selectedCurrency;
   const options = {
     url: `/api/v1/product/all`,
     method: API_METHOD_ENUM.GET,
-    params,
+    params: {
+      ...params,
+      currency: currency,
+    },
   };
 
   const response = await network.request(options);

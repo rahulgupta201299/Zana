@@ -171,7 +171,7 @@ const Wishlist = () => {
               <WishlistCardSkeleton key={index} />
             ))
             : wishList.map((product) => {
-              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '' } = product;
+              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '', currencySymbol='' } = product;
 
               const quantityInCart = getQuantity(_id);
 
@@ -314,7 +314,7 @@ const Wishlist = () => {
                           alignSelf: "flex-end",
                         }}
                       >
-                        {`₹${price}`}
+                        {`${currencySymbol || '₹'} ${price}`}
                       </Typography>
                     </CardContent>
 
