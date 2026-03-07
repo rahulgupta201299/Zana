@@ -71,14 +71,14 @@ const ProductsSection = ({
     const { _id: productId, isWishlist } = product;
     const { phoneNumber = "" } = profileDetails;
     const currentValue = wishlistMap[productId] ?? isWishlist;
-    if(!phoneNumber){
-           enqueueSnackbar({
-              message:  "Login required to save products to your wishlist.",
-              variant: "info",
-            });
-          dispatch(setOpenSignupPopup(true));
-          return
-        }
+    if (!phoneNumber) {
+      enqueueSnackbar({
+        message: "Login required to save products to your wishlist.",
+        variant: "info",
+      });
+      dispatch(setOpenSignupPopup(true));
+      return
+    }
     setWishlistMap((prev) => ({
       ...prev,
       [productId]: !currentValue,
@@ -87,13 +87,13 @@ const ProductsSection = ({
     try {
       const action = currentValue
         ? removeWishlistServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          })
+          phoneNumber,
+          productIds: [productId],
+        })
         : addWishListServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          });
+          phoneNumber,
+          productIds: [productId],
+        });
 
       const result = await dispatch(action);
 
@@ -185,10 +185,10 @@ const ProductsSection = ({
                         bottom: 12,
                         left: 0,
                         right: 0,
-                        minWidth:'150px',
-                        width: "150px", 
-                        display:'flex',
-                        alignSelf:'center',
+                        minWidth: '150px',
+                        width: "150px",
+                        display: 'flex',
+                        alignSelf: 'center',
                         margin: "0 auto",
                         bgcolor: "#fff",
                         px: 2,
@@ -293,7 +293,10 @@ const ProductsSection = ({
                         fontWeight: "bold",
                       }}
                     >
-                      {currencySymbol || "₹"} {price.toLocaleString()}
+                      {currencySymbol} {price.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
                     </Typography>
 
                     <Box

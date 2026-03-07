@@ -18,6 +18,10 @@ export interface CartItemDetail {
   price: number;
   totalPrice: number;
   _id: string;
+  originalPrice: number;
+  originalTotalPrice: number;
+  currency: string;
+  currencySymbol: string;
 }
 
 export interface OutOfStockDetail {
@@ -50,6 +54,9 @@ export interface CartDetailResType {
   status: string;
   appliedCoupon: string;
   couponCode: string;
+  currency: string;
+  currencySymbol: string;
+  couponRemoved: boolean;
 }
 
 export interface GetCartDetailResType {
@@ -65,6 +72,14 @@ export interface GetCartDetailResType {
   status: string;
   appliedCoupon: string;
   couponCode: string;
+  shippingAddressSameAsBillingAddress: boolean;
+  originalSubtotal: number;
+  originalDiscountAmount: number;
+  originalShippingCost: number;
+  originalTaxAmount: number;
+  originalTotalAmount: number;
+  currency: string;
+  currencySymbol: string;
 }
 
 export interface CartAddressType {
@@ -125,6 +140,8 @@ export type ApplyCouponResType = {
   subtotal: number;
   shippingCost: number;
   taxAmount: number;
+  currency: string;
+  currencySymbol: string;
 };
 
 export type RemoveCouponResType = {
@@ -133,4 +150,6 @@ export type RemoveCouponResType = {
   shippingCost: number;
   taxAmount: number;
   discountAmount: number;
+  currency: string;
+  currencySymbol: string;
 };

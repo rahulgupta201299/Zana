@@ -40,6 +40,7 @@ import { useSnackbar } from "notistack";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { categoryProductServiceName } from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
+import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -66,6 +67,8 @@ const ProductDetailPage = () => {
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [categoryProductServiceName]),
   );
+  const currency = useSelector(getSelectedCurrency);
+
   function handleBackToProducts() {
     const category = replaceHiphenWithSpaces(productCategory);
     navigate(ROUTES.PRODUCT_CATALOG, { state: { category } });
@@ -88,13 +91,13 @@ const ProductDetailPage = () => {
     try {
       const action = prevValue
         ? removeWishlistServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          })
+          phoneNumber,
+          productIds: [productId],
+        })
         : addWishListServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          });
+          phoneNumber,
+          productIds: [productId],
+        });
 
       const result = await dispatch(action);
 
@@ -153,7 +156,7 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, []);
+  }, [currency]);
 
   if (!product && !loading) {
     return (
@@ -209,11 +212,10 @@ const ProductDetailPage = () => {
                     {image ? (
                       <div
                         key={index}
-                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${
-                          selectedImageIndex === index
-                            ? "border-white"
-                            : "border-gray-600"
-                        }`}
+                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index
+                          ? "border-white"
+                          : "border-gray-600"
+                          }`}
                         onClick={() => setSelectedImageIndex(index)}
                       >
                         <img
@@ -425,11 +427,10 @@ const ProductDetailPage = () => {
                       handleWishList(product._id);
                     }}
                     className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                     ${
-                       (isWishlisted ?? product.isWishlist)
-                         ? "bg-yellow-400 text-black"
-                         : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
-                     }`}
+                     ${(isWishlisted ?? product.isWishlist)
+                        ? "bg-yellow-400 text-black"
+                        : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                      }`}
                   >
                     <Heart size={20} className="md:w-6 md:h-6" />
                   </button>
@@ -551,6 +552,7 @@ const ProductDetailPage = () => {
                 price,
                 category,
                 quantityAvailable,
+                currencySymbol,
               } = relatedProduct;
 
               const productQuantity = getQuantity(_id);
@@ -620,7 +622,10 @@ const ProductDetailPage = () => {
                     </h3>
 
                     <span className="font-bold text-black text-sm whitespace-nowrap">
-                      ₹ {price}
+                      {currencySymbol} {price.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
                     </span>
                   </div>
                 </div>

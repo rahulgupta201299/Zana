@@ -31,6 +31,7 @@ import useCart from "@/hooks/useCart";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType } from "@/Redux/Cart/Types";
 import { cartModifyServiceName } from "@/Redux/Cart/Action";
+import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
 const Wishlist = () => {
   const dispatch = useDispatch<TAppDispatch>();
@@ -58,7 +59,8 @@ const Wishlist = () => {
     isServiceLoading(state, [cartModifyServiceName]),
   );
 
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const profileDetails = useSelector(getProfileDetails);
+  const currency = useSelector(getSelectedCurrency);
 
   const getWishList = async () => {
     actions.fetchWishlist();
@@ -128,7 +130,7 @@ const Wishlist = () => {
 
   useEffect(() => {
     getWishList();
-  }, []);
+  }, [currency]);
 
   return (
     <Box

@@ -15,12 +15,13 @@ async function allProductService(
 ): Promise<ProductCatalogDetailsType> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
+
   const options = {
     url: `/api/v1/product/all`,
     method: API_METHOD_ENUM.GET,
     params: {
       ...params,
-      currency: currency,
+      currency,
     },
   };
 

@@ -33,7 +33,7 @@ const CartSidebar = ({
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
-  const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [] } = cartDetail;
+  const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [], currencySymbol = '' } = cartDetail;
   const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
@@ -105,7 +105,7 @@ const CartSidebar = ({
         ) : (
           processedItems.map((item) => {
             const { product, price = 0 } = item;
-            const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+            const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0, currencySymbol = '' } = product || {}
             const productQuantity = getQuantity(productId)
 
             const isPlusDisabled = productQuantity >= quantityAvailable;
@@ -186,16 +186,16 @@ const CartSidebar = ({
                       alignItems: "center",
                     }}
                   >
-
                     <Typography
                       color="yellow"
                       fontWeight={700}
                       fontSize={{ xs: 18, md: 22 }}
                     >
-                      ₹ {price}
+                      {currencySymbol} {price.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
                     </Typography>
-
-
                     <Box
                       sx={{
                         display: "flex",
@@ -281,8 +281,9 @@ const CartSidebar = ({
           >
             <Typography sx={{ opacity: 0.7 }}>Subtotal</Typography>
             <Typography fontWeight={600}>
-              ₹ {subtotal.toLocaleString("en-IN", {
+              {currencySymbol} {subtotal.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               })}
             </Typography>
           </Box>
@@ -299,7 +300,10 @@ const CartSidebar = ({
             >
               <Typography>Discount ({couponCode})</Typography>
               <Typography>
-                - ₹{discountAmount}
+                - {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
               </Typography>
             </Box>
           )}
@@ -349,9 +353,9 @@ const CartSidebar = ({
               fontWeight={800}
               fontSize={32}
             >
-              ₹{" "}
-              {total.toLocaleString("en-IN", {
+              {currencySymbol} {total.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               })}
             </Typography>
           </Box>
