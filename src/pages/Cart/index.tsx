@@ -18,7 +18,7 @@ export default function Cart() {
 
   const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
 
-  const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '' } = cartDetail
+  const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '', currencySymbol = '' } = cartDetail
   const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
@@ -66,7 +66,7 @@ export default function Cart() {
             <div className="lg:col-span-8">
               <div className="space-y-4">
                 {processedItems.map((item) => {
-                  const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
+                  const { product, quantity = 0, price = 0, totalPrice = 0, currencySymbol = '' } = item;
                   const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
                   return (
@@ -103,11 +103,17 @@ export default function Cart() {
                             {/* Price */}
                             <div>
                               <span className="text-yellow-400 font-bold text-xl md:text-2xl">
-                                ₹ {price.toLocaleString()}
+                                {currencySymbol} {price.toLocaleString('en-IN', {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2
+                                })}
                               </span>
                               {quantity > 1 && (
                                 <p className="text-white/40 text-sm">
-                                  ₹ {(totalPrice).toLocaleString()} total
+                                  {currencySymbol} {(totalPrice).toLocaleString('en-IN', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                  })} total
                                 </p>
                               )}
                             </div>
@@ -176,20 +182,35 @@ export default function Cart() {
                   {/* Items Count */}
                   <div className="flex justify-between text-white/80">
                     <span>Items ({totalItems})</span>
-                    <span>₹ {subtotal}</span>
+                    <span>
+                      {currencySymbol} {subtotal.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </span>
                   </div>
 
                   {/* Subtotal */}
                   <div className="flex justify-between text-white">
                     <span className="font-semibold">Subtotal</span>
-                    <span className="font-semibold">₹ {subtotal}</span>
+                    <span className="font-semibold">
+                      {currencySymbol} {subtotal.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </span>
                   </div>
 
                   {/* Discount (if applicable) */}
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-400">
                       <span className="font-semibold">Discount ({couponCode})</span>
-                      <span className="font-semibold">- ₹ {discountAmount}</span>
+                      <span className="font-semibold">
+                        - {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
+                      </span>
                     </div>
                   )}
 
@@ -197,7 +218,10 @@ export default function Cart() {
                   {discountAmount > 0 && (
                     <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3">
                       <p className="text-green-400 text-sm text-center">
-                        🎉 You saved ₹ {discountAmount}!
+                        🎉 You saved {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}!
                       </p>
                     </div>
                   )}
@@ -228,7 +252,10 @@ export default function Cart() {
                     <div className="flex justify-between items-center">
                       <span className="text-white text-xl font-bold">Total</span>
                       <span className="text-yellow-400 text-2xl font-bold">
-                        ₹ {totalAmount}
+                        {currencySymbol} {totalAmount.toLocaleString('en-IN', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
                       </span>
                     </div>
                   </div>

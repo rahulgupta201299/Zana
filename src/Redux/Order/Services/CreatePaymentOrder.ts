@@ -1,17 +1,25 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
+import AppStore from "@/Configurations/AppStore";
 import { createPaymentOrdeActions } from "../Action";
 import { CreatePaymentOrderReqType, CreatePaymentOrderResType } from "../Types";
 
-
 const network = new Network();
 
-async function createPaymentOrderService(requestData: CreatePaymentOrderReqType): Promise<CreatePaymentOrderResType> {
+async function createPaymentOrderService(
+  requestData: CreatePaymentOrderReqType,
+): Promise<CreatePaymentOrderResType> {
+  const state = AppStore.getState();
+  const currency = state.landing.selectedCurrency;
+
   const options = {
-    url: '/api/v1/payment/create-order',
+    url: "/api/v1/payment/create-order",
     method: API_METHOD_ENUM.POST,
-    data: requestData
+    data: {
+      ...requestData,
+      currency
+    },
   };
 
   const response = await network.request(options);
@@ -19,6 +27,9 @@ async function createPaymentOrderService(requestData: CreatePaymentOrderReqType)
   return data;
 }
 
-const createPaymentOrderServiceAction = serviceActionCreator(createPaymentOrdeActions, createPaymentOrderService);
+const createPaymentOrderServiceAction = serviceActionCreator(
+  createPaymentOrdeActions,
+  createPaymentOrderService,
+);
 
-export default createPaymentOrderServiceAction
+export default createPaymentOrderServiceAction;

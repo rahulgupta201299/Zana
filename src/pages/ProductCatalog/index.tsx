@@ -41,6 +41,7 @@ const ProductCatalogPage = () => {
   const { incrementToCart, getQuantity } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
+  const currency = useSelector(getSelectedCurrency);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [
       categoryProductServiceName,
@@ -73,8 +74,8 @@ const ProductCatalogPage = () => {
     navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
   }
 
-  async function handleCategoryService(type: string, page = 1) {
-    if (type === selectedCategory && page === currentPage) return;
+  async function handleCategoryService(type: string, page = 1, skip = false) {
+    if (type === selectedCategory && page === currentPage && !skip) return;
 
     try {
       setFilteredProducts([]);
@@ -83,18 +84,18 @@ const ProductCatalogPage = () => {
       const action =
         type === ALL_CATEGORY
           ? AllProductService({
+            page,
+            limit: LIMIT_PER_PAGE,
+            phoneNumber: profileDetails?.phoneNumber,
+          })
+          : CategoryProductService({
+            category: type,
+            queryParams: {
               page,
               limit: LIMIT_PER_PAGE,
               phoneNumber: profileDetails?.phoneNumber,
-            })
-          : CategoryProductService({
-              category: type,
-              queryParams: {
-                page,
-                limit: LIMIT_PER_PAGE,
-                phoneNumber: profileDetails?.phoneNumber,
-              },
-            });
+            },
+          });
 
       const { data, pagination } = (await dispatch(
         action,
@@ -111,13 +112,13 @@ const ProductCatalogPage = () => {
   async function handleWishList(product: ShopByProductDetailsType) {
     const { _id: productId, isWishlist } = product;
     const { phoneNumber = "" } = profileDetails;
-    
+
     const currentValue = wishlistMap[productId] ?? isWishlist;
-    if(!phoneNumber){
-       enqueueSnackbar({
-          message:  "Login required to save products to your wishlist.",
-          variant: "info",
-        });
+    if (!phoneNumber) {
+      enqueueSnackbar({
+        message: "Login required to save products to your wishlist.",
+        variant: "info",
+      });
       dispatch(setOpenSignupPopup(true));
       return
     }
@@ -129,13 +130,13 @@ const ProductCatalogPage = () => {
     try {
       const action = currentValue
         ? removeWishlistServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          })
+          phoneNumber,
+          productIds: [productId],
+        })
         : addWishListServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          });
+          phoneNumber,
+          productIds: [productId],
+        });
 
       const result = await dispatch(action);
 
@@ -168,7 +169,7 @@ const ProductCatalogPage = () => {
 
   async function pageOps() {
     try {
-      await handleCategoryService(initialCategory || ALL_CATEGORY);
+      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
     } catch (error: any) {
       console.error(error);
     }
@@ -188,7 +189,7 @@ const ProductCatalogPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, []);
+  }, [currency]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -289,7 +290,7 @@ const ProductCatalogPage = () => {
                   {/* Product Image */}
                   <div
                     className="relative bg-white p-4 md:p-6 h-48 md:h-64 flex items-center justify-center"
-                   
+
                   >
                     <img
                       src={imageUrl}
@@ -298,11 +299,11 @@ const ProductCatalogPage = () => {
                       onError={(e) =>
                         (e.currentTarget.src = BikePlaceholderImage)
                       }
-                       style={{
-                      filter:
-                        quantityAvailable === 0 ? "grayscale(100%)" : "none",
-                      opacity: quantityAvailable === 0 ? 0.6 : 1,
-                    }}
+                      style={{
+                        filter:
+                          quantityAvailable === 0 ? "grayscale(100%)" : "none",
+                        opacity: quantityAvailable === 0 ? 0.6 : 1,
+                      }}
                     />
                     {isBikeSpecific && (
                       <div className="absolute top-2 right-2 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
@@ -344,10 +345,9 @@ const ProductCatalogPage = () => {
                             handleWishList(product);
                           }}
                           className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${
-                              (wishlistMap[product._id] ?? product.isWishlist)
-                                ? "bg-yellow-400 text-black"
-                                : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                            ${(wishlistMap[product._id] ?? product.isWishlist)
+                              ? "bg-yellow-400 text-black"
+                              : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
                             }
    `}
                         >

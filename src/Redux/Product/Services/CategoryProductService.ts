@@ -16,10 +16,14 @@ async function categoryProductService({
 }: CategoryProductReqType): Promise<ProductCatalogDetailsType> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
+  
   const options = {
     url: `api/v1/product/category/${encodeURIComponent(category)}`,
     method: API_METHOD_ENUM.GET,
-    params: { ...queryParams, currency: currency },
+    params: {
+      ...queryParams,
+      currency,
+    },
   };
 
   const response = await network.request(options);

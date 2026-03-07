@@ -28,6 +28,7 @@ import { enqueueSnackbar } from "notistack";
 import removeCouponServiceAction from "@/Redux/Cart/Services/RemoveCouponService";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import applyCouponServiceAction from "@/Redux/Cart/Services/ApplyCouponService";
+import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import Loading from "./Loading";
 
 export default function CouponDialog() {
@@ -36,6 +37,7 @@ export default function CouponDialog() {
 	const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [applyCouponServiceName, removeCouponServiceName]));
 	const cartDetail = useSelector(cartDetailSelector);
 	const loginDetails = useSelector(getLoginDetails);
+	const currency = useSelector(getSelectedCurrency)
 
 	const { couponCode = '', discountAmount = 0, totalAmount: cartTotalAmount = 0 } = cartDetail;
 	const { phoneNumber = "" } = loginDetails;
@@ -102,7 +104,7 @@ export default function CouponDialog() {
 
 	useEffect(() => {
 		loadCoupons(1);
-	}, [])
+	}, [currency])
 
 	return (
 		<Dialog

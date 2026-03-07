@@ -48,9 +48,7 @@ const BlogDetail = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      fetchBlogDetails();
-    }
+    if (id) fetchBlogDetails();
     getBlogList();
   }, [id]);
 

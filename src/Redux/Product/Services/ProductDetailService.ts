@@ -8,22 +8,25 @@ import AppStore from "@/Configurations/AppStore";
 const network = new Network();
 
 export type Product_Detail_Type = {
-  productId: string
-  phoneNumber:string
-}
+  productId: string;
+  phoneNumber: string;
+};
 
-async function productDetailService({productId, phoneNumber}:Product_Detail_Type
-): Promise<ShopByProductDetailsType> {
-   const state = AppStore.getState();
+async function productDetailService({
+  productId,
+  phoneNumber,
+}: Product_Detail_Type): Promise<ShopByProductDetailsType> {
+  const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
+
   const options = {
     url: `/api/v1/product/${productId}?phoneNumber=${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
     params: {
-      currency: currency,
+      currency,
     },
   };
-  
+
   const response = await network.request(options);
   const { data } = response;
   return data;
@@ -31,5 +34,5 @@ async function productDetailService({productId, phoneNumber}:Product_Detail_Type
 
 export default serviceActionCreator(
   productDetailTraceActions,
-  productDetailService
+  productDetailService,
 );

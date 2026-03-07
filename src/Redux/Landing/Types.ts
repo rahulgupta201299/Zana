@@ -2,7 +2,7 @@ import { ShopByProductDetailsType } from "../Product/Types";
 
 
 
-export type currencyType = {
+export type CurrencyType = {
   code: string
   name: string
   symbol: string
@@ -11,7 +11,6 @@ export type currencyType = {
 export type T_LANDING_REDUCER = {
   garageFavoriteList: ShopByProductDetailsType[];
   newArrivalsList: ShopByProductDetailsType[];
-  currencyList: currencyType[],
+  currencyList: CurrencyType[],
   selectedCurrency: string
 };
-

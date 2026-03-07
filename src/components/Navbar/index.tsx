@@ -218,10 +218,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
                 sx={{
                   color: "white",
                   fontSize: isMobile ? "0.8rem" : "0.9rem",
-                  height: isMobile ? 32 : 40, 
+                  height: isMobile ? 32 : 40,
                   ".MuiSelect-select": {
-                    py: isMobile ? 0.5 : 1, 
-                    paddingRight: isMobile ? "24px !important" : "32px !important",                 
+                    py: isMobile ? 0.5 : 1,
+                    paddingRight: isMobile ? "24px !important" : "32px !important",
                   },
                   ".MuiOutlinedInput-notchedOutline": {
                     borderColor: "white",
@@ -234,7 +234,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                   },
                   ".MuiSvgIcon-root": {
                     color: "white",
-                    fontSize: isMobile ? "1rem" : "1.25rem", 
+                    fontSize: isMobile ? "1rem" : "1.25rem",
                   },
                 }}
                 MenuProps={{
@@ -249,18 +249,21 @@ function Navbar({ isMobile }: NavbarPropsType) {
                   const selectedCurrency = currencies.find(
                     (item) => item.code === selected,
                   );
-                  return selectedCurrency
-                    ? isMobile
-                      ? selectedCurrency.symbol
-                      : `${selectedCurrency.symbol} ${selectedCurrency.code}`
-                    : "";
+
+                  if (!selectedCurrency) return "";
+                  if (isMobile) return selectedCurrency.symbol;
+                  
+                  return `${selectedCurrency.symbol} ${selectedCurrency.code}`;
                 }}
               >
-                {currencies.map((item) => (
-                  <MenuItem key={item.code} value={item.code}>
-                    {isMobile ? item.symbol : `${item.symbol} - ${item.code}`}
-                  </MenuItem>
-                ))}
+                {currencies.map((item) => {
+                  const value = isMobile ? item.symbol : `${item.symbol} - ${item.code}`;
+                  return (
+                    <MenuItem key={item.code} value={item.code}>
+                      {value}
+                    </MenuItem>
+                  )
+                })}
               </Select>
             </FormControl>
 
