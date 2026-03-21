@@ -16,7 +16,7 @@ export const getListOfBlogs = createSelector(
 
   export const getTopFourBlogs = createSelector(
     [getListOfBlogs],
-    (blogs) => blogs.slice(0, 4)
+    (blogs) => blogs.slice(2, 9)
   );
 
   
