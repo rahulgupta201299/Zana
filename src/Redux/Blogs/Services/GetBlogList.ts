@@ -5,15 +5,14 @@ import { fetchBlogListActions } from "../Actions";
 
 const network = new Network();
 
-async function allBlogListService(): Promise<any> {
+async function allBlogListService({page, limit}): Promise<any> {
   const options = {
     url: `/api/v1/blog`,
     method: API_METHOD_ENUM.GET,
+    params: {page, limit},
   };
-
   const response = await network.request(options);
-  const { data } = response;
-  return data;
+  return response;
 }
 
 const fetchBlogListServiceAction = serviceActionCreator(fetchBlogListActions, allBlogListService);
