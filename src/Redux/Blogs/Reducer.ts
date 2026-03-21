@@ -24,9 +24,8 @@ const sliceOptions: CreateSliceOptions<T_BLOG_REDUCER> = {
     extraReducers: (builder: ActionReducerMapBuilder<T_BLOG_REDUCER>) => {
       builder.addCase(
         fetchBlogListActions.success,
-        (state, action: PayloadAction<blogDataType[]>) => {
-            console.log(action)
-          state.blogList = action.payload;
+        (state, action: PayloadAction<{ data: blogDataType[] }>) => {  
+          state.blogList = action.payload.data;     
         }
       );
       builder.addCase(

@@ -213,7 +213,7 @@ export default function Search({ onClose }: SearchPropsType) {
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {products.map((item) => {
-                const { _id, imageUrl, name, price, category, shortDescription } = item;
+                const { _id, imageUrl, name, price, category, shortDescription, currencySymbol } = item;
 
                 return (
                   <Box
@@ -250,7 +250,10 @@ export default function Search({ onClose }: SearchPropsType) {
                       </Typography>
 
                       <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
-                        ₹ {price.toLocaleString()}
+                        {currencySymbol} {price.toLocaleString('en-IN', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
                       </Typography>
                     </Box>
                   </Box>

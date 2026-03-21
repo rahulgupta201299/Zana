@@ -3,21 +3,30 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { productDetailTraceActions } from "../Actions";
+import AppStore from "@/Configurations/AppStore";
 
 const network = new Network();
 
 export type Product_Detail_Type = {
-  productId: string
-  phoneNumber:string
-}
+  productId: string;
+  phoneNumber: string;
+};
 
-async function productDetailService({productId, phoneNumber}:Product_Detail_Type
-): Promise<ShopByProductDetailsType> {
+async function productDetailService({
+  productId,
+  phoneNumber,
+}: Product_Detail_Type): Promise<ShopByProductDetailsType> {
+  const state = AppStore.getState();
+  const currency = state.landing.selectedCurrency;
+
   const options = {
     url: `/api/v1/product/${productId}?phoneNumber=${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
+    params: {
+      currency,
+    },
   };
-  
+
   const response = await network.request(options);
   const { data } = response;
   return data;
@@ -25,5 +34,5 @@ async function productDetailService({productId, phoneNumber}:Product_Detail_Type
 
 export default serviceActionCreator(
   productDetailTraceActions,
-  productDetailService
+  productDetailService,
 );

@@ -7,6 +7,7 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { SLICE_NAME as CartSliceName } from "@/Redux/Cart/Selectors";
+import { CURRENCY_LIST, CURRENCY_SYMBOL } from "@/Constants/AppConstant";
 import {
   ApplyCouponResType,
   CartDetailResType,
@@ -24,6 +25,18 @@ import {
   removeCouponActions,
   updateCartAddressActions,
 } from "./Action";
+import { selectedCurrencyActions } from "../Landing/Actions";
+
+const INITIAL_CART_ADDRESS = {
+  fullName: "",
+  phone: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "",
+};
 
 export const INITIAL_STATE: T_CART_REDUCER = {
   cartDetail: {
@@ -39,28 +52,13 @@ export const INITIAL_STATE: T_CART_REDUCER = {
     status: "",
     appliedCoupon: "",
     couponCode: "",
+    couponRemoved: false,
+    currency: CURRENCY_LIST.INR,
+    currencySymbol: CURRENCY_SYMBOL.INR,
   },
   cartAddress: {
-    shippingAddress: {
-      fullName: "",
-      phone: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
-    },
-    billingAddress: {
-      fullName: "",
-      phone: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
-    },
+    shippingAddress: INITIAL_CART_ADDRESS,
+    billingAddress: INITIAL_CART_ADDRESS,
   },
   outOfStocks: [],
   initialCartLoaded: false,
@@ -108,10 +106,11 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       cartModifyActions.success,
       (state, action: PayloadAction<CartDetailResType>) => {
         const data = action.payload;
+
         if (!data) return state;
 
         const { unProcessedItems = [] } = data;
-        state.cartDetail = action.payload;
+        state.cartDetail = data;
         state.outOfStocks = unProcessedItems;
       },
     );
@@ -119,13 +118,39 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       getCartDetailActions.success,
       (state, action: PayloadAction<GetCartDetailResType>) => {
         const data = action.payload;
+
         if (!data) return state;
 
-        const { items = [], phoneNumber, ...rest } = data;
+        const {
+          items = [],
+          phoneNumber,
+          subtotal = 0,
+          paymentStatus = "",
+          shippingCost = 0,
+          taxAmount = 0,
+          discountAmount = 0,
+          totalAmount = 0,
+          status = "",
+          appliedCoupon = "",
+          couponCode = "",
+          currency = "",
+          currencySymbol = "",
+        } = data;
         state.cartDetail = {
+          ...state.cartDetail,
           processedItems: items,
           unProcessedItems: [],
-          ...rest,
+          subtotal,
+          paymentStatus,
+          shippingCost,
+          taxAmount,
+          discountAmount,
+          totalAmount,
+          status,
+          appliedCoupon,
+          couponCode,
+          currency,
+          currencySymbol,
         };
         state.outOfStocks = [];
         state.initialCartLoaded = true;
@@ -148,6 +173,8 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           subtotal = 0,
           shippingCost = 0,
           taxAmount = 0,
+          currency = "",
+          currencySymbol = "",
         } = action.payload;
 
         state.cartDetail = {
@@ -159,6 +186,8 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           subtotal,
           shippingCost,
           taxAmount,
+          currency,
+          currencySymbol,
         };
       },
     );
@@ -172,6 +201,8 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           subtotal = 0,
           shippingCost = 0,
           taxAmount = 0,
+          currency = "",
+          currencySymbol = "",
         } = action.payload;
 
         state.cartDetail = {
@@ -183,9 +214,14 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           subtotal,
           shippingCost,
           taxAmount,
+          currency,
+          currencySymbol,
         };
       },
     );
+    builder.addCase(selectedCurrencyActions, (state) => {
+      state.initialCartLoaded = false;
+    });
   },
 };
 

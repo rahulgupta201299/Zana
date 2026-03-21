@@ -28,3 +28,11 @@ export const COUPON_TYPE = {
   PERCENTAGE: "PERCENTAGE",
   FIXED: "FIXED",
 }
+
+export enum CURRENCY_LIST {
+  INR = 'INR'
+}
+
+export enum CURRENCY_SYMBOL {
+  INR = '₹'
+}

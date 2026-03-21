@@ -14,42 +14,39 @@ import { useEffect, useMemo } from "react";
 import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
 import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
-import { getGarageFavorite, getNewArrivalsList } from "@/Redux/Landing/Selectors";
+import { getGarageFavorite, getNewArrivalsList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
+
 
 function index() {
   const garageFavoriteList = useSelector(getGarageFavorite)
   const newArrivalsList = useSelector(getNewArrivalsList)
+  const currency = useSelector(getSelectedCurrency)
 
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
       newArrivalList: () => dispatch(newArrivalsServiceAction()),
       garageFavorite: () => dispatch(garageFavoriteServiceAction()),
+
     }),
     [dispatch]
   );
 
+  // TODO currency check this
   const retry = autoRetry()
 
   const fetchData = async () => {
     const requests: Promise<any>[] = []
 
+    // TODO currency check this
     if (!garageFavoriteList.length) requests.push(retry(() => actions.newArrivalList()))
     if (!newArrivalsList.length) requests.push(retry(() => actions.garageFavorite()))
-
     await Promise.allSettled(requests)
-    // results.forEach((result, index) => {
-    //   if (result.status === "fulfilled") {
-    //     console.log(`API ${index} succeeded:`, result.value);
-    //   } else {
-    //     console.error(`API ${index} failed:`, result.reason);
-    //   }
-    // });
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currency]);
 
   return (
     <div className="min-h-screen">

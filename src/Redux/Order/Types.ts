@@ -1,6 +1,6 @@
 export type T_ORDER_REDUCER = {
-  openOrderPopup: boolean
-  newOrderPlaced: VerifyPaymentOrderResType
+  openOrderPopup: boolean;
+  newOrderPlaced: VerifyPaymentOrderResType;
 };
 
 export type CreatePaymentOrderReqType = {
@@ -11,8 +11,11 @@ export type CreatePaymentOrderResType = {
   orderId: string;
   amount: number;
   currency: string;
-  key: string;
   cartId: string;
+  displayAmount: number;
+  displayCurrency: string;
+  currencySymbol: string;
+  name: string;
 };
 
 export type VerifyPaymentOrderReqType = {
@@ -20,6 +23,7 @@ export type VerifyPaymentOrderReqType = {
   razorpay_payment_id: string;
   razorpay_signature: string;
   cartId: string;
+  currency: string;
 };
 
 export type VerifyPaymentOrderResType = {

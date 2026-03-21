@@ -21,5 +21,5 @@ async function productCategoryCountService(): Promise<
 
 export default serviceActionCreator(
   productCategoryCountTraceActions,
-  productCategoryCountService
+  productCategoryCountService,
 );

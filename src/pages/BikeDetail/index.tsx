@@ -17,7 +17,8 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
 import { Skeleton } from "@mui/material";
 import useCart from "@/hooks/useCart";
-import ProductsSection from "@/components/ProductSection";
+import ProductSection from "@/components/ProductSection";
+import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
@@ -29,6 +30,7 @@ const BikeDetailPage = () => {
   const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [bikeProductServiceName, shopByBikeServiceName, productCategoryCountServiceName]))
 
   const shopByBike = useSelector(isZProPath ? zProBikeSelector : shopByBikeSelector)
+  const currency = useSelector(getSelectedCurrency)
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
@@ -70,7 +72,7 @@ const BikeDetailPage = () => {
 
   useEffect(() => {
     getBikeProducts()
-  }, [location.pathname])
+  }, [location.pathname, currency])
 
   const bikeDetails = useMemo(() => {
     if (shopByBike.length === 0) return null
@@ -223,7 +225,7 @@ const BikeDetailPage = () => {
               categoriesWithCount.length === 0 && isLoading && <CategorySkeleton />
             }
           </div>
-            <ProductsSection
+            <ProductSection
               filteredBikeProducts={filteredBikeProducts}
               setSelectedCategory={setSelectedCategory}
              />

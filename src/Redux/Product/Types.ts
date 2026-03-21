@@ -22,6 +22,9 @@ export type ShopByProductDetailsType = {
   category: string;
   categoryIcon: string;
   price: number;
+  currencySymbol: string;
+  currency: string;
+  originalPrice: number,
   imageUrl: string;
   images: string[];
   quantityAvailable: number;
@@ -101,9 +104,12 @@ export type SearchDataProductsType = {
   shortDescription: string;
   price: number;
   imageUrl: string;
+  originalPrice: string;
+  currency: string;
+  currencySymbol: string;
 };
 
 export type SearchResponseType = {
-  data: [];
+  data: SearchDataProductsType[];
   pagination: PaginationType;
 };
