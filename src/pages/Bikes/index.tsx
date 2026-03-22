@@ -6,17 +6,17 @@ import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
 import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
 import { shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
-import { SUB_ROUTES } from "@/Constants/Routes";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { ROUTES } from "@/Constants/Routes";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import { TAppStore } from "@/Configurations/AppStore";
 import { shopByBikeServiceName, zProBikeServiceName } from "@/Redux/Product/Actions";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
 
 function Bikes() {
 	const params = useParams()
-	const bikeTypeParams = params?.bikeType?.toLowerCase() || ''
+	const { bikeType: bikeTypeParams = '' } = decodeParams(params)
 
 	const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
 	const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
@@ -25,7 +25,7 @@ function Bikes() {
 	const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName]))
 
 	const location = useLocation()
-	const { brand: initialBikeBrand } = location.state || {}
+	const { brand: initialBikeBrand = '' } = decodeParams(location.state)
 
 	const [selectedBrand, setSelectedBrand] = useState<string>(initialBikeBrand || ALL_CATEGORY);
 	const [filteredBrandDetails, setFilteredBrandDetails] = useState<ShopByBikeModelsType[]>([]);
@@ -50,11 +50,10 @@ function Bikes() {
 		return result
 	}, [bikeSelector.length])
 
-	function handleBikeClick(brand: string, model: string, id: string) {
-		const bikeBrand = replaceSpacesWithHiphen(brand)
-		const bikeModel = replaceSpacesWithHiphen(model)
+	function handleBikeClick(bikeBrand: string, bikeModel: string, bikeId: string) {
+		const path = encodedGeneratedPath(ROUTES.BIKE_DETAIL, { bikeType, bikeBrand, bikeModel, bikeId })
 
-		navigate(`/${bikeType}${SUB_ROUTES.BIKE}/${bikeBrand}/${bikeModel}/${id}`);
+		navigate(path);
 	}
 
 	function handleBrandCategoryClick(val: string) {

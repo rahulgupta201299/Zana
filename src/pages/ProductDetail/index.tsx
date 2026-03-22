@@ -1,6 +1,8 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
+import { useSnackbar } from "notistack";
+
 import {
   Minus,
   Plus,
@@ -10,9 +12,7 @@ import {
   Heart,
   ShoppingBag,
 } from "lucide-react";
-// import SeeAndHearImage from '@/Assets/Images/SeeAndHearImage.png'
 
-import SeeAndHearImage from "@/Assets/Images/SeeAndHearImage.png";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
@@ -25,29 +25,28 @@ import {
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import {
   handleSocialMedia,
-  replaceHiphenWithSpaces,
-  replaceSpacesWithHiphen,
 } from "@/Utils/StringUtils";
 import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { Box, Skeleton, Tooltip } from "@mui/material";
 import useCart from "@/hooks/useCart";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
-import { useSnackbar } from "notistack";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { categoryProductServiceName } from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { addToCart, getQuantity, incrementToCart } = useCart();
-  const { productCategory, productId, productItem } =
-    useParams<ProductDetailParamsType>();
 
+  const params = useParams<ProductDetailParamsType>();
+  const { productCategory = '', productId = '', productItem = '' } = decodeParams(params)
+    
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
@@ -70,8 +69,7 @@ const ProductDetailPage = () => {
   const currency = useSelector(getSelectedCurrency);
 
   function handleBackToProducts() {
-    const category = replaceHiphenWithSpaces(productCategory);
-    navigate(ROUTES.PRODUCT_CATALOG, { state: { category } });
+    navigate(ROUTES.PRODUCT_CATALOG, { state: { category: encodeURIComponent(productCategory) } });
   }
 
   async function handleWishList(productId: string) {
@@ -142,16 +140,11 @@ const ProductDetailPage = () => {
     }
   }
 
-  function handleSuggestedProductClick(
-    productCategory: string,
-    productName: string,
-    productId: string,
-  ) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const name = replaceSpacesWithHiphen(productName);
+  function handleSuggestedProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
-    window.scrollTo(0, 0);
+    navigate(path)
+    window.scrollTo(0, 0)
   }
 
   useEffect(() => {

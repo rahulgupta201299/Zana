@@ -8,12 +8,10 @@ import {
 	Divider
 } from "@mui/material";
 import { MenuOptionsType } from "./Types";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { getMenuOption } from "./Utils";
 import { ROUTES } from "@/Constants/Routes";
 import WebNavMenuSkeleton from "@/components/Skeleton/WebNavMenuSkeleton";
 import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
-import { MenuItemsName } from "./Constant";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -34,7 +32,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 
 	function handleItemClick(category: string, subCategory: string, _id: string) {
 		const prefixRoute = getMenuOption().find(item => item.name === menuName)?.route || ''
-		const name = replaceSpacesWithHiphen(`${category}/${subCategory}/${_id}`)
+		const name = `${encodeURIComponent(category)}/${encodeURIComponent(subCategory)}/${_id}`
 		const routeName = `${prefixRoute}/${name}`
 
 		navigate(routeName)
@@ -42,7 +40,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 	}
 
 	function handleCategoryClick(category: string) {
-		navigate(ROUTES.PRODUCT_CATALOG, { state: { category } })
+		navigate(ROUTES.PRODUCT_CATALOG, { state: { category: encodeURIComponent(category) } })
 		onClose()
 	}
 

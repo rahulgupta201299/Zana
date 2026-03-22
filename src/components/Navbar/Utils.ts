@@ -10,14 +10,14 @@ export const getMenuOption = (): MenuOptionsType[] => {
   const zProBikes = state.product.menu.zProBikes;
   const productCategory = state.product.menu.productCategory;
 
-  const productCategoryList: MenuOptionsType[] = productCategory.map(item => {
+  const productCategoryList: MenuOptionsType[] = productCategory.map((item) => {
     return {
       _id: Math.floor(Math.random() * 100 + 1).toString(),
       name: item.name,
       models: [],
-      route: ROUTES.PRODUCT_CATALOG
-    }
-  })
+      route: ROUTES.PRODUCT_CATALOG,
+    };
+  });
 
   return [
     {
@@ -46,6 +46,12 @@ export const getMenuOption = (): MenuOptionsType[] => {
     },
     {
       _id: "5",
+      name: MenuItemsName.MOTODEVIL,
+      models: [],
+      route: "https://motodevil.shop",
+    },
+    {
+      _id: "6",
       name: MenuItemsName.OUR_STORY,
       models: [],
       route: ROUTES.OUR_STORIES,

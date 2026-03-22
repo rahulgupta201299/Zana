@@ -13,8 +13,7 @@ import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import ProductSkeleton from "./Skeleton/ProductSkeleton";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import useCart from "@/hooks/useCart";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
@@ -32,6 +31,8 @@ import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { useState } from "react";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
+import { encodedGeneratedPath } from "@/Utils/global";
+
 type Props = {
   filteredBikeProducts: any[];
   setSelectedCategory: (cat: string) => void;
@@ -57,14 +58,10 @@ const ProductsSection = ({
   //This whole logic will change after Be changes///
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
 
-  function handleProductClick(
-    productCategory: string,
-    productSubCategory: string,
-    productId: string,
-  ) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const subCategory = replaceSpacesWithHiphen(productSubCategory);
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${subCategory}/${productId}`);
+  function handleProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
+
+    navigate(path);
   }
 
   async function handleWishList(product: ShopByProductDetailsType) {
