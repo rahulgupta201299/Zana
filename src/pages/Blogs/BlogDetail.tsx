@@ -89,10 +89,10 @@ const BlogDetail = () => {
                   className="w-full h-auto rounded-lg object-fit"
                 />
               </div>
-
-              <div className="text-white space-y-6 leading-relaxed whitespace-pre-line">
-                {blogDetails?.content?.replace(/\\n/g, "\n")}
-              </div>
+              <div
+                className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
+                dangerouslySetInnerHTML={{ __html: blogDetails?.content }}
+              />
             </div>
 
             {/* Right Side - Related Reads */}
