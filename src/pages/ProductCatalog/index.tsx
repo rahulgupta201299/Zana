@@ -10,8 +10,7 @@ import {
   ProductCatalogDetailsType,
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import AllProductService from "@/Redux/Product/Services/AllProductService";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
@@ -27,16 +26,17 @@ import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
-import { ProductDetailParamsType } from "../ProductDetail/Types";
+// import { ProductDetailParamsType } from "../ProductDetail/Types";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
+import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
-
   const location = useLocation();
-  const state = location.state;
-  const initialCategory = state?.category?.toLowerCase() || "";
+
+  const { category: initialCategory = '' } = decodeParams(location.state)
+
   const { enqueueSnackbar } = useSnackbar();
   const { incrementToCart, getQuantity } = useCart();
 
@@ -57,21 +57,17 @@ const ProductCatalogPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
-  const LIMIT_PER_PAGE = 12;
+
   const profileDetails = useSelector(getProfileDetails);
   const dispatch = useDispatch<TAppDispatch>();
-  const selectedCurrency = useSelector(getSelectedCurrency);
-  console.log(selectedCurrency)
+  // const selectedCurrency = useSelector(getSelectedCurrency);
 
-  function handleProductClick(
-    productCategory: string,
-    productName: string,
-    productId: string,
-  ) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const name = replaceSpacesWithHiphen(productName);
+  const LIMIT_PER_PAGE = 12;
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
+  function handleProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
+
+    navigate(path)
   }
 
   async function handleCategoryService(type: string, page = 1, skip = false) {
@@ -168,6 +164,7 @@ const ProductCatalogPage = () => {
   }, [productCategory.length]);
 
   async function pageOps() {
+    if (filteredProducts.length && initialCategory === selectedCategory) return;
     try {
       await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
     } catch (error: any) {
@@ -189,7 +186,7 @@ const ProductCatalogPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, [currency]);
+  }, [currency, initialCategory]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>

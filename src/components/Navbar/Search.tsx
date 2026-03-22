@@ -19,11 +19,12 @@ import { createDebounce } from "@/Utils/Debounce";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import SearchService from "@/Redux/Product/Services/SearchService";
 import { SearchDataProductsType, SearchResponseType } from "@/Redux/Product/Types";
-import { replaceSpacesWithHiphen, trimByLength } from "@/Utils/StringUtils";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { trimByLength } from "@/Utils/StringUtils";
+import { ROUTES } from "@/Constants/Routes";
 import SearchSkeleton from '@/components/Skeleton/SearchSkeleton'
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { searchServiceName } from "@/Redux/Product/Actions";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 type SearchPropsType = {
   onClose: () => void;
@@ -33,7 +34,7 @@ export default function Search({ onClose }: SearchPropsType) {
 
   const navigate = useNavigate()
 
-  const isSearchLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [searchServiceName]))
+  // const isSearchLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [searchServiceName]))
 
   const [query, setQuery] = useState("");
 
@@ -64,12 +65,10 @@ export default function Search({ onClose }: SearchPropsType) {
     setLoading(true)
   }
 
-  function handleNavigate(productCategory: string, productName: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory)
-    const name = replaceSpacesWithHiphen(productName)
-    const routeName = `${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`
+  function handleNavigate(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(routeName)
+    navigate(path)
     onClose()
   }
 

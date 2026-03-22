@@ -39,6 +39,7 @@ import {
   getSelectedCurrency,
 } from "@/Redux/Landing/Selectors";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
+import { decodeParams } from "@/Utils/global";
 
 type NavbarPropsType = {
   isMobile: boolean;
@@ -48,7 +49,9 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const bikeType = params?.bikeType?.toLowerCase() || "";
+
+  const { bikeType = '' } = decodeParams(params)
+
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
   const [selectedTopItem, setSelectedTopItem] = useState<MenuItemsName | null>(
@@ -81,7 +84,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     if (route) {
       setSelectedMenuItem(null);
-      navigate(route);
+      name === MenuItemsName.MOTODEVIL ? window.open(route, "_blank") : navigate(route);
       return;
     }
 

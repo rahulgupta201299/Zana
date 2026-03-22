@@ -1,10 +1,11 @@
-import { SUB_ROUTES } from "@/Constants/Routes";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { PlusIcon } from "lucide-react";
-import { useNavigate } from "react-router";
+import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { ROUTES } from "@/Constants/Routes";
+import { encodedGeneratedPath } from "@/Utils/global";
+
 const ProductCard = ({
   product,
   onClick,
@@ -31,13 +32,12 @@ const ProductCard = ({
 
   function handleProductClick(
     productCategory: string,
-    productName: string,
+    productItem: string,
     productId: string,
   ) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const name = replaceSpacesWithHiphen(productName);
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
+    navigate(path)
   }
 
   return (

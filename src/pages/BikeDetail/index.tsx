@@ -1,28 +1,26 @@
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
 import { ShoppingCart, Heart } from "lucide-react";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { SUB_ROUTES } from "@/Constants/Routes";
 import { BikeDetailParamsType } from "./Types";
 import { shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
-import { replaceHiphenWithSpaces, replaceSpacesWithHiphen } from "@/Utils/StringUtils";
-import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { bikeProductServiceName, productCategoryCountServiceName, shopByBikeServiceName } from "@/Redux/Product/Actions";
 import { Skeleton } from "@mui/material";
-import useCart from "@/hooks/useCart";
 import ProductSection from "@/components/ProductSection";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { decodeParams } from "@/Utils/global";
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
-  const { bikeType: bikeTypeParams = '', bikeId = '', bikeBrand = '', bikeModel = '' } = params || {}
+  const { bikeType: bikeTypeParams = '', bikeId = '', bikeBrand = '', bikeModel = '' } = decodeParams<BikeDetailParamsType>(params)
 
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
@@ -34,7 +32,6 @@ const BikeDetailPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>()
-  const { incrementToCart, getQuantity } = useCart()
 
   const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>([])
@@ -60,15 +57,8 @@ const BikeDetailPage = () => {
   }
 
   function handleBackToBikes() {
-    navigate(`/${bikeType}${SUB_ROUTES.BIKES}`, { state: { brand: replaceHiphenWithSpaces(bikeBrand) } })
+    navigate(`/${bikeType}${SUB_ROUTES.BIKES}`, { state: { brand: encodeURIComponent(bikeBrand) } })
   }
-
-  function handleProductClick(productCategory: string, productSubCategory: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory)
-    const subCategory = replaceSpacesWithHiphen(productSubCategory)
-
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${subCategory}/${productId}`);
-  };
 
   useEffect(() => {
     getBikeProducts()
@@ -76,7 +66,7 @@ const BikeDetailPage = () => {
 
   const bikeDetails = useMemo(() => {
     if (shopByBike.length === 0) return null
-    const bikeModels = shopByBike.find(item => item.name.toLowerCase() === replaceHiphenWithSpaces(bikeBrand))?.models || []
+    const bikeModels = shopByBike.find(item => item.name.toLowerCase() === bikeBrand)?.models || []
     return bikeModels.find(item => item._id === bikeId)
   }, [shopByBike.length, location.pathname])
 
@@ -172,7 +162,7 @@ const BikeDetailPage = () => {
                 {description ? description : <Skeleton sx={{ backgroundColor: 'rgba(255,255,255,0.20)' }} width={150} />}
               </p>
               <div className="flex items-center gap-4 mb-8">
-                <span className="text-yellow-400 text-lg font-medium">{replaceHiphenWithSpaces(bikeBrand).toUpperCase()}</span>
+                <span className="text-yellow-400 text-lg font-medium">{bikeBrand.toUpperCase()}</span>
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">{bikeProducts.length} Products Available</span>
               </div>
@@ -193,7 +183,7 @@ const BikeDetailPage = () => {
           {/* Section Header */}
           <div className="mb-8">
             <h2 style={{ textTransform: 'capitalize' }} className="text-white text-3xl md:text-4xl font-bold mb-2">
-              Products for {replaceHiphenWithSpaces(bikeModel).toUpperCase()}
+              Products for {bikeModel.toUpperCase()}
             </h2>
             <p className="text-white/60">
               Browse {bikeProducts.length} accessories designed for your {name}
@@ -225,10 +215,10 @@ const BikeDetailPage = () => {
               categoriesWithCount.length === 0 && isLoading && <CategorySkeleton />
             }
           </div>
-            <ProductSection
-              filteredBikeProducts={filteredBikeProducts}
-              setSelectedCategory={setSelectedCategory}
-             />
+          <ProductSection
+            filteredBikeProducts={filteredBikeProducts}
+            setSelectedCategory={setSelectedCategory}
+          />
         </div>
       </div>
     </div>

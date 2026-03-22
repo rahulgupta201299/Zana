@@ -1,14 +1,14 @@
 import { Stack, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -25,11 +25,10 @@ export default function Cart() {
 
   const dispatch = useDispatch<TAppDispatch>();
 
-  function handleProductClick(productCategory: string, productName: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const name = replaceSpacesWithHiphen(productName);
+  function handleProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+    navigate(path)
   }
 
   function handleApplyCoupon() {

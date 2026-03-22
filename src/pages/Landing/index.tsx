@@ -58,7 +58,7 @@ function index() {
       <InstagramFeed />
       <BlogsSection />
       <BrandStory />
-      <CapSection />
+      {/* <CapSection /> */}
       <TestimonialsSection />
     </div>
   );

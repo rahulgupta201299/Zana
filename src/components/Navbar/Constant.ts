@@ -13,6 +13,7 @@ export enum MenuItemsName {
   RIDE_STORIES = "RIDE STORIES",
   OUR_STORY = "OUR STORY",
   Z_PRO = "Z PRO",
+  MOTODEVIL = "MOTODEVIL"
 }
 
 export const TopLevelItems: TopLevelItemsType[] = [
@@ -46,6 +47,10 @@ export const MenuItems = [
   {
     name: MenuItemsName.RIDE_STORIES,
     route: ROUTES.BLOGS,
+  },
+  {
+    name: MenuItemsName.MOTODEVIL,
+    route: 'https://motodevil.shop'
   },
   {
     name: MenuItemsName.OUR_STORY,

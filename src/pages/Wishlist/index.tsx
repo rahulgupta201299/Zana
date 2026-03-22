@@ -1,3 +1,8 @@
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+
 import {
   Box,
   Button,
@@ -9,8 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getWishListServiceAction from "@/Redux/Auth/Services/Wishlist";
 import removeWishlistServiceAction, {
@@ -22,16 +25,14 @@ import {
 } from "@/Redux/ServiceTracker/Selectors";
 import { removeWishlistName, wishlistName } from "@/Redux/Auth/Actions";
 import WishlistCardSkeleton from "@/components/Skeleton/WishlistSkeleton";
-import { useSnackbar } from "notistack";
 import Loading from "@/components/Loading";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
-import { useNavigate } from "react-router";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType } from "@/Redux/Cart/Types";
 import { cartModifyServiceName } from "@/Redux/Cart/Action";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 const Wishlist = () => {
   const dispatch = useDispatch<TAppDispatch>();
@@ -86,11 +87,10 @@ const Wishlist = () => {
     }
   };
 
-  function handleProductClick(productCategory: string, productName: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory)
-    const name = replaceSpacesWithHiphen(productName)
+  function handleProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`);
+    navigate(path)
   }
 
   async function handleMoveToBag(e: React.MouseEvent<HTMLButtonElement>, productId: string) {
@@ -173,7 +173,7 @@ const Wishlist = () => {
               <WishlistCardSkeleton key={index} />
             ))
             : wishList.map((product) => {
-              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '', currencySymbol='' } = product;
+              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '', currencySymbol = '' } = product;
 
               const quantityInCart = getQuantity(_id);
 

@@ -13,9 +13,9 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart, setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
-import { replaceSpacesWithHiphen } from "@/Utils/StringUtils";
+import { ROUTES } from "@/Constants/Routes";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 interface CartSidebarProps {
   variant?: "drawer" | "checkout";
@@ -42,11 +42,10 @@ const CartSidebar = ({
     dispatch(setOpenCart(false))
   }
 
-  function handleProductClick(productCategory: string, productName: string, productId: string) {
-    const category = replaceSpacesWithHiphen(productCategory);
-    const name = replaceSpacesWithHiphen(productName);
+  function handleProductClick(productCategory: string, productItem: string, productId: string) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
-    navigate(`${SUB_ROUTES.PRODUCT}/${category}/${name}/${productId}`)
+    navigate(path)
     onClose()
   }
 

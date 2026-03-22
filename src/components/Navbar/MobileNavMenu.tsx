@@ -6,13 +6,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { MenuOptionsType } from './Types';
-import { replaceSpacesWithHiphen } from '@/Utils/StringUtils';
 import { getMenuOption } from './Utils';
 import MobileNavMenuSkeleton from '@/components/Skeleton/MobileNavMenuSkeleton';
 import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from '@/Redux/Product/Selectors';
 import { TAppStore } from '@/Configurations/AppStore';
 import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors';
 import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName } from '@/Redux/Product/Actions';
+import { MenuItemsName } from './Constant';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -36,8 +36,14 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 	function handleMenuItemClick(item: MenuOptionsType) {
 		const { name, _id, models = [], route } = item
 
+		if (name === MenuItemsName.MOTODEVIL) {
+			window.open(route, '_blank')
+			onClose()
+			return
+		}
+
 		if (route && models.length === 0) {
-			navigate(route, { state: { category: name } })
+			navigate(route, { state: { category: encodeURIComponent(name) } })
 			onClose()
 			return
 		}
@@ -45,7 +51,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		historyStackRef.current.push(item)
 
 		if (route) routeRef.current = route + '/'
-		else routeRef.current += replaceSpacesWithHiphen(name) + '/'
+		else routeRef.current += encodeURIComponent(name) + '/'
 
 		if (models.length === 0) {
 			routeRef.current += _id + '/'
