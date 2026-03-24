@@ -34,6 +34,7 @@ export type ShopByProductDetailsType = {
   isNewArrival: boolean;
   isGarageFavorite: boolean;
   isWishlist: boolean;
+  productCode: string;
 };
 
 export type ShopByBikeModelsType = {

@@ -5,7 +5,9 @@ import { fetchBlogListActions } from "../Actions";
 
 const network = new Network();
 
-async function allBlogListService({page, limit}): Promise<any> {
+async function allBlogListService(
+  { page = 1, limit = 10 }: { page?: number; limit?: number } = {}
+): Promise<any> {
   const options = {
     url: `/api/v1/blog`,
     method: API_METHOD_ENUM.GET,

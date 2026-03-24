@@ -17,7 +17,7 @@ const BlogsSection = () => {
 
   const actions = useMemo(
     () => ({
-      fetchBlogList: () => blogList.length === 0 ? dispatch(fetchBlogListServiceAction()) : null,
+      fetchBlogList: () => blogList.length === 0 ? dispatch(fetchBlogListServiceAction({})) : null,
     }),
     [dispatch]
   );
@@ -40,20 +40,20 @@ const BlogsSection = () => {
   }, []);
 
   return (
-    <div className="py-8 md:py-16 px-4 md:px-6" style={{ backgroundColor: '#181818' }}>
+    <div className="py-8 md:py-16 px-4 md:px-6 "  style={{ backgroundColor: '#181818' }}>
     <div className="max-w-7xl mx-auto">
   
       {/* Responsive Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {blogs.map((blog) => (
-          <div key={blog?._id} className="flex flex-col">
+          <div key={blog?._id} className="flex flex-col" style={{ backgroundColor: "#2A2A2A", borderRadius: "0.5rem", padding: "1rem" }}>
   
             {/* Image */}
             <div className="relative h-[180px] md:h-[280px] mb-4 rounded-lg overflow-hidden">
               <img
                 src={blog?.imageUrl}
                 alt={blog?.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-fit"
               />
             </div>
   
