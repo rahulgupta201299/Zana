@@ -186,6 +186,7 @@ const ProductDetailPage = () => {
     quantityAvailable = 0,
     specifications = "",
     isBikeSpecific = false,
+    productCode = "",
   } = product || {};
 
   const isPlusDisabled = quantity >= quantityAvailable;
@@ -248,15 +249,29 @@ const ProductDetailPage = () => {
 
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
-            {name ? (
-              <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
+            <div className="flex items-center justify-between">
+              {name ? (
+                <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
+              ) : (
+                <Skeleton
+                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                  width={300}
+                  height={60}
+                />
+              )}
+               {productCode ? (
+              <p className="text-white text-lg mb-2 leading-relaxed">
+                {productCode}
+              </p>
             ) : (
               <Skeleton
                 sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                width={300}
-                height={60}
+                width={100}
+                height={40}
               />
             )}
+            </div>
+           
             {shortDescription ? (
               <p className="text-white text-lg mb-6 leading-relaxed">
                 {shortDescription}
@@ -269,7 +284,7 @@ const ProductDetailPage = () => {
               />
             )}
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6">      
               {price ? (
                 <span className="text-2xl font-bold text-white">
                   {currencySymbol || "₹"} {price.toLocaleString()}
@@ -289,6 +304,7 @@ const ProductDetailPage = () => {
                   />
                 </Box>
               )}
+              
               {quantityAvailable > 0 ? (
                 <div className="flex items-center gap-2">
                   <Button
