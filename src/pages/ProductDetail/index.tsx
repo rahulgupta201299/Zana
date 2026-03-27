@@ -287,7 +287,7 @@ const ProductDetailPage = () => {
             <div className="flex items-center justify-between mb-6">      
               {price ? (
                 <span className="text-2xl font-bold text-white">
-                  {currencySymbol || "₹"} {price.toLocaleString()}
+                  {currencySymbol} {price.toLocaleString()}
                 </span>
               ) : (
                 <Box sx={{ display: "flex", gap: 2 }}>
@@ -295,7 +295,7 @@ const ProductDetailPage = () => {
                     style={{ margin: "auto 0" }}
                     className="text-2xl font-bold text-white"
                   >
-                    ₹{" "}
+                    {currencySymbol}{" "}
                   </span>
                   <Skeleton
                     sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}

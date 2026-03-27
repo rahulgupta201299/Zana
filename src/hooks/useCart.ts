@@ -34,6 +34,7 @@ export default function useCart() {
     if (!phoneNumber) return;
 
     try {
+      // @ts-ignore
       (await dispatch(getCartDetailServiceAction())) as CartDetailResType;
     } catch (error: any) {
       throw error;
@@ -137,6 +138,8 @@ export default function useCart() {
         price: product.price,
         totalPrice: product.price * quantity,
         _id: Date.now().toString(),
+        currency: product.currency,
+        currencySymbol: product.currencySymbol,
       });
     }
 
@@ -184,6 +187,8 @@ export default function useCart() {
         price: product.price,
         totalPrice: product.price,
         _id: Date.now().toString(),
+        currency: product.currency,
+        currencySymbol: product.currencySymbol,
       });
     }
 

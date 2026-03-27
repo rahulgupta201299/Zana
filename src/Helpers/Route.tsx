@@ -20,22 +20,6 @@ export const lazyLoadPage = (
   return lazyPage
 }
 
-export const validatePrivateRouteLoader =
-  (importer?: () => Promise<{ loader: LoaderFunction }>) =>
-  async (args: LoaderFunctionArgs) => {
-    const state = AppStore.getState()
-    // TODO check
-    // const isLoggedIn = Boolean(state.draftDetails.draft._id)
-
-    // if (!isLoggedIn) {
-    //   return redirect(
-    //     `${ROUTES.ETB_DYNAMIC_ERROR}/${ErrorScreenType.SOMETHING_WENT_WRONG}`
-    //   )
-    // }
-
-    return lazyLoadLoader(importer)(args)
-  }
-
 export const validatePublicRouteLoader =
   (importer?: () => Promise<{ loader: LoaderFunction }>) =>
   async (args: LoaderFunctionArgs) => {

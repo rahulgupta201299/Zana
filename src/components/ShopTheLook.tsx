@@ -329,7 +329,7 @@ const ShopTheLook = () => {
                         {/* Price */}
                         <div className="mb-3">
                           <span className="text-white font-bold text-lg md:text-xl">
-                            ₹ {selectedPart.price}
+                            {selectedPart.price}
                           </span>
                         </div>
 

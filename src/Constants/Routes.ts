@@ -11,7 +11,6 @@ export const ROUTES = Object.freeze({
   PRODUCT_CATALOG: '/product-catalog',
   BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
   BIKE_DETAIL: `/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
-  BIKE_ACCESSORIES: '/bike-accessories',
   BLOGS: '/blogs',
   BLOG_DETAIL: `${SUB_ROUTES.BLOG}/:id`,
   OUR_STORIES: '/our-stories',

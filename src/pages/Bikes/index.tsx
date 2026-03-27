@@ -72,7 +72,7 @@ function Bikes() {
 	}, [allBrandDetails.length])
 
 	return (
-		<div className="min-h-screen" style={{ backgroundColor:  "#2a2a2a" }}>
+		<div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
 			<div className="py-8 md:py-16 px-4 md:px-6">
 				<div className="max-w-7xl mx-auto">
 					{/* Header */}
@@ -83,7 +83,7 @@ function Bikes() {
 						</p>
 					</div>
 
-				<div className="mb-8 flex gap-3 justify-start items-center overflow-x-auto whitespace-nowrap scrollbar-hide">
+					<div className="mb-8 flex gap-3 justify-start items-center overflow-x-auto whitespace-nowrap scrollbar-hide">
 						{categoriesWithCount.map((brand) => {
 							const { name, count } = brand
 							const brandName = name.toLowerCase()
@@ -120,7 +120,6 @@ function Bikes() {
 								>
 									{/* Image Section */}
 									<div className="bg-white p-6 md:p-8 h-48 md:h-64 flex items-center justify-center">
-										{/* TODO image */}
 										<img
 											src={imageUrl}
 											alt={name}

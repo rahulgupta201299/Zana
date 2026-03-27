@@ -36,7 +36,6 @@ export function useNetwork() {
       if (!shopByBike.length) requests.push(retry(() => dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))))
       if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))
       if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
-      // TODO currency call on the currency change
       if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB()))
       if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
       if (!currencies.length) requests.push(retry(()  => dispatch(currencyListServiceAction())))

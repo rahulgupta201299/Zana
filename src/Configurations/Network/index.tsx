@@ -24,7 +24,7 @@ export default class Network {
       const { data } = response
       return data
     } catch (error: any) {
-	  console.error("API Request Error:", error);
+      console.error("API Request Error:", error);
       throw error
     }
   }

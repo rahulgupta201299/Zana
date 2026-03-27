@@ -128,7 +128,6 @@ const BikeDetailPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="bg-white rounded-2xl p-8 md:p-12 flex items-center justify-center">
-              {/* TODO image */}
               {
                 imageUrl ? (
                   <img
@@ -206,7 +205,6 @@ const BikeDetailPage = () => {
                     : "bg-white/10 text-white hover:bg-white/20"
                     }`}
                 >
-                  {/* TODO icon */}
                   {categoryName} ({count})
                 </button>
               )
