@@ -14,7 +14,6 @@ const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"), Lo
 const ProductCatalogPage = lazyLoadPage(() => import("@/pages/ProductCatalog"), Loading);
 const BikesPage = lazyLoadPage(() => import("@/pages/Bikes"), Loading);
 const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"), Loading);
-const BikeAccessoriesPage = lazyLoadPage(() => import("@/pages/BikeAccessoriesPage"), Loading);
 const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"), Loading);
 const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"), Loading);
 const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"), Loading);
@@ -40,7 +39,6 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
       { path: ROUTES.BIKES, element: BikesPage },
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
-      { path: ROUTES.BIKE_ACCESSORIES, element: BikeAccessoriesPage },
       { path: ROUTES.BLOGS, element: BlogsPage },
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },
       { path: ROUTES.OUR_STORIES, element: OurStoriesPage },

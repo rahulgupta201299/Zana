@@ -11,39 +11,37 @@ export interface UPDATE_PROFILE_DETAILS {
   lastName: string;
   isdCode: string;
   phoneNumber: string;
-  emailId: string
+  emailId: string;
   address: string;
   notifyOffers: boolean;
-  bikeOwnedByCustomer?: bike_owned[]
+  bikeOwnedByCustomer?: bike_owned[];
 }
 
- type bike_owned={
-	brand: string,
-	model: string
- }
+type bike_owned = {
+  brand: string;
+  model: string;
+};
 
 async function updateProfileDetailsService(
   requestData: UPDATE_PROFILE_DETAILS,
 ): Promise<any> {
-
-  const state = AppStore.getState()
-  const profileId = state.auth.profileDetails._id
+  const state = AppStore.getState();
+  const profileId = state.auth.profileDetails._id;
 
   const options = {
-	url: `/api/v1/profile/update/${profileId}`,
-	method: API_METHOD_ENUM.POST,
-	data: requestData,
+    url: `/api/v1/profile/update/${profileId}`,
+    method: API_METHOD_ENUM.POST,
+    data: requestData,
   };
-  // TODO
-	const response = await network.request(options)
-	const { data } = response
-	return data
- 
+
+  const response = await network.request(options);
+  const { data } = response;
+  return data;
 }
 
 const updateProfileDetailServiceAction = serviceActionCreator(
   updateProfileDetailsActions,
-  updateProfileDetailsService
+  updateProfileDetailsService,
 );
 
 export default updateProfileDetailServiceAction;

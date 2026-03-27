@@ -32,9 +32,7 @@ import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { TReducers } from "@/Redux/Reducers";
 import { PersistPartial } from "redux-persist/lib/persistReducer";
-import VerifyOtpServiceAction, {
-  VERIFY_OTP_REQ,
-} from "@/Redux/Auth/Services/VerifyOtpService";
+import VerifyOtpServiceAction from "@/Redux/Auth/Services/VerifyOtpService";
 import { useSnackbar } from "notistack";
 import { useLocation } from "react-router";
 import Loading from "./Loading";
@@ -43,6 +41,7 @@ import { SESSION_STORAGE } from "@/Constants/AppConstant";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { ROUTES } from "@/Constants/Routes";
 import EditIcon from "@mui/icons-material/Edit";
+import { VerifyOtpResType } from "@/Redux/Auth/Types";
 
 interface SIGN_UP_TYPE {
   isMobile: boolean;
@@ -79,8 +78,6 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
     () => ({
       generateOtp: (state: GEN_OTP_REQ) =>
         dispatch(GenerateOtpServiceAction(state)),
-      verifyOtp: (state: VERIFY_OTP_REQ) =>
-        dispatch(VerifyOtpServiceAction(state)),
     }),
     [dispatch],
   );
@@ -156,7 +153,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
     };
 
     try {
-      const response = await actions.verifyOtp(reqBody);
+      const response = await dispatch(VerifyOtpServiceAction(reqBody)) as VerifyOtpResType
       const { phoneNumber = "" } = response;
       saveCartToDB(phoneNumber);
       enqueueSnackbar({

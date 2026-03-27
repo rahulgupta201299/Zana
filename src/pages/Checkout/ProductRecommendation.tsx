@@ -16,8 +16,6 @@ export default function ProductRecommendation() {
 		// incrementToCart(productId, quantityAvailable, { saveToDb: true })
 	}
 
-	// TODO handle Button UI
-
 	return (
 		<Box
 			sx={{
@@ -118,7 +116,7 @@ export default function ProductRecommendation() {
 										fontSize: "16px",
 									}}
 								>
-									₹ {price}
+									{price}
 								</Typography>
 							</Box>
 

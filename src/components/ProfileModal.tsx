@@ -73,7 +73,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   );
 
   const profileDetails = useSelector((state: any) => getProfileDetails(state));
-  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [addProfileDetailsName, updateProfileDetailName,getBikeModelName,getBikeBrandName,getProfileDetailName]))
+  const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [addProfileDetailsName, updateProfileDetailName, getBikeModelName, getBikeBrandName, getProfileDetailName]))
 
   useEffect(() => {
     // fetchProfileData();
@@ -146,10 +146,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const handleSubmit = async (values) => {
     try {
-      // const [isd, phone] = values.phoneNumber.split("-");
+      const [isd, phone] = values.phoneNumber.split("-");
+
       const reqBody = {
-        phoneNumber: values.phoneNumber,
-        isdCode: "+91", // TODO hardcoded
+        phoneNumber: phone,
+        isdCode: isd,
         emailId: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
@@ -162,13 +163,16 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
           },
         ],
       };
-      let result; 
-    if (profileDetails?._id) {
-      result = await actions.updateProfileDetails(reqBody);
-    } else {
-      result = await actions.addProfileDetails(reqBody);
-    }
-      enqueueSnackbar(profileDetails?._id?"Profile Details updated successfully!":"Profile Details added successfully!", {
+
+      let result;
+
+      if (profileDetails?._id) {
+        result = await actions.updateProfileDetails(reqBody);
+      } else {
+        result = await actions.addProfileDetails(reqBody);
+      }
+      
+      enqueueSnackbar(profileDetails?._id ? "Profile Details updated successfully!" : "Profile Details added successfully!", {
         variant: "success",
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
         autoHideDuration: 2000,

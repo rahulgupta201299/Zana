@@ -316,7 +316,7 @@ const Wishlist = () => {
                           alignSelf: "flex-end",
                         }}
                       >
-                        {`${currencySymbol || '₹'} ${price}`}
+                        {`${currencySymbol} ${price}`}
                       </Typography>
                     </CardContent>
 

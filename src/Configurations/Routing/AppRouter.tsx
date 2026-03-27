@@ -12,7 +12,6 @@ export function getHistory() {
 function AppRouter() {
   if (!router) router = getAppRouter()
 
-  // TODO: Add loading component
   return (
     <Suspense fallback={"Loading..."}>
       <RouterProvider router={router} />

@@ -32,15 +32,15 @@ function index() {
     [dispatch]
   );
 
-  // TODO currency check this
   const retry = autoRetry()
 
   const fetchData = async () => {
     const requests: Promise<any>[] = []
 
-    // TODO currency check this
-    if (!garageFavoriteList.length) requests.push(retry(() => actions.newArrivalList()))
-    if (!newArrivalsList.length) requests.push(retry(() => actions.garageFavorite()))
+    const checkNewCurrency = garageFavoriteList.length > 0 && garageFavoriteList[0].currency !== currency
+
+    if (!garageFavoriteList.length || checkNewCurrency) requests.push(retry(() => actions.newArrivalList()))
+    if (!newArrivalsList.length || checkNewCurrency) requests.push(retry(() => actions.garageFavorite()))
     await Promise.allSettled(requests)
   };
 

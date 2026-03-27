@@ -68,3 +68,15 @@ export type WishListResType = {
   phoneNumber: string;
   products: WishlistProductType[];
 };
+
+export interface VeriftyOtpReqType {
+  isdCode: string;
+  phoneNumber: string;
+  otp: string;
+}
+
+export type VerifyOtpResType = {
+  message: string;
+  phoneNumber: string;
+  verified: boolean;
+};

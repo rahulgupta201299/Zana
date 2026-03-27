@@ -13,32 +13,30 @@ export interface ADD_PROFILE_DETAILS {
   phoneNumber: string;
   address: string;
   notifyOffers: boolean;
-  bikeOwnedByCustomer?: bike_owned[]
+  bikeOwnedByCustomer?: bike_owned[];
 }
 
- type bike_owned={
-    brand: string,
-    model: string
- }
+type bike_owned = {
+  brand: string;
+  model: string;
+};
 
 async function addProfileDetailsService(
-  requestData: ADD_PROFILE_DETAILS
+  requestData: ADD_PROFILE_DETAILS,
 ): Promise<any> {
   const options = {
     url: `/api/v1/profile`,
     method: API_METHOD_ENUM.POST,
     data: requestData,
   };
-  // TODO
-    const response = await network.request(options)
-    const { data } = response
-    return data
- 
+  const response = await network.request(options);
+  const { data } = response;
+  return data;
 }
 
 const addProfileDetailServiceAction = serviceActionCreator(
   addProfileDetailsActions,
-  addProfileDetailsService
+  addProfileDetailsService,
 );
 
 export default addProfileDetailServiceAction;

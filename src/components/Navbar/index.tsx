@@ -4,23 +4,20 @@ import {
   Box,
   Button,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
 import {
   Link,
-  Navigate,
   useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
-import ProfileModal from "@/components/ProfileModal";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
 import ZPro from "@/Assets/Icons/ZPro.webp";
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
-import { MenuItemsType, TopLevelItemsType } from "./Types";
+import { MenuItemsType } from "./Types";
 import HeroSection from "@/components/HeroSection";
 import MenuIcon from "@mui/icons-material/Menu";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -40,6 +37,7 @@ import {
 } from "@/Redux/Landing/Selectors";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import { decodeParams } from "@/Utils/global";
+import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 
 type NavbarPropsType = {
   isMobile: boolean;
@@ -134,8 +132,15 @@ function Navbar({ isMobile }: NavbarPropsType) {
     return () => observer.disconnect();
   }, [location.pathname]);
 
-  const handleChange = (value) => {
+  async function handleChange(value: string) {
+    // @ts-ignore
     dispatch(selectedCurrencyActions(value));
+
+    try {
+      await dispatch(getCartDetailServiceAction(value))
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -255,7 +260,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
                   if (!selectedCurrency) return "";
                   if (isMobile) return selectedCurrency.symbol;
-                  
+
                   return `${selectedCurrency.symbol} ${selectedCurrency.code}`;
                 }}
               >
@@ -291,7 +296,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       },
                     }}
                   />
-                  {/* TODO */}
 
                   {name === MenuItemsName.CART && totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
