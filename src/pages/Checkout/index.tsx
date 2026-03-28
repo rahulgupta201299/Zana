@@ -68,7 +68,7 @@ interface CheckoutFormValues {
 }
 
 export default function CheckoutPage() {
-  const { decrementToCart, incrementToCart, validateCart, clearCart } = useCart();
+  const { decrementToCart, incrementToCart, validateCart, getQuantity, clearCart } = useCart();
 
   const cartDetail = useSelector(cartDetailSelector)
   const isdCode = useSelector(isdCodeDetails)
@@ -1194,6 +1194,9 @@ export default function CheckoutPage() {
               const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
               const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
+              const productQuantity = getQuantity(productId)
+              const isPlusDisabled = productQuantity >= quantityAvailable;
+
               return (
                 <Box
                   key={productId}
@@ -1264,12 +1267,10 @@ export default function CheckoutPage() {
                           bgcolor: "rgba(255,255,255,0.1)",
                           borderRadius: 2,
                         }}
+                        onClick={e => e.stopPropagation()}
                       >
                         <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            decrementToCart(productId)
-                          }}
+                          onClick={() => decrementToCart(productId)}
                           sx={{
                             color: "white",
                             "&:hover": { color: "yellow" },
@@ -1283,14 +1284,13 @@ export default function CheckoutPage() {
                         </Typography>
 
                         <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            incrementToCart(product, productId, quantityAvailable)
-                          }}
+                          onClick={() => incrementToCart(product, productId, quantityAvailable)}
                           sx={{
                             color: "white",
                             "&:hover": { color: "yellow" },
+                            "&.Mui-disabled": { color: "gray" },
                           }}
+                          disabled={isPlusDisabled}
                         >
                           <Plus size={18} />
                         </IconButton>
@@ -1326,27 +1326,23 @@ export default function CheckoutPage() {
             </>
           )}
 
-          {
-            phoneNumber && (
-              <Stack mt={discountAmount > 0 ? 0 : 4} direction="row" justifyContent="flex-end">
-                <Typography
-                  sx={{
-                    textTransform: 'uppercase',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: '#3B82F6',
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
-                  }}
-                  onClick={handleApplyCoupon}
-                >
-                  {discountAmount > 0 ? "update" : "apply"} coupon
-                </Typography>
-              </Stack>
-            )
-          }
+          <Stack mt={discountAmount > 0 ? 0 : 4} direction="row" justifyContent="flex-end">
+            <Typography
+              sx={{
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: '#3B82F6',
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={handleApplyCoupon}
+            >
+              {discountAmount > 0 ? "update" : "apply"} coupon
+            </Typography>
+          </Stack>
 
           <Box
             sx={{
