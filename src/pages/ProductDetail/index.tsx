@@ -35,7 +35,7 @@ import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { categoryProductServiceName } from "@/Redux/Product/Actions";
+import { categoryProductServiceName, productDetailServiceName } from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
@@ -46,7 +46,7 @@ const ProductDetailPage = () => {
 
   const params = useParams<ProductDetailParamsType>();
   const { productCategory = '', productId = '', productItem = '' } = decodeParams(params)
-    
+
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
@@ -54,7 +54,6 @@ const ProductDetailPage = () => {
   const [suggestedProducts, setSuggestedProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const dispatch = useDispatch<TAppDispatch>();
@@ -63,10 +62,16 @@ const ProductDetailPage = () => {
   const getQuantityValue = getQuantity(productId);
 
   const profileDetails = useSelector(getProfileDetails);
-  const isLoading = useSelector<TAppStore, boolean>((state) =>
+  
+  const currency = useSelector(getSelectedCurrency);
+
+  const isCategoryLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [categoryProductServiceName]),
   );
-  const currency = useSelector(getSelectedCurrency);
+
+  const isProductLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [productDetailServiceName]),
+  );
 
   function handleBackToProducts() {
     navigate(ROUTES.PRODUCT_CATALOG, { state: { category: encodeURIComponent(productCategory) } });
@@ -111,7 +116,6 @@ const ProductDetailPage = () => {
   }
 
   async function pageOps() {
-    setLoading(true);
     setQuantity(getQuantityValue || 1);
     try {
       const response = (await dispatch(
@@ -133,10 +137,6 @@ const ProductDetailPage = () => {
       setSuggestedProducts(data);
     } catch (error: any) {
       console.error(error);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
     }
   }
 
@@ -149,9 +149,9 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, [currency]);
+  }, [currency, location.pathname]);
 
-  if (!product && !loading) {
+  if (!product && !isProductLoading) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -203,7 +203,7 @@ const ProductDetailPage = () => {
               {images.map((image, index) => {
                 return (
                   <>
-                    {image ? (
+                    {!isProductLoading ? (
                       <div
                         key={index}
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index
@@ -235,7 +235,7 @@ const ProductDetailPage = () => {
           {/* Center - Main Product Image */}
           <div className="lg:col-span-5">
             <div className="bg-gradient-to-b from-[#7B7575] to-white rounded-lg p-8 h-96 lg:h-[600px] flex items-center justify-center">
-              {imageUrl ? (
+              {!isProductLoading ? (
                 <img
                   src={images[selectedImageIndex]}
                   alt={name}
@@ -250,7 +250,7 @@ const ProductDetailPage = () => {
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
             <div className="flex items-center justify-between">
-              {name ? (
+              {!isProductLoading ? (
                 <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
               ) : (
                 <Skeleton
@@ -259,20 +259,20 @@ const ProductDetailPage = () => {
                   height={60}
                 />
               )}
-               {productCode ? (
-              <p className="text-white text-lg mb-2 leading-relaxed">
-                {productCode}
-              </p>
-            ) : (
-              <Skeleton
-                sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                width={100}
-                height={40}
-              />
-            )}
+              {!isProductLoading ? (
+                <p className="text-white text-lg mb-2 leading-relaxed">
+                  {productCode}
+                </p>
+              ) : (
+                <Skeleton
+                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                  width={100}
+                  height={40}
+                />
+              )}
             </div>
-           
-            {shortDescription ? (
+
+            {!isProductLoading ? (
               <p className="text-white text-lg mb-6 leading-relaxed">
                 {shortDescription}
               </p>
@@ -284,8 +284,8 @@ const ProductDetailPage = () => {
               />
             )}
 
-            <div className="flex items-center justify-between mb-6">      
-              {price ? (
+            <div className="flex items-center justify-between mb-6">
+              {!isProductLoading ? (
                 <span className="text-2xl font-bold text-white">
                   {currencySymbol} {price.toLocaleString()}
                 </span>
@@ -304,7 +304,7 @@ const ProductDetailPage = () => {
                   />
                 </Box>
               )}
-              
+
               {quantityAvailable > 0 ? (
                 <div className="flex items-center gap-2">
                   <Button
@@ -539,7 +539,7 @@ const ProductDetailPage = () => {
           You may also like
         </h2>
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-          {isLoading &&
+          {isCategoryLoading &&
             Array.from({ length: 5 }).map((_, index) => (
               <Skeleton
                 key={index}
@@ -552,7 +552,7 @@ const ProductDetailPage = () => {
                 }}
               />
             ))}
-          {!isLoading &&
+          {!isCategoryLoading &&
             suggestedProducts.map((relatedProduct, index) => {
               const {
                 _id,

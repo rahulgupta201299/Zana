@@ -68,8 +68,8 @@ function Bikes() {
 	}
 
 	useEffect(() => {
-		setFilteredBrandDetails(allBrandDetails)
-	}, [allBrandDetails.length])
+		handleBrandCategoryClick(initialBikeBrand)
+	}, [allBrandDetails.length, initialBikeBrand])
 
 	return (
 		<div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
