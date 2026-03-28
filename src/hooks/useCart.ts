@@ -222,7 +222,7 @@ export default function useCart() {
 
   function clearCart() {
     // @ts-ignore
-    dispatch(resetCart);
+    dispatch(resetCart());
   }
 
   function removeItemFromCart(productId: string) {

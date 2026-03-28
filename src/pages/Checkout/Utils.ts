@@ -14,7 +14,8 @@ export async function verifyPayment(data: VerifyPaymentOrderReqType) {
   try {
     await dispatch(verifyPaymentOrderServiceAction(data));
     dispatch(setOpenOrder(true))
-    dispatch(resetCart)
+    // @ts-ignore
+    dispatch(resetCart())
   } catch (error: any) {
     const { message = '' } = error
     enqueueSnackbar({
