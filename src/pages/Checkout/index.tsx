@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router";
 import {
   Container,
   Grid,
@@ -18,7 +17,6 @@ import {
   RadioGroup,
   IconButton,
   InputAdornment,
-  Stack,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -39,7 +37,7 @@ import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddr
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
-import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
+import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -90,15 +88,11 @@ export default function CheckoutPage() {
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0 } = cartDetail
+  const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0, currencySymbol = '' } = cartDetail
   const { phoneNumber = '' } = profileDetails;
 
   function performOps() {
     if (!phoneNumber) dispatch(setOpenSignupPopup(true))
-  }
-
-  function handleApplyCoupon() {
-    dispatch(setOpenCouponDialog(true))
   }
 
   useEffect(() => {
@@ -1191,7 +1185,7 @@ export default function CheckoutPage() {
             }}
           >
             {processedItems.map((item) => {
-              const { product, quantity = 0, price = 0, totalPrice = 0 } = item;
+              const { product, quantity = 0, price = 0, totalPrice = 0, currencySymbol = '' } = item;
               const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
               const productQuantity = getQuantity(productId)
@@ -1257,7 +1251,7 @@ export default function CheckoutPage() {
                         fontWeight={300}
                         fontSize={{ xs: 18, md: 22 }}
                       >
-                        ₹ {price}
+                        {currencySymbol} {price}
                       </Typography>
 
                       <Box
@@ -1306,7 +1300,7 @@ export default function CheckoutPage() {
             <>
               <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6">
                 <p className="text-green-400 text-sm text-center">
-                  🎉 You saved ₹ {discountAmount}!
+                  🎉 You saved {currencySymbol} {discountAmount}!
                 </p>
               </div>
               <Box
@@ -1320,29 +1314,13 @@ export default function CheckoutPage() {
               >
                 <Typography>Discount ({couponCode})</Typography>
                 <Typography>
-                  - ₹ {discountAmount}
+                  - {currencySymbol} {discountAmount}
                 </Typography>
               </Box>
             </>
           )}
 
-          <Stack mt={discountAmount > 0 ? 0 : 4} direction="row" justifyContent="flex-end">
-            <Typography
-              sx={{
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: '#3B82F6',
-                cursor: "pointer",
-                "&:hover": {
-                  opacity: 0.8,
-                },
-              }}
-              onClick={handleApplyCoupon}
-            >
-              {discountAmount > 0 ? "update" : "apply"} coupon
-            </Typography>
-          </Stack>
+          <DisplayCouponCTA />
 
           <Box
             sx={{
@@ -1354,7 +1332,7 @@ export default function CheckoutPage() {
           >
             <Typography>Subtotal</Typography>
             <Typography fontWeight={600}>
-              ₹ {subtotal}
+              {currencySymbol} {subtotal}
             </Typography>
           </Box>
           <Box
@@ -1366,7 +1344,7 @@ export default function CheckoutPage() {
             }}
           >
             <Typography>Shipping</Typography>
-            <Typography fontWeight={600}>{shippingCost}</Typography>
+            <Typography fontWeight={600}>{currencySymbol} {shippingCost}</Typography>
           </Box>
 
           <Box
@@ -1384,11 +1362,11 @@ export default function CheckoutPage() {
                 Total
               </Typography>
               <Typography fontWeight={700} fontSize={12}>
-                Including {"Rs"} {taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
+                Including {currencySymbol} {taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
               </Typography>
             </Box>
             <Typography color="#F5F4F4" fontWeight={500} fontSize={32}>
-              ₹ {totalAmount}
+              {currencySymbol} {totalAmount}
             </Typography>
           </Box>
         </Grid>

@@ -1,4 +1,3 @@
-import { Stack, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
@@ -6,9 +5,9 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { setOpenCouponDialog } from "@/Redux/Cart/Reducer";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
+import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -23,16 +22,10 @@ export default function Cart() {
 
   const totalItems = getTotalQuantity()
 
-  const dispatch = useDispatch<TAppDispatch>();
-
   function handleProductClick(productCategory: string, productItem: string, productId: string) {
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
 
     navigate(path)
-  }
-
-  function handleApplyCoupon() {
-    dispatch(setOpenCouponDialog(true))
   }
 
   return (
@@ -229,23 +222,7 @@ export default function Cart() {
                     </div>
                   )}
 
-                  <Stack direction="row" justifyContent="flex-end">
-                    <Typography
-                      sx={{
-                        textTransform: 'uppercase',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        color: '#3B82F6',
-                        cursor: "pointer",
-                        "&:hover": {
-                          opacity: 0.8,
-                        },
-                      }}
-                      onClick={handleApplyCoupon}
-                    >
-                      {discountAmount > 0 ? "update" : "apply"} coupon
-                    </Typography>
-                  </Stack>
+                  <DisplayCouponCTA />
 
                   <div className="border-t border-white/20 pt-4">
                     <div className="flex justify-between items-center">

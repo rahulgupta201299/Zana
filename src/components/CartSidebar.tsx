@@ -4,18 +4,18 @@ import {
   Typography,
   IconButton,
   Button,
-  Stack,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { X, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { setOpenCart, setOpenCouponDialog } from "@/Redux/Cart/Reducer";
+import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
 import { ROUTES } from "@/Constants/Routes";
 import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
+import DisplayCouponCTA from "./DisplayCouponCTA";
 
 interface CartSidebarProps {
   variant?: "drawer" | "checkout";
@@ -47,10 +47,6 @@ const CartSidebar = ({
 
     navigate(path)
     onClose()
-  }
-
-  function handleApplyCoupon() {
-    dispatch(setOpenCouponDialog(true))
   }
 
   const CartContent = (
@@ -307,23 +303,7 @@ const CartSidebar = ({
             </Box>
           )}
 
-          <Stack direction="row" justifyContent="flex-end">
-            <Typography
-              sx={{
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: '#3B82F6',
-                cursor: "pointer",
-                "&:hover": {
-                  opacity: 0.8,
-                },
-              }}
-              onClick={handleApplyCoupon}
-            >
-              {discountAmount > 0 ? "update" : "apply"} coupon
-            </Typography>
-          </Stack>
+          <DisplayCouponCTA />
 
           <Box
             sx={{

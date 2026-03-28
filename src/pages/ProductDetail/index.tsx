@@ -62,7 +62,7 @@ const ProductDetailPage = () => {
   const getQuantityValue = getQuantity(productId);
 
   const profileDetails = useSelector(getProfileDetails);
-  
+
   const currency = useSelector(getSelectedCurrency);
 
   const isCategoryLoading = useSelector<TAppStore, boolean>((state) =>
@@ -290,19 +290,11 @@ const ProductDetailPage = () => {
                   {currencySymbol} {price.toLocaleString()}
                 </span>
               ) : (
-                <Box sx={{ display: "flex", gap: 2 }}>
-                  <span
-                    style={{ margin: "auto 0" }}
-                    className="text-2xl font-bold text-white"
-                  >
-                    {currencySymbol}{" "}
-                  </span>
-                  <Skeleton
-                    sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                    width={100}
-                    height={60}
-                  />
-                </Box>
+                <Skeleton
+                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                  width={100}
+                  height={60}
+                />
               )}
 
               {quantityAvailable > 0 ? (
