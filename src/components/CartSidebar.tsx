@@ -202,6 +202,7 @@ const CartSidebar = ({
                         bgcolor: "rgba(255,255,255,0.1)",
                         borderRadius: 2,
                       }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <IconButton
                         onClick={(e) => {
@@ -223,8 +224,7 @@ const CartSidebar = ({
                       </Typography>
 
                       <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           incrementToCart(product, item.product._id, item.product.quantityAvailable)
                         }}
                         sx={{
@@ -307,27 +307,23 @@ const CartSidebar = ({
             </Box>
           )}
 
-          {
-            phoneNumber && (
-              <Stack direction="row" justifyContent="flex-end">
-                <Typography
-                  sx={{
-                    textTransform: 'uppercase',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: '#3B82F6',
-                    cursor: "pointer",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
-                  }}
-                  onClick={handleApplyCoupon}
-                >
-                  {discountAmount > 0 ? "update" : "apply"} coupon
-                </Typography>
-              </Stack>
-            )
-          }
+          <Stack direction="row" justifyContent="flex-end">
+            <Typography
+              sx={{
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: '#3B82F6',
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={handleApplyCoupon}
+            >
+              {discountAmount > 0 ? "update" : "apply"} coupon
+            </Typography>
+          </Stack>
 
           <Box
             sx={{

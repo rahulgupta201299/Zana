@@ -16,7 +16,7 @@ export default function Cart() {
   const cartDetail = useSelector(cartDetailSelector);
   const profileDetails = useSelector(getProfileDetails);
 
-  const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity } = useCart();
+  const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity, getQuantity } = useCart();
 
   const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '', currencySymbol = '' } = cartDetail
   const { phoneNumber = '' } = profileDetails;
@@ -68,6 +68,9 @@ export default function Cart() {
                   const { product, quantity = 0, price = 0, totalPrice = 0, currencySymbol = '' } = item;
                   const { _id: productId = '', category = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
 
+                  const productQuantity = getQuantity(productId)
+                  const isPlusDisabled = productQuantity >= quantityAvailable;
+
                   return (
                     <div
                       key={productId}
@@ -118,7 +121,10 @@ export default function Cart() {
                             </div>
 
                             {/* Quantity Controls */}
-                            <div className="flex items-center gap-4">
+                            <div
+                              className="flex items-center gap-4"
+                              onClick={e => e.stopPropagation()}
+                            >
                               <div className="flex items-center gap-2 bg-white/10 rounded-lg">
                                 <button
                                   onClick={(e) => {
@@ -133,11 +139,12 @@ export default function Cart() {
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    incrementToCart(product, productId, quantityAvailable)
-                                  }}
-                                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
+                                  onClick={() => incrementToCart(product, productId, quantityAvailable)}
+                                  className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors ${isPlusDisabled
+                                      ? "text-black cursor-not-allowed"
+                                      : "text-white hover:text-yellow-400"
+                                    }`}
+                                  disabled={isPlusDisabled}
                                 >
                                   <Plus size={20} />
                                 </button>
@@ -145,10 +152,7 @@ export default function Cart() {
 
                               {/* Remove Button */}
                               <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  removeItemFromCart(productId)
-                                }}
+                                onClick={() => removeItemFromCart(productId)}
                                 className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
                                 title="Remove item"
                               >
@@ -225,27 +229,23 @@ export default function Cart() {
                     </div>
                   )}
 
-                  {
-                    phoneNumber && (
-                      <Stack direction="row" justifyContent="flex-end">
-                        <Typography
-                          sx={{
-                            textTransform: 'uppercase',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                            color: '#3B82F6',
-                            cursor: "pointer",
-                            "&:hover": {
-                              opacity: 0.8,
-                            },
-                          }}
-                          onClick={handleApplyCoupon}
-                        >
-                          {discountAmount > 0 ? "update" : "apply"} coupon
-                        </Typography>
-                      </Stack>
-                    )
-                  }
+                  <Stack direction="row" justifyContent="flex-end">
+                    <Typography
+                      sx={{
+                        textTransform: 'uppercase',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: '#3B82F6',
+                        cursor: "pointer",
+                        "&:hover": {
+                          opacity: 0.8,
+                        },
+                      }}
+                      onClick={handleApplyCoupon}
+                    >
+                      {discountAmount > 0 ? "update" : "apply"} coupon
+                    </Typography>
+                  </Stack>
 
                   <div className="border-t border-white/20 pt-4">
                     <div className="flex justify-between items-center">

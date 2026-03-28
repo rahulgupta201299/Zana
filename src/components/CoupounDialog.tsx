@@ -29,6 +29,7 @@ import removeCouponServiceAction from "@/Redux/Cart/Services/RemoveCouponService
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import applyCouponServiceAction from "@/Redux/Cart/Services/ApplyCouponService";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import Loading from "./Loading";
 
 export default function CouponDialog() {
@@ -51,6 +52,17 @@ export default function CouponDialog() {
 	const dispatch = useDispatch<TAppDispatch>();
 
 	async function handleApply(code: string) {
+
+		if (!phoneNumber) {
+			dispatch(setOpenSignupPopup(true))
+			onClose()
+			enqueueSnackbar({
+				variant: 'warning',
+				message: 'Login required to apply coupon'
+			})
+			return
+		}
+
 		try {
 			await dispatch(applyCouponServiceAction({ phoneNumber, couponCode: code })) as ApplyCouponResType
 			enqueueSnackbar({
@@ -58,7 +70,8 @@ export default function CouponDialog() {
 				variant: 'success',
 			})
 		} catch (error: any) {
-			const { message = '' } = error;
+			// TODO Rahul check for all error case scenarios and make it common
+			const { message = '' } = error?.response?.data || {};
 			enqueueSnackbar({
 				message: message || 'Failed to apply coupon',
 				variant: 'error',
