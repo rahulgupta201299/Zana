@@ -2,37 +2,49 @@ import React, { useEffect, useMemo } from "react";
 import { Box, Stack, Typography, Button, Divider } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { PersistPartial } from "redux-persist/es/persistReducer";
-import { TReducers } from "@/Redux/Reducers";
-import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
+import {  isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderDetailName } from "@/Redux/Order/Action";
 import Loading from "@/components/Loading";
 import { addDays, format } from "date-fns";
+import getOrderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
+import { Order, orderDetailResponse } from "./Types";
+import { decodeParams } from "@/Utils/global";
+import { useParams } from "react-router-dom";
+
 
 const OrderDetails = () => {
+    const params = useParams();
+  const { id = "" } = decodeParams(params);
   const dispatch = useDispatch<TAppDispatch>();
-  // const actions = useMemo(
-  //   () => ({
-  //     getOrderDetails: (state) => dispatch(orderDetailServiceAction(state)),
-  //   }),
-  //   [dispatch]
-  // );
-  const phoneNumber = useSelector<TAppStore, string>(
-    (state) => state.auth.login.phoneNumber
+  const actions = useMemo(
+    () => ({
+      getOrderDetails: (state) => dispatch(getOrderDetailServiceAction(state)),
+    }),
+    [dispatch]
   );
-  const orderList = []
-  const isDetailsLoading = useSelector(
-    (state: TReducers & PersistPartial) =>
-      getServiceSelector(state, orderDetailName) === "LOADING"
+ 
+  const [order, setOrder] = React.useState(null);
+  
+  const isDetailsLoading = useSelector<TAppStore, boolean>((state) =>
+  isServiceLoading(state, [orderDetailName]),
   );
 
-  // const fetchOrderDetails = async () => {
-  //   const result = await actions.getOrderDetails(phoneNumber);
-  //   console.log(result);
-  // };
-  // useEffect(() => {
-  //   fetchOrderDetails();
-  // }, []);
+const fetchOrderDetails = async (id: string) => {
+  try {
+    const result = await actions.getOrderDetails(id);
+    setOrder(result);
+    return result;
+  } catch (error) {
+   
+    console.error('Failed to fetch order details:', error);
+    throw error; 
+  }
+};
+  useEffect(() => {
+    if(id) {
+    fetchOrderDetails(id);
+    }
+  }, [id]);
 
   return (
     <Box
@@ -46,7 +58,7 @@ const OrderDetails = () => {
       }}
     >
       {isDetailsLoading && <Loading />}
-      {orderList && orderList.map((order) => (
+      
         <Box sx={{ width: "100%", maxWidth: 900 }}>
           <Stack direction="row" spacing={2} mb={3}>
             <Typography variant="h5" sx={{ flex: 1 }}>
@@ -144,9 +156,12 @@ const OrderDetails = () => {
             </Button>
           </Stack>
         </Box>
-      ))}
+      
     </Box>
   );
 };
 
 export default OrderDetails;
+
+
+

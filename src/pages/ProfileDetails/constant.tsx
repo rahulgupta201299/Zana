@@ -2,14 +2,16 @@
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import PersonIcon from "@mui/icons-material/Person";
-import { LogOutIcon } from "lucide-react";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
+import ViewListIcon from '@mui/icons-material/ViewList';
 export const profileSideMenu = [
   { key: "profile", icon: <PersonIcon />, label: "My Profile" },
+  { key: "orders", icon: <ViewListIcon />, label: "My Orders" },
   { key: "wishlist", icon: <FavoriteBorderIcon />, label: "Wishlist" },
   { key: "faq", icon: <HelpOutlineIcon />, label: "FAQ's" },
-  { key: "logout", icon: <LogOutIcon />, label: "Logout" },
+  { key: "logout", icon: <LogoutIcon />, label: "Logout" },
 ];
 
 export const faqs = [

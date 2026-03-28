@@ -32,3 +32,9 @@ export function decodeParams<T extends Record<string, string>>(
     {} as Record<string, string>,
   ) as Partial<T>;
 }
+
+export const getTotalQuantity = <T extends { quantity: number }>(
+  items: T[]
+): number => {
+  return items.reduce((total, item) => total + item.quantity, 0);
+};

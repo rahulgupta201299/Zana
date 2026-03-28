@@ -85,9 +85,10 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
       case "wishlist":
         navigate(ROUTES.WISHLIST);
-
       case "faq":
         return <Faq />;
+      case "orders":
+        navigate(ROUTES.ORDER_LIST);
 
       default:
         return null;
