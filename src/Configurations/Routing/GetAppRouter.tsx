@@ -28,6 +28,7 @@ const Wishlist = lazyLoadPage(() => import("@/pages/Wishlist"), Loading)
 const TermsAndCondition = lazyLoadPage(() => import("@/pages/QuickLinks/TermsConditions"), Loading);
 const Disclaimer = lazyLoadPage(() => import("@/pages/QuickLinks/Disclaimer"), Loading);
 const PrivacyPolicy = lazyLoadPage(() => import("@/pages/QuickLinks/PrivacyPolicy"), Loading);
+const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), Loading);
 
 export const routeObj: RouteObject[] = [
   {
@@ -60,6 +61,7 @@ export const routeObj: RouteObject[] = [
     children: [
       { path: ROUTES.PROFILE, element: ProfileDetails },
       { path: ROUTES.WISHLIST, element: Wishlist },
+      { path: ROUTES.ORDER_LIST, element: OrderList },
       { path: ROUTES.ORDER_DETAILS, element: OrderDetails },
     ]
   }
