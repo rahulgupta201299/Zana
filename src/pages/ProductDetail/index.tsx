@@ -249,17 +249,8 @@ const ProductDetailPage = () => {
 
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
-            <div className="flex items-center justify-between">
-              {!isProductLoading ? (
-                <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
-              ) : (
-                <Skeleton
-                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                  width={300}
-                  height={60}
-                />
-              )}
-              {!isProductLoading ? (
+            <div className="flex justify-end gap-4 mb-2">
+                {!isProductLoading ? (
                 <p className="text-white text-lg mb-2 leading-relaxed">
                   {productCode}
                 </p>
@@ -270,6 +261,18 @@ const ProductDetailPage = () => {
                   height={40}
                 />
               )}
+            </div>
+            <div className="flex items-center justify-between">
+              {!isProductLoading ? (
+                <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
+              ) : (
+                <Skeleton
+                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                  width={300}
+                  height={60}
+                />
+              )}
+            
             </div>
 
             {!isProductLoading ? (

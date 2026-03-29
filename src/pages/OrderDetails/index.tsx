@@ -1,150 +1,247 @@
 import React, { useEffect, useMemo } from "react";
-import { Box, Stack, Typography, Button, Divider } from "@mui/material";
+import { Box, Stack, Typography, Button, Divider, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { PersistPartial } from "redux-persist/es/persistReducer";
-import { TReducers } from "@/Redux/Reducers";
-import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
-import { orderDetailName } from "@/Redux/Order/Action";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { orderDetailByIdName, orderDetailName } from "@/Redux/Order/Action";
 import Loading from "@/components/Loading";
 import { addDays, format } from "date-fns";
+import getOrderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
+import { Order, orderDetailResponse } from "./Types";
+import { decodeParams, statusColor } from "@/Utils/global";
+import { useParams } from "react-router-dom";
+import OrderDetailsSkeleton from "@/components/Skeleton/orderDetailSkeleton";
+
+const Row = ({ label, value }) => (
+  <Stack direction="row" justifyContent="space-between">
+    <Typography color="grey.400">{label}</Typography>
+    <Typography>₹{value?.toLocaleString("en-IN")}</Typography>
+  </Stack>
+);
+
+const AddressBlock = ({ title, address }) => (
+  <Box sx={{ flex: 1 }}>
+    <Typography fontWeight={600} mb={1}>
+      {title}
+    </Typography>
+
+    <Typography>{address?.fullName}</Typography>
+    <Typography color="grey.400">{address?.phone}</Typography>
+    <Typography color="grey.400">{address?.addressLine1}</Typography>
+    <Typography color="grey.400">
+      {address?.city}, {address?.state}
+    </Typography>
+    <Typography color="grey.400">
+      {address?.postalCode}, {address?.country}
+    </Typography>
+  </Box>
+);
 
 const OrderDetails = () => {
+  const params = useParams();
+  const { id = "" } = decodeParams(params);
   const dispatch = useDispatch<TAppDispatch>();
-  // const actions = useMemo(
-  //   () => ({
-  //     getOrderDetails: (state) => dispatch(orderDetailServiceAction(state)),
-  //   }),
-  //   [dispatch]
-  // );
-  const phoneNumber = useSelector<TAppStore, string>(
-    (state) => state.auth.login.phoneNumber
-  );
-  const orderList = []
-  const isDetailsLoading = useSelector(
-    (state: TReducers & PersistPartial) =>
-      getServiceSelector(state, orderDetailName) === "LOADING"
+  const actions = useMemo(
+    () => ({
+      getOrderDetails: (state) => dispatch(getOrderDetailServiceAction(state)),
+    }),
+    [dispatch],
   );
 
-  // const fetchOrderDetails = async () => {
-  //   const result = await actions.getOrderDetails(phoneNumber);
-  //   console.log(result);
-  // };
-  // useEffect(() => {
-  //   fetchOrderDetails();
-  // }, []);
+  const [order, setOrder] = React.useState(null);
 
-  return (
+  const isDetailsLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [orderDetailByIdName]),
+  );
+
+  const fetchOrderDetails = async (id: string) => {
+    try {
+      const result = await actions.getOrderDetails(id);
+      setOrder(result);
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch order details:", error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    if (id) {
+      fetchOrderDetails(id);
+    }
+  }, [id]);
+
+  return isDetailsLoading ? (
+    <OrderDetailsSkeleton />
+  ) : (
     <Box
       sx={{
         width: "100%",
         bgcolor: "#111",
         color: "white",
-        p: "48px",
+        p: { xs: 2, md: 6 },
         display: "flex",
         justifyContent: "center",
       }}
     >
-      {isDetailsLoading && <Loading />}
-      {orderList && orderList.map((order) => (
-        <Box sx={{ width: "100%", maxWidth: 900 }}>
-          <Stack direction="row" spacing={2} mb={3}>
-            <Typography variant="h5" sx={{ flex: 1 }}>
-              Items Ordered
-            </Typography>
-            <Typography variant="h5" sx={{ width: 120, textAlign: "center" }}>
-              Quantity
-            </Typography>
-            <Typography variant="h5" sx={{ width: 120, textAlign: "center" }}>
-              Price
-            </Typography>
-          </Stack>
+      <Box sx={{ width: "100%", maxWidth: 1000 }}>
+        <Stack spacing={1} mb={4}>
+          <Typography fontSize={{ xs: 22, md: 28 }} fontWeight={700}>
+            Order Details
+          </Typography>
 
-          {order?.items?.map((item, index) => (
-            <Stack
-              key={index}
-              direction="row"
-              spacing={2}
-              mb={4}
-              alignItems="center"
+          <Typography fontSize={16} color="grey.400">
+            {order?.orderNumber}
+          </Typography>
+
+          <Typography variant="body2" color="grey.500">
+            {order?.orderDate
+              ? format(new Date(order?.orderDate), "d MMM yyyy, hh:mm a")
+              : ""}
+          </Typography>
+        </Stack>
+
+        <Stack
+          justifyContent={"space-between"}
+          direction={"row"}
+          spacing={4}
+          mb={4}
+        >
+         <Chip
+								label={order?.orderStatus || ""}
+								sx={{
+									backgroundColor: statusColor(order?.orderStatus),
+									color: "#022C22",
+									fontWeight: 600,
+									textTransform: "uppercase",
+								}}
+							/>
+
+          <Typography
+            fontWeight={700}
+            color={order?.paymentStatus === "paid" ? "#ffff" : "error.main"}
+          >
+            {order?.paymentStatus?.toUpperCase()}
+          </Typography>
+        </Stack>
+
+        <Typography variant="h6" mb={2}>
+          Items Ordered
+        </Typography>
+
+        <Stack spacing={3}>
+          {order?.items?.map((item) => (
+            <Box
+              key={item._id}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "80px 1fr",
+                  md: "100px 1fr 120px 120px",
+                },
+                gap: 2,
+                alignItems: "center",
+                p: 2,
+                borderRadius: 2,
+                bgcolor: "#1a1a1a",
+              }}
             >
               <Box
                 component="img"
                 src={item?.product?.imageUrl}
                 sx={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: "12px",
+                  width: { xs: 80, md: 100 },
+                  height: { xs: 80, md: 100 },
+                  borderRadius: 2,
                   objectFit: "cover",
                 }}
               />
 
-              <Box
-                sx={{ display: "flex", flexDirection: "column", gap: "8px", flex:1 }}
-              >
+              <Box>
+                <Typography variant="subtitle1" fontWeight={400}>
+                  {item?.product?.productCode}
+                </Typography>
                 <Typography fontWeight={600}>{item?.product?.name}</Typography>
-                <Typography
-                  variant="body2"
-                  color="grey.400"
-                  sx={{ flex:1 }}
-                >
+                <Typography variant="body2" color="grey.400">
                   {item?.product?.shortDescription}
                 </Typography>
               </Box>
 
-              <Typography sx={{ width: 120, textAlign: "center" }}>
-                {item?.quantity}
+              <Typography textAlign={{ xs: "left", md: "center" }}>
+                Qty: {item?.quantity}
               </Typography>
 
-              <Typography sx={{ width: 120, textAlign: "center" }}>
-                {item?.price}
+              <Typography
+                textAlign={{ xs: "right", md: "center" }}
+                fontWeight={600}
+              >
+                {item?.currencySymbol}
+                {item?.totalPrice?.toLocaleString("en-IN")}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
+
+        <Divider sx={{ my: 4, borderColor: "grey.800" }} />
+
+        <Box sx={{ maxWidth: 400, ml: "auto" }}>
+          <Stack spacing={1}>
+            <Row label="Subtotal" value={order?.subtotal} />
+            <Row label="Discount" value={-order?.discountAmount} />
+            <Row label="Shipping" value={order?.shippingCost} />
+            <Row label="Tax" value={order?.taxAmount} />
+
+            <Divider sx={{ borderColor: "grey.700", my: 1 }} />
+
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={700}>Total</Typography>
+              <Typography fontWeight={700}>
+                {order?.currencySymbol}
+                {order?.totalAmount?.toLocaleString("en-IN")}
               </Typography>
             </Stack>
-          ))}
-
-          <Divider sx={{ my: 3, borderColor: "grey.700" }} />
-
-          <Typography fontWeight={700} mb={1}>
-            ORDER STATUS:
-          </Typography>
-          <Typography variant="h5" fontWeight={800} color="success.main" mb={1}>
-            {order?.orderStatus?.toUpperCase()}
-          </Typography>
-          {/* <Typography mb={4}>Expected Delivery By 1</Typography> */}
-
-          <Typography>{`ORDER NO.: ${order?.orderNumber} `}</Typography>
-          <Typography mb={4}>
-            SHIPPING DATE: {format(addDays(new Date(), 2), "d MMM, yyyy")}
-          </Typography>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={6}>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: 2,
-                px: 3,
-                py: 1,
-                color: "white",
-                borderColor: "white",
-              }}
-            >
-              TRACK ORDER
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: 2,
-                px: 3,
-                py: 1,
-                color: "white",
-                borderColor: "white",
-              }}
-            >
-              VIEW ORDER
-            </Button>
           </Stack>
         </Box>
-      ))}
+
+        <Divider sx={{ my: 4, borderColor: "grey.800" }} />
+
+        <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
+          <AddressBlock
+            title="Shipping Address"
+            address={order?.shippingAddress}
+          />
+          <AddressBlock
+            title="Billing Address"
+            address={order?.billingAddress}
+          />
+        </Stack>
+
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={6}>
+          <Button
+            variant="outlined"
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              color: "white",
+              borderColor: "white",
+            }}
+          >
+            TRACK ORDER
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              color: "white",
+              borderColor: "white",
+            }}
+          >
+            DOWNLOAD INVOICE
+          </Button>
+        </Stack>
+      </Box>
     </Box>
   );
 };

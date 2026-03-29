@@ -1,3 +1,4 @@
+import { orderDetailResponse } from "@/pages/OrderDetails/Types"
 import traceActionsCreator from "../traceActionsCreator"
 import { SLICE_NAME } from "./Selectors"
 
@@ -12,3 +13,11 @@ export const createPaymentOrdeActions = traceActionsCreator(createPaymentOrderNa
 
 export const verifyPaymentOrderName = `${SLICE_NAME}/verifyPaymentOrder`
 export const verifyPaymentOrdeActions = traceActionsCreator(verifyPaymentOrderName)
+
+export const orderName = `${SLICE_NAME}/order`
+export const orderActions = traceActionsCreator(orderName)
+
+
+export const orderDetailByIdName = `${SLICE_NAME}/orderDetailById`
+export const orderDetailByIdActions = traceActionsCreator(orderDetailByIdName)
+
