@@ -1320,7 +1320,9 @@ export default function CheckoutPage() {
             </>
           )}
 
-          <DisplayCouponCTA />
+          <Box mt={discountAmount > 0 ? 4 : 0}>
+            <DisplayCouponCTA />
+          </Box>
 
           <Box
             sx={{

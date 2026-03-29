@@ -5,7 +5,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderName } from "@/Redux/Order/Action";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getOrderListServiceAction from "@/Redux/Order/Services/GetOrderList";
-import { Order, orderDetailResponse, OrderListType } from "./Types";
+import { OrderListType } from "./Types";
 import { useNavigate } from "react-router";
 import { getTotalQuantity, statusColor } from "@/Utils/global";
 
@@ -24,6 +24,7 @@ const OrderList = () => {
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [orderName]),
   );
+  const currency = useSelector<TAppStore, string>(state => state.landing.selectedCurrency)
   const orders = useSelector<TAppStore, OrderListType>(
     (state) => state.order.orderList,
   );
@@ -31,7 +32,7 @@ const OrderList = () => {
 
   const fetchOrderList = async () => {
     try {
-      const result = await actions.getOrderList();
+      await actions.getOrderList();
     } catch (error) {
       console.error("Failed to fetch order List:", error);
       throw error;
@@ -40,7 +41,7 @@ const OrderList = () => {
 
   useEffect(() => {
     fetchOrderList();
-  }, []);
+  }, [currency]);
 
   const onViewDetails = (order) => {
     // Implement navigation to order details page
