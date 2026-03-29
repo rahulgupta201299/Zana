@@ -14,21 +14,9 @@ import { TAppStore } from "@/Configurations/AppStore";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
 import { newOrderPlacedDetails } from "@/Redux/Order/Selectors";
 import { ROUTES } from "@/Constants/Routes";
+import { statusColor } from "@/Utils/global";
 
-function statusColor(status: string) {
-	switch (status.toLowerCase()) {
-		case "confirmed":
-		case "success":
-			return "#22C55E";
-		case "processing":
-			return "#FACC15";
-		case "failed":
-		case "cancelled":
-			return "#EF4444";
-		default:
-			return "#A7F3D0";
-	}
-}
+
 
 function InfoRow({ label, value }: { label: string; value: string; }) {
 	return (

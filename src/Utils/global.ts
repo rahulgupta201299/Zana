@@ -38,3 +38,20 @@ export const getTotalQuantity = <T extends { quantity: number }>(
 ): number => {
   return items.reduce((total, item) => total + item.quantity, 0);
 };
+
+
+export function statusColor(status: string) {
+  if (!status) return "#A7F3D0";
+	switch (status.toLowerCase()) {
+		case "confirmed":
+		case "success":
+			return "#22C55E";
+		case "processing":
+			return "#FACC15";
+		case "failed":
+		case "cancelled":
+			return "#EF4444";
+		default:
+			return "#A7F3D0";
+	}
+}

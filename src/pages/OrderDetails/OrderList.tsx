@@ -7,7 +7,7 @@ import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getOrderListServiceAction from "@/Redux/Order/Services/GetOrderList";
 import { Order, orderDetailResponse, OrderListType } from "./Types";
 import { useNavigate } from "react-router";
-import { getTotalQuantity } from "@/Utils/global";
+import { getTotalQuantity, statusColor } from "@/Utils/global";
 
 import { OrderListSkeleton } from "@/components/Skeleton/OrderList";
 import { ROUTES } from "@/Constants/Routes";
@@ -159,12 +159,12 @@ const OrderList = () => {
                           borderRadius: 999,
                           fontSize: 12,
                           fontWeight: 500,
-                          bgcolor: "rgba(244, 248, 244, 0.15)",
-                          color: "#4caf50",
+                           backgroundColor: statusColor(order?.orderStatus ),
+                            color: "#022C22",
                           textTransform: "capitalize",
                         }}
                       >
-                        {order.orderStatus}
+                        {order?.orderStatus}
                       </Box>
                     </Stack>
 
