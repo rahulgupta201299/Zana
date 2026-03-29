@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { generatePath, useNavigate } from "react-router";
 import {
 	Box,
 	Typography,
@@ -49,8 +49,12 @@ export default function OrderConfirmDialog() {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
+	const { orderId = '', orderNumber='', orderStatus='', paymentId='' } = newOrderPlaced;
+
 	function handleTrackOrder() {
-		navigate(ROUTES.ORDER_DETAILS)
+		const path = generatePath(ROUTES.ORDER_DETAILS, { id: orderId })
+
+		navigate(path)
 		dispatch(setOpenOrder(false))
 	}
 
@@ -58,8 +62,6 @@ export default function OrderConfirmDialog() {
 		navigate(ROUTES.PRODUCT_CATALOG)
 		dispatch(setOpenOrder(false))
 	}
-
-	const { orderId = '', orderNumber='', orderStatus='', paymentId='' } = newOrderPlaced;
 
 	return (
 		<Dialog
