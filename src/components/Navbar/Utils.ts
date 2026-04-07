@@ -58,3 +58,16 @@ export const getMenuOption = (): MenuOptionsType[] => {
     },
   ];
 };
+
+export function convertCurrency(originalPrice: number, toCurrency: string) {
+  const state = AppStore.getState();
+  const data = state.landing.currencyList;
+
+  // Create a map for quick lookup
+  const rates = data.find(curr => curr.code === toCurrency)?.exchangeRate || 0;
+
+  // TODO get the value from BE or env variables 1.7 is a fixed conversion factor
+  const result = originalPrice * 1.7 * rates;
+  
+  return Number(result.toFixed(2)); // rounded to 2 decimals
+}
