@@ -14,6 +14,7 @@ import {
   addWishlistActions,
   getBikeBrandActions,
   getIsdCodeActions,
+  getProfileDetailsActions,
   removeWishlistActions,
   updateProfileDetailsActions,
   verifyOtpActions,
@@ -79,6 +80,9 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
         state.profileDetails = payload;
       },
     );
+    builder.addCase(getProfileDetailsActions.success, (state, { payload }: any) => {
+      state.profileDetails = payload;
+    });
     builder.addCase(wishlistActions.success, (state, action: PayloadAction<WishListResType>) => {
       state.wishlist = action.payload.products || [];
     });
