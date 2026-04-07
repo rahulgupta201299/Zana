@@ -27,7 +27,7 @@ export const INITIAL_STATE: T_LANDING_REDUCER = {
 const LandingPersistConfig = {
   key: LandingSliceName,
   storage,
-  whitelist: ["selectedCurrency", "currencyList"],
+  whitelist: ["selectedCurrency"],
 };
 
 const sliceOptions: CreateSliceOptions<T_LANDING_REDUCER> = {

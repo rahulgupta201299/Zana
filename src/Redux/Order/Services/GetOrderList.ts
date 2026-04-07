@@ -9,17 +9,21 @@ import { orderActions } from "../Action";
 
 const network = new Network();
 
-async function getOrderListService(): Promise<OrderListType> {
+async function getOrderListService(
+  { page = 1, limit = 10 }: { page?: number; limit?: number } = {}
+): Promise<any> {
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
   const currency = state.landing.selectedCurrency;
 
   const options = {
-    url: `/api/v1/order/user/+91-9811360979`,
+    url: `/api/v1/order/user/${phoneNumber}`,
     method: API_METHOD_ENUM.GET,
     params: {
-      currency
-    }
+      currency,
+      page,
+      limit,
+    },
   };
 
   const response = await network.request(options);

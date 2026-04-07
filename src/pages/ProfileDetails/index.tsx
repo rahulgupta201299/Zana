@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Paper } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { getProfileDetails, listOfBikes } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, getProfileDetails, listOfBikes } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
@@ -34,6 +34,8 @@ import MyProfile from "./components/MyProfile";
 import Faq from "./components/Faq";
 import { ROUTES } from "@/Constants/Routes";
 import { logout } from "./Utils";
+
+
 interface PROFILE_PROPS_TYPE {
   onClose: () => void;
   isMobile: boolean;
@@ -44,8 +46,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [selectedMenu, setSelectedMenu] = useState<string>("profile");
 
   const dispatch = useDispatch<TAppDispatch>();
-  const profileDetails = useSelector((state: any) => getProfileDetails(state));
+ const profileDetails = useSelector((state: any) => getProfileDetails(state));
+  const loginDetails = useSelector((state: any) => getLoginDetails(state));
   const bikeDetails = useSelector(listOfBikes)
+
+
 
   const actions = useMemo(
     () => ({
@@ -60,14 +65,17 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
 
   const fetchDetails = async () => {
-    //Need to confirm
-    // const [isd, phone] = profileDetails.phoneNumber.split("-");
-    // const body = {
-    //   isdCode: isd,
-    //   phoneNumber: phone,
-    // };
+    // Need to confirm
+    const {isdCode, phoneNumber} = profileDetails;
+    if (!isdCode) {
+     return;
+     }
+    const body = {
+      isdCode: encodeURIComponent(isdCode),
+       phoneNumber,
+    };
     try {
-      // const profileRes = await actions.fetchProfileDetails(body);
+      const profileRes = await actions.fetchProfileDetails(body);
       if (!bikeDetails.length) await actions.getBrandList();
     } catch (error) {
       console.error("Error fetching details:", error);
