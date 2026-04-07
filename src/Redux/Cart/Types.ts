@@ -18,8 +18,8 @@ export interface CartItemDetail {
   price: number;
   totalPrice: number;
   _id: string;
-  // originalPrice: number;
-  // originalTotalPrice: number;
+  originalPrice: number;
+  originalTotalPrice: number;
   currency: string;
   currencySymbol: string;
 }

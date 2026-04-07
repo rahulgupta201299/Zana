@@ -45,7 +45,7 @@ export default function CouponDialog() {
 
 	const [totalPages, setTotalPages] = useState<number>(0);
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [currentLimit, setCurrentLimit] = useState<number>(0);
+	const [currentLimit, setCurrentLimit] = useState<number>(10);
 	const [couponsData, setCouponsData] = useState<CouponDetailsType[]>([]);
 	const [promoCode, setPromoCode] = useState("");
 
