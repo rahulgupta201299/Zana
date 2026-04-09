@@ -140,6 +140,8 @@ export default function useCart() {
         _id: Date.now().toString(),
         currency: product.currency,
         currencySymbol: product.currencySymbol,
+        originalPrice: product.originalPrice,
+        originalTotalPrice: product.originalPrice * quantity,
       });
     }
 
@@ -189,6 +191,8 @@ export default function useCart() {
         _id: Date.now().toString(),
         currency: product.currency,
         currencySymbol: product.currencySymbol,
+        originalPrice: product.originalPrice,
+        originalTotalPrice: product.originalPrice,
       });
     }
 
