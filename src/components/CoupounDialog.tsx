@@ -40,7 +40,7 @@ export default function CouponDialog() {
 	const loginDetails = useSelector(getLoginDetails);
 	const currency = useSelector(getSelectedCurrency)
 
-	const { couponCode = '', discountAmount = 0, totalAmount: cartTotalAmount = 0 } = cartDetail;
+	const { couponCode = '', discountAmount = 0, totalAmount: cartTotalAmount = 0, currencySymbol = '' } = cartDetail;
 	const { phoneNumber = "" } = loginDetails;
 
 	const [totalPages, setTotalPages] = useState<number>(0);
@@ -235,7 +235,7 @@ export default function CouponDialog() {
 						)
 					}
 					{couponsData.map((coupon) => {
-						const { _id = '', code = '', description = '', discount = 0, type = '', maxDiscount = 0, minCartAmount = 0, isActive = false, expiresAt = '' } = coupon;
+						const { _id = '', code = '', description = '', discount = 0, type = '', maxDiscount = 0, minCartAmount = 0, isActive = false, expiresAt = '', currency = '', currencySymbol = '' } = coupon;
 
 						const isDisabled = !isActive || code === couponCode || cartTotalAmount < minCartAmount;
 
@@ -268,7 +268,7 @@ export default function CouponDialog() {
 												{code}
 											</Typography>
 											<Chip
-												label={`${discount}${type.toUpperCase() === COUPON_TYPE.PERCENTAGE ? "%" : "₹"} OFF`}
+												label={`${discount}${type.toUpperCase() === COUPON_TYPE.PERCENTAGE ? "%" : currencySymbol} OFF`}
 												size="small"
 												sx={{
 													backgroundColor: "rgba(124,58,237,0.15)",
@@ -299,14 +299,14 @@ export default function CouponDialog() {
 											<Typography variant="caption" sx={{ color: "#6B7280" }}>
 												Min Cart:{" "}
 												<span style={{ color: "#D1D5DB" }}>
-													₹{minCartAmount}
+													{currencySymbol}{minCartAmount}
 												</span>
 											</Typography>
 
 											<Typography variant="caption" sx={{ color: "#6B7280" }}>
 												Max Discount:{" "}
 												<span style={{ color: "#D1D5DB" }}>
-													{maxDiscount ? `₹${maxDiscount}` : "No Limit"}
+													{maxDiscount ? `${currencySymbol}${maxDiscount}` : "No Limit"}
 												</span>
 											</Typography>
 
@@ -393,7 +393,7 @@ export default function CouponDialog() {
 
 							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 								<Typography sx={{ color: "#10B981", fontWeight: 600 }}>
-									- ₹{discountAmount}
+									- {currencySymbol}{discountAmount}
 								</Typography>
 
 								<IconButton
