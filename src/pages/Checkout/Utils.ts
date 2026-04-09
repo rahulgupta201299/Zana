@@ -44,14 +44,14 @@ export async function displayRazorpay() {
   const response = (await dispatch(
     createPaymentOrderServiceAction({ phoneNumber }),
   )) as CreatePaymentOrderResType;
-  const { orderId, amount, currency, cartId, name } = response;
+  const { orderId, amount, currency, razorpayOrderId, name } = response;
 
   const options = {
     key: RAZORPAY_TEST_API_KEY,
     amount,
     currency,
     name,
-    order_id: orderId,
+    order_id: razorpayOrderId,
 
     handler: (response: any) => {
       const {
@@ -63,8 +63,8 @@ export async function displayRazorpay() {
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature,
-        cartId,
         currency,
+        orderId
       };
       verifyPayment(data);
     },
