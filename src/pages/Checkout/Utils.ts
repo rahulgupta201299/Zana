@@ -1,27 +1,33 @@
 import AppStore from "@/Configurations/AppStore";
 import { RAZORPAY_TEST_API_KEY } from "@/Configurations/env";
 import { resetCart } from "@/Redux/Cart/Reducer";
+import clearCartServiceAction from "@/Redux/Cart/Services/ClearCartService";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
 import createPaymentOrderServiceAction from "@/Redux/Order/Services/CreatePaymentOrder";
 import verifyPaymentOrderServiceAction from "@/Redux/Order/Services/VerifyPaymentOrder";
-import { CreatePaymentOrderResType, VerifyPaymentOrderReqType } from "@/Redux/Order/Types";
+import {
+  CreatePaymentOrderResType,
+  VerifyPaymentOrderReqType,
+} from "@/Redux/Order/Types";
 import { loadScript } from "@/Utils/razorpay";
 import { enqueueSnackbar } from "notistack";
 
 export async function verifyPayment(data: VerifyPaymentOrderReqType) {
   const dispatch = AppStore.dispatch;
+  const state = AppStore.getState();
+  const phoneNumber = state.auth.login.phoneNumber;
 
   try {
     await dispatch(verifyPaymentOrderServiceAction(data));
-    dispatch(setOpenOrder(true))
-    // @ts-ignore
-    dispatch(resetCart())
+    dispatch(setOpenOrder(true));
+
+    await dispatch(clearCartServiceAction({ phoneNumber }));
   } catch (error: any) {
-    const { message = '' } = error
+    const { message = "" } = error;
     enqueueSnackbar({
-      variant: 'error',
-      message
-    })
+      variant: "error",
+      message,
+    });
   }
 }
 
@@ -64,7 +70,7 @@ export async function displayRazorpay() {
         razorpay_payment_id,
         razorpay_signature,
         currency,
-        orderId
+        orderId,
       };
       verifyPayment(data);
     },
