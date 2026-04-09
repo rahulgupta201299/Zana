@@ -33,6 +33,16 @@ export interface OutOfStockDetail {
   totalPrice: number;
 }
 
+export interface ClearCartReqType {
+  phoneNumber: string;
+}
+
+export interface ClearCartResType {
+  phoneNumber: string;
+  items: Array<unknown>;
+  status: string;
+}
+
 export interface CartModifyReqType {
   phoneNumber: string;
   items: Array<{
@@ -111,6 +121,8 @@ export type CouponDetailsType = {
   minCartAmount: number;
   usageLimit: number;
   usedCount: number;
+  currency: string;
+  currencySymbol: string;
   isActive: boolean;
   expiresAt: string;
   description: string;

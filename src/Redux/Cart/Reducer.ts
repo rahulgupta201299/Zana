@@ -12,6 +12,7 @@ import {
   ApplyCouponResType,
   CartDetailResType,
   CartItemDetail,
+  ClearCartResType,
   GetCartDetailResType,
   RemoveCouponResType,
   T_CART_REDUCER,
@@ -21,6 +22,7 @@ import { SLICE_NAME } from "./Selectors";
 import {
   applyCouponActions,
   cartModifyActions,
+  clearCartActions,
   getCartDetailActions,
   removeCouponActions,
   updateCartAddressActions,
@@ -219,6 +221,14 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
         };
       },
     );
+    builder.addCase(clearCartActions.success, (state, action: PayloadAction<ClearCartResType>) => {
+      const { items = [], status = '' } = action.payload;
+      state.cartDetail = {
+        ...INITIAL_STATE.cartDetail,
+        processedItems: items as CartItemDetail[],
+        status,
+      };
+    })
     builder.addCase(selectedCurrencyActions, (state) => {
       state.initialCartLoaded = false;
     });
