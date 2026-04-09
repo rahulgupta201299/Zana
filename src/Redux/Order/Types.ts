@@ -13,20 +13,23 @@ export type CreatePaymentOrderReqType = {
 
 export type CreatePaymentOrderResType = {
   orderId: string;
+  orderNumber: string;
   amount: number;
+  razorpayOrderId: string;
   currency: string;
   cartId: string;
   displayAmount: number;
   displayCurrency: string;
   currencySymbol: string;
   name: string;
+  status: string;
 };
 
 export type VerifyPaymentOrderReqType = {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
-  cartId: string;
+  orderId: string;
   currency: string;
 };
 
