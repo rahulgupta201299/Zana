@@ -250,7 +250,7 @@ const ProductDetailPage = () => {
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
             <div className="flex justify-end gap-4 mb-2">
-                {!isProductLoading ? (
+              {!isProductLoading ? (
                 <p className="text-white text-lg mb-2 leading-relaxed">
                   {productCode}
                 </p>
@@ -272,7 +272,7 @@ const ProductDetailPage = () => {
                   height={60}
                 />
               )}
-            
+
             </div>
 
             {!isProductLoading ? (
@@ -290,7 +290,7 @@ const ProductDetailPage = () => {
             <div className="flex items-center justify-between mb-6">
               {!isProductLoading ? (
                 <span className="text-2xl font-bold text-white">
-                  {currencySymbol} {price.toLocaleString()}
+                  {currencySymbol} {price?.toLocaleString()}
                 </span>
               ) : (
                 <Skeleton
@@ -626,7 +626,7 @@ const ProductDetailPage = () => {
                     </h3>
 
                     <span className="font-bold text-black text-sm whitespace-nowrap">
-                      {currencySymbol} {price.toLocaleString('en-IN', {
+                      {currencySymbol} {price?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}

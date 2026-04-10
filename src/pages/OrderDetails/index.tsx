@@ -107,15 +107,15 @@ const OrderDetails = () => {
           spacing={4}
           mb={4}
         >
-         <Chip
-								label={order?.orderStatus || ""}
-								sx={{
-									backgroundColor: statusColor(order?.orderStatus),
-									color: "#022C22",
-									fontWeight: 600,
-									textTransform: "uppercase",
-								}}
-							/>
+          <Chip
+            label={order?.orderStatus || ""}
+            sx={{
+              backgroundColor: statusColor(order?.orderStatus),
+              color: "#022C22",
+              fontWeight: 600,
+              textTransform: "uppercase",
+            }}
+          />
 
           <Typography
             fontWeight={700}

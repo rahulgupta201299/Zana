@@ -11,6 +11,9 @@ export const orderDetailActions = traceActionsCreator(orderDetailName)
 export const createPaymentOrderName = `${SLICE_NAME}/createPaymentOrder`
 export const createPaymentOrdeActions = traceActionsCreator(createPaymentOrderName)
 
+export const createCodOrderName = `${SLICE_NAME}/createCodOrder`
+export const createCodOrdeActions = traceActionsCreator(createCodOrderName)
+
 export const verifyPaymentOrderName = `${SLICE_NAME}/verifyPaymentOrder`
 export const verifyPaymentOrdeActions = traceActionsCreator(verifyPaymentOrderName)
 

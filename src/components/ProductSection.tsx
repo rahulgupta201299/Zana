@@ -290,7 +290,7 @@ const ProductsSection = ({
                         fontWeight: "bold",
                       }}
                     >
-                      {currencySymbol} {price.toLocaleString('en-IN', {
+                      {currencySymbol} {price?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}

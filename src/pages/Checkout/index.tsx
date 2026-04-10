@@ -23,11 +23,11 @@ import * as Yup from "yup";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import PaymentImg from "@/Assets/Images/Payment.svg";
 import { Minus, Plus } from "lucide-react";
-import { displayRazorpay } from "./Utils";
+import { displayRazorpay, handleClearCart, validatePhone } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useSnackbar } from "notistack";
-import { paymentOptions, PaymentTypeEnum } from "./Constant";
+import { COUNTRY_MAPPER, paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
@@ -38,10 +38,12 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
+import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
+import { setOpenOrder } from "@/Redux/Order/Reducer";
 
 interface CheckoutFormValues {
   shippingCountry: string;
-  email: string;
+  emailId: string;
   shippingFirstName: string;
   shippingLastName: string;
   shippingAddress: string;
@@ -52,7 +54,7 @@ interface CheckoutFormValues {
   shippingPhone: string;
 
   saveInfo: boolean;
-  sameAsDelivery: boolean;
+  shippingAddressSameAsBillingAddress: boolean;
 
   billingCountry: string;
   billingFirstName: string;
@@ -66,7 +68,7 @@ interface CheckoutFormValues {
 }
 
 export default function CheckoutPage() {
-  const { decrementToCart, incrementToCart, validateCart, getQuantity, clearCart } = useCart();
+  const { decrementToCart, incrementToCart, validateCart, getQuantity } = useCart();
 
   const cartDetail = useSelector(cartDetailSelector)
   const isdCode = useSelector(isdCodeDetails)
@@ -74,7 +76,9 @@ export default function CheckoutPage() {
   const profileDetails = useSelector(getProfileDetails);
   const {
     shippingAddress: shippingAddressSelector,
-    billingAddress: billingAddressSelector
+    billingAddress: billingAddressSelector,
+    shippingAddressSameAsBillingAddress,
+    emailId: cartEmailId,
   } = cartAddressSelector
 
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
@@ -98,6 +102,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const shippingIsdCode = isdCode.find(c => c.name === shippingAddressSelector.country)?.isd || ''
     const billingIsdCode = isdCode.find(c => c.name === billingAddressSelector.country)?.isd || ''
+
     setShippingIsdCode(shippingIsdCode)
     setBillingIsdCode(billingIsdCode)
   }, [isdCode.length])
@@ -107,20 +112,18 @@ export default function CheckoutPage() {
   }, []);
 
   const CheckoutSchema = Yup.object({
-    shippingCountry: Yup.string().required("Country is required"),
-    email: Yup.string()
-      .email("Invalid email format")
+    emailId: Yup.string()
+      .email("Invalid emailId format")
       .required("Email Id is required")
-      .test("email", "Invalid email format", (value) => {
+      .test("emailId", "Invalid email format", (value) => {
         if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value))
           return true;
         else return false;
       }),
-    shippingPhone: Yup.string().required("Phone Number is required")
-      .test("shippingPhone", "Please enter valid 10 digit Phone Number", (value) => {
-        if (/^[6-9]\d{9}$/.test(value)) return true;
-        else return false;
-      }),
+    shippingCountry: Yup.string().required("Country is required"),
+    shippingPhone: Yup.string()
+      .required("Phone number is required")
+      .test("shippingPhone", validatePhone("shippingCountry")),
 
     shippingFirstName: Yup.string().required("First name is required"),
     shippingLastName: Yup.string().required("Last name is required"),
@@ -133,49 +136,42 @@ export default function CheckoutPage() {
       .required("Pincode is required"),
 
     saveInfo: Yup.boolean(),
-    sameAsDelivery: Yup.boolean(),
-    billingCountry: Yup.string().when("sameAsDelivery", (same, schema) =>
+    shippingAddressSameAsBillingAddress: Yup.boolean(),
+    billingCountry: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Country is required")
     ),
-    billingFirstName: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingFirstName: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Billing first name is required")
     ),
 
-    billingLastName: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingLastName: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Billing last name is required")
     ),
 
-    billingAddress: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingAddress: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Billing address is required")
     ),
 
     billingApartment: Yup.string(),
 
-    billingCity: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingCity: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Billing city is required")
     ),
 
-    billingState: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingState: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same ? schema : schema.required("Billing state is required")
     ),
 
-    billingPincode: Yup.string().when("sameAsDelivery", (same, schema) =>
+    billingPincode: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
       same
         ? schema
         : schema
           .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
           .required("Billing pincode is required")
     ),
-    billingPhone: Yup.string().when("sameAsDelivery", (same, schema) =>
-      same
-        ? schema
-        : schema
-          .required("Billing phone number is required")
-          .test("billingPhone", "Please enter valid 10 digit Phone Number", (value) => {
-            if (/^[6-9]\d{9}$/.test(value)) return true;
-            else return false;
-          }),
-    ),
+    billingPhone: Yup.string()
+      .required("Billing phone number is required")
+      .test("billingPhone", validatePhone("billingCountry")),
   });
 
   // TODO change the API contract completely
@@ -183,7 +179,7 @@ export default function CheckoutPage() {
 
     const {
       shippingCountry = "",
-      email = "",
+      emailId = "",
       shippingFirstName = "",
       shippingLastName = "",
       shippingAddress = "",
@@ -194,7 +190,7 @@ export default function CheckoutPage() {
       shippingPhone = "",
 
       saveInfo = true,
-      sameAsDelivery = true,
+      shippingAddressSameAsBillingAddress = false,
 
       billingCountry = "",
       billingFirstName = "",
@@ -236,11 +232,20 @@ export default function CheckoutPage() {
 
       await dispatch(updateCartAddressServiceAction({
         phoneNumber,
+        emailId,
+        shippingAddressSameAsBillingAddress,
         shippingAddress: shippingAddressData,
-        billingAddress: sameAsDelivery ? shippingAddressData : billingAddressData
+        billingAddress: shippingAddressSameAsBillingAddress ? shippingAddressData : billingAddressData
       }))
 
-      if (paymentType !== PaymentTypeEnum.COD) {
+      if (paymentType === PaymentTypeEnum.COD) {
+        await dispatch(createCodOrderServiceAction({ phoneNumber }))
+        dispatch(setOpenOrder(true));
+        handleClearCart();
+        return;
+      }
+
+      if (paymentType === PaymentTypeEnum.RAZORPAY) {
         displayRazorpay();
         return;
       }
@@ -296,7 +301,7 @@ export default function CheckoutPage() {
               enableReinitialize
               validateOnMount
               initialValues={{
-                email: "",
+                emailId: cartEmailId || profileDetails.emailId || "",
                 shippingCountry: shippingAddressSelector.country,
                 shippingFirstName: shippingFirstName,
                 shippingLastName: shippingLastName,
@@ -305,7 +310,7 @@ export default function CheckoutPage() {
                 shippingCity: shippingAddressSelector.city,
                 shippingState: shippingAddressSelector.state,
                 shippingPincode: shippingAddressSelector.postalCode,
-                shippingPhone: shippingAddressSelector.phone,
+                shippingPhone: shippingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
                 saveInfo: true,
                 billingCountry: billingAddressSelector.country,
                 billingFirstName: billingFirstName,
@@ -315,8 +320,8 @@ export default function CheckoutPage() {
                 billingCity: billingAddressSelector.city,
                 billingState: billingAddressSelector.state,
                 billingPincode: billingAddressSelector.postalCode,
-                billingPhone: billingAddressSelector.phone,
-                sameAsDelivery: true,
+                billingPhone: billingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
+                shippingAddressSameAsBillingAddress,
               }}
               validationSchema={CheckoutSchema}
               onSubmit={handleSubmit}
@@ -327,10 +332,41 @@ export default function CheckoutPage() {
                 handleBlur,
                 errors,
                 touched,
+                setValues,
                 setFieldValue,
                 setFieldTouched,
                 isValid,
               }) => {
+
+                function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
+                  const { checked } = e.target;
+
+                  const {
+                    shippingCountry,
+                    shippingFirstName,
+                    shippingLastName,
+                    shippingAddress,
+                    shippingApartment,
+                    shippingCity,
+                    shippingState,
+                    shippingPincode,
+                    shippingPhone,
+                  } = values;
+
+                  setValues({
+                    ...values,
+                    shippingAddressSameAsBillingAddress: checked,
+                    billingCountry: shippingCountry,
+                    billingFirstName: shippingFirstName,
+                    billingLastName: shippingLastName,
+                    billingAddress: shippingAddress,
+                    billingApartment: shippingApartment,
+                    billingCity: shippingCity,
+                    billingState: shippingState,
+                    billingPincode: shippingPincode,
+                    billingPhone: shippingPhone,
+                  });
+                }
 
                 const isSubmitDisabled = !isValid || !processedItems.length
 
@@ -341,15 +377,15 @@ export default function CheckoutPage() {
                     >
                       <TextField
                         fullWidth
-                        name="email"
+                        name="emailId"
                         label="Email"
-                        value={values.email}
+                        value={values.emailId}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "email")}
+                        error={getFieldErrorState({ errors, touched }, "emailId")}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
-                          "email"
+                          "emailId"
                         )}
                         slotProps={{
                           input: {
@@ -816,16 +852,11 @@ export default function CheckoutPage() {
                       <Box>
                         <Box>
                           <FormControlLabel
-                            name="sameAsDelivery"
+                            name="shippingAddressSameAsBillingAddress"
                             control={
                               <Checkbox
-                                checked={values.sameAsDelivery}
-                                onChange={(e) =>
-                                  setFieldValue(
-                                    "sameAsDelivery",
-                                    e.target.checked
-                                  )
-                                }
+                                checked={values.shippingAddressSameAsBillingAddress}
+                                onChange={handleCheckboxChange}
                                 sx={{ color: "black" }}
                               />
                             }
@@ -842,7 +873,7 @@ export default function CheckoutPage() {
                             }
                           />
 
-                          {!values.sameAsDelivery && (
+                          {!values.shippingAddressSameAsBillingAddress && (
                             <Box sx={{ mt: "32px" }}>
                               <Grid container spacing={2}>
                                 <FormControl fullWidth>
@@ -1364,7 +1395,7 @@ export default function CheckoutPage() {
                 Total
               </Typography>
               <Typography fontWeight={700} fontSize={12}>
-                Including {currencySymbol} {taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
+                Including {currencySymbol} {taxAmount?.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
               </Typography>
             </Box>
             <Typography color="#F5F4F4" fontWeight={500} fontSize={32}>

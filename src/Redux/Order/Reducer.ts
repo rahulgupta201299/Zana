@@ -4,9 +4,9 @@ import type {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { T_ORDER_REDUCER, VerifyPaymentOrderResType } from "./Types";
+import { CreateCodOrderResType, T_ORDER_REDUCER, VerifyPaymentOrderResType } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { orderActions,  orderDetailByIdActions, verifyPaymentOrdeActions } from "./Action";
+import { createCodOrdeActions, orderActions,  orderDetailByIdActions, verifyPaymentOrdeActions } from "./Action";
 import { orderDetailResponse, OrderListType } from "@/pages/OrderDetails/Types";
 import getOrderListServiceAction from "./Services/GetOrderList";
 
@@ -103,6 +103,18 @@ const sliceOptions: CreateSliceOptions<T_ORDER_REDUCER> = {
         state.orderList = action.payload;
       },
     );
+    builder.addCase(
+      createCodOrdeActions.success,
+      (state, action: PayloadAction<CreateCodOrderResType>) => {
+        const { orderId, orderNumber, status } = action.payload;
+        state.newOrderPlaced = {
+          orderId,
+          orderNumber,
+          orderStatus: status,
+          paymentId: '',
+        }
+      },
+    )
   },
 };
 
