@@ -1,5 +1,4 @@
 import AppStore from "@/Configurations/AppStore";
-import { RAZORPAY_TEST_API_KEY } from "@/Configurations/env";
 import { clearCart } from "@/Redux/Cart/Reducer";
 import clearCartServiceAction from "@/Redux/Cart/Services/ClearCartService";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
@@ -61,10 +60,10 @@ export async function displayRazorpay() {
   const response = (await dispatch(
     createPaymentOrderServiceAction({ phoneNumber }),
   )) as CreatePaymentOrderResType;
-  const { orderId, amount, currency, razorpayOrderId, name } = response;
+  const { orderId, amount, currency, razorpayOrderId, name, key } = response;
 
   const options = {
-    key: RAZORPAY_TEST_API_KEY,
+    key,
     amount,
     currency,
     name,

@@ -33,6 +33,7 @@ export interface CreateCodOrderResType extends CreateOrderType {
 }
 
 export interface CreatePaymentOrderResType extends CreateOrderType {
+  key: string;
   amount: number;
   razorpayOrderId: string;
   currency: string;
