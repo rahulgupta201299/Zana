@@ -19,6 +19,8 @@ import { statusColor } from "@/Utils/global";
 
 
 function InfoRow({ label, value }: { label: string; value: string; }) {
+	if (!value) return null;
+	
 	return (
 		<Stack
 			direction="row"

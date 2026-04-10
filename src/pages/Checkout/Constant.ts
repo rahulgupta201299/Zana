@@ -1,7 +1,6 @@
 export enum PaymentTypeEnum {
   COD = "COD",
   RAZORPAY = "RAZORPAY",
-  PHONE_PE = "PHONE_PE",
 }
 
 export const paymentOptions = [
@@ -10,12 +9,12 @@ export const paymentOptions = [
     label: "Razorpay Secure (UPI, Cards, Wallets, Net Banking)",
     showRazorpayInfo: true,
   },
-  // {
-  //   value: PaymentTypeEnum.PHONE_PE,
-  //   label: "PhonePe Payment Gateway (UPI, Cards & Net Banking)",
-  // },
   {
     value: PaymentTypeEnum.COD,
     label: "COD (Cash On Delivery)",
   },
 ];
+
+export enum COUNTRY_MAPPER {
+  INDIA = "INDIA"
+}

@@ -333,7 +333,7 @@ const ProductCatalogPage = () => {
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className="text-yellow-400 text-lg md:text-xl font-bold">
-                        {currencySymbol} {price.toLocaleString()}
+                        {currencySymbol} {price?.toLocaleString()}
                       </span>
                       <div className="flex gap-1 md:gap-2">
                         <button

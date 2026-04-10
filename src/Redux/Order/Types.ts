@@ -1,9 +1,13 @@
-import { Order, orderDetailResponse, OrderListType } from "@/pages/OrderDetails/Types";
+import {
+  Order,
+  orderDetailResponse,
+  OrderListType,
+} from "@/pages/OrderDetails/Types";
 
 export type T_ORDER_REDUCER = {
   openOrderPopup: boolean;
   newOrderPlaced: VerifyPaymentOrderResType;
-  orderDetail: orderDetailResponse ;
+  orderDetail: orderDetailResponse;
   orderList: OrderListType;
 };
 
@@ -11,19 +15,29 @@ export type CreatePaymentOrderReqType = {
   phoneNumber: string;
 };
 
-export type CreatePaymentOrderResType = {
+export interface CreateOrderType {
   orderId: string;
   orderNumber: string;
-  amount: number;
-  razorpayOrderId: string;
-  currency: string;
-  cartId: string;
+  paymentMethod: string;
   displayAmount: number;
   displayCurrency: string;
   currencySymbol: string;
-  name: string;
+  cartId: string;
   status: string;
-};
+  message: string;
+}
+
+export interface CreateCodOrderResType extends CreateOrderType {
+  paymentMethod: string;
+  message: string;
+}
+
+export interface CreatePaymentOrderResType extends CreateOrderType {
+  amount: number;
+  razorpayOrderId: string;
+  currency: string;
+  name: string;
+}
 
 export type VerifyPaymentOrderReqType = {
   razorpay_order_id: string;
@@ -39,5 +53,3 @@ export type VerifyPaymentOrderResType = {
   paymentId: string;
   orderStatus: string;
 };
-
-

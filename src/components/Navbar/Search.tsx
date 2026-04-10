@@ -249,7 +249,7 @@ export default function Search({ onClose }: SearchPropsType) {
                       </Typography>
 
                       <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
-                        {currencySymbol} {price.toLocaleString('en-IN', {
+                        {currencySymbol} {price?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}

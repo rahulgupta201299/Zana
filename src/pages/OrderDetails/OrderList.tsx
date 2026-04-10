@@ -160,8 +160,8 @@ const OrderList = () => {
                           borderRadius: 999,
                           fontSize: 12,
                           fontWeight: 500,
-                           backgroundColor: statusColor(order?.orderStatus ),
-                            color: "#022C22",
+                          backgroundColor: statusColor(order?.orderStatus),
+                          color: "#022C22",
                           textTransform: "capitalize",
                         }}
                       >
@@ -215,7 +215,7 @@ const OrderList = () => {
                     }}
                   >
                     <Typography fontWeight={700} fontSize={18}>
-                      {`${order.currencySymbol}${order.totalAmount.toLocaleString(
+                      {`${order.currencySymbol}${order.totalAmount?.toLocaleString(
                         "en-IN",
                       )}`}
                     </Typography>
@@ -258,7 +258,7 @@ const OrderList = () => {
                         },
                       }}
                     >
-                     View Details
+                      View Details
                     </Button>
                   </Box>
                 </Box>
