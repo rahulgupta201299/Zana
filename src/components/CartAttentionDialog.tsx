@@ -113,6 +113,7 @@ export default function CartAttentionDialog() {
   async function handleMoveToWishlist() {
     const { phoneNumber = '' } = profileDetails;
     const productIds = outOfStock.map(item => item.product._id);
+    
     try {
       await dispatch(addWishListServiceAction({
         phoneNumber,

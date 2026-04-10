@@ -263,7 +263,7 @@ const CartSidebar = ({
               "&:hover": { bgcolor: "white", color: "black" },
             }}
             onClick={() => {
-              onClose?.();
+              onClose();
               navigate("/product-catalog");
             }}
           >
@@ -347,7 +347,7 @@ const CartSidebar = ({
               fontSize: 18,
             }}
             onClick={() => {
-              onClose?.();
+              onClose();
               navigate(ROUTES.CHECKOUT);
             }}
           >
