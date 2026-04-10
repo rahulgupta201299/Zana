@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useSelector } from "react-redux";
+import {
+  bikeBrandSelector,
+  zProBikeBrandSelector,
+} from "@/Redux/Product/Selectors";
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
+import { SUB_ROUTES } from "@/Constants/Routes";
+import { useNavigate } from "react-router";
 
 const Footer = () => {
+  const navigate = useNavigate();
   const [openSections, setOpenSections] = useState({
     quickLinks: false,
     zanaAccessories: false,
@@ -15,6 +24,15 @@ const Footer = () => {
       [section]: !prev[section],
     }));
   };
+
+  function redirectToBikes(type: string, brand: string) {
+    navigate(`/${type}${SUB_ROUTES.BIKES}`, {
+      state: { brand: encodeURIComponent(brand) },
+    });
+  }
+
+  const bikeBrands = useSelector(bikeBrandSelector);
+  const zProBikeBrands = useSelector(zProBikeBrandSelector);
 
   return (
     <footer
@@ -106,88 +124,24 @@ const Footer = () => {
               />
             </button>
             {openSections.zanaAccessories && (
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    BMW
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    BSA
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    BAJAJ
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    HARLEY DAVIDSON
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    HERO
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    HONDA
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    KTM
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    HUSQVARNA
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    KAWASAKI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    ROYAL ENFIELD
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    SUZUKI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    TRIUMPH
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    TVS
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    YAMAHA
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    YEZDI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    Universal Accessories
-                  </a>
-                </li>
-              </ul>
+              <div className="flex flex-col">
+                {openSections.zanaAccessories && (
+                  <ul className="flex flex-col gap-[2px] text-xs md:text-sm cursor-pointer">
+                    {bikeBrands.map((brand) => (
+                      <li key={brand}>
+                        <a
+                          className="hover:underline"
+                          onClick={() =>
+                            redirectToBikes(BikeCategoryEnum.ZANA, brand)
+                          }
+                        >
+                          {brand}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
 
@@ -206,36 +160,18 @@ const Footer = () => {
             </button>
             {openSections.zproAccessories && (
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    BMW
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    DUCATI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    KAWASAKI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    SUZUKI
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    TRIUMPH
-                  </a>
-                </li>
-                <li>
-                  <a href="/bikes" className="hover:underline">
-                    Universal Accessories
-                  </a>
-                </li>
+                {zProBikeBrands.map((brand) => (
+                  <li key={brand}>
+                    <a
+                      className="hover:underline"
+                      onClick={() =>
+                        redirectToBikes(BikeCategoryEnum.ZPRO, brand)
+                      }
+                    >
+                      {brand}
+                    </a>
+                  </li>
+                ))}
               </ul>
             )}
           </div>
