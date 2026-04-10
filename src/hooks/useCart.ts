@@ -224,11 +224,6 @@ export default function useCart() {
     debounceFn(newProductDetails);
   }
 
-  function clearCart() {
-    // @ts-ignore
-    dispatch(resetCart());
-  }
-
   function removeItemFromCart(productId: string) {
     const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) return { ...item, quantity: 0 };
@@ -255,7 +250,6 @@ export default function useCart() {
     getTotalQuantity,
     decrementToCart,
     incrementToCart,
-    clearCart,
     removeItemFromCart,
     validateCart,
     getCartFromDB,

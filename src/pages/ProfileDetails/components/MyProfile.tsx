@@ -106,15 +106,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   const ProfileSchema = Yup.object().shape({
-    phoneNumber: Yup.string()
-      // TODO once double + issue resolve from BE
-      // .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
-      //   if (/^[6-9]\d{9}$/.test(value)) return true;
-      //   else return false;
-      // })
-      // .min(10, "Please enter valid 10 digit Phone Number")
-      // .max(10, "Please enter valid 10 digit Phone Number"),
-      .required(),
+    phoneNumber: Yup.string().required(),
     email: Yup.string()
       .email("Invalid email format")
       .test("email", "Invalid email format", (value) => {

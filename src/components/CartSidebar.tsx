@@ -186,7 +186,7 @@ const CartSidebar = ({
                       fontWeight={700}
                       fontSize={{ xs: 18, md: 22 }}
                     >
-                      {currencySymbol} {price.toLocaleString('en-IN', {
+                      {currencySymbol} {price?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
@@ -276,7 +276,7 @@ const CartSidebar = ({
           >
             <Typography sx={{ opacity: 0.7 }}>Subtotal</Typography>
             <Typography fontWeight={600}>
-              {currencySymbol} {subtotal.toLocaleString('en-IN', {
+              {currencySymbol} {subtotal?.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
@@ -295,7 +295,7 @@ const CartSidebar = ({
             >
               <Typography>Discount ({couponCode})</Typography>
               <Typography>
-                - {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
@@ -328,7 +328,7 @@ const CartSidebar = ({
               fontWeight={800}
               fontSize={32}
             >
-              {currencySymbol} {total.toLocaleString('en-IN', {
+              {currencySymbol} {total?.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}

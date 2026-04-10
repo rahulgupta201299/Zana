@@ -1,6 +1,6 @@
 import AppStore from "@/Configurations/AppStore";
 import { RAZORPAY_TEST_API_KEY } from "@/Configurations/env";
-import { resetCart } from "@/Redux/Cart/Reducer";
+import { clearCart } from "@/Redux/Cart/Reducer";
 import clearCartServiceAction from "@/Redux/Cart/Services/ClearCartService";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
 import createPaymentOrderServiceAction from "@/Redux/Order/Services/CreatePaymentOrder";
@@ -11,24 +11,35 @@ import {
 } from "@/Redux/Order/Types";
 import { loadScript } from "@/Utils/razorpay";
 import { enqueueSnackbar } from "notistack";
+import { COUNTRY_MAPPER } from "./Constant";
 
-export async function verifyPayment(data: VerifyPaymentOrderReqType) {
+export async function handleClearCart() {
   const dispatch = AppStore.dispatch;
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
 
+  await dispatch(clearCartServiceAction({ phoneNumber }));
+
+  //@ts-ignore
+  dispatch(clearCart());
+}
+
+export async function verifyPayment(data: VerifyPaymentOrderReqType) {
+  const dispatch = AppStore.dispatch;
+
   try {
     await dispatch(verifyPaymentOrderServiceAction(data));
     dispatch(setOpenOrder(true));
-
-    await dispatch(clearCartServiceAction({ phoneNumber }));
   } catch (error: any) {
     const { message = "" } = error;
     enqueueSnackbar({
       variant: "error",
       message,
     });
+    return;
   }
+
+  handleClearCart();
 }
 
 export async function displayRazorpay() {
@@ -103,3 +114,46 @@ export async function displayRazorpay() {
 
   rzp.open();
 }
+
+export const validatePhone = (countryKey: string) =>
+  function (value) {
+    const country = this.parent[countryKey];
+
+    if (!value) {
+      return this.createError({ message: "Phone number is required" });
+    }
+
+    const cleaned = value.replace(/[\s-]/g, "");
+
+    if (country?.toUpperCase() === COUNTRY_MAPPER.INDIA) {
+      if (cleaned.length !== 10) {
+        return this.createError({
+          message: "Indian phone number must be exactly 10 digits",
+        });
+      }
+
+      if (!/^[6-9]\d{9}$/.test(cleaned)) {
+        return this.createError({
+          message: "Indian number must start with 6-9",
+        });
+      }
+
+      return true;
+    }
+
+    const digitsOnly = cleaned.replace(/^\+/, "");
+
+    if (digitsOnly.length < 8 || digitsOnly.length > 15) {
+      return this.createError({
+        message: "Phone number must be between 8 and 15 digits",
+      });
+    }
+
+    if (!/^\+?[1-9]\d{7,14}$/.test(cleaned)) {
+      return this.createError({
+        message: "Enter a valid international phone number",
+      });
+    }
+
+    return true;
+  };

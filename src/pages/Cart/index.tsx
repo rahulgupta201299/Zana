@@ -98,14 +98,14 @@ export default function Cart() {
                             {/* Price */}
                             <div>
                               <span className="text-yellow-400 font-bold text-xl md:text-2xl">
-                                {currencySymbol} {price.toLocaleString('en-IN', {
+                                {currencySymbol} {price?.toLocaleString('en-IN', {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2
                                 })}
                               </span>
                               {quantity > 1 && (
                                 <p className="text-white/40 text-sm">
-                                  {currencySymbol} {(totalPrice).toLocaleString('en-IN', {
+                                  {currencySymbol} {(totalPrice)?.toLocaleString('en-IN', {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
                                   })} total
@@ -134,8 +134,8 @@ export default function Cart() {
                                 <button
                                   onClick={() => incrementToCart(product, productId, quantityAvailable)}
                                   className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors ${isPlusDisabled
-                                      ? "text-black cursor-not-allowed"
-                                      : "text-white hover:text-yellow-400"
+                                    ? "text-black cursor-not-allowed"
+                                    : "text-white hover:text-yellow-400"
                                     }`}
                                   disabled={isPlusDisabled}
                                 >
@@ -179,7 +179,7 @@ export default function Cart() {
                   <div className="flex justify-between text-white/80">
                     <span>Items ({totalItems})</span>
                     <span>
-                      {currencySymbol} {subtotal.toLocaleString('en-IN', {
+                      {currencySymbol} {subtotal?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
@@ -190,7 +190,7 @@ export default function Cart() {
                   <div className="flex justify-between text-white">
                     <span className="font-semibold">Subtotal</span>
                     <span className="font-semibold">
-                      {currencySymbol} {subtotal.toLocaleString('en-IN', {
+                      {currencySymbol} {subtotal?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
@@ -202,7 +202,7 @@ export default function Cart() {
                     <div className="flex justify-between text-green-400">
                       <span className="font-semibold">Discount ({couponCode})</span>
                       <span className="font-semibold">
-                        - {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                        - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}
@@ -214,7 +214,7 @@ export default function Cart() {
                   {discountAmount > 0 && (
                     <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3">
                       <p className="text-green-400 text-sm text-center">
-                        🎉 You saved {currencySymbol} {discountAmount.toLocaleString('en-IN', {
+                        🎉 You saved {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}!
@@ -228,7 +228,7 @@ export default function Cart() {
                     <div className="flex justify-between items-center">
                       <span className="text-white text-xl font-bold">Total</span>
                       <span className="text-yellow-400 text-2xl font-bold">
-                        {currencySymbol} {totalAmount.toLocaleString('en-IN', {
+                        {currencySymbol} {totalAmount?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}

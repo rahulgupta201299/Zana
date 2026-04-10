@@ -61,6 +61,8 @@ export const INITIAL_STATE: T_CART_REDUCER = {
   cartAddress: {
     shippingAddress: INITIAL_CART_ADDRESS,
     billingAddress: INITIAL_CART_ADDRESS,
+    shippingAddressSameAsBillingAddress: true,
+    emailId: "",
   },
   outOfStocks: [],
   initialCartLoaded: false,
@@ -101,6 +103,10 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     clearOutofStockItems(state) {
       state.outOfStocks = [];
     },
+    clearCart: (state) => ({
+      ...INITIAL_STATE,
+      cartAddress: { ...state.cartAddress },
+    }),
     resetCart: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_CART_REDUCER>): void => {
@@ -161,9 +167,17 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     builder.addCase(
       updateCartAddressActions.success,
       (state, action: PayloadAction<UpdateCartAddressResType>) => {
-        const { shippingAddress, billingAddress } = action.payload;
+        const {
+          shippingAddress,
+          billingAddress,
+          shippingAddressSameAsBillingAddress,
+          emailId,
+        } = action.payload;
         state.cartAddress.shippingAddress = shippingAddress;
         state.cartAddress.billingAddress = billingAddress;
+        state.cartAddress.shippingAddressSameAsBillingAddress =
+          shippingAddressSameAsBillingAddress;
+        state.cartAddress.emailId = emailId;
       },
     );
     builder.addCase(
@@ -221,14 +235,17 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
         };
       },
     );
-    builder.addCase(clearCartActions.success, (state, action: PayloadAction<ClearCartResType>) => {
-      const { items = [], status = '' } = action.payload;
-      state.cartDetail = {
-        ...INITIAL_STATE.cartDetail,
-        processedItems: items as CartItemDetail[],
-        status,
-      };
-    })
+    builder.addCase(
+      clearCartActions.success,
+      (state, action: PayloadAction<ClearCartResType>) => {
+        const { items = [], status = "" } = action.payload;
+        state.cartDetail = {
+          ...INITIAL_STATE.cartDetail,
+          processedItems: items as CartItemDetail[],
+          status,
+        };
+      },
+    );
     builder.addCase(selectedCurrencyActions, (state) => {
       state.initialCartLoaded = false;
     });
@@ -238,6 +255,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
 const slice = createSlice(sliceOptions);
 
 export const {
+  clearCart,
   resetCart,
   setOpenCart,
   setOpenCouponDialog,

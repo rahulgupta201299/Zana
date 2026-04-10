@@ -6,6 +6,8 @@ export type T_CART_REDUCER = {
   cartAddress: {
     shippingAddress: CartAddressType;
     billingAddress: CartAddressType;
+    shippingAddressSameAsBillingAddress: boolean;
+    emailId: string;
   };
   initialCartLoaded: boolean;
   isOpenCart: boolean;
@@ -110,6 +112,8 @@ export type UpdateCartAddressReqType = UpdateCartAddressResType & {
 export interface UpdateCartAddressResType {
   shippingAddress: CartAddressType;
   billingAddress: CartAddressType;
+  shippingAddressSameAsBillingAddress: boolean;
+  emailId: string;
 }
 
 export type CouponDetailsType = {
