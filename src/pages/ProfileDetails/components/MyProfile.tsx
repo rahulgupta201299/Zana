@@ -106,19 +106,28 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   const ProfileSchema = Yup.object().shape({
-    phoneNumber: Yup.string().required(),
-    email: Yup.string()
-      .email("Invalid email format")
-      .test("email", "Invalid email format", (value) => {
-        if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value))
-          return true;
-        else return false;
-      }),
-    firstName: Yup.string().matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
-    lastName: Yup.string().matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
-    address: Yup.string().min(3, "Name length should be 3 to 80 characters"),
-    notifyOffers: Yup.boolean(),
-  });
+  phoneNumber: Yup.string().required("Phone number is required"),
+
+  email: Yup.string()
+    .required("Email is required")
+    .email("Invalid email format")
+    .test("email", "Invalid email format", (value) => {
+      if (!value) return false
+      return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+    }),
+
+  firstName: Yup.string()
+    .required("First name is required")
+    .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
+
+  lastName: Yup.string()
+    .required("Last name is required")
+    .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
+
+  address: Yup.string().min(3, "Address length should be 3 to 80 characters"),
+
+  notifyOffers: Yup.boolean(),
+})
 
   return (
     <Box

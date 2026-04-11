@@ -17,6 +17,7 @@ import {
   RadioGroup,
   IconButton,
   InputAdornment,
+  Stack,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -40,6 +41,8 @@ import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Ac
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
+import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
+import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -169,9 +172,15 @@ export default function CheckoutPage() {
           .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
           .required("Billing pincode is required")
     ),
-    billingPhone: Yup.string()
-      .required("Billing phone number is required")
-      .test("billingPhone", validatePhone("billingCountry")),
+     billingPhone: Yup.string().when(
+  "shippingAddressSameAsBillingAddress",
+  (same, schema) =>
+    same
+      ? schema.notRequired()
+      : schema
+          .required("Billing phone number is required")
+          .test("billingPhone", validatePhone("billingCountry"))
+)
   });
 
   // TODO change the API contract completely
@@ -225,7 +234,27 @@ export default function CheckoutPage() {
       country: billingCountry,
     }
 
-    if (!phoneNumber || !processedItems.length) return;
+  if (!phoneNumber || !processedItems.length) return;
+
+  const shouldUpdate =
+  !profileDetails.emailId ||
+  !profileDetails.firstName ||
+  !profileDetails.lastName
+
+if (shouldUpdate) {
+  const payload = {
+  ...profileDetails,
+  ...(!profileDetails.emailId && { emailId }),
+  ...(!profileDetails.firstName && { firstName: shippingFirstName }),
+  ...(!profileDetails.lastName && { lastName: shippingLastName }),
+}
+
+  await dispatch(
+    (profileDetails._id
+      ? updateProfileDetailServiceAction
+      : addProfileDetailServiceAction)(payload)
+  )
+}
 
     try {
       await validateCart(processedItems);
@@ -375,6 +404,9 @@ export default function CheckoutPage() {
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 3 }}
                     >
+                    <Stack
+                    gap='2px'
+                    >
                       <TextField
                         fullWidth
                         name="emailId"
@@ -402,6 +434,17 @@ export default function CheckoutPage() {
                           },
                         }}
                       />
+                     {/* Note: check verification of email and conditionally render this text */}
+                      <Typography
+                      variant ='caption'
+                      color='#202020'
+                      sx={{
+                        ml: '4px',
+                      }}
+                      >
+                        Verify your email address from your profile settings.
+                      </Typography>
+                      </Stack>
 
                       <Typography
                         variant="h6"
