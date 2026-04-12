@@ -214,7 +214,7 @@ export default function CheckoutPage() {
 
     const shippingAddressData = {
       fullName: `${shippingFirstName} ${shippingLastName}`,
-      phone: shippingPhone,
+      phone: `${shippingIsdCode}-${shippingPhone}`,
       addressLine1: shippingAddress,
       addressLine2: shippingApartment,
       city: shippingCity,
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
 
     const billingAddressData = {
       fullName: `${billingFirstName} ${billingLastName}`,
-      phone: billingPhone,
+      phone: `${billingIsdCode}-${billingPhone}`,
       addressLine1: billingAddress,
       addressLine2: billingApartment,
       city: billingCity,
