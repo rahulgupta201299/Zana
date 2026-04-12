@@ -17,6 +17,7 @@ import {
   RadioGroup,
   IconButton,
   InputAdornment,
+  Stack,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -40,6 +41,8 @@ import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Ac
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
 import { setOpenOrder } from "@/Redux/Order/Reducer";
+import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
+import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -169,9 +172,15 @@ export default function CheckoutPage() {
           .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
           .required("Billing pincode is required")
     ),
-    billingPhone: Yup.string()
-      .required("Billing phone number is required")
-      .test("billingPhone", validatePhone("billingCountry")),
+     billingPhone: Yup.string().when(
+  "shippingAddressSameAsBillingAddress",
+  (same, schema) =>
+    same
+      ? schema.notRequired()
+      : schema
+          .required("Billing phone number is required")
+          .test("billingPhone", validatePhone("billingCountry"))
+)
   });
 
   // TODO change the API contract completely
@@ -205,7 +214,7 @@ export default function CheckoutPage() {
 
     const shippingAddressData = {
       fullName: `${shippingFirstName} ${shippingLastName}`,
-      phone: shippingPhone,
+      phone: `${shippingIsdCode}-${shippingPhone}`,
       addressLine1: shippingAddress,
       addressLine2: shippingApartment,
       city: shippingCity,
@@ -216,7 +225,7 @@ export default function CheckoutPage() {
 
     const billingAddressData = {
       fullName: `${billingFirstName} ${billingLastName}`,
-      phone: billingPhone,
+      phone: `${billingIsdCode}-${billingPhone}`,
       addressLine1: billingAddress,
       addressLine2: billingApartment,
       city: billingCity,
@@ -225,7 +234,41 @@ export default function CheckoutPage() {
       country: billingCountry,
     }
 
-    if (!phoneNumber || !processedItems.length) return;
+  if (!phoneNumber || !processedItems.length) return;
+
+ const shouldUpdate =
+  !profileDetails.emailId ||
+  !profileDetails.firstName ||
+  !profileDetails.lastName ||
+  !profileDetails.addressLine1 ||
+  !profileDetails.city ||
+  !profileDetails.state ||
+  !profileDetails.postalCode ||
+  !profileDetails.country
+
+if (shouldUpdate) {
+        const [isd, phone] = profileDetails.phoneNumber.split("-");
+  const payload = {
+    ...profileDetails,
+    isdCode: isd, 
+    ...(!profileDetails.emailId && { emailId }),
+    ...(!profileDetails.firstName && { firstName: shippingFirstName }),
+    ...(!profileDetails.lastName && { lastName: shippingLastName }),
+
+    ...(!profileDetails.addressLine1 && { addressLine1: shippingAddress }),
+    ...(!profileDetails.addressLine2 && { addressLine2: shippingApartment }),
+    ...(!profileDetails.city && { city: shippingCity }),
+    ...(!profileDetails.state && { state: shippingState }),
+    ...(!profileDetails.postalCode && { postalCode: shippingPincode }),
+    ...(!profileDetails.country && { country: shippingCountry }),
+  }
+
+  await dispatch(
+    (profileDetails._id
+      ? updateProfileDetailServiceAction
+      : addProfileDetailServiceAction)(payload)
+  )
+}
 
     try {
       await validateCart(processedItems);
@@ -302,14 +345,14 @@ export default function CheckoutPage() {
               validateOnMount
               initialValues={{
                 emailId: cartEmailId || profileDetails.emailId || "",
-                shippingCountry: shippingAddressSelector.country,
-                shippingFirstName: shippingFirstName,
-                shippingLastName: shippingLastName,
-                shippingAddress: shippingAddressSelector.addressLine1,
-                shippingApartment: shippingAddressSelector.addressLine2,
-                shippingCity: shippingAddressSelector.city,
-                shippingState: shippingAddressSelector.state,
-                shippingPincode: shippingAddressSelector.postalCode,
+                shippingCountry: shippingAddressSelector.country || profileDetails.country || "",
+                shippingFirstName: shippingFirstName || profileDetails.firstName || "",
+                shippingLastName: shippingLastName || profileDetails.lastName || "",
+                shippingAddress: shippingAddressSelector.addressLine1 || profileDetails.addressLine1 || "",
+                shippingApartment: shippingAddressSelector.addressLine2 || profileDetails.addressLine2 || "",
+                shippingCity: shippingAddressSelector.city || profileDetails.city || "",
+                shippingState: shippingAddressSelector.state || profileDetails.state || "",
+                shippingPincode: shippingAddressSelector.postalCode || profileDetails.postalCode || "",
                 shippingPhone: shippingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
                 saveInfo: true,
                 billingCountry: billingAddressSelector.country,
@@ -337,6 +380,8 @@ export default function CheckoutPage() {
                 setFieldTouched,
                 isValid,
               }) => {
+
+                {console.log("Formik values", values)}
 
                 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
                   const { checked } = e.target;
@@ -375,6 +420,9 @@ export default function CheckoutPage() {
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 3 }}
                     >
+                    <Stack
+                    gap='2px'
+                    >
                       <TextField
                         fullWidth
                         name="emailId"
@@ -402,6 +450,17 @@ export default function CheckoutPage() {
                           },
                         }}
                       />
+                     {/* Note: check verification of email and conditionally render this text */}
+                      <Typography
+                      variant ='caption'
+                      color='#202020'
+                      sx={{
+                        ml: '4px',
+                      }}
+                      >
+                        Verify your email address from your profile settings.
+                      </Typography>
+                      </Stack>
 
                       <Typography
                         variant="h6"

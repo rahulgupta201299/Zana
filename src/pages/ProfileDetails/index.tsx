@@ -6,10 +6,6 @@ import { getLoginDetails, getProfileDetails, listOfBikes } from "@/Redux/Auth/Se
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
-import getBikeModelServiceAction from "@/Redux/Auth/Services/GetBikeModel";
-import addProfileDetailServiceAction, {
-  ADD_PROFILE_DETAILS,
-} from "@/Redux/Auth/Services/AddProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import {
   addProfileDetailsName,
@@ -18,15 +14,9 @@ import {
   getProfileDetailName,
   updateProfileDetailName,
 } from "@/Redux/Auth/Actions";
-import { PersistPartial } from "redux-persist/es/persistReducer";
 import {
-  getServiceSelector,
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
-
-import updateProfileDetailServiceAction, {
-  UPDATE_PROFILE_DETAILS,
-} from "@/Redux/Auth/Services/UpdateProfileDetails";
 import { profileSideMenu } from "./constant";
 import { useNavigate } from "react-router";
 import Loading from "@/components/Loading";
@@ -65,14 +55,18 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
 
   const fetchDetails = async () => {
-    // Need to confirm
+   
     const {isdCode, phoneNumber} = profileDetails;
-    if (!isdCode) {
-     return;
+    let isdCodeLocal;
+     if(!isdCode){ 
+      const [isd, phone] = phoneNumber.split("-");
+        isdCodeLocal = isd ;
      }
+   
+
     const body = {
-      isdCode: encodeURIComponent(isdCode),
-       phoneNumber,
+      isdCode: encodeURIComponent(isdCodeLocal || isdCode ),
+      phoneNumber: encodeURIComponent(phoneNumber),
     };
     try {
       const profileRes = await actions.fetchProfileDetails(body);

@@ -42,7 +42,12 @@ export type T_AUTH_REDUCER = {
     isdCode: string;
     phoneNumber: string;
     emailId: string;
-    address: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
     notifyOffers: boolean;
     bikeOwnedByCustomer: bike_owned[];
     createdAt: string;
