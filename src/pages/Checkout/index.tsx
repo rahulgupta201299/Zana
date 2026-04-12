@@ -236,18 +236,32 @@ export default function CheckoutPage() {
 
   if (!phoneNumber || !processedItems.length) return;
 
-  const shouldUpdate =
+ const shouldUpdate =
   !profileDetails.emailId ||
   !profileDetails.firstName ||
-  !profileDetails.lastName
+  !profileDetails.lastName ||
+  !profileDetails.addressLine1 ||
+  !profileDetails.city ||
+  !profileDetails.state ||
+  !profileDetails.postalCode ||
+  !profileDetails.country
 
 if (shouldUpdate) {
+        const [isd, phone] = profileDetails.phoneNumber.split("-");
   const payload = {
-  ...profileDetails,
-  ...(!profileDetails.emailId && { emailId }),
-  ...(!profileDetails.firstName && { firstName: shippingFirstName }),
-  ...(!profileDetails.lastName && { lastName: shippingLastName }),
-}
+    ...profileDetails,
+    isdCode: isd, 
+    ...(!profileDetails.emailId && { emailId }),
+    ...(!profileDetails.firstName && { firstName: shippingFirstName }),
+    ...(!profileDetails.lastName && { lastName: shippingLastName }),
+
+    ...(!profileDetails.addressLine1 && { addressLine1: shippingAddress }),
+    ...(!profileDetails.addressLine2 && { addressLine2: shippingApartment }),
+    ...(!profileDetails.city && { city: shippingCity }),
+    ...(!profileDetails.state && { state: shippingState }),
+    ...(!profileDetails.postalCode && { postalCode: shippingPincode }),
+    ...(!profileDetails.country && { country: shippingCountry }),
+  }
 
   await dispatch(
     (profileDetails._id
@@ -331,14 +345,14 @@ if (shouldUpdate) {
               validateOnMount
               initialValues={{
                 emailId: cartEmailId || profileDetails.emailId || "",
-                shippingCountry: shippingAddressSelector.country,
-                shippingFirstName: shippingFirstName,
-                shippingLastName: shippingLastName,
-                shippingAddress: shippingAddressSelector.addressLine1,
-                shippingApartment: shippingAddressSelector.addressLine2,
-                shippingCity: shippingAddressSelector.city,
-                shippingState: shippingAddressSelector.state,
-                shippingPincode: shippingAddressSelector.postalCode,
+                shippingCountry: shippingAddressSelector.country || profileDetails.country || "",
+                shippingFirstName: shippingFirstName || profileDetails.firstName || "",
+                shippingLastName: shippingLastName || profileDetails.lastName || "",
+                shippingAddress: shippingAddressSelector.addressLine1 || profileDetails.addressLine1 || "",
+                shippingApartment: shippingAddressSelector.addressLine2 || profileDetails.addressLine2 || "",
+                shippingCity: shippingAddressSelector.city || profileDetails.city || "",
+                shippingState: shippingAddressSelector.state || profileDetails.state || "",
+                shippingPincode: shippingAddressSelector.postalCode || profileDetails.postalCode || "",
                 shippingPhone: shippingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
                 saveInfo: true,
                 billingCountry: billingAddressSelector.country,
@@ -366,6 +380,8 @@ if (shouldUpdate) {
                 setFieldTouched,
                 isValid,
               }) => {
+
+                {console.log("Formik values", values)}
 
                 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
                   const { checked } = e.target;

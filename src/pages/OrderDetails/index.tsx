@@ -3,14 +3,17 @@ import { Box, Stack, Typography, Button, Divider, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { orderDetailByIdName, orderDetailName } from "@/Redux/Order/Action";
-import Loading from "@/components/Loading";
-import { addDays, format } from "date-fns";
+import { orderDetailByIdName,  } from "@/Redux/Order/Action";
+
+import {  format } from "date-fns";
 import getOrderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
-import { Order, orderDetailResponse } from "./Types";
+
+
 import { decodeParams, statusColor } from "@/Utils/global";
 import { useParams } from "react-router-dom";
 import OrderDetailsSkeleton from "@/components/Skeleton/OrderDetailSkeleton";
+import { InvoiceDownloadButton, InvoicePreviewButton } from "@/components/InvoicePdf";
+
 
 const Row = ({ label, value }) => (
   <Stack direction="row" justifyContent="space-between">
@@ -229,18 +232,9 @@ const OrderDetails = () => {
           >
             TRACK ORDER
           </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              px: 3,
-              py: 1,
-              color: "white",
-              borderColor: "white",
-            }}
-          >
-            DOWNLOAD INVOICE
-          </Button>
+          {/* <InvoicePreviewButton data={order}/> */}
+         <InvoiceDownloadButton data={order}/>
+        
         </Stack>
       </Box>
     </Box>

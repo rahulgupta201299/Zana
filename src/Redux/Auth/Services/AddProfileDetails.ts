@@ -12,7 +12,12 @@ export interface ADD_PROFILE_DETAILS {
   isdCode: string;
   emailId: string;
   phoneNumber: string;
-  address: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
   notifyOffers: boolean;
   bikeOwnedByCustomer?: bike_owned[];
 }
