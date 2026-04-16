@@ -10,7 +10,7 @@ export interface ADD_PROFILE_DETAILS {
   firstName: string;
   lastName: string;
   isdCode: string;
-  emailId: string;
+ 
   phoneNumber: string;
   addressLine1: string;
   addressLine2: string;

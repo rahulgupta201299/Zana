@@ -230,7 +230,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
               width: "100%",
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
-              maxHeight: "40vh",
+              maxHeight: { md: "40vh", xs: "50vh" },
               display: "flex",
               flexDirection: "column",
               animation: "slideUp 0.3s ease",

@@ -17,6 +17,7 @@ import {
   getProfileDetailsActions,
   removeWishlistActions,
   updateProfileDetailsActions,
+  verifyEmailOtpActions,
   verifyOtpActions,
   wishlistActions,
 } from "./Actions";
@@ -33,7 +34,12 @@ export const INITIAL_STATE: T_AUTH_REDUCER = {
     isdCode: "",
     phoneNumber: "",
     emailId: "",
-    address: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
     notifyOffers: false,
     bikeOwnedByCustomer: [],
     createdAt: "",
@@ -98,6 +104,13 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
       addWishlistActions.success,
       (state, action: PayloadAction<WishListResType>) => {
         state.wishlist = action.payload.products || [];
+      },
+    );
+
+     builder.addCase(
+      verifyEmailOtpActions.success,
+      (state, action: PayloadAction<any>) => {
+        state.profileDetails = action.payload.profile || { ...state.profileDetails };
       },
     );
 
