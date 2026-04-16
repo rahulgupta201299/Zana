@@ -20,7 +20,6 @@ export const verifyPaymentOrdeActions = traceActionsCreator(verifyPaymentOrderNa
 export const orderName = `${SLICE_NAME}/order`
 export const orderActions = traceActionsCreator(orderName)
 
-
 export const orderDetailByIdName = `${SLICE_NAME}/orderDetailById`
 export const orderDetailByIdActions = traceActionsCreator(orderDetailByIdName)
 

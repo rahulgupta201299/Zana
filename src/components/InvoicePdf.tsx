@@ -11,7 +11,7 @@ import {
 import { Button, Box, Tooltip } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PreviewIcon from "@mui/icons-material/Visibility";
-import { Order } from "@/pages/OrderDetails/Types";
+import { OrderType } from "@/pages/OrderDetails/Types";
 
 // ─── Asset import ─────────────────────────────────────────────────────────────
 // @react-pdf/renderer cannot use <img> HTML tags — must use its own <Image>.
@@ -360,7 +360,7 @@ const SectionBox = ({
 );
 
 // ─── Main PDF Document ────────────────────────────────────────────────────────
-const InvoicePDFDocument = ({ data }: { data: Order }) => {
+const InvoicePDFDocument = ({ data }: { data: OrderType }) => {
   const { billingAddress: ba, shippingAddress: sa } = data;
 
   const addr = (a: typeof ba) =>
@@ -571,7 +571,7 @@ const InvoicePDFDocument = ({ data }: { data: Order }) => {
 
 // ─── Buttons ─────────────────────────────────────────────────────────────────
 interface Props {
-  data?: Order;
+  data?: OrderType;
 }
 
 export const InvoiceDownloadButton = ({ data }: Props) => {

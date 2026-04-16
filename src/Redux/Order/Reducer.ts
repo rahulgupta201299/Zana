@@ -6,9 +6,8 @@ import type {
 import { createSlice } from "@reduxjs/toolkit";
 import { CreateCodOrderResType, T_ORDER_REDUCER, VerifyPaymentOrderResType } from "./Types";
 import { SLICE_NAME } from "./Selectors";
-import { createCodOrdeActions, orderActions,  orderDetailByIdActions, verifyPaymentOrdeActions } from "./Action";
-import { orderDetailResponse, OrderListType } from "@/pages/OrderDetails/Types";
-import getOrderListServiceAction from "./Services/GetOrderList";
+import { createCodOrdeActions,  orderDetailByIdActions, verifyPaymentOrdeActions } from "./Action";
+import { orderDetailResponse } from "@/pages/OrderDetails/Types";
 
 export const INITIAL_STATE: T_ORDER_REDUCER = {
   openOrderPopup: false,
@@ -64,16 +63,6 @@ export const INITIAL_STATE: T_ORDER_REDUCER = {
   razorpayPaymentId: '',
   razorpaySignature: '',
 },
-orderList:{
-  orders: [],
-  pagination: {
-    currentPage: 1,
-    totalPages: 0,
-    totalOrders: 0,
-    hasNextPage: false,
-    hasPrevPage: false,
-  }
-}
 };
 
 const sliceOptions: CreateSliceOptions<T_ORDER_REDUCER> = {
@@ -95,12 +84,6 @@ const sliceOptions: CreateSliceOptions<T_ORDER_REDUCER> = {
       orderDetailByIdActions.success,
       (state, action: PayloadAction<orderDetailResponse>) => {
         state.orderDetail = action.payload;
-      },
-    );
-     builder.addCase(
-      orderActions.success,
-      (state, action: PayloadAction<OrderListType>) => {
-        state.orderList = action.payload;
       },
     );
     builder.addCase(

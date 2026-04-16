@@ -1,52 +1,71 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderName } from "@/Redux/Order/Action";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getOrderListServiceAction from "@/Redux/Order/Services/GetOrderList";
-import { OrderListType } from "./Types";
-import { useNavigate } from "react-router";
+import { OrderListType, OrderType } from "./Types";
 import { getTotalQuantity, statusColor } from "@/Utils/global";
 
 import { OrderListSkeleton } from "@/components/Skeleton/OrderList";
 import { ROUTES } from "@/Constants/Routes";
+import Loading from "@/components/Loading";
 
 const OrderList = () => {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
-  const actions = useMemo(
-    () => ({
-      getOrderList: () => dispatch(getOrderListServiceAction()),
-    }),
-    [dispatch],
-  );
+  const observerTriggerRef = useRef<HTMLDivElement>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [orderList, setOrderList] = useState<OrderType[]>([]);
+
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [orderName]),
   );
   const currency = useSelector<TAppStore, string>(state => state.landing.selectedCurrency)
-  const orders = useSelector<TAppStore, OrderListType>(
-    (state) => state.order.orderList,
-  );
-  const { orders: orderList } = orders;
 
-  const fetchOrderList = async () => {
+  const fetchOrderList = async (page: number) => {
     try {
-      await actions.getOrderList();
+      const { orders = [], pagination: { hasNextPage, currentPage } } = await dispatch(getOrderListServiceAction({ page, limit: 10 })) as OrderListType;
+
+      setOrderList((prev) => [...prev, ...orders]);
+      setHasMore(hasNextPage);
+      setCurrentPage(currentPage);
     } catch (error) {
       console.error("Failed to fetch order List:", error);
-      throw error;
     }
   };
 
   useEffect(() => {
-    fetchOrderList();
+    fetchOrderList(1);
   }, [currency]);
 
-  const onViewDetails = (order) => {
-    // Implement navigation to order details page
-    console.log("View details for order:", order);
-  };
+  useEffect(() => {
+    if (!observerTriggerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            fetchOrderList(currentPage + 1);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "100px",
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(observerTriggerRef.current);
+
+    return () => observer.disconnect();
+  }, [orderList.length, currency]);
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#2a2a2a" }}>
@@ -71,9 +90,9 @@ const OrderList = () => {
           </Typography>
         </Container>
       </Box>
-      {isLoading ? (
-        <OrderListSkeleton />
-      ) : (
+      {isLoading && orderList.length === 0 && <OrderListSkeleton />}
+      {isLoading && orderList.length > 0 && <Loading />}
+      {orderList.length > 0 && (
         <>
           <Stack spacing={2} sx={{ p: { xs: 2, md: 4 } }}>
             {orderList.map((order) => {
@@ -83,6 +102,7 @@ const OrderList = () => {
               return (
                 <Box
                   key={order._id}
+                  ref={observerTriggerRef}
                   sx={{
                     p: 2,
                     borderRadius: 3,
@@ -265,6 +285,26 @@ const OrderList = () => {
               );
             })}
           </Stack>
+
+          {/* View More Trigger (Intersection Observer Target) */}
+          {hasMore && (
+            <Box
+              ref={observerTriggerRef}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 4,
+                px: 2,
+              }}
+            >
+              {isLoading && (
+                <Typography sx={{ color: "grey.500" }}>
+                  Loading more orders...
+                </Typography>
+              )}
+            </Box>
+          )}
         </>
       )}
       {!isLoading && orderList.length === 0 && (
