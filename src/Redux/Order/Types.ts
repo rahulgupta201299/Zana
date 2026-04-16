@@ -1,14 +1,11 @@
 import {
-  Order,
   orderDetailResponse,
-  OrderListType,
 } from "@/pages/OrderDetails/Types";
 
 export type T_ORDER_REDUCER = {
   openOrderPopup: boolean;
   newOrderPlaced: VerifyPaymentOrderResType;
   orderDetail: orderDetailResponse;
-  orderList: OrderListType;
 };
 
 export type CreatePaymentOrderReqType = {

@@ -1,11 +1,11 @@
 import { ShopByProductDetailsType } from "@/Redux/Product/Types"
 
 export type OrderListType = {
-  orders: Order[]
+  orders: OrderType[]
   pagination: Pagination
 }
 
-export type Order = {
+export type OrderType = {
   _id: string
   phoneNumber: string
   orderNumber: string
