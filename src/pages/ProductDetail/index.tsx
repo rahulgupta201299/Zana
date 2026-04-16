@@ -503,14 +503,14 @@ const ProductDetailPage = () => {
                   )}
                 </TabsContent>
 
-                <div className="flex justify-center mt-6">
+                {/* <div className="flex justify-center mt-6">
                   <Button
                     disabled={!price}
                     className="bg-white text-black border-2 border-black hover:bg-black hover:text-white px-8 py-2 font-bold"
                   >
                     BROCHURE
                   </Button>
-                </div>
+                </div> */}
               </div>
             </Tabs>
           </div>
