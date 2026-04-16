@@ -11,6 +11,7 @@ export interface UPDATE_PROFILE_DETAILS {
   lastName: string;
   isdCode: string;
   phoneNumber: string;
+  emailId: string;
   addressLine1: string;
   addressLine2?: string;
   city?: string;

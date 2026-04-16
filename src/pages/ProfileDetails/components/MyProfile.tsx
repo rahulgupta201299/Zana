@@ -79,6 +79,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         isdCode: isd,   
         firstName: values.firstName,
         lastName: values.lastName,
+        emailId: values.email,
         addressLine1: values.addressLine1,
         addressLine2: values.addressLine2,
         city: values.city,
