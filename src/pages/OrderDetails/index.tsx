@@ -1,19 +1,29 @@
 import React, { useEffect, useMemo } from "react";
-import { Box, Stack, Typography, Button, Divider, Chip } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  Button,
+  Divider,
+  Chip,
+  Collapse,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { orderDetailByIdName,  } from "@/Redux/Order/Action";
+import { orderDetailByIdName } from "@/Redux/Order/Action";
 
-import {  format } from "date-fns";
+import { format } from "date-fns";
 import getOrderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
-
 
 import { decodeParams, statusColor } from "@/Utils/global";
 import { useParams } from "react-router-dom";
 import OrderDetailsSkeleton from "@/components/Skeleton/OrderDetailSkeleton";
-import { InvoiceDownloadButton, InvoicePreviewButton } from "@/components/InvoicePdf";
-
+import {
+  InvoiceDownloadButton,
+  InvoicePreviewButton,
+} from "@/components/InvoicePdf";
+import { OrderTracker } from "./OrderTracker";
 
 const Row = ({ label, value }) => (
   <Stack direction="row" justifyContent="space-between">
@@ -42,6 +52,7 @@ const AddressBlock = ({ title, address }) => (
 
 const OrderDetails = () => {
   const params = useParams();
+  const [showTracker, setShowTracker] = React.useState(false);
   const { id = "" } = decodeParams(params);
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
@@ -56,7 +67,9 @@ const OrderDetails = () => {
   const isDetailsLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [orderDetailByIdName]),
   );
-  const currency = useSelector<TAppStore, string>(state => state.landing.selectedCurrency)
+  const currency = useSelector<TAppStore, string>(
+    (state) => state.landing.selectedCurrency,
+  );
 
   const fetchOrderDetails = async (id: string) => {
     try {
@@ -189,10 +202,22 @@ const OrderDetails = () => {
 
         <Box sx={{ maxWidth: 400, ml: "auto" }}>
           <Stack spacing={1}>
-            <Row label="Subtotal" value={`${order?.currencySymbol}${order?.subtotal}`} />
-            <Row label="Discount" value={`-${order?.currencySymbol}${order?.discountAmount}`} />
-            <Row label="Shipping" value={`${order?.currencySymbol}${order?.shippingCost}`} />
-            <Row label="Tax" value={`${order?.currencySymbol}${order?.taxAmount}`} />
+            <Row
+              label="Subtotal"
+              value={`${order?.currencySymbol}${order?.subtotal}`}
+            />
+            <Row
+              label="Discount"
+              value={`-${order?.currencySymbol}${order?.discountAmount}`}
+            />
+            <Row
+              label="Shipping"
+              value={`${order?.currencySymbol}${order?.shippingCost}`}
+            />
+            <Row
+              label="Tax"
+              value={`${order?.currencySymbol}${order?.taxAmount}`}
+            />
 
             <Divider sx={{ borderColor: "grey.700", my: 1 }} />
 
@@ -220,7 +245,7 @@ const OrderDetails = () => {
         </Stack>
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={6}>
-          <Button
+         {order?.logisticsAWBNumber && <Button
             variant="outlined"
             sx={{
               borderRadius: 2,
@@ -229,13 +254,29 @@ const OrderDetails = () => {
               color: "white",
               borderColor: "white",
             }}
+             onClick={() => setShowTracker(prev => !prev)}
           >
             TRACK ORDER
           </Button>
+}
           {/* <InvoicePreviewButton data={order}/> */}
-         <InvoiceDownloadButton data={order}/>
-        
+          <InvoiceDownloadButton data={order} />
         </Stack>
+        <Collapse in={showTracker}>
+          <Box
+            mt={4}
+        
+            sx={{
+              borderRadius: 2,
+              bgcolor: "#1a1a1a",
+            }}
+          >
+            <OrderTracker
+      
+              orderId={order?._id}
+            />
+          </Box>
+        </Collapse>
       </Box>
     </Box>
   );

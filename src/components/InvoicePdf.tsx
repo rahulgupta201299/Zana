@@ -603,6 +603,7 @@ export const InvoiceDownloadButton = ({ data }: Props) => {
             borderColor: "white",
           }}
           onClick={handleDownload}
+          fullWidth
         >
           DOWNLOAD INVOICE
         </Button>
