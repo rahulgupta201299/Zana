@@ -245,36 +245,33 @@ const OrderDetails = () => {
         </Stack>
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={6}>
-         {order?.logisticsAWBNumber && <Button
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              px: 3,
-              py: 1,
-              color: "white",
-              borderColor: "white",
-            }}
-             onClick={() => setShowTracker(prev => !prev)}
-          >
-            TRACK ORDER
-          </Button>
-}
+          {order?.logisticsAWBNumber && (
+            <Button
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                py: 1,
+                color: "white",
+                borderColor: "white",
+              }}
+              onClick={() => setShowTracker((prev) => !prev)}
+            >
+              TRACK ORDER
+            </Button>
+          )}
           {/* <InvoicePreviewButton data={order}/> */}
           <InvoiceDownloadButton data={order} />
         </Stack>
-        <Collapse in={showTracker}>
+        <Collapse in={showTracker} unmountOnExit>
           <Box
             mt={4}
-        
             sx={{
               borderRadius: 2,
               bgcolor: "#1a1a1a",
             }}
           >
-            <OrderTracker
-      
-              orderId={order?._id}
-            />
+            <OrderTracker orderId={order?._id} />
           </Box>
         </Collapse>
       </Box>
