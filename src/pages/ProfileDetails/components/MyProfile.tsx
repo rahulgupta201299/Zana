@@ -358,7 +358,7 @@ const ProfileSchema = Yup.object().shape({
                     borderRadius: "10px",
                   },
                   endAdornment:
-                    profileDetails.emailId === '' ? (
+                    profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
                       <InputAdornment position="end">
                         <Button
                           variant="text"
