@@ -357,23 +357,23 @@ const ProfileSchema = Yup.object().shape({
                     color: "#000",
                     borderRadius: "10px",
                   },
-                  endAdornment:
-                    profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
-                      <InputAdornment position="end">
-                        <Button
-                          variant="text"
-                          size="small"
-                          onClick={() => {
-                            generateOtp(values.email);
-                          }}
-                          sx={{
-                            color: "#2192de",
-                          }}
-                        >
-                          Verify
-                        </Button>
-                      </InputAdornment>
-                    ) : null,
+                  // endAdornment:
+                  //   profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
+                  //     <InputAdornment position="end">
+                  //       <Button
+                  //         variant="text"
+                  //         size="small"
+                  //         onClick={() => {
+                  //           generateOtp(values.email);
+                  //         }}
+                  //         sx={{
+                  //           color: "#2192de",
+                  //         }}
+                  //       >
+                  //         Verify
+                  //       </Button>
+                  //     </InputAdornment>
+                  //   ) : null,
                 },
               }}
                      
@@ -774,7 +774,7 @@ const ProfileSchema = Yup.object().shape({
                         UPDATE
                       </Button>
                     </Box>
-                      { showOtpDialog &&
+                      {/* { showOtpDialog &&
                       (<VerifyEmailOtp
                         open={showOtpDialog}
                         onClose={() => setShowOtpDialog(false)}
@@ -782,7 +782,7 @@ const ProfileSchema = Yup.object().shape({
                         handleRequestOtp={() => generateOtp(values?.email)}    
                       />
                       )
-                    }
+                    } */}
                   </Form>
                 );
               }}
