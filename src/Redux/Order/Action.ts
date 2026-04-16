@@ -23,3 +23,6 @@ export const orderActions = traceActionsCreator(orderName)
 export const orderDetailByIdName = `${SLICE_NAME}/orderDetailById`
 export const orderDetailByIdActions = traceActionsCreator(orderDetailByIdName)
 
+export const trackOrderName = `${SLICE_NAME}/trackOrder`
+export const trackOrderActions = traceActionsCreator(trackOrderName)
+
