@@ -1,31 +1,33 @@
-import React, { useEffect } from "react"
-import { Box, Stack, Typography, Card } from "@mui/material"
-import { useDispatch } from "react-redux"
-import { TAppDispatch } from "@/Configurations/AppStore"
-import trackOrderServiceAction from "@/Redux/Order/Services/TrackOrder"
-import { keyframes } from "@mui/system"
+import React, { useEffect } from "react";
+import { Box, Stack, Typography, Card, Skeleton } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
+import trackOrderServiceAction from "@/Redux/Order/Services/TrackOrder";
+import { keyframes } from "@mui/system";
+import { trackOrderName } from "@/Redux/Order/Action";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 
 // ─── Animations ───────────────────────────────────────────────────────────────
 const popIn = keyframes`
   0%   { transform: scale(0.5); opacity: 0; }
   70%  { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
-`
+`;
 
 const fillLine = keyframes`
   from { width: 0%; }
   to   { width: 100%; }
-`
+`;
 
 const fadeSlideUp = keyframes`
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
-`
+`;
 
 const pulse = keyframes`
   0%, 100% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.4); }
   50%       { box-shadow: 0 0 0 8px rgba(25, 118, 210, 0); }
-`
+`;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type OrderStatusType =
@@ -33,10 +35,10 @@ type OrderStatusType =
   | "PICKED_UP"
   | "IN_TRANSIT"
   | "OUT_FOR_DELIVERY"
-  | "DELIVERED"
+  | "DELIVERED";
 
 interface OrderTrackerProps {
-  orderId: string
+  orderId: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -46,7 +48,7 @@ const ORDER_FLOW: OrderStatusType[] = [
   "IN_TRANSIT",
   "OUT_FOR_DELIVERY",
   "DELIVERED",
-]
+];
 
 const STATUS_CONFIG = {
   SCHEDULED: {
@@ -74,7 +76,7 @@ const STATUS_CONFIG = {
     description: "Package delivered successfully",
     step: 4,
   },
-}
+};
 
 // ─── Checkmark SVG ────────────────────────────────────────────────────────────
 const CheckIcon = () => (
@@ -87,52 +89,54 @@ const CheckIcon = () => (
       strokeLinejoin="round"
     />
   </svg>
-)
-
-
+);
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
-  const dispatch = useDispatch<TAppDispatch>()
+  const dispatch = useDispatch<TAppDispatch>();
   const [trackingInfo, setTrackingInfo] = React.useState<{
-    orderStatus?: OrderStatusType
-    currentStatus?: string
-    expectedDeliveryDate?: string | null
-  } | null>(null)
-  const [mounted, setMounted] = React.useState(false)
+    orderStatus?: OrderStatusType;
+    currentStatus?: string;
+    expectedDeliveryDate?: string | null;
+  } | null>(null);
+  const [mounted, setMounted] = React.useState(false);
+  const isLoading = useSelector<TAppStore, boolean>((state) =>
+    isServiceLoading(state, [trackOrderName]),
+  );
 
   const trackOrder = async () => {
     try {
-      const result = await dispatch(trackOrderServiceAction(orderId))
-      setTrackingInfo(result)
+      const result = await dispatch(trackOrderServiceAction(orderId));
+      setTrackingInfo(result);
     } catch (error) {
-      console.error("Failed to trackOrder:", error)
+      console.error("Failed to trackOrder:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    if (orderId) trackOrder()
-  }, [orderId])
+    if (orderId) trackOrder();
+  }, [orderId]);
 
   useEffect(() => {
-    if (trackingInfo) setMounted(true)
-  }, [trackingInfo])
+    if (trackingInfo) setMounted(true);
+  }, [trackingInfo]);
 
-  const { orderStatus, currentStatus, expectedDeliveryDate } = trackingInfo || {}
+  const { orderStatus, currentStatus, expectedDeliveryDate } =
+    trackingInfo || {};
 
-  const currentStep = orderStatus ? (STATUS_CONFIG[orderStatus]?.step ?? 0) : 0
-  const displayTitle = currentStatus || (orderStatus ? STATUS_CONFIG[orderStatus]?.label : "—")
-  const displayDescription = orderStatus ? STATUS_CONFIG[orderStatus]?.description : ""
+  const currentStep = orderStatus ? (STATUS_CONFIG[orderStatus]?.step ?? 0) : 0;
+  const displayTitle =
+    currentStatus || (orderStatus ? STATUS_CONFIG[orderStatus]?.label : "—");
+  const displayDescription = orderStatus
+    ? STATUS_CONFIG[orderStatus]?.description
+    : "";
 
-  const totalSteps = ORDER_FLOW.length
+  const totalSteps = ORDER_FLOW.length;
 
   return (
-    <Stack spacing={3} sx={{ p: { xs: '16px', sm: '16px' } }}>
-
+    <Stack spacing={3} sx={{ p: { xs: "16px", sm: "16px" } }}>
       {/* ── Stepper ───────────────────────────────────────────────────────── */}
       <Box sx={{ position: "relative" }}>
-
-        
         <Box
           sx={{
             position: "absolute",
@@ -170,12 +174,11 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
           sx={{ position: "relative", zIndex: 2 }}
         >
           {ORDER_FLOW.map((status, index) => {
-            const isCompleted = index < currentStep
-            const isActive = index === currentStep
+            const isCompleted = index < currentStep;
+            const isActive = index === currentStep;
 
             return (
               <Stack key={status} alignItems="center" sx={{ flex: 1 }}>
-
                 {/* Circle */}
                 <Box
                   sx={{
@@ -191,15 +194,17 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
                     bgcolor: isCompleted
                       ? "#4caf50"
                       : isActive
-                      ? "#1976d2"
-                      : "#fff",
+                        ? "#1976d2"
+                        : "#fff",
                     color: isCompleted || isActive ? "#fff" : "#9e9e9e",
-                    border: isCompleted || isActive ? "none" : "2px solid #e0e0e0",
-                    animation: mounted && isActive
-                      ? `${popIn} 0.4s ease ${index * 0.1}s both, ${pulse} 2s ease 0.6s infinite`
-                      : mounted && isCompleted
-                      ? `${popIn} 0.4s ease ${index * 0.1}s both`
-                      : undefined,
+                    border:
+                      isCompleted || isActive ? "none" : "2px solid #e0e0e0",
+                    animation:
+                      mounted && isActive
+                        ? `${popIn} 0.4s ease ${index * 0.1}s both, ${pulse} 2s ease 0.6s infinite`
+                        : mounted && isCompleted
+                          ? `${popIn} 0.4s ease ${index * 0.1}s both`
+                          : undefined,
                   }}
                 >
                   {isCompleted ? <CheckIcon /> : index + 1}
@@ -216,8 +221,8 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
                     color: isCompleted
                       ? "#4caf50"
                       : isActive
-                      ? "#1976d2"
-                      : "#9e9e9e",
+                        ? "#1976d2"
+                        : "#9e9e9e",
                     lineHeight: 1.2,
                     letterSpacing: "0.02em",
                     maxWidth: 60,
@@ -227,7 +232,7 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
                   {STATUS_CONFIG[status].label}
                 </Typography>
               </Stack>
-            )
+            );
           })}
         </Stack>
       </Box>
@@ -245,59 +250,73 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({ orderId }) => {
         }}
       >
         <Stack spacing={1.25}>
-          
+          {isLoading ? (
+            <>
+              <Skeleton variant="text" width="60%" height={24} />
 
-          <Typography
-            variant="subtitle1"
-            fontWeight={700}
-            sx={{
-              fontSize: { xs: "0.95rem", sm: "1rem" },
-              color: "#1a237e",
-            }}
-          >
-            {displayTitle}
-          </Typography>
+              <Skeleton variant="text" width="100%" />
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              lineHeight: 1.6,
-              fontSize: { xs: "0.8rem", sm: "0.875rem" },
-            }}
-          >
-            {displayDescription}
-          </Typography>
-
-          {expectedDeliveryDate && (
-            <Box
-              sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 0.75,
-                mt: 0.5,
-                px: 1.5,
-                py: 0.6,
-                borderRadius: 99,
-                bgcolor: "rgba(76,175,80,0.1)",
-                width: "fit-content",
-              }}
-            >
-       
+              <Skeleton
+                variant="rounded"
+                width={140}
+                height={24}
+                sx={{ mt: 1 }}
+              />
+            </>
+          ) : (
+            <>
               <Typography
-                variant="caption"
+                variant="subtitle1"
+                fontWeight={700}
                 sx={{
-                  color: "#388e3c",
-                  fontWeight: 600,
-                  fontSize: { xs: "10px", sm: "11px" },
+                  fontSize: { xs: "0.95rem", sm: "1rem" },
+                  color: "#1a237e",
                 }}
               >
-                Expected: {expectedDeliveryDate}
+                {displayTitle}
               </Typography>
-            </Box>
+
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  lineHeight: 1.6,
+                  fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                }}
+              >
+                {displayDescription}
+              </Typography>
+
+              {expectedDeliveryDate && (
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.75,
+                    mt: 0.5,
+                    px: 1.5,
+                    py: 0.6,
+                    borderRadius: 99,
+                    bgcolor: "rgba(76,175,80,0.1)",
+                    width: "fit-content",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "#388e3c",
+                      fontWeight: 600,
+                      fontSize: { xs: "10px", sm: "11px" },
+                    }}
+                  >
+                    Expected: {expectedDeliveryDate}
+                  </Typography>
+                </Box>
+              )}
+            </>
           )}
         </Stack>
       </Card>
     </Stack>
-  )
-}
+  );
+};
