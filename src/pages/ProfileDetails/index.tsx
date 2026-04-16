@@ -9,10 +9,12 @@ import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import {
   addProfileDetailsName,
+  generateEmailOtpName,
   getBikeBrandName,
   getBikeModelName,
   getProfileDetailName,
   updateProfileDetailName,
+  verifyEmailOtpName,
 } from "@/Redux/Auth/Actions";
 import {
   isServiceLoading,
@@ -69,8 +71,9 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       phoneNumber: encodeURIComponent(phoneNumber),
     };
     try {
-      const profileRes = await actions.fetchProfileDetails(body);
       if (!bikeDetails.length) await actions.getBrandList();
+      const profileRes = await actions.fetchProfileDetails(body);
+  
     } catch (error) {
       console.error("Error fetching details:", error);
     }
@@ -104,6 +107,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       getBikeModelName,
       getBikeBrandName,
       getProfileDetailName,
+      verifyEmailOtpName,
+      generateEmailOtpName
     ]),
   );
 

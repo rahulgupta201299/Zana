@@ -4,6 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  InputAdornment,
   MenuItem,
   Select,
   Stack,
@@ -16,7 +17,11 @@ import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfileDetails, isdCodeDetails, listOfBikes } from "@/Redux/Auth/Selectors";
+import {
+  getProfileDetails,
+  isdCodeDetails,
+  listOfBikes,
+} from "@/Redux/Auth/Selectors";
 import PersonIcon from "@mui/icons-material/Person";
 import { enqueueSnackbar } from "notistack";
 import getBikeBrandServiceAction from "@/Redux/Auth/Services/GetBikeBrand";
@@ -31,10 +36,13 @@ import { TAppDispatch } from "@/Configurations/AppStore";
 import { logout } from "../Utils";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-
+import GenerateEmailOtpServiceAction, {
+  GEN_EMAIL_OTP_REQ,
+} from "@/Redux/Auth/Services/GenerateEmailOtp";
+import verifyEmailOtpServiceAction from "@/Redux/Auth/Services/VerifyEmailOtp";
+import VerifyEmailOtp from "./VerifyEmailOtp";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
-
   const [models, setModels] = useState([]);
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
@@ -46,12 +54,16 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
       updateProfileDetails: (state: UPDATE_PROFILE_DETAILS) =>
         dispatch(updateProfileDetailServiceAction(state)),
       logout,
+      generateEmailOtp: (state: GEN_EMAIL_OTP_REQ) =>
+        dispatch(GenerateEmailOtpServiceAction(state)),
+      verifyEmailOtp: (state) => dispatch(verifyEmailOtpServiceAction(state)),
     }),
     [dispatch],
   );
   const profileDetails = useSelector(getProfileDetails);
-    const isdCode = useSelector(isdCodeDetails)
+  const isdCode = useSelector(isdCodeDetails);
   const bikeList = useSelector(listOfBikes);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
 
   const fetchBrandModels = async (bikeId: string) => {
     if (!bikeId) return;
@@ -64,10 +76,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
       const [isd, phone] = values.phoneNumber.split("-");
       const reqBody = {
         phoneNumber: values.phoneNumber, // Storing phone number with ISD code as prefix (e.g., +91-1234567890)
-        isdCode: isd,
-        emailId: values.email,
+        isdCode: isd,   
         firstName: values.firstName,
         lastName: values.lastName,
+        emailId: values.email,
         addressLine1: values.addressLine1,
         addressLine2: values.addressLine2,
         city: values.city,
@@ -78,15 +90,15 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         bikeOwnedByCustomer:
           values.brand || values.model
             ? [
-              {
-                ...(values.brand && { brand: values.brand }),
-                ...(values.model && { model: values.model }),
-              },
-            ]
+                {
+                  ...(values.brand && { brand: values.brand }),
+                  ...(values.model && { model: values.model }),
+                },
+              ]
             : [],
       };
       let result;
-   
+
       if (profileDetails._id) {
         result = await actions.updateProfileDetails(reqBody);
       } else {
@@ -113,16 +125,17 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
     }
   };
 
-  const ProfileSchema = Yup.object().shape({
-  phoneNumber: Yup.string().required("Phone number is required"),
+const ProfileSchema = Yup.object().shape({
+  phoneNumber: Yup.string()
+    .required("Phone number is required"),
 
   email: Yup.string()
     .required("Email is required")
     .email("Invalid email format")
-    .test("email", "Invalid email format", (value) => {
-      if (!value) return false
-      return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
-    }),
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Invalid email format"
+    ),
 
   firstName: Yup.string()
     .required("First name is required")
@@ -132,14 +145,47 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
     .required("Last name is required")
     .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
 
-  addressLine1: Yup.string().min(3, "Address length should be 3 to 80 characters"),
-  addressLine2: Yup.string().min(3, "Address length should be 3 to 80 characters"), 
-  city: Yup.string().min(2, "City length should be 2 to 50 characters"),
-  state: Yup.string().min(2, "State length should be 2 to 50 characters"),
-  postalCode: Yup.string().min(6, "Invalid postal code").max(6, "Invalid postal code"),
-  country: Yup.string().required("Country is required"),
+  addressLine1: Yup.string()
+    .required("Address Line 1 is required")
+    .min(3, "Address length should be 3 to 80 characters")
+    .max(80, "Address length should be 3 to 80 characters"),
+
+  addressLine2: Yup.string()
+    .required("Address Line 2 is required")
+    .min(3, "Address length should be 3 to 80 characters")
+    .max(80, "Address length should be 3 to 80 characters"),
+
+  city: Yup.string()
+    .required("City is required")
+    .min(2, "City length should be 2 to 50 characters")
+    .max(50, "City length should be 2 to 50 characters"),
+
+  state: Yup.string()
+    .required("State is required")
+    .min(2, "State length should be 2 to 50 characters")
+    .max(50, "State length should be 2 to 50 characters"),
+
+  postalCode: Yup.string()
+    .required("Postal code is required")
+    .matches(/^[0-9]{6}$/, "Enter a valid 6-digit postal code"),
+
+  country: Yup.string()
+    .required("Country is required"),
+
   notifyOffers: Yup.boolean(),
-})
+});
+
+  const generateOtp = async (email: string) => {
+    try {
+      const result = await actions.generateEmailOtp({ email });
+      console.log(result.success);
+      if (result.success) {
+        setShowOtpDialog(true);
+      }
+    } catch (error) {}
+  };
+
+  
 
   return (
     <Box
@@ -234,7 +280,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
               }}
               enableReinitialize
               validationSchema={ProfileSchema}
-
               onSubmit={handleSubmit}
             >
               {({
@@ -248,12 +293,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                 dirty,
                 isValid,
               }) => {
-
-                const { brand = '' } = values;
+                const { brand = "" } = values;
 
                 useEffect(() => {
                   fetchBrandModels(brand);
-                }, [])
+                }, []);
 
                 return (
                   <Form>
@@ -307,15 +351,33 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           { errors, touched },
                           "email",
                         )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#000",
-                              borderRadius: "10px",
-                            },
-                          },
-                        }}
+              slotProps={{
+                input: {
+                  sx: {
+                    backgroundColor: "#FFFFFF",
+                    color: "#000",
+                    borderRadius: "10px",
+                  },
+                  // endAdornment:
+                  //   profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
+                  //     <InputAdornment position="end">
+                  //       <Button
+                  //         variant="text"
+                  //         size="small"
+                  //         onClick={() => {
+                  //           generateOtp(values.email);
+                  //         }}
+                  //         sx={{
+                  //           color: "#2192de",
+                  //         }}
+                  //       >
+                  //         Verify
+                  //       </Button>
+                  //     </InputAdornment>
+                  //   ) : null,
+                },
+              }}
+                     
                       />
 
                       <Box sx={{ display: "flex", gap: "16px" }}>
@@ -395,7 +457,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         onChange={handleChange}
                         placeholder="Address Line1"
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "addressLine1")}
+                        error={getFieldErrorState(
+                          { errors, touched },
+                          "addressLine1",
+                        )}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
                           "addressLine1",
@@ -410,14 +475,17 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           },
                         }}
                       />
-                       <TextField
+                      <TextField
                         fullWidth
                         name="addressLine2"
                         value={values.addressLine2}
                         onChange={handleChange}
                         placeholder="Address Line2"
                         onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "addressLine2")}
+                        error={getFieldErrorState(
+                          { errors, touched },
+                          "addressLine2",
+                        )}
                         helperText={getHelperOrErrorText(
                           { errors, touched },
                           "addressLine2",
@@ -434,115 +502,125 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                       />
                       <Stack direction="row" spacing={2}>
                         <TextField
-                        fullWidth
-                        name="city"
-                        value={values.city}
-                        onChange={handleChange}
-                        placeholder="City"
-                        onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "city")}
-                        helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "city",
-                        )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#000",
-                              borderRadius: "10px",
+                          fullWidth
+                          name="city"
+                          value={values.city}
+                          onChange={handleChange}
+                          placeholder="City"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "city",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "city",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
                             },
-                          },
-                        }}
-                      />
-                       <TextField
-                        fullWidth
-                        name="state"
-                        value={values.state}
-                        onChange={handleChange}
-                        placeholder="State"
-                        onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "state")}
-                        helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "state",
-                        )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#000",
-                              borderRadius: "10px",
-                            },
-                          },
-                        }}
-                      />
-                      </Stack>
-                        <Stack direction="row" spacing={2}>
+                          }}
+                        />
                         <TextField
-                        fullWidth
-                        name="postalCode"
-                        value={values.postalCode}
-                        onChange={handleChange}
-                        placeholder="Postal Code"
-                        onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "postalCode")}
-                        helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "postalCode",
-                        )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#000",
-                              borderRadius: "10px",
+                          fullWidth
+                          name="state"
+                          value={values.state}
+                          onChange={handleChange}
+                          placeholder="State"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "state",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "state",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
                             },
-                          },
-                        }}
-                      />
-                       <FormControl fullWidth>
-                                              <Select
-                                                name="country"
-                                               
-                                                value={values.country}
-                                                onChange={(e) => {
-                                                  const countryName = e.target.value as string;                   
-                                                  // const selected = isdCode.find(
-                                                  //   (c) => c.name === countryName
-                                                  // );
-                                                  setFieldValue("country", countryName, true);
-                                                  setFieldTouched("country", true);
-                      
-                                                 
-                                                }}
-                                                displayEmpty
-                                                IconComponent={() => null}
-                                                sx={{ p: 0, borderRadius: "10px" }}
-                                                renderValue={(value) => (
-                                                
-                                                    <Typography sx={{ fontSize: "16px", fontWeight: 400, color: value ? "#000" : "#8A8A8A" }}>
-                                                      {value || "Select country"}
-                                                    </Typography>
-                                                
-                                                )}
-                                              >
-                                                {isdCode.map((c) => (
-                                                  <MenuItem
-                                                    key={c.name}
-                                                    value={c.name}
-                                                    sx={{
-                                                      display: "flex",
-                                                      alignItems: "center",
-                                                      gap: "8px",
-                                                      justifyContent: "space-between",
-                                                    }}
-                                                  >
-                                                    {c.name}
-                                                  </MenuItem>
-                                                ))}
-                                              </Select>
-                                            </FormControl>
+                          }}
+                        />
+                      </Stack>
+                      <Stack direction="row" spacing={2}>
+                        <TextField
+                          fullWidth
+                          name="postalCode"
+                          value={values.postalCode}
+                          onChange={handleChange}
+                          placeholder="Postal Code"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                            },
+                          }}
+                        />
+                        <FormControl fullWidth>
+                          <Select
+                            name="country"
+                            value={values.country}
+                            onChange={(e) => {
+                              const countryName = e.target.value as string;
+                              // const selected = isdCode.find(
+                              //   (c) => c.name === countryName
+                              // );
+                              setFieldValue("country", countryName, true);
+                              setFieldTouched("country", true);
+                            }}
+                            displayEmpty
+                            IconComponent={() => null}
+                            sx={{ p: 0, borderRadius: "10px" }}
+                            renderValue={(value) => (
+                              <Typography
+                                sx={{
+                                  fontSize: "16px",
+                                  fontWeight: 400,
+                                  color: value ? "#000" : "#8A8A8A",
+                                }}
+                              >
+                                {value || "Select country"}
+                              </Typography>
+                            )}
+                          >
+                            {isdCode.map((c) => (
+                              <MenuItem
+                                key={c.name}
+                                value={c.name}
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                {c.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </Stack>
                       <Box sx={{ display: "flex", gap: "16px" }}>
                         <FormControl fullWidth>
@@ -673,10 +751,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             icon={<RadioButtonUncheckedIcon />}
                             checkedIcon={<RadioButtonCheckedIcon />}
                           />
-
                         }
                         label="Notify me with offers and updates"
                       />
+                    
 
                       <Button
                         type="submit"
@@ -697,8 +775,17 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         UPDATE
                       </Button>
                     </Box>
+                      {/* { showOtpDialog &&
+                      (<VerifyEmailOtp
+                        open={showOtpDialog}
+                        onClose={() => setShowOtpDialog(false)}
+                        emailId={values?.email }
+                        handleRequestOtp={() => generateOtp(values?.email)}    
+                      />
+                      )
+                    } */}
                   </Form>
-                )
+                );
               }}
             </Formik>
             <Box

@@ -38,3 +38,10 @@ export const addWishlistActions = traceActionsCreator(addWishlistName);
 
 export const removeWishlistName = `${SLICE_NAME}/removeWishlist`;
 export const removeWishlistActions = traceActionsCreator(removeWishlistName);
+
+
+export const generateEmailOtpName = `${SLICE_NAME}/generateEmailOtp`;
+export const generateEmailOtpActions = traceActionsCreator(generateEmailOtpName);
+
+export const verifyEmailOtpName = `${SLICE_NAME}/verifyEmailOtp`;
+export const verifyEmailOtpActions = traceActionsCreator(verifyEmailOtpName);
