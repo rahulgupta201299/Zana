@@ -28,6 +28,8 @@ const OrderList = () => {
   const currency = useSelector<TAppStore, string>(state => state.landing.selectedCurrency)
 
   const fetchOrderList = async (page: number) => {
+    if (!hasMore) return;
+    
     try {
       const { orders = [], pagination: { hasNextPage, currentPage } } = await dispatch(getOrderListServiceAction({ page, limit: 10 })) as OrderListType;
 
