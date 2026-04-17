@@ -121,7 +121,9 @@ const BlogDetail = () => {
                     <RelatedReadsSkeleton />
                   ) : (
                     relatedBlogs.map((blog, index) => (
-                      <div key={index} className="cursor-pointer">
+                      <div key={index} className="cursor-pointer"
+                       onClick={() => navigate(`/blog/${blog?._id}`)}
+                      >
                         <div className="h-50 overflow-hidden mb-4">
                           <img
                             src={blog?.imageUrl}
