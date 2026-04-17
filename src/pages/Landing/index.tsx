@@ -53,7 +53,7 @@ function index() {
       <NewArrivals />
       <YouTubeSection />
       <InstagramFeed />
-      <BlogsSection />
+      {/* <BlogsSection /> */}
       <BrandStory />
       <TestimonialsSection />
     </div>
