@@ -195,6 +195,8 @@ const ProductDetailPage = () => {
   const isPlusDisabled = quantity >= quantityAvailable;
   const isMinusDisabled = quantity === 1;
 
+  const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       {/* Product Details */}
@@ -203,7 +205,7 @@ const ProductDetailPage = () => {
           {/* Left - Product Images List */}
           <div className="lg:col-span-2">
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
-              {images.map((image, index) => {
+              {newImages.map((image, index) => {
                 return (
                   <>
                     {!isProductLoading ? (
@@ -240,7 +242,7 @@ const ProductDetailPage = () => {
             <div className="bg-gradient-to-b from-[#7B7575] to-white rounded-lg p-8 h-96 lg:h-[600px] flex items-center justify-center">
               {!isProductLoading ? (
                 <img
-                  src={images[selectedImageIndex]}
+                  src={newImages[selectedImageIndex]}
                   alt={name}
                   className="max-w-full max-h-full object-contain"
                 />
