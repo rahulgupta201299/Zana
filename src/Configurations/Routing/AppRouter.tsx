@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
+import usePageTracking from '@/hooks/usePageTracking'
 
 import { getAppRouter } from './GetAppRouter'
 
@@ -11,6 +12,8 @@ export function getHistory() {
 
 function AppRouter() {
   if (!router) router = getAppRouter()
+
+  usePageTracking();
 
   return (
     <Suspense fallback={"Loading..."}>
