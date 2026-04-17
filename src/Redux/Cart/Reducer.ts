@@ -107,10 +107,12 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
     clearOutofStockItems(state) {
       state.outOfStocks = [];
     },
-    clearCart: (state) => ({
-      ...INITIAL_STATE,
-      cartAddress: { ...state.cartAddress },
-    }),
+    clearCart: (state) => {
+      return {
+        ...INITIAL_STATE,
+        cartAddress: state.cartAddress,
+      };
+    },
     resetCart: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_CART_REDUCER>): void => {
