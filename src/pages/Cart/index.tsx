@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
+import BikePlaceholderImage from '@/Assets/Images/BikePlaceholder.svg'
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -74,7 +75,7 @@ export default function Cart() {
                             alt={name}
                             className="w-full h-full object-contain p-2"
                             onError={(e) => {
-                              e.currentTarget.src = '/bike-placeholder.svg';
+                              e.currentTarget.src = BikePlaceholderImage;
                             }}
                           />
                         </div>

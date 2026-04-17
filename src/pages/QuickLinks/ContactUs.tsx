@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { Grid } from "@mui/material";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
+import SuccessImg from "@/Assets/Images/Success.svg";
 
 const ContactSchema = Yup.object().shape({
   name: Yup.string()
@@ -64,7 +65,7 @@ const ContactUsForm = () => {
               width: "170px",
               height: "170px",
             }}
-            src="/uploads/success.svg"
+            src={SuccessImg}
             alt={"Sucess"}
             className="w-full h-full object-contain p-2"
           />

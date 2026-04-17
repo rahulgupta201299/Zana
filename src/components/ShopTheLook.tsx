@@ -26,6 +26,7 @@ interface BikeView {
   dots: YellowDot[];
 }
 
+// Not Used
 const ShopTheLook = () => {
   const navigate = useNavigate();
 
@@ -35,160 +36,162 @@ const ShopTheLook = () => {
   const [isRotating, setIsRotating] = useState(false);
 
   // Sample bike data with multiple views - different side images with same dimensions
-  const bikeViews: BikeView[] = [
-    {
-      id: "side-view-1",
-      name: "Side View - Left",
-      image: "/uploads/2ec2bf66-f502-4f10-bb9e-6e304d83a854.png",
-      dots: [
-        {
-          id: "top-rack-1",
-          x: 26.97,
-          y: 29.66,
-          partData: {
-            id: "top-rack",
-            name: "Top Rack",
-            price: 500,
-            description:
-              "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
-            image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "headlight-1",
-          x: 66.43,
-          y: 30.16,
-          partData: {
-            id: "headlight",
-            name: "Headlight Assembly",
-            price: 1500,
-            description:
-              "High-performance LED headlight for enhanced visibility and style.",
-            image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "crash-guard-1",
-          x: 74.2,
-          y: 70.16,
-          partData: {
-            id: "crash-guard",
-            name: "Crash Guard",
-            price: 1200,
-            description:
-              "Heavy-duty protection for your bike's engine and frame during adventures.",
-            image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "skid-plate-1",
-          x: 52.16,
-          y: 74.33,
-          partData: {
-            id: "skid-plate",
-            name: "Skid Plate",
-            price: 900,
-            description: "Durable engine protection for off-road adventures.",
-            image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "rear-brake-1",
-          x: 32,
-          y: 70,
-          partData: {
-            id: "rear-brake",
-            name: "Rear Brake System",
-            price: 2000,
-            description:
-              "Premium rear brake assembly for superior stopping power.",
-            image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
-            quantityAvailable: 10,
-          },
-        },
-      ],
-    },
-    {
-      id: "side-view-2",
-      name: "Side View - Right",
-      image: "/uploads/99b42158-dc7a-48aa-8b06-3d9b6ca0b44c.png",
-      dots: [
-        {
-          id: "top-rack-2",
-          x: 79,
-          y: 33,
-          partData: {
-            id: "top-rack",
-            name: "Top Rack",
-            price: 500,
-            description:
-              "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
-            image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "headlight-2",
-          x: 30,
-          y: 29.5,
-          partData: {
-            id: "headlight",
-            name: "Headlight Assembly",
-            price: 1500,
-            description:
-              "High-performance LED headlight for enhanced visibility and style.",
-            image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "engine-guard-2",
-          x: 46,
-          y: 74,
-          partData: {
-            id: "engine-guard",
-            name: "Engine Guard",
-            price: 1800,
-            description: "Robust engine protection for all riding conditions.",
-            image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "front-wheel-2",
-          x: 73,
-          y: 76,
-          partData: {
-            id: "front-wheel",
-            name: "Front Wheel",
-            price: 3500,
-            description:
-              "Premium alloy wheels for superior performance and style.",
-            image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
-            quantityAvailable: 10,
-          },
-        },
-        {
-          id: "rear-wheel-2",
-          x: 24,
-          y: 75,
-          partData: {
-            id: "rear-wheel",
-            name: "Rear Wheel Assembly",
-            price: 3800,
-            description:
-              "High-performance rear wheel for enhanced traction and stability.",
-            image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
-            quantityAvailable: 10,
-          },
-        },
-      ],
-    },
-  ];
+  // const bikeViews: BikeView[] = [
+  //   {
+  //     id: "side-view-1",
+  //     name: "Side View - Left",
+  //     image: "/uploads/2ec2bf66-f502-4f10-bb9e-6e304d83a854.png",
+  //     dots: [
+  //       {
+  //         id: "top-rack-1",
+  //         x: 26.97,
+  //         y: 29.66,
+  //         partData: {
+  //           id: "top-rack",
+  //           name: "Top Rack",
+  //           price: 500,
+  //           description:
+  //             "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
+  //           image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "headlight-1",
+  //         x: 66.43,
+  //         y: 30.16,
+  //         partData: {
+  //           id: "headlight",
+  //           name: "Headlight Assembly",
+  //           price: 1500,
+  //           description:
+  //             "High-performance LED headlight for enhanced visibility and style.",
+  //           image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "crash-guard-1",
+  //         x: 74.2,
+  //         y: 70.16,
+  //         partData: {
+  //           id: "crash-guard",
+  //           name: "Crash Guard",
+  //           price: 1200,
+  //           description:
+  //             "Heavy-duty protection for your bike's engine and frame during adventures.",
+  //           image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "skid-plate-1",
+  //         x: 52.16,
+  //         y: 74.33,
+  //         partData: {
+  //           id: "skid-plate",
+  //           name: "Skid Plate",
+  //           price: 900,
+  //           description: "Durable engine protection for off-road adventures.",
+  //           image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "rear-brake-1",
+  //         x: 32,
+  //         y: 70,
+  //         partData: {
+  //           id: "rear-brake",
+  //           name: "Rear Brake System",
+  //           price: 2000,
+  //           description:
+  //             "Premium rear brake assembly for superior stopping power.",
+  //           image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "side-view-2",
+  //     name: "Side View - Right",
+  //     image: "/uploads/99b42158-dc7a-48aa-8b06-3d9b6ca0b44c.png",
+  //     dots: [
+  //       {
+  //         id: "top-rack-2",
+  //         x: 79,
+  //         y: 33,
+  //         partData: {
+  //           id: "top-rack",
+  //           name: "Top Rack",
+  //           price: 500,
+  //           description:
+  //             "Spacious, rugged, and ready for every ride — your ultimate top rack for adventure and utility.",
+  //           image: "/uploads/eff9f866-19fc-4f25-b82d-d52a9464ce6c.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "headlight-2",
+  //         x: 30,
+  //         y: 29.5,
+  //         partData: {
+  //           id: "headlight",
+  //           name: "Headlight Assembly",
+  //           price: 1500,
+  //           description:
+  //             "High-performance LED headlight for enhanced visibility and style.",
+  //           image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "engine-guard-2",
+  //         x: 46,
+  //         y: 74,
+  //         partData: {
+  //           id: "engine-guard",
+  //           name: "Engine Guard",
+  //           price: 1800,
+  //           description: "Robust engine protection for all riding conditions.",
+  //           image: "/uploads/7f595850-f9ae-41ae-a1b4-15a130e88029.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "front-wheel-2",
+  //         x: 73,
+  //         y: 76,
+  //         partData: {
+  //           id: "front-wheel",
+  //           name: "Front Wheel",
+  //           price: 3500,
+  //           description:
+  //             "Premium alloy wheels for superior performance and style.",
+  //           image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //       {
+  //         id: "rear-wheel-2",
+  //         x: 24,
+  //         y: 75,
+  //         partData: {
+  //           id: "rear-wheel",
+  //           name: "Rear Wheel Assembly",
+  //           price: 3800,
+  //           description:
+  //             "High-performance rear wheel for enhanced traction and stability.",
+  //           image: "/uploads/65fa3801-e56f-4fa5-91c0-ced6fd64024b.png",
+  //           quantityAvailable: 10,
+  //         },
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  const bikeViews: BikeView[] = []
 
   // ----Use to set coordinates---//
   // const handleImageClick = (e) => {

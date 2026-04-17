@@ -61,11 +61,11 @@ const Footer = () => {
                     About Us
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="#" className="hover:underline">
                     Become A Vendor
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a href="/privacy-policy" className="hover:underline">
                     Privacy Policy
@@ -81,31 +81,31 @@ const Footer = () => {
                     Disclaimer
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="#" className="hover:underline">
                     FAQ's
                   </a>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <a href="#" className="hover:underline">
                     Returns and Exchange
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a href="/blogs" className="hover:underline">
                     Blogs
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="/contact-us" className="hover:underline">
                     Contact Us
                   </a>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <a href="#" className="hover:underline">
                     Warranty Registration
                   </a>
-                </li>
+                </li> */}
               </ul>
             )}
           </div>

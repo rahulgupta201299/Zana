@@ -5,17 +5,14 @@ const InstagramFeed = () => {
     {
       id: 1,
       url: "https://www.instagram.com/reel/DRKZdwsAWyC/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      thumbnail: "/uploads/b67e9e8e-d696-4316-b2bb-11bd7bc13b81.png",
     },
     {
       id: 2,
       url: "https://www.instagram.com/reel/DUsuR-sDJ7h/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      thumbnail: "/uploads/217344ea-47af-4464-9cd6-c943037ad654.png",
     },
     {
       id: 3,
       url: "https://www.instagram.com/reel/DTk6xS1Dr6M/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      thumbnail: "/uploads/308eca5a-6835-43b4-a78d-255bfc062c42.png",
     },
   ];
 

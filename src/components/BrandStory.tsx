@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
+import AutumnAdventureSale from '@/Assets/Images/AutumnAdventureSale.png';
 
 const BrandStory = () => {
 
@@ -14,7 +15,7 @@ const BrandStory = () => {
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "flex-start",
-        backgroundImage: "url('/uploads/b1dad550-3094-45b1-b41c-bc177002d6d0.png')",
+        backgroundImage: `url(${AutumnAdventureSale})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
