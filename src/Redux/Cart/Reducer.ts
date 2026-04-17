@@ -76,7 +76,7 @@ const cartPersistConfig = {
   whitelist: ["cartDetail", "cartAddress"],
 };
 
-function getPhoneNumber(phoneNumber: string = ''): string {
+function getPhoneNumber(phoneNumber: string = ""): string {
   return phoneNumber.split("-")?.[1] || phoneNumber;
 }
 

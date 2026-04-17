@@ -18,6 +18,7 @@ import {
   IconButton,
   InputAdornment,
   Stack,
+  FormHelperText,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -102,14 +103,6 @@ export default function CheckoutPage() {
   function performOps() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
   }
-
-  useEffect(() => {
-    const shippingIsdCode = isdCode.find(c => c.name.toLowerCase() === shippingAddressSelector.country.toLowerCase())?.isd || ''
-    const billingIsdCode = isdCode.find(c => c.name.toLowerCase() === billingAddressSelector.country.toLowerCase())?.isd || ''
-
-    setShippingIsdCode(shippingIsdCode)
-    setBillingIsdCode(billingIsdCode)
-  }, [isdCode.length])
 
   useEffect(() => {
     performOps()
@@ -384,7 +377,17 @@ export default function CheckoutPage() {
                 isValid,
               }) => {
 
-                { console.log("Formik values", values) }
+                console.log("Errors 11112222", errors);
+
+                useEffect(() => {
+                  const { shippingCountry, billingCountry } = values
+
+                  const shippingIsdCode = isdCode.find(c => c.name.toLowerCase() === shippingCountry.toLowerCase())?.isd || ''
+                  const billingIsdCode = isdCode.find(c => c.name.toLowerCase() === billingCountry.toLowerCase())?.isd || ''
+
+                  setShippingIsdCode(shippingIsdCode)
+                  setBillingIsdCode(billingIsdCode)
+                }, [isdCode.length, values.shippingPhone, values.billingPhone, values.shippingAddressSameAsBillingAddress])
 
                 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
                   const { checked } = e.target;
@@ -471,26 +474,21 @@ export default function CheckoutPage() {
                       >
                         Delivery
                       </Typography>
-                      <FormControl fullWidth>
+                      <FormControl
+                        fullWidth
+                        error={Boolean(errors.shippingCountry && touched.shippingCountry)}
+                      >
                         <Select
                           name="shippingCountry"
                           value={values.shippingCountry}
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            const selected = isdCode.find(
-                              (c) => c.name.toLowerCase() === countryName.toLowerCase()
-                            );
-
                             setFieldValue("shippingCountry", countryName, true);
                             setFieldTouched("shippingCountry", true);
-
-                            if (selected) {
-                              setShippingIsdCode(selected.isd);
-                            }
                           }}
+                          onBlur={handleBlur}
                           displayEmpty
-                          IconComponent={() => null}
                           sx={{ p: 0, borderRadius: "10px" }}
                           renderValue={(value) => (
                             <Box>
@@ -518,6 +516,11 @@ export default function CheckoutPage() {
                             </MenuItem>
                           ))}
                         </Select>
+                        {Boolean(errors.shippingCountry && touched.shippingCountry) && (
+                          <FormHelperText>
+                            {getHelperOrErrorText({ errors, touched }, "shippingCountry")}
+                          </FormHelperText>
+                        )}
                       </FormControl>
 
                       <Grid container spacing={2}>
@@ -938,24 +941,20 @@ export default function CheckoutPage() {
                           {!values.shippingAddressSameAsBillingAddress && (
                             <Box sx={{ mt: "32px" }}>
                               <Grid container spacing={2}>
-                                <FormControl fullWidth>
+                                <FormControl
+                                  fullWidth
+                                  error={Boolean(errors.billingCountry && touched.billingCountry)}
+                                >
                                   <Select
                                     name="billingCountry"
                                     value={values.billingCountry}
                                     onChange={(e) => {
                                       const countryName = e.target.value as string;
 
-                                      const selected = isdCode.find(
-                                        (c) => c.name.toLowerCase() === countryName.toLowerCase()
-                                      );
-
                                       setFieldValue("billingCountry", countryName, true);
                                       setFieldTouched("billingCountry", true);
-
-                                      if (selected) {
-                                        setBillingIsdCode(selected.isd);
-                                      }
                                     }}
+                                    onBlur={handleBlur}
                                     displayEmpty
                                     IconComponent={() => null}
                                     sx={{ p: 0, borderRadius: "10px" }}
@@ -985,6 +984,11 @@ export default function CheckoutPage() {
                                       </MenuItem>
                                     ))}
                                   </Select>
+                                  {Boolean(errors.billingCountry && touched.billingCountry) && (
+                                    <FormHelperText>
+                                      {getHelperOrErrorText({ errors, touched }, "billingCountry")}
+                                    </FormHelperText>
+                                  )}
                                 </FormControl>
 
                                 <Grid size={6}>

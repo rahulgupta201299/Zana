@@ -6,7 +6,7 @@ export const getFieldErrorState = (form: any, name: string) => {
     return !!(touch && error)
   }
   
-  export const getHelperOrErrorText = (form: any, name: string) => {
+  export const getHelperOrErrorText = (form: any, name: string): string => {
     const error = getIn(form.errors, name)
     const touch = getIn(form.touched, name)
     if (touch && error) {
