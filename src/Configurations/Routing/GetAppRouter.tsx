@@ -17,7 +17,6 @@ const BikeDetailPage = lazyLoadPage(() => import("@/pages/BikeDetail"), Loading)
 const BlogsPage = lazyLoadPage(() => import("@/pages/Blogs"), Loading);
 const BlogDetailPage = lazyLoadPage(() => import("@/pages/Blogs/BlogDetail"), Loading);
 const OurStoriesPage = lazyLoadPage(() => import("@/pages/OurStories"), Loading);
-const BikeViewPage = lazyLoadPage(() => import("@/pages/BikeViewPage"), Loading);
 const Cart = lazyLoadPage(() => import("@/pages/Cart"), Loading);
 const NotFound = lazyLoadPage(() => import("@/pages/ErrorScreens/NotFound"), Loading);
 const ContactUsForm = lazyLoadPage(() => import("@/pages/QuickLinks/ContactUs"), Loading);
@@ -43,7 +42,6 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BLOGS, element: BlogsPage },
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },
       { path: ROUTES.OUR_STORIES, element: OurStoriesPage },
-      { path: ROUTES.BIKE_VIEW, element: BikeViewPage },
       { path: ROUTES.CART, element: Cart },
       { path: ROUTES.CONTACT_US, element: ContactUsForm },
       { path: ROUTES.CHECKOUT, element: Checkout },

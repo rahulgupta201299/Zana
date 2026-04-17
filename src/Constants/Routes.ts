@@ -14,7 +14,6 @@ export const ROUTES = Object.freeze({
   BLOGS: '/blogs',
   BLOG_DETAIL: `${SUB_ROUTES.BLOG}/:id`,
   OUR_STORIES: '/our-stories',
-  BIKE_VIEW: '/bike-view',
   CART: '/cart',
   SEARCH: '/search',
   CONTACT_US:'/contact-us',

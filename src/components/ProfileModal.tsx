@@ -37,9 +37,7 @@ import addProfileDetailServiceAction, {
 } from "@/Redux/Auth/Services/AddProfileDetails";
 import getProfileDetailsServiceAction from "@/Redux/Auth/Services/GetProfileDetail";
 import { addProfileDetailsName, getBikeBrandName, getBikeModelName, getProfileDetailName, updateProfileDetailName } from "@/Redux/Auth/Actions";
-import { PersistPartial } from "redux-persist/es/persistReducer";
-import { TReducers } from "@/Redux/Reducers";
-import { getServiceSelector, isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import Loading from "./Loading";
 import { useSnackbar } from "notistack";
 import updateProfileDetailServiceAction, { UPDATE_PROFILE_DETAILS } from "@/Redux/Auth/Services/UpdateProfileDetails";
@@ -258,11 +256,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
               <Box
                 sx={{ display: "flex", justifyContent: "center", mb: "8px" }}
               >
-                <img
+                {/* <img
                   src="/uploads/957a38a6-31ae-4f52-8f91-4db69e92b127.png"
                   alt="logo"
                   style={{ height: "89px" }}
-                />
+                /> */}
               </Box>
               <Typography
                 sx={{
@@ -338,14 +336,14 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   gap: "8px",
                 }}
               >
-                <img
+                {/* <img
                   src="/uploads/957a38a6-31ae-4f52-8f91-4db69e92b127.png"
                   alt="logo"
                   style={{
                     height: "65px",
                     objectFit: "contain",
                   }}
-                />
+                /> */}
                 <Typography
                   sx={{
                     fontSize: "22px",
