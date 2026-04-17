@@ -642,12 +642,12 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Customer Review */}
-      <div className="max-w-7xl mx-auto px-6 py-8 text-center">
+      {/* <div className="max-w-7xl mx-auto px-6 py-8 text-center">
         <Button className="bg-black text-white border-2 border-white hover:bg-white hover:text-black px-8 py-3 font-bold mb-8">
           CUSTOMER REVIEW
         </Button>
         <Separator className="bg-white/20" />
-      </div>
+      </div> */}
     </div>
   );
 };
