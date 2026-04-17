@@ -16,11 +16,12 @@ export async function handleClearCart() {
   const dispatch = AppStore.dispatch;
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
-
+  //@ts-ignore
+   dispatch(clearCart());
   await dispatch(clearCartServiceAction({ phoneNumber }));
 
-  //@ts-ignore
-  dispatch(clearCart());
+  
+ 
 }
 
 export async function verifyPayment(data: VerifyPaymentOrderReqType) {
