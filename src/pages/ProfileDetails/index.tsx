@@ -38,11 +38,9 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
   const [selectedMenu, setSelectedMenu] = useState<string>("profile");
 
   const dispatch = useDispatch<TAppDispatch>();
- const profileDetails = useSelector((state: any) => getProfileDetails(state));
-  const loginDetails = useSelector((state: any) => getLoginDetails(state));
+  const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
   const bikeDetails = useSelector(listOfBikes)
-
-
 
   const actions = useMemo(
     () => ({
@@ -57,23 +55,19 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
 
   const fetchDetails = async () => {
-   
-    const {isdCode, phoneNumber} = profileDetails;
-    let isdCodeLocal;
-     if(!isdCode){ 
-      const [isd, phone] = phoneNumber.split("-");
-        isdCodeLocal = isd ;
-     }
-   
+
+    const { isdCode } = profileDetails;
+    const { phoneNumber } = loginDetails;
 
     const body = {
-      isdCode: encodeURIComponent(isdCodeLocal || isdCode ),
+      isdCode: encodeURIComponent(isdCode),
       phoneNumber: encodeURIComponent(phoneNumber),
     };
     try {
       if (!bikeDetails.length) await actions.getBrandList();
-      const profileRes = await actions.fetchProfileDetails(body);
-  
+
+      await actions.fetchProfileDetails(body);
+
     } catch (error) {
       console.error("Error fetching details:", error);
     }

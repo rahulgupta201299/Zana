@@ -28,11 +28,11 @@ import { displayRazorpay, handleClearCart, validatePhone } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useSnackbar } from "notistack";
-import { COUNTRY_MAPPER, paymentOptions, PaymentTypeEnum } from "./Constant";
+import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
-import { getProfileDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, getProfileDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
@@ -77,6 +77,8 @@ export default function CheckoutPage() {
   const isdCode = useSelector(isdCodeDetails)
   const cartAddressSelector = useSelector(cartAddressDetails)
   const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
+
   const {
     shippingAddress: shippingAddressSelector,
     billingAddress: billingAddressSelector,
@@ -96,15 +98,14 @@ export default function CheckoutPage() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0, currencySymbol = '' } = cartDetail
-  const { phoneNumber = '' } = profileDetails;
 
   function performOps() {
-    if (!phoneNumber) dispatch(setOpenSignupPopup(true))
+    if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
   }
 
   useEffect(() => {
-    const shippingIsdCode = isdCode.find(c => c.name === shippingAddressSelector.country)?.isd || ''
-    const billingIsdCode = isdCode.find(c => c.name === billingAddressSelector.country)?.isd || ''
+    const shippingIsdCode = isdCode.find(c => c.name.toLowerCase() === shippingAddressSelector.country.toLowerCase())?.isd || ''
+    const billingIsdCode = isdCode.find(c => c.name.toLowerCase() === billingAddressSelector.country.toLowerCase())?.isd || ''
 
     setShippingIsdCode(shippingIsdCode)
     setBillingIsdCode(billingIsdCode)
@@ -172,15 +173,15 @@ export default function CheckoutPage() {
           .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
           .required("Billing pincode is required")
     ),
-     billingPhone: Yup.string().when(
-  "shippingAddressSameAsBillingAddress",
-  (same, schema) =>
-    same
-      ? schema.notRequired()
-      : schema
-          .required("Billing phone number is required")
-          .test("billingPhone", validatePhone("billingCountry"))
-)
+    billingPhone: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same
+          ? schema.notRequired()
+          : schema
+            .required("Billing phone number is required")
+            .test("billingPhone", validatePhone("billingCountry"))
+    )
   });
 
   // TODO change the API contract completely
@@ -234,41 +235,43 @@ export default function CheckoutPage() {
       country: billingCountry,
     }
 
-  if (!phoneNumber || !processedItems.length) return;
+    const { phoneNumber = '' } = loginDetails
 
- const shouldUpdate =
-  !profileDetails.emailId ||
-  !profileDetails.firstName ||
-  !profileDetails.lastName ||
-  !profileDetails.addressLine1 ||
-  !profileDetails.city ||
-  !profileDetails.state ||
-  !profileDetails.postalCode ||
-  !profileDetails.country
+    if (!phoneNumber || !processedItems.length) return;
 
-if (shouldUpdate) {
-        const [isd, phone] = profileDetails.phoneNumber.split("-");
-  const payload = {
-    ...profileDetails,
-    isdCode: isd, 
-    ...(!profileDetails.emailId && { emailId }),
-    ...(!profileDetails.firstName && { firstName: shippingFirstName }),
-    ...(!profileDetails.lastName && { lastName: shippingLastName }),
+    const shouldUpdate =
+      !profileDetails.emailId ||
+      !profileDetails.firstName ||
+      !profileDetails.lastName ||
+      !profileDetails.addressLine1 ||
+      !profileDetails.city ||
+      !profileDetails.state ||
+      !profileDetails.postalCode ||
+      !profileDetails.country
 
-    ...(!profileDetails.addressLine1 && { addressLine1: shippingAddress }),
-    ...(!profileDetails.addressLine2 && { addressLine2: shippingApartment }),
-    ...(!profileDetails.city && { city: shippingCity }),
-    ...(!profileDetails.state && { state: shippingState }),
-    ...(!profileDetails.postalCode && { postalCode: shippingPincode }),
-    ...(!profileDetails.country && { country: shippingCountry }),
-  }
+    if (shouldUpdate) {
+      const isd = profileDetails.isdCode;
+      const payload = {
+        ...profileDetails,
+        isdCode: isd,
+        ...(!profileDetails.emailId && { emailId }),
+        ...(!profileDetails.firstName && { firstName: shippingFirstName }),
+        ...(!profileDetails.lastName && { lastName: shippingLastName }),
 
-  await dispatch(
-    (profileDetails._id
-      ? updateProfileDetailServiceAction
-      : addProfileDetailServiceAction)(payload)
-  )
-}
+        ...(!profileDetails.addressLine1 && { addressLine1: shippingAddress }),
+        ...(!profileDetails.addressLine2 && { addressLine2: shippingApartment }),
+        ...(!profileDetails.city && { city: shippingCity }),
+        ...(!profileDetails.state && { state: shippingState }),
+        ...(!profileDetails.postalCode && { postalCode: shippingPincode }),
+        ...(!profileDetails.country && { country: shippingCountry }),
+      }
+
+      await dispatch(
+        (profileDetails._id
+          ? updateProfileDetailServiceAction
+          : addProfileDetailServiceAction)(payload)
+      )
+    }
 
     try {
       await validateCart(processedItems);
@@ -353,7 +356,7 @@ if (shouldUpdate) {
                 shippingCity: shippingAddressSelector.city || profileDetails.city || "",
                 shippingState: shippingAddressSelector.state || profileDetails.state || "",
                 shippingPincode: shippingAddressSelector.postalCode || profileDetails.postalCode || "",
-                shippingPhone: shippingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
+                shippingPhone: shippingAddressSelector.phone || profileDetails.phoneNumber || "",
                 saveInfo: true,
                 billingCountry: billingAddressSelector.country,
                 billingFirstName: billingFirstName,
@@ -363,7 +366,7 @@ if (shouldUpdate) {
                 billingCity: billingAddressSelector.city,
                 billingState: billingAddressSelector.state,
                 billingPincode: billingAddressSelector.postalCode,
-                billingPhone: billingAddressSelector.phone || phoneNumber?.split("-")?.[1] || "",
+                billingPhone: billingAddressSelector.phone || profileDetails.phoneNumber || "",
                 shippingAddressSameAsBillingAddress,
               }}
               validationSchema={CheckoutSchema}
@@ -381,7 +384,7 @@ if (shouldUpdate) {
                 isValid,
               }) => {
 
-                {console.log("Formik values", values)}
+                { console.log("Formik values", values) }
 
                 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
                   const { checked } = e.target;
@@ -420,46 +423,46 @@ if (shouldUpdate) {
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 3 }}
                     >
-                    <Stack
-                    gap='2px'
-                    >
-                      <TextField
-                        fullWidth
-                        name="emailId"
-                        label="Email"
-                        value={values.emailId}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={getFieldErrorState({ errors, touched }, "emailId")}
-                        helperText={getHelperOrErrorText(
-                          { errors, touched },
-                          "emailId"
-                        )}
-                        slotProps={{
-                          input: {
-                            sx: {
-                              backgroundColor: "#fff",
-                              color: "#000",
-                              borderRadius: "10px",
-                            },
-                          },
-                          inputLabel: {
-                            sx: {
-                              color: "#000",
-                            },
-                          },
-                        }}
-                      />
-                     {/* Note: check verification of email and conditionally render this text */}
-                      <Typography
-                      variant ='caption'
-                      color='#202020'
-                      sx={{
-                        ml: '4px',
-                      }}
+                      <Stack
+                        gap='2px'
                       >
-                        Verify your email address from your profile settings.
-                      </Typography>
+                        <TextField
+                          fullWidth
+                          name="emailId"
+                          label="Email"
+                          value={values.emailId}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={getFieldErrorState({ errors, touched }, "emailId")}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "emailId"
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#fff",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                            },
+                            inputLabel: {
+                              sx: {
+                                color: "#000",
+                              },
+                            },
+                          }}
+                        />
+                        {/* Note: check verification of email and conditionally render this text */}
+                        {/* <Typography
+                          variant='caption'
+                          color='#202020'
+                          sx={{
+                            ml: '4px',
+                          }}
+                        >
+                          Verify your email address from your profile settings.
+                        </Typography> */}
                       </Stack>
 
                       <Typography
@@ -476,7 +479,7 @@ if (shouldUpdate) {
                             const countryName = e.target.value as string;
 
                             const selected = isdCode.find(
-                              (c) => c.name === countryName
+                              (c) => c.name.toLowerCase() === countryName.toLowerCase()
                             );
 
                             setFieldValue("shippingCountry", countryName, true);
@@ -943,7 +946,7 @@ if (shouldUpdate) {
                                       const countryName = e.target.value as string;
 
                                       const selected = isdCode.find(
-                                        (c) => c.name === countryName
+                                        (c) => c.name.toLowerCase() === countryName.toLowerCase()
                                       );
 
                                       setFieldValue("billingCountry", countryName, true);

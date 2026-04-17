@@ -33,7 +33,7 @@ import { Box, Skeleton, Tooltip } from "@mui/material";
 import useCart from "@/hooks/useCart";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { categoryProductServiceName, productDetailServiceName } from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
@@ -61,7 +61,7 @@ const ProductDetailPage = () => {
 
   const getQuantityValue = getQuantity(productId);
 
-  const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
 
   const currency = useSelector(getSelectedCurrency);
 
@@ -78,7 +78,7 @@ const ProductDetailPage = () => {
   }
 
   async function handleWishList(productId: string) {
-    const { phoneNumber = "" } = profileDetails;
+    const { phoneNumber = "" } = loginDetails;
     const prevValue = isWishlisted;
     if (!phoneNumber) {
       enqueueSnackbar({
@@ -116,12 +116,15 @@ const ProductDetailPage = () => {
   }
 
   async function pageOps() {
+    const { phoneNumber = "" } = loginDetails;
+
     setQuantity(getQuantityValue || 1);
+
     try {
       const response = (await dispatch(
         ProductDetailService({
           productId: productId,
-          phoneNumber: profileDetails?.phoneNumber,
+          phoneNumber,
         }),
       )) as ShopByProductDetailsType;
       setProduct(response);

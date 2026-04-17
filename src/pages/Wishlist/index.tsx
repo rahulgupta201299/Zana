@@ -19,7 +19,7 @@ import getWishListServiceAction from "@/Redux/Auth/Services/Wishlist";
 import removeWishlistServiceAction, {
   REMOVE_WISHLIST,
 } from "@/Redux/Auth/Services/RemoveWishlist";
-import { getProfileDetails, WishListProducts } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, WishListProducts } from "@/Redux/Auth/Selectors";
 import {
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
@@ -60,7 +60,7 @@ const Wishlist = () => {
     isServiceLoading(state, [cartModifyServiceName]),
   );
 
-  const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
   const currency = useSelector(getSelectedCurrency);
 
   const getWishList = async () => {
@@ -68,7 +68,8 @@ const Wishlist = () => {
   };
 
   const handleRemoveFromWishlist = async (productId: string) => {
-    const { phoneNumber = '' } = profileDetails;
+    const { phoneNumber = '' } = loginDetails;
+
     const requestData: REMOVE_WISHLIST = {
       phoneNumber,
       productIds: [productId],
@@ -96,7 +97,7 @@ const Wishlist = () => {
   async function handleMoveToBag(e: React.MouseEvent<HTMLButtonElement>, productId: string) {
     e.stopPropagation();
 
-    const { phoneNumber = '' } = profileDetails;
+    const { phoneNumber = '' } = loginDetails;
     const quantityInCart = getQuantity(productId);
 
     const items = [{

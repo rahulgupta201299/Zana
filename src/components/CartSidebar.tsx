@@ -13,7 +13,6 @@ import { setOpenCart } from "@/Redux/Cart/Reducer";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import useCart from "@/hooks/useCart";
 import { ROUTES } from "@/Constants/Routes";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
 import DisplayCouponCTA from "./DisplayCouponCTA";
 
@@ -27,14 +26,12 @@ const CartSidebar = ({
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
-  const profileDetails = useSelector(getProfileDetails);
 
   const dispatch = useDispatch<TAppDispatch>()
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
   const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [], currencySymbol = '' } = cartDetail;
-  const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
 

@@ -49,6 +49,8 @@ interface PROFILE_PROPS_TYPE {
   isMobile: boolean;
 }
 
+// This component is not being used @Rohini
+
 const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
   const [brands, setBrands] = useState([]);
@@ -166,11 +168,11 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
 
       let result;
 
-      if (profileDetails?._id) {
-        result = await actions.updateProfileDetails(reqBody);
-      } else {
-        result = await actions.addProfileDetails(reqBody);
-      }
+      // if (profileDetails?._id) {
+      //   result = await actions.updateProfileDetails(reqBody);
+      // } else {
+      //   result = await actions.addProfileDetails(reqBody);
+      // }
       
       enqueueSnackbar(profileDetails?._id ? "Profile Details updated successfully!" : "Profile Details added successfully!", {
         variant: "success",
@@ -473,14 +475,14 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
                   <Formik
                     innerRef={formikRef}
                     initialValues={{
-                      phoneNumber: profileDetails?.phoneNumber || "",
-                      email: profileDetails?.emailId || "",
-                      firstName: profileDetails?.firstName || "",
-                      lastName: profileDetails?.lastName || "",
-                      address: profileDetails?.address || "",
-                      notifyOffers: profileDetails?.notifyOffers || false,
-                      brand: profileDetails?.bikeOwnedByCustomer?.[0]?.brand || '',
-                      model: profileDetails?.bikeOwnedByCustomer?.[0]?.model || '',
+                      // phoneNumber: profileDetails?.phoneNumber || "",
+                      // email: profileDetails?.emailId || "",
+                      // firstName: profileDetails?.firstName || "",
+                      // lastName: profileDetails?.lastName || "",
+                      // address: profileDetails?.address || "",
+                      // notifyOffers: profileDetails?.notifyOffers || false,
+                      // brand: profileDetails?.bikeOwnedByCustomer?.[0]?.brand || '',
+                      // model: profileDetails?.bikeOwnedByCustomer?.[0]?.model || '',
                     }}
                     enableReinitialize
                     validationSchema={ProfileSchema}

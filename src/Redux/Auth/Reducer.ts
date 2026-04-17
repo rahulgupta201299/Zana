@@ -7,7 +7,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import { SLICE_NAME as AuthSliceName } from "@/Redux/Auth/Selectors";
 import storage from "redux-persist/lib/storage";
-import { IsdCodeType, T_AUTH_REDUCER, WishListResType } from "./Types";
+import {
+  IsdCodeType,
+  T_AUTH_REDUCER,
+  VerifyOtpResType,
+  WishListResType,
+} from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
   addProfileDetailsActions,
@@ -23,6 +28,7 @@ import {
 } from "./Actions";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
+  // Note: phone number is stored in format <isdCode>-<phoneNumber> in login reducer
   login: {
     phoneNumber: "",
     verified: false,
@@ -57,6 +63,10 @@ const cartPersistConfig = {
   blacklist: ["openSignupPopup", "wishlist"],
 };
 
+function getPhoneNumber(phoneNumber: string = ''): string {
+  return phoneNumber.split("-")?.[1] || phoneNumber;
+}
+
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
@@ -67,31 +77,58 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     resetAuth: () => INITIAL_STATE,
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_AUTH_REDUCER>): void => {
-    builder.addCase(verifyOtpActions.success, (state, { payload }: any) => {
-      state.login = payload;
-      state.profileDetails = payload.profile || {
-        ...state.profileDetails,
-        phoneNumber: payload.phoneNumber,
-      };
-    });
+    builder.addCase(
+      verifyOtpActions.success,
+      (state, action: PayloadAction<VerifyOtpResType>) => {
+        const { phoneNumber: isdPhone, verified } = action.payload;
+
+        const [isdCode, phoneNumber] = isdPhone.split("-");
+
+        state.login = {
+          phoneNumber: isdPhone,
+          verified,
+        };
+
+        state.profileDetails = {
+          ...state.profileDetails,
+          isdCode,
+          phoneNumber,
+        };
+      },
+    );
     builder.addCase(
       addProfileDetailsActions.success,
       (state, { payload }: any) => {
+        const { phoneNumber = "" } = payload;
+
         state.profileDetails = payload;
+        state.profileDetails.phoneNumber = getPhoneNumber(phoneNumber);
       },
     );
     builder.addCase(
       updateProfileDetailsActions.success,
       (state, { payload }: any) => {
+        const { phoneNumber = "" } = payload;
+
         state.profileDetails = payload;
+        state.profileDetails.phoneNumber = getPhoneNumber(phoneNumber);
       },
     );
-    builder.addCase(getProfileDetailsActions.success, (state, { payload }: any) => {
-      state.profileDetails = payload;
-    });
-    builder.addCase(wishlistActions.success, (state, action: PayloadAction<WishListResType>) => {
-      state.wishlist = action.payload.products || [];
-    });
+    builder.addCase(
+      getProfileDetailsActions.success,
+      (state, { payload }: any) => {
+        const { phoneNumber = "" } = payload;
+
+        state.profileDetails = payload;
+        state.profileDetails.phoneNumber = getPhoneNumber(phoneNumber);
+      },
+    );
+    builder.addCase(
+      wishlistActions.success,
+      (state, action: PayloadAction<WishListResType>) => {
+        state.wishlist = action.payload.products || [];
+      },
+    );
 
     builder.addCase(
       removeWishlistActions.success,
@@ -107,10 +144,12 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
       },
     );
 
-     builder.addCase(
+    builder.addCase(
       verifyEmailOtpActions.success,
       (state, action: PayloadAction<any>) => {
-        state.profileDetails = action.payload.profile || { ...state.profileDetails };
+        state.profileDetails = action.payload.profile || {
+          ...state.profileDetails,
+        };
       },
     );
 

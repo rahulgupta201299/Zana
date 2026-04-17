@@ -1,11 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ROUTES } from "@/Constants/Routes";
 import useCart from "@/hooks/useCart";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { Minus, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { TAppDispatch } from "@/Configurations/AppStore";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 
@@ -13,12 +11,10 @@ export default function Cart() {
   const navigate = useNavigate();
 
   const cartDetail = useSelector(cartDetailSelector);
-  const profileDetails = useSelector(getProfileDetails);
 
   const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity, getQuantity } = useCart();
 
   const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '', currencySymbol = '' } = cartDetail
-  const { phoneNumber = '' } = profileDetails;
 
   const totalItems = getTotalQuantity()
 

@@ -76,6 +76,10 @@ const cartPersistConfig = {
   whitelist: ["cartDetail", "cartAddress"],
 };
 
+function getPhoneNumber(phoneNumber: string = ''): string {
+  return phoneNumber.split("-")?.[1] || phoneNumber;
+}
+
 const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
@@ -173,8 +177,14 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           shippingAddressSameAsBillingAddress,
           emailId,
         } = action.payload;
-        state.cartAddress.shippingAddress = shippingAddress;
-        state.cartAddress.billingAddress = billingAddress;
+        state.cartAddress.shippingAddress = {
+          ...shippingAddress,
+          phone: getPhoneNumber(shippingAddress.phone),
+        };
+        state.cartAddress.billingAddress = {
+          ...billingAddress,
+          phone: getPhoneNumber(billingAddress.phone),
+        };
         state.cartAddress.shippingAddressSameAsBillingAddress =
           shippingAddressSameAsBillingAddress;
         state.cartAddress.emailId = emailId;

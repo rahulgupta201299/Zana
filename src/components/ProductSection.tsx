@@ -9,7 +9,7 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES } from "@/Constants/Routes";
 import ProductSkeleton from "./Skeleton/ProductSkeleton";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import useCart from "@/hooks/useCart";
@@ -27,7 +27,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useState } from "react";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
@@ -50,7 +50,7 @@ const ProductsSection = ({
     ]),
   );
   const dispatch = useDispatch<TAppDispatch>();
-  const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { incrementToCart, getQuantity } = useCart();
@@ -66,7 +66,7 @@ const ProductsSection = ({
 
   async function handleWishList(product: ShopByProductDetailsType) {
     const { _id: productId, isWishlist } = product;
-    const { phoneNumber = "" } = profileDetails;
+    const { phoneNumber = "" } = loginDetails;
     const currentValue = wishlistMap[productId] ?? isWishlist;
     if (!phoneNumber) {
       enqueueSnackbar({

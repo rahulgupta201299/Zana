@@ -18,6 +18,7 @@ import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getLoginDetails,
   getProfileDetails,
   isdCodeDetails,
   listOfBikes,
@@ -40,7 +41,6 @@ import GenerateEmailOtpServiceAction, {
   GEN_EMAIL_OTP_REQ,
 } from "@/Redux/Auth/Services/GenerateEmailOtp";
 import verifyEmailOtpServiceAction from "@/Redux/Auth/Services/VerifyEmailOtp";
-import VerifyEmailOtp from "./VerifyEmailOtp";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   const [models, setModels] = useState([]);
@@ -61,9 +61,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
     [dispatch],
   );
   const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
+
   const isdCode = useSelector(isdCodeDetails);
   const bikeList = useSelector(listOfBikes);
-  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  // const [showOtpDialog, setShowOtpDialog] = useState(false);
 
   const fetchBrandModels = async (bikeId: string) => {
     if (!bikeId) return;
@@ -73,10 +75,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
 
   const handleSubmit = async (values) => {
     try {
-      const [isd, phone] = values.phoneNumber.split("-");
+      const { isdCode } = profileDetails;
+
       const reqBody = {
         phoneNumber: values.phoneNumber, // Storing phone number with ISD code as prefix (e.g., +91-1234567890)
-        isdCode: isd,   
+        isdCode,
         firstName: values.firstName,
         lastName: values.lastName,
         emailId: values.email,
@@ -90,11 +93,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         bikeOwnedByCustomer:
           values.brand || values.model
             ? [
-                {
-                  ...(values.brand && { brand: values.brand }),
-                  ...(values.model && { model: values.model }),
-                },
-              ]
+              {
+                ...(values.brand && { brand: values.brand }),
+                ...(values.model && { model: values.model }),
+              },
+            ]
             : [],
       };
       let result;
@@ -125,67 +128,67 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
     }
   };
 
-const ProfileSchema = Yup.object().shape({
-  phoneNumber: Yup.string()
-    .required("Phone number is required"),
+  const ProfileSchema = Yup.object().shape({
+    phoneNumber: Yup.string()
+      .required("Phone number is required"),
 
-  email: Yup.string()
-    .required("Email is required")
-    .email("Invalid email format")
-    .matches(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email format"
-    ),
+    email: Yup.string()
+      .required("Email is required")
+      .email("Invalid email format")
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Invalid email format"
+      ),
 
-  firstName: Yup.string()
-    .required("First name is required")
-    .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
+    firstName: Yup.string()
+      .required("First name is required")
+      .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
 
-  lastName: Yup.string()
-    .required("Last name is required")
-    .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
+    lastName: Yup.string()
+      .required("Last name is required")
+      .matches(/^[A-Za-z]+$/, "Only alphabets allowed"),
 
-  addressLine1: Yup.string()
-    .required("Address Line 1 is required")
-    .min(3, "Address length should be 3 to 80 characters")
-    .max(80, "Address length should be 3 to 80 characters"),
+    addressLine1: Yup.string()
+      .required("Address Line 1 is required")
+      .min(3, "Address length should be 3 to 80 characters")
+      .max(80, "Address length should be 3 to 80 characters"),
 
-  addressLine2: Yup.string()
-    .required("Address Line 2 is required")
-    .min(3, "Address length should be 3 to 80 characters")
-    .max(80, "Address length should be 3 to 80 characters"),
+    addressLine2: Yup.string()
+      .required("Address Line 2 is required")
+      .min(3, "Address length should be 3 to 80 characters")
+      .max(80, "Address length should be 3 to 80 characters"),
 
-  city: Yup.string()
-    .required("City is required")
-    .min(2, "City length should be 2 to 50 characters")
-    .max(50, "City length should be 2 to 50 characters"),
+    city: Yup.string()
+      .required("City is required")
+      .min(2, "City length should be 2 to 50 characters")
+      .max(50, "City length should be 2 to 50 characters"),
 
-  state: Yup.string()
-    .required("State is required")
-    .min(2, "State length should be 2 to 50 characters")
-    .max(50, "State length should be 2 to 50 characters"),
+    state: Yup.string()
+      .required("State is required")
+      .min(2, "State length should be 2 to 50 characters")
+      .max(50, "State length should be 2 to 50 characters"),
 
-  postalCode: Yup.string()
-    .required("Postal code is required")
-    .matches(/^[0-9]{6}$/, "Enter a valid 6-digit postal code"),
+    postalCode: Yup.string()
+      .required("Postal code is required")
+      .matches(/^[0-9]{6}$/, "Enter a valid 6-digit postal code"),
 
-  country: Yup.string()
-    .required("Country is required"),
+    country: Yup.string()
+      .required("Country is required"),
 
-  notifyOffers: Yup.boolean(),
-});
+    notifyOffers: Yup.boolean(),
+  });
 
-  const generateOtp = async (email: string) => {
-    try {
-      const result = await actions.generateEmailOtp({ email });
-      console.log(result.success);
-      if (result.success) {
-        setShowOtpDialog(true);
-      }
-    } catch (error) {}
-  };
+  // const generateOtp = async (email: string) => {
+  //   try {
+  //     const result = await actions.generateEmailOtp({ email });
+  //     console.log(result.success);
+  //     if (result.success) {
+  //       setShowOtpDialog(true);
+  //     }
+  //   } catch (error) { }
+  // };
 
-  
+
 
   return (
     <Box
@@ -264,7 +267,7 @@ const ProfileSchema = Yup.object().shape({
           >
             <Formik
               initialValues={{
-                phoneNumber: profileDetails?.phoneNumber || "",
+                phoneNumber: loginDetails?.phoneNumber || "",
                 email: profileDetails?.emailId || "",
                 firstName: profileDetails?.firstName || "",
                 lastName: profileDetails?.lastName || "",
@@ -351,33 +354,33 @@ const ProfileSchema = Yup.object().shape({
                           { errors, touched },
                           "email",
                         )}
-              slotProps={{
-                input: {
-                  sx: {
-                    backgroundColor: "#FFFFFF",
-                    color: "#000",
-                    borderRadius: "10px",
-                  },
-                  // endAdornment:
-                  //   profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
-                  //     <InputAdornment position="end">
-                  //       <Button
-                  //         variant="text"
-                  //         size="small"
-                  //         onClick={() => {
-                  //           generateOtp(values.email);
-                  //         }}
-                  //         sx={{
-                  //           color: "#2192de",
-                  //         }}
-                  //       >
-                  //         Verify
-                  //       </Button>
-                  //     </InputAdornment>
-                  //   ) : null,
-                },
-              }}
-                     
+                        slotProps={{
+                          input: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#000",
+                              borderRadius: "10px",
+                            },
+                            // endAdornment:
+                            //   profileDetails.emailId === '' || (profileDetails.emailId != values.email) ? (
+                            //     <InputAdornment position="end">
+                            //       <Button
+                            //         variant="text"
+                            //         size="small"
+                            //         onClick={() => {
+                            //           generateOtp(values.email);
+                            //         }}
+                            //         sx={{
+                            //           color: "#2192de",
+                            //         }}
+                            //       >
+                            //         Verify
+                            //       </Button>
+                            //     </InputAdornment>
+                            //   ) : null,
+                          },
+                        }}
+
                       />
 
                       <Box sx={{ display: "flex", gap: "16px" }}>
@@ -754,7 +757,7 @@ const ProfileSchema = Yup.object().shape({
                         }
                         label="Notify me with offers and updates"
                       />
-                    
+
 
                       <Button
                         type="submit"
@@ -775,7 +778,7 @@ const ProfileSchema = Yup.object().shape({
                         UPDATE
                       </Button>
                     </Box>
-                      {/* { showOtpDialog &&
+                    {/* { showOtpDialog &&
                       (<VerifyEmailOtp
                         open={showOtpDialog}
                         onClose={() => setShowOtpDialog(false)}

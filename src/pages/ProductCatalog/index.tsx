@@ -25,7 +25,7 @@ import useCart from "@/hooks/useCart";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 // import { ProductDetailParamsType } from "../ProductDetail/Types";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
@@ -58,7 +58,7 @@ const ProductCatalogPage = () => {
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
 
-  const profileDetails = useSelector(getProfileDetails);
+  const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
   // const selectedCurrency = useSelector(getSelectedCurrency);
 
@@ -71,6 +71,8 @@ const ProductCatalogPage = () => {
   }
 
   async function handleCategoryService(type: string, page = 1, skip = false) {
+    const { phoneNumber = '' } = loginDetails;
+
     if (type === selectedCategory && page === currentPage && !skip) return;
 
     try {
@@ -82,14 +84,14 @@ const ProductCatalogPage = () => {
           ? AllProductService({
             page,
             limit: LIMIT_PER_PAGE,
-            phoneNumber: profileDetails?.phoneNumber,
+            phoneNumber,
           })
           : CategoryProductService({
             category: type,
             queryParams: {
               page,
               limit: LIMIT_PER_PAGE,
-              phoneNumber: profileDetails?.phoneNumber,
+              phoneNumber,
             },
           });
 
@@ -107,7 +109,7 @@ const ProductCatalogPage = () => {
 
   async function handleWishList(product: ShopByProductDetailsType) {
     const { _id: productId, isWishlist } = product;
-    const { phoneNumber = "" } = profileDetails;
+    const { phoneNumber = "" } = loginDetails;
 
     const currentValue = wishlistMap[productId] ?? isWishlist;
     if (!phoneNumber) {

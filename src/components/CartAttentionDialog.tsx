@@ -22,7 +22,7 @@ import { OutOfStockDetail } from "@/Redux/Cart/Types";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { clearOutofStockItems } from "@/Redux/Cart/Reducer";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
-import { getProfileDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { ROUTES } from "@/Constants/Routes";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { addWishlistName } from "@/Redux/Auth/Actions";
@@ -90,7 +90,7 @@ function ItemCard(props: ItemCardType) {
 export default function CartAttentionDialog() {
 
   const outOfStock = useSelector(outOfStockDetails)
-  const profileDetails = useSelector(getProfileDetails)
+  const loginDetails = useSelector(getLoginDetails)
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [addWishlistName]));
 
   const dispatch = useDispatch<TAppDispatch>()
@@ -111,7 +111,7 @@ export default function CartAttentionDialog() {
   }
 
   async function handleMoveToWishlist() {
-    const { phoneNumber = '' } = profileDetails;
+    const { phoneNumber = '' } = loginDetails;
     const productIds = outOfStock.map(item => item.product._id);
     
     try {
