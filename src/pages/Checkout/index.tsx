@@ -484,6 +484,9 @@ export default function CheckoutPage() {
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
+                            const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
+
+                            setShippingIsdCode(isd)
                             setFieldValue("shippingCountry", countryName, true);
                             setFieldTouched("shippingCountry", true);
                           }}
@@ -950,7 +953,9 @@ export default function CheckoutPage() {
                                     value={values.billingCountry}
                                     onChange={(e) => {
                                       const countryName = e.target.value as string;
+                                      const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
+                                      setBillingIsdCode(isd)
                                       setFieldValue("billingCountry", countryName, true);
                                       setFieldTouched("billingCountry", true);
                                     }}
