@@ -453,26 +453,26 @@ const ProductDetailPage = () => {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-[#7B7575] to-white">
-                <TabsTrigger
-                  value="description"
-                  className="text-black font-medium"
+             <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-[#7B7575] to-white">
+              <TabsTrigger
+                 value="description"
+                 className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
                 >
-                  DESCRIPTION
-                </TabsTrigger>
-                <TabsTrigger
-                  value="specification"
-                  className="text-black font-medium"
+                DESCRIPTION
+               </TabsTrigger>
+            <TabsTrigger
+              value="specification"
+              className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
+             >
+             SPECIFICATION
+          </TabsTrigger>
+              <TabsTrigger
+               value="shipping"
+               className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
                 >
-                  SPECIFICATION
-                </TabsTrigger>
-                <TabsTrigger
-                  value="shipping"
-                  className="text-black font-medium"
-                >
-                  SHIPPING & RETURN
-                </TabsTrigger>
-              </TabsList>
+             SHIPPING & RETURN
+             </TabsTrigger>
+            </TabsList>
 
               <div className="bg-white rounded-b-lg p-6 min-h-[200px] max-h-[300px] overflow-y-auto">
                 <TabsContent

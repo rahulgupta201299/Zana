@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PhilosophyImage from "@/Assets/Images/Philosophy.jpeg";
 
 const OurPhilosophy = () => {
   const navigate = useNavigate();
@@ -8,13 +9,13 @@ const OurPhilosophy = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left side - Image */}
-          <div className="relative">
-            <img 
-              src="/uploads/fc780bf6-168c-4870-b45b-cf3f47f07ce2.png" 
-              alt="Motorcycle rider on autumn road" 
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
-          </div>
+         <div className="relative flex justify-center">
+          <img 
+           src={PhilosophyImage} 
+           alt="Motorcycle rider on autumn road" 
+           className="w-full h-auto md:w-[600px] md:h-[500px] object-cover rounded-lg shadow-lg"
+           />
+        </div>
           
           {/* Right side - Content */}
           <div className="space-y-3 md:space-y-6">
