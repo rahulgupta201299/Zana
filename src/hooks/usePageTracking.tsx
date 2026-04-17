@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-function usePageTracking() {
+export function usePageTracking() {
   const location = window.location;
   const pathname = location.pathname;
   const search = location.search;
@@ -10,6 +10,6 @@ function usePageTracking() {
       page_path: pathname + search,
     });
   }, [pathname]);
-}
 
-export default usePageTracking;
+  return null;
+}
