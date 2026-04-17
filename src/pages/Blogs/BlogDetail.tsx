@@ -10,7 +10,10 @@ import {
 } from "@/Redux/ServiceTracker/Selectors";
 import { decodeParams } from "@/Utils/global";
 import Loading from "@/components/Loading";
-import { BlogDetailsSkeleton, RelatedReadsSkeleton } from "@/components/Skeleton/BlogDetail";
+import {
+  BlogDetailsSkeleton,
+  RelatedReadsSkeleton,
+} from "@/components/Skeleton/BlogDetail";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -90,16 +93,17 @@ const BlogDetail = () => {
                     />
                   </div>
 
-             <div
-              className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
-              dangerouslySetInnerHTML={{ 
-              __html: blogDetails?.content
-                ?.replace(/\\r\\n/g, '')   
-                ?.replace(/\r\n/g, '')     
-                ?.replace(/\r/g, '')       
-                ?.replace(/\n/g, '')       
-                ?? '' }}
-                />
+                  <div
+                    className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        blogDetails?.content
+                          ?.replace(/\\r\\n/g, "")
+                          ?.replace(/\r\n/g, "")
+                          ?.replace(/\r/g, "")
+                          ?.replace(/\n/g, "") ?? "",
+                    }}
+                  />
                 </>
               )}
             </div>
@@ -120,20 +124,26 @@ const BlogDetail = () => {
                   {isLoading ? (
                     <RelatedReadsSkeleton />
                   ) : (
-                    relatedBlogs.map((blog, index) => (
-                      <div key={index} className="cursor-pointer">
-                        <div className="h-50 overflow-hidden mb-4">
-                          <img
-                            src={blog?.imageUrl}
-                            alt={blog?.title}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
+                    relatedBlogs
+                      .filter((blog) => blog?._id !== blogDetails?._id) // excluded current blog 
+                      .map((blog, index) => (
+                        <div
+                          key={index}
+                          className="cursor-pointer"
+                          onClick={() => navigate(`/blog/${blog?._id}`)}
+                        >
+                          <div className="h-50 overflow-hidden mb-4">
+                            <img
+                              src={blog?.imageUrl}
+                              alt={blog?.title}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
+                          <h3 className="text-black text-sm font-semibold">
+                            {blog.title}
+                          </h3>
                         </div>
-                        <h3 className="text-black text-sm font-semibold">
-                          {blog.title}
-                        </h3>
-                      </div>
-                    ))
+                      ))
                   )}
                 </div>
               </div>
