@@ -90,10 +90,16 @@ const BlogDetail = () => {
                     />
                   </div>
 
-                  <div
-                    className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
-                    dangerouslySetInnerHTML={{ __html: blogDetails?.content }}
-                  />
+             <div
+              className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
+              dangerouslySetInnerHTML={{ 
+              __html: blogDetails?.content
+                ?.replace(/\\r\\n/g, '')   
+                ?.replace(/\r\n/g, '')     
+                ?.replace(/\r/g, '')       
+                ?.replace(/\n/g, '')       
+                ?? '' }}
+                />
                 </>
               )}
             </div>
