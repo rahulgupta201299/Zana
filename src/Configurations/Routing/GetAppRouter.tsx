@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
@@ -8,6 +8,7 @@ import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
 import Loading from '@/components/Loading'
+import ErrorBoundary from './ErrorBoundary'
 
 const Landing = lazyLoadPage(() => import("@/pages/Landing"), Loading);
 const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"), Loading);
@@ -32,7 +33,7 @@ const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), L
 export const routeObj: RouteObject[] = [
   {
     element: <PublicRoutes />,
-    errorElement: <Navigate to={ROUTES.ANY} replace />,
+    errorElement: <ErrorBoundary />,
     children: [
       { path: ROUTES.BASE_URL, element: Landing },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
@@ -55,7 +56,7 @@ export const routeObj: RouteObject[] = [
   },
   {
     element: <ProtectedRoutes />,
-    errorElement: <Navigate to={ROUTES.ANY} replace />,
+    errorElement: <ErrorBoundary />,
     children: [
       { path: ROUTES.PROFILE, element: ProfileDetails },
       { path: ROUTES.WISHLIST, element: Wishlist },
