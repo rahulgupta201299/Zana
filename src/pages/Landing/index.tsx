@@ -15,6 +15,7 @@ import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import { getGarageFavorite, getNewArrivalsList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
 
+
 function index() {
   const garageFavoriteList = useSelector(getGarageFavorite)
   const newArrivalsList = useSelector(getNewArrivalsList)
@@ -56,6 +57,7 @@ function index() {
       {/* <BlogsSection /> */}
       <BrandStory />
       <TestimonialsSection />
+        
     </div>
   );
 }
