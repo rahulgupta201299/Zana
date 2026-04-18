@@ -86,11 +86,11 @@ const Footer = () => {
                     FAQ's
                   </a>
                 </li> */}
-                {/* <li>
-                  <a href="#" className="hover:underline">
+                <li>
+                  <a href="/return-and-exchange" className="hover:underline">
                     Returns and Exchange
                   </a>
-                </li> */}
+                </li>
                 <li>
                   <a href="/blogs" className="hover:underline">
                     Blogs

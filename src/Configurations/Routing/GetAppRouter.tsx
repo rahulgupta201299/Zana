@@ -30,6 +30,8 @@ const Disclaimer = lazyLoadPage(() => import("@/pages/QuickLinks/Disclaimer"), L
 const PrivacyPolicy = lazyLoadPage(() => import("@/pages/QuickLinks/PrivacyPolicy"), Loading);
 const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), Loading);
 
+const ReturnExchange = lazyLoadPage(() => import("@/pages/QuickLinks/ReturnAndExchange"), Loading);
+
 export const routeObj: RouteObject[] = [
   {
     element: <PublicRoutes />,
@@ -51,6 +53,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.TERMSANDCONDITIONS, element: TermsAndCondition },
       { path: ROUTES.DISCLAIMER, element: Disclaimer },
       { path: ROUTES.PRIVACYPOLICY, element: PrivacyPolicy },
+      { path: ROUTES.RETURNEXCHANGE, element: ReturnExchange },
       
     ],
   },

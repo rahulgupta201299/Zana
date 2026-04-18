@@ -19,6 +19,7 @@ import { openCartSelector, outOfStockDetails } from '@/Redux/Cart/Selectors'
 import OrderConfirmDialog from '@/pages/OrderDetails/OrderConfirmModal'
 import CouponDialog from '@/components/CoupounDialog'
 import { onMountChecks } from '../Service/Service'
+import FloatingButtons from '@/components/Floating'
 
 function Wrapper() {
 	const location = useLocation()
@@ -46,7 +47,9 @@ function Wrapper() {
 			{isOpenCouponDialog && <CouponDialog />}
 			<Outlet />
 			<Footer />
-			<WhatsAppButton />
+	    <FloatingButtons />
+
+
 			{outOfStock.length > 0 && <CartAttentionDialog />}
 			{isOpenOrderPopup && <OrderConfirmDialog />}
 		</Box>
