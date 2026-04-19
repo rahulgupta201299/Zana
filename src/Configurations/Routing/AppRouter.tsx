@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
-import { usePageTracking } from '@/hooks/usePageTracking'
 
 import { getAppRouter } from './GetAppRouter'
 import { useClarityPageTracking } from '@/hooks/useClarityPageTracking'
+import { usePageTracking } from '@/hooks/usePageTracking'
 
 let router: ReturnType<typeof getAppRouter>
 
