@@ -1,11 +1,8 @@
-import {
-  orderDetailResponse,
-} from "@/pages/OrderDetails/Types";
+import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
 
 export type T_ORDER_REDUCER = {
   openOrderPopup: boolean;
-  newOrderPlaced: VerifyPaymentOrderResType;
-  orderDetail: orderDetailResponse;
+  orderDetail: OrderDetailResponse;
 };
 
 export type CreatePaymentOrderReqType = {
@@ -50,4 +47,8 @@ export type VerifyPaymentOrderResType = {
   orderNumber: string;
   paymentId: string;
   orderStatus: string;
+  orderDate: string;
+  totalAmount: number;
+  displayCurrency: string;
+  currencySymbol: string;
 };

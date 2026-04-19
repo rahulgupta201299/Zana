@@ -27,7 +27,7 @@ function Wrapper() {
 	const isOpenCart = useSelector(openCartSelector)
 	const isOpenSignupPopup = useSelector((state: TAppStore) => state.auth.openSignupPopup)
 	const isOpenCouponDialog = useSelector((state: TAppStore) => state.cart.isOpenCouponDialog)
-	const isOpenOrderPopup = useSelector((state: TAppStore) => state.order.openOrderPopup)
+	// const isOpenOrderPopup = useSelector((state: TAppStore) => state.order.openOrderPopup)
 	const outOfStock = useSelector(outOfStockDetails)
 
 	useNetwork()
@@ -51,7 +51,7 @@ function Wrapper() {
 
 
 			{outOfStock.length > 0 && <CartAttentionDialog />}
-			{isOpenOrderPopup && <OrderConfirmDialog />}
+			{/* {isOpenOrderPopup && <OrderConfirmDialog />} */}
 		</Box>
 	)
 }

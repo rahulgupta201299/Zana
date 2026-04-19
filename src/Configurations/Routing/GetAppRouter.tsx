@@ -31,6 +31,7 @@ const PrivacyPolicy = lazyLoadPage(() => import("@/pages/QuickLinks/PrivacyPolic
 const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), Loading);
 
 const ReturnExchange = lazyLoadPage(() => import("@/pages/QuickLinks/ReturnAndExchange"), Loading);
+const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuccessful"), Loading);
 
 export const routeObj: RouteObject[] = [
   {
@@ -53,8 +54,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.TERMSANDCONDITIONS, element: TermsAndCondition },
       { path: ROUTES.DISCLAIMER, element: Disclaimer },
       { path: ROUTES.PRIVACYPOLICY, element: PrivacyPolicy },
-      { path: ROUTES.RETURNEXCHANGE, element: ReturnExchange },
-      
+      { path: ROUTES.RETURN_EXCHANGE, element: ReturnExchange },
     ],
   },
   {
@@ -65,6 +65,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.WISHLIST, element: Wishlist },
       { path: ROUTES.ORDER_LIST, element: OrderList },
       { path: ROUTES.ORDER_DETAILS, element: OrderDetails },
+      { path: ROUTES.ORDER_SUCCESSFUL, element: OrderSuccessful },
     ]
   }
 ];

@@ -1,16 +1,18 @@
 import AppStore from "@/Configurations/AppStore";
 import { clearCart } from "@/Redux/Cart/Reducer";
 import clearCartServiceAction from "@/Redux/Cart/Services/ClearCartService";
-import { setOpenOrder } from "@/Redux/Order/Reducer";
 import createPaymentOrderServiceAction from "@/Redux/Order/Services/CreatePaymentOrder";
 import verifyPaymentOrderServiceAction from "@/Redux/Order/Services/VerifyPaymentOrder";
 import {
   CreatePaymentOrderResType,
   VerifyPaymentOrderReqType,
+  VerifyPaymentOrderResType,
 } from "@/Redux/Order/Types";
 import { loadScript } from "@/Utils/razorpay";
 import { enqueueSnackbar } from "notistack";
 import { COUNTRY_MAPPER } from "./Constant";
+import { ROUTES } from "@/Constants/Routes";
+import { getHistory } from "@/Configurations/Routing/AppRouter";
 
 export async function handleClearCart() {
   const dispatch = AppStore.dispatch;
@@ -26,10 +28,12 @@ export async function handleClearCart() {
 
 export async function verifyPayment(data: VerifyPaymentOrderReqType) {
   const dispatch = AppStore.dispatch;
+  const router = getHistory()
 
   try {
-    await dispatch(verifyPaymentOrderServiceAction(data));
-    dispatch(setOpenOrder(true));
+    const { orderId = '' } = await dispatch(verifyPaymentOrderServiceAction(data)) as VerifyPaymentOrderResType;
+
+    router.navigate(ROUTES.ORDER_SUCCESSFUL, { state: { orderId } });
   } catch (error: any) {
     const { message = "" } = error;
     enqueueSnackbar({

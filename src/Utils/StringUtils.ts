@@ -1,4 +1,5 @@
 import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
+import { AddressType } from "@/pages/OrderDetails/Types";
 
 export function replaceHiphenWithSpaces(val: string): string {
   if (!val) return "";
@@ -10,13 +11,16 @@ export function replaceSpacesWithHiphen(val: string): string {
   return val.toLowerCase().split(" ").join("-");
 }
 
-export const handleSocialMedia = (platform: SocialMediaPlatformEnum, url: string, text?: string) => {
-
+export const handleSocialMedia = (
+  platform: SocialMediaPlatformEnum,
+  url: string,
+  text?: string,
+) => {
   switch (platform) {
     case SocialMediaPlatformEnum.FACEBOOK:
       window.open(
         `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-        "_blank"
+        "_blank",
       );
       break;
     case SocialMediaPlatformEnum.INSTAGRAM:
@@ -26,7 +30,7 @@ export const handleSocialMedia = (platform: SocialMediaPlatformEnum, url: string
     case SocialMediaPlatformEnum.WHATSAPP:
       window.open(
         `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
-        "_blank"
+        "_blank",
       );
       break;
   }
@@ -36,3 +40,11 @@ export const trimByLength = (text = "", maxLength = 40) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength).trim() + " ...";
 };
+
+export function getAddressLabel(address: AddressType): string {
+  if (!address) return "";
+
+  const { addressLine1 = '', addressLine2 = '', city = '', state = '', postalCode = '', country = '' } = address;
+
+  return `${addressLine1}, ${addressLine2 ? addressLine2 + ", " : ""}${city}, ${state} ${postalCode}, ${country}`;
+}

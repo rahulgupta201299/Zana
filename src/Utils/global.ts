@@ -46,6 +46,7 @@ export function statusColor(status: string) {
 		case "confirmed":
 		case "success":
 			return "#22C55E";
+    case "pending":
 		case "processing":
 			return "#FACC15";
 		case "failed":
