@@ -9,9 +9,11 @@ export function usePageTracking() {
   useEffect(() => {
     if (!VITE_ENABLE_TRACKING) return;
 
-    (window as any).gtag("config", "G-RM7848E6XE4", {
-      page_path: pathname + search,
-    });
+    if ((window as any).gtag) {
+      (window as any).gtag("config", "G-RM7848E6XE4", {
+        page_path: pathname + search,
+      });
+    }
   }, [pathname]);
 
   return null;
