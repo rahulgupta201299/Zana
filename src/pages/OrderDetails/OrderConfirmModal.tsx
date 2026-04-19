@@ -10,13 +10,9 @@ import {
 } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { useDispatch, useSelector } from "react-redux";
-import { TAppStore } from "@/Configurations/AppStore";
-import { setOpenOrder } from "@/Redux/Order/Reducer";
 import { newOrderPlacedDetails } from "@/Redux/Order/Selectors";
 import { ROUTES } from "@/Constants/Routes";
 import { statusColor } from "@/Utils/global";
-
-
 
 function InfoRow({ label, value }: { label: string; value: string; }) {
 	if (!value) return null;
@@ -57,12 +53,12 @@ export default function OrderConfirmDialog() {
 		const path = generatePath(ROUTES.ORDER_DETAILS, { id: orderId })
 
 		navigate(path)
-		dispatch(setOpenOrder(false))
+		// dispatch(setOpenOrder(false))
 	}
 
 	function handleReturn() {
 		navigate(ROUTES.PRODUCT_CATALOG)
-		dispatch(setOpenOrder(false))
+		// dispatch(setOpenOrder(false))
 	}
 
 	return (

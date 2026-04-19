@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import PaymentImg from "@/Assets/Images/Payment.svg";
 import { Minus, Plus } from "lucide-react";
@@ -29,7 +30,7 @@ import { displayRazorpay, handleClearCart, validatePhone } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useSnackbar } from "notistack";
-import { paymentOptions, PaymentTypeEnum } from "./Constant";
+import { COUNTRY_MAPPER, paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
@@ -41,9 +42,10 @@ import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Car
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
-import { setOpenOrder } from "@/Redux/Order/Reducer";
 import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
 import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
+import { CreateCodOrderResType } from "@/Redux/Order/Types";
+import { ROUTES } from "@/Constants/Routes";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -96,6 +98,7 @@ export default function CheckoutPage() {
   const [billingIsdCode, setBillingIsdCode] = useState<string>('')
 
   const dispatch = useDispatch<TAppDispatch>();
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0, currencySymbol = '' } = cartDetail
@@ -278,8 +281,8 @@ export default function CheckoutPage() {
       }))
 
       if (paymentType === PaymentTypeEnum.COD) {
-        await dispatch(createCodOrderServiceAction({ phoneNumber }))
-        dispatch(setOpenOrder(true));
+        const { orderId = '' } = await dispatch(createCodOrderServiceAction({ phoneNumber })) as CreateCodOrderResType
+        navigate(ROUTES.ORDER_SUCCESSFUL, { state: { orderId } });
         handleClearCart();
         return;
       }
@@ -483,6 +486,8 @@ export default function CheckoutPage() {
                           value={values.shippingCountry}
                           onChange={(e) => {
                             const countryName = e.target.value as string;
+
+                            countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA && setPaymentType(PaymentTypeEnum.RAZORPAY)
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
@@ -850,6 +855,9 @@ export default function CheckoutPage() {
                               label,
                               showRazorpayInfo = false,
                             } = option;
+
+                            if (value === PaymentTypeEnum.COD && values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA) return null;
+
                             return (
                               <Box key={value}>
                                 <FormControlLabel
