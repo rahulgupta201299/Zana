@@ -20,6 +20,8 @@ import OrderConfirmDialog from '@/pages/OrderDetails/OrderConfirmModal'
 import CouponDialog from '@/components/CoupounDialog'
 import { onMountChecks } from '../Service/Service'
 import FloatingButtons from '@/components/Floating'
+import { usePageTracking } from '@/hooks/usePageTracking'
+import { useClarityPageTracking } from '@/hooks/useClarityPageTracking'
 
 function Wrapper() {
 	const location = useLocation()
@@ -31,6 +33,8 @@ function Wrapper() {
 	const outOfStock = useSelector(outOfStockDetails)
 
 	useNetwork()
+	usePageTracking();
+	useClarityPageTracking();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -47,7 +51,7 @@ function Wrapper() {
 			{isOpenCouponDialog && <CouponDialog />}
 			<Outlet />
 			<Footer />
-	    <FloatingButtons />
+			<FloatingButtons />
 
 
 			{outOfStock.length > 0 && <CartAttentionDialog />}
