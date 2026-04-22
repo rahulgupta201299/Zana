@@ -11,6 +11,19 @@ export function replaceSpacesWithHiphen(val: string): string {
   return val.toLowerCase().split(" ").join("-");
 }
 
+export function replaceSpecialCharactersWithHyphen(val: string): string {
+  if (!val) return "";
+
+  return (
+    val
+      .toLowerCase()
+      // replace non-alphanumeric with hyphen directly
+      .replace(/[^a-z0-9]+/gi, "-")
+      // remove leading/trailing hyphens
+      .replace(/^-+|-+$/g, "")
+  );
+}
+
 export const handleSocialMedia = (
   platform: SocialMediaPlatformEnum,
   url: string,
@@ -44,7 +57,14 @@ export const trimByLength = (text = "", maxLength = 40) => {
 export function getAddressLabel(address: AddressType): string {
   if (!address) return "";
 
-  const { addressLine1 = '', addressLine2 = '', city = '', state = '', postalCode = '', country = '' } = address;
+  const {
+    addressLine1 = "",
+    addressLine2 = "",
+    city = "",
+    state = "",
+    postalCode = "",
+    country = "",
+  } = address;
 
   return `${addressLine1}, ${addressLine2 ? addressLine2 + ", " : ""}${city}, ${state} ${postalCode}, ${country}`;
 }

@@ -12,11 +12,11 @@ import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import { TAppStore } from "@/Configurations/AppStore";
 import { shopByBikeServiceName, zProBikeServiceName } from "@/Redux/Product/Actions";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 function Bikes() {
 	const params = useParams()
-	const { bikeType: bikeTypeParams = '' } = decodeParams(params)
+	const { bikeType: bikeTypeParams = '' } = params
 
 	const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO
 	const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
@@ -25,7 +25,7 @@ function Bikes() {
 	const isBikeProductLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName]))
 
 	const location = useLocation()
-	const { brand: initialBikeBrand = '' } = decodeParams(location.state)
+	const { brand: initialBikeBrand = '' } = location.state || {}
 
 	const [selectedBrand, setSelectedBrand] = useState<string>(initialBikeBrand || ALL_CATEGORY);
 	const [filteredBrandDetails, setFilteredBrandDetails] = useState<ShopByBikeModelsType[]>([]);
@@ -166,7 +166,7 @@ function Bikes() {
 							</p>
 							<button
 								onClick={() => handleBrandCategoryClick(ALL_CATEGORY)}
-								className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+								className="mt-4 px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
 							>
 								View All Bikes
 							</button>

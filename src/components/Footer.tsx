@@ -27,7 +27,7 @@ const Footer = () => {
 
   function redirectToBikes(type: string, brand: string) {
     navigate(`/${type}${SUB_ROUTES.BIKES}`, {
-      state: { brand: encodeURIComponent(brand) },
+      state: { brand: brand.toLowerCase() },
     });
   }
 

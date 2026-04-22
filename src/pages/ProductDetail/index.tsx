@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { useSnackbar } from "notistack";
@@ -38,14 +38,14 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { categoryProductServiceName, productDetailServiceName } from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
-import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
-  const { productCategory = '', productId = '', productItem = '' } = decodeParams(params)
+  const { productCategory = '', productId = '', productItem = '' } = params
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -74,7 +74,7 @@ const ProductDetailPage = () => {
   );
 
   function handleBackToProducts() {
-    navigate(ROUTES.PRODUCT_CATALOG, { state: { category: encodeURIComponent(productCategory) } });
+    navigate(ROUTES.PRODUCT_CATALOG, { state: { category: productCategory.toLowerCase() } });
   }
 
   async function handleWishList(productId: string) {
@@ -207,10 +207,9 @@ const ProductDetailPage = () => {
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
               {newImages.map((image, index) => {
                 return (
-                  <>
+                  <Fragment key={index}>
                     {!isProductLoading ? (
                       <div
-                        key={index}
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index
                           ? "border-white"
                           : "border-gray-600"
@@ -225,13 +224,12 @@ const ProductDetailPage = () => {
                       </div>
                     ) : (
                       <Skeleton
-                        key={index}
                         sx={{ backgroundColor: "grey" }}
                         width={180}
                         height={160}
                       />
                     )}
-                  </>
+                  </Fragment>
                 );
               })}
             </div>

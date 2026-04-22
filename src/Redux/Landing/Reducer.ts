@@ -10,6 +10,7 @@ import { CURRENCY_LIST } from "@/Constants/AppConstant";
 import {
   currencyListActions,
   garageFavoriteActions,
+  initialLoadingActions,
   newArrivalsActions,
   selectedCurrencyActions,
 } from "./Actions";
@@ -22,6 +23,7 @@ export const INITIAL_STATE: T_LANDING_REDUCER = {
   newArrivalsList: [],
   currencyList: [],
   selectedCurrency: CURRENCY_LIST.INR,
+  initialLoading: false,
 };
 
 const LandingPersistConfig = {
@@ -61,11 +63,17 @@ const sliceOptions: CreateSliceOptions<T_LANDING_REDUCER> = {
         state.selectedCurrency = action.payload;
       },
     );
+    builder.addCase(
+      initialLoadingActions,
+      (state, action: PayloadAction<boolean>) => {
+        state.initialLoading = action.payload;
+      },
+    );
   },
 };
 
 const slice = createSlice(sliceOptions);
 
-export const { resetLanding } = slice.actions;
+export const { setInitialLoading, resetLanding } = slice.actions;
 
 export default persistReducer(LandingPersistConfig, slice.reducer);

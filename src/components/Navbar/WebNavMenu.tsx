@@ -12,6 +12,7 @@ import { getMenuOption } from "./Utils";
 import { ROUTES } from "@/Constants/Routes";
 import WebNavMenuSkeleton from "@/components/Skeleton/WebNavMenuSkeleton";
 import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
+import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -32,7 +33,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 
 	function handleItemClick(category: string, subCategory: string, _id: string) {
 		const prefixRoute = getMenuOption().find(item => item.name === menuName)?.route || ''
-		const name = `${encodeURIComponent(category)}/${encodeURIComponent(subCategory)}/${_id}`
+		const name = `${replaceSpecialCharactersWithHyphen(category)}/${replaceSpecialCharactersWithHyphen(subCategory)}/${_id}`
 		const routeName = `${prefixRoute}/${name}`
 
 		navigate(routeName)
@@ -40,7 +41,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 	}
 
 	function handleCategoryClick(category: string) {
-		navigate(ROUTES.PRODUCT_CATALOG, { state: { category: encodeURIComponent(category) } })
+		navigate(ROUTES.PRODUCT_CATALOG, { state: { category: category.toLowerCase() } })
 		onClose()
 	}
 

@@ -16,7 +16,7 @@ import { orderDetailByIdName } from "@/Redux/Order/Action";
 import { format } from "date-fns";
 import getOrderDetailServiceAction from "@/Redux/Order/Services/OrderDetail";
 
-import { decodeParams, statusColor } from "@/Utils/global";
+import { statusColor } from "@/Utils/global";
 import { useParams } from "react-router-dom";
 import OrderDetailsSkeleton from "@/components/Skeleton/OrderDetailSkeleton";
 import {
@@ -52,9 +52,12 @@ const AddressBlock = ({ title, address }) => (
 
 const OrderDetails = () => {
   const params = useParams();
+  const { id = "" } = params;
+
   const [showTracker, setShowTracker] = React.useState(false);
-  const { id = "" } = decodeParams(params);
+
   const dispatch = useDispatch<TAppDispatch>();
+  
   const actions = useMemo(
     () => ({
       getOrderDetails: (state) => dispatch(getOrderDetailServiceAction(state)),

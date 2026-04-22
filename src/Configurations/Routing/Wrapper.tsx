@@ -52,8 +52,6 @@ function Wrapper() {
 			<Outlet />
 			<Footer />
 			<FloatingButtons />
-
-
 			{outOfStock.length > 0 && <CartAttentionDialog />}
 			{/* {isOpenOrderPopup && <OrderConfirmDialog />} */}
 		</Box>

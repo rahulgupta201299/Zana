@@ -3,13 +3,9 @@ import { blogDetailsName, fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { getBlogDetail, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
 import getBlogDetailServiceAction from "@/Redux/Blogs/Services/GetBlogDetail";
 import fetchBlogListServiceAction from "@/Redux/Blogs/Services/GetBlogList";
-import { TReducers } from "@/Redux/Reducers";
 import {
-  getServiceSelector,
   isServiceLoading,
 } from "@/Redux/ServiceTracker/Selectors";
-import { decodeParams } from "@/Utils/global";
-import Loading from "@/components/Loading";
 import {
   BlogDetailsSkeleton,
   RelatedReadsSkeleton,
@@ -17,12 +13,11 @@ import {
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { PersistPartial } from "redux-persist/es/persistReducer";
 
 const BlogDetail = () => {
   const params = useParams();
 
-  const { id = "" } = decodeParams(params);
+  const { id = "" } = params;
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
@@ -39,7 +34,6 @@ const BlogDetail = () => {
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [blogDetailsName, fetchBlogListName]),
   );
-
   const blogDetails = useSelector((state: TAppStore) => getBlogDetail(state));
   const relatedBlogs = useSelector((state: TAppStore) =>
     getTopFourBlogs(state),

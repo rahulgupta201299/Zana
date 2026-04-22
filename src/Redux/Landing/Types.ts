@@ -11,5 +11,6 @@ export type T_LANDING_REDUCER = {
   garageFavoriteList: ShopByProductDetailsType[];
   newArrivalsList: ShopByProductDetailsType[];
   currencyList: CurrencyType[],
-  selectedCurrency: string
+  selectedCurrency: string,
+  initialLoading: boolean,
 };

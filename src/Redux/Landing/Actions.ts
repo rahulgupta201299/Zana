@@ -15,3 +15,8 @@ export const selectedCurrencyName = 'api/selectedCurrency'
 export const selectedCurrencyActions = createAction(
   `${selectedCurrencyName}/UPDATE`
 )
+
+export const initialLoadingName = 'app/initialLoading'
+export const initialLoadingActions = createAction(
+  `${initialLoadingName}/setInitialLoading`
+)
