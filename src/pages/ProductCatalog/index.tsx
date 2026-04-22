@@ -29,13 +29,13 @@ import { getLoginDetails } from "@/Redux/Auth/Selectors";
 // import { ProductDetailParamsType } from "../ProductDetail/Types";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
-import { decodeParams, encodedGeneratedPath } from "@/Utils/global";
+import { encodedGeneratedPath } from "@/Utils/global";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { category: initialCategory = '' } = decodeParams(location.state)
+  const { category: initialCategory = '' } = location.state || {};
 
   const { enqueueSnackbar } = useSnackbar();
   const { incrementToCart, getQuantity } = useCart();

@@ -3,6 +3,7 @@ export const SUB_ROUTES = Object.freeze({
   BIKE: '/bike',
   BIKES: '/bikes',
   BLOG: '/blog',
+  BIKE_ACCESSORIES: '/bike-accessories',
 })
 
 export const ROUTES = Object.freeze({
@@ -10,7 +11,7 @@ export const ROUTES = Object.freeze({
   PRODUCT_DETAIL: `${SUB_ROUTES.PRODUCT}/:productCategory/:productItem/:productId`,
   PRODUCT_CATALOG: '/product-catalog',
   BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
-  BIKE_DETAIL: `/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
+  BIKE_DETAIL: `${SUB_ROUTES.BIKE_ACCESSORIES}/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
   BLOGS: '/blogs',
   BLOG_DETAIL: `${SUB_ROUTES.BLOG}/:id`,
   OUR_STORIES: '/our-stories',

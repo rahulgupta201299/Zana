@@ -24,7 +24,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
       _id: "1",
       name: MenuItemsName.SHOP_BY_BIKE,
       models: shopByBike,
-      route: `/${BikeCategoryEnum.ZANA}${SUB_ROUTES.BIKE}`,
+      route: `${SUB_ROUTES.BIKE_ACCESSORIES}/${BikeCategoryEnum.ZANA}${SUB_ROUTES.BIKE}`,
     },
     {
       _id: "2",
@@ -36,7 +36,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
       _id: "3",
       name: MenuItemsName.Z_PRO,
       models: zProBikes,
-      route: `/${BikeCategoryEnum.ZPRO}${SUB_ROUTES.BIKE}`,
+      route: `${SUB_ROUTES.BIKE_ACCESSORIES}/${BikeCategoryEnum.ZPRO}${SUB_ROUTES.BIKE}`,
     },
     {
       _id: "4",

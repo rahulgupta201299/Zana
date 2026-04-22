@@ -1,6 +1,9 @@
 import traceActionsCreator from "../traceActionsCreator"
 import { SLICE_NAME } from "./Selectors"
 
+export const bikeDetailServiceName = `${SLICE_NAME}/bikeDetail`
+export const bikeDetailTraceActions = traceActionsCreator(bikeDetailServiceName)
+
 export const bikeProductServiceName = `${SLICE_NAME}/bikeProduct`
 export const bikeProductTraceActions = traceActionsCreator(bikeProductServiceName)
 

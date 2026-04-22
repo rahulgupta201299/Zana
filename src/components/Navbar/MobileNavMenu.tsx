@@ -13,6 +13,7 @@ import { TAppStore } from '@/Configurations/AppStore';
 import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors';
 import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName } from '@/Redux/Product/Actions';
 import { MenuItemsName } from './Constant';
+import { replaceSpecialCharactersWithHyphen } from '@/Utils/StringUtils';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -43,7 +44,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		}
 
 		if (route && models.length === 0) {
-			navigate(route, { state: { category: encodeURIComponent(name) } })
+			navigate(route, { state: { category: name.toLowerCase() } })
 			onClose()
 			return
 		}
@@ -51,7 +52,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		historyStackRef.current.push(item)
 
 		if (route) routeRef.current = route + '/'
-		else routeRef.current += encodeURIComponent(name) + '/'
+		else routeRef.current += replaceSpecialCharactersWithHyphen(name) + '/'
 
 		if (models.length === 0) {
 			routeRef.current += _id + '/'

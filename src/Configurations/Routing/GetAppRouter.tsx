@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
@@ -9,6 +9,7 @@ import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 import { lazyLoadPage } from '@/Helpers/Route'
 import Loading from '@/components/Loading'
 import ErrorBoundary from './ErrorBoundary'
+import AppStore from '../AppStore'
 
 const Landing = lazyLoadPage(() => import("@/pages/Landing"), Loading);
 const ProductDetailPage = lazyLoadPage(() => import("@/pages/ProductDetail"), Loading);
@@ -33,6 +34,22 @@ const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), L
 const ReturnExchange = lazyLoadPage(() => import("@/pages/QuickLinks/ReturnAndExchange"), Loading);
 const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuccessful"), Loading);
 
+function DynamicRedirect() {
+  const state = AppStore.getState();
+  const initialLoading = state.landing.initialLoading
+
+  return (
+    <Navigate
+      replace
+      to={
+        initialLoading
+          ? ROUTES.PAGE_NOT_FOUND
+          : ROUTES.BASE_URL
+      }
+    />
+  );
+}
+
 export const routeObj: RouteObject[] = [
   {
     element: <PublicRoutes />,
@@ -50,11 +67,11 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.CONTACT_US, element: ContactUsForm },
       { path: ROUTES.CHECKOUT, element: Checkout },
       { path: ROUTES.PAGE_NOT_FOUND, element: NotFound },
-      { path: ROUTES.ANY, element: NotFound },
       { path: ROUTES.TERMSANDCONDITIONS, element: TermsAndCondition },
       { path: ROUTES.DISCLAIMER, element: Disclaimer },
       { path: ROUTES.PRIVACYPOLICY, element: PrivacyPolicy },
       { path: ROUTES.RETURN_EXCHANGE, element: ReturnExchange },
+      { path: ROUTES.ANY, element: <DynamicRedirect /> },
     ],
   },
   {

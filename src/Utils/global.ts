@@ -1,4 +1,5 @@
 import { generatePath } from "react-router-dom";
+import { replaceSpecialCharactersWithHyphen } from "./StringUtils";
 
 export const InrFormatter = {
   format(amount: number): string {
@@ -11,27 +12,29 @@ export const InrFormatter = {
   },
 };
 
+// Custom encoding function that replaces spaces and special characters with hyphens for SEO-friendly URLs
 export function encodedGeneratedPath(route: string, obj?: object): string {
   const encodedObj = Object.entries(obj).reduce((acc, [k, v]) => {
-    acc[k] = encodeURIComponent(v).toLowerCase();
+    // acc[k] = encodeURIComponent(v).toLowerCase();
+    acc[k] = replaceSpecialCharactersWithHyphen(String(v));
     return acc;
   }, {});
   return generatePath(route, encodedObj);
 }
 
-export function decodeParams<T extends Record<string, string>>(
-  obj: Partial<T>,
-): Partial<T> {
-  if (!obj) return {}
+// export function decodeParams<T extends Record<string, string>>(
+//   obj: Partial<T>,
+// ): Partial<T> {
+//   if (!obj) return {}
 
-  return Object.entries(obj).reduce(
-    (acc, [k, v]) => {
-      acc[k] = decodeURIComponent(v).toLowerCase();
-      return acc;
-    },
-    {} as Record<string, string>,
-  ) as Partial<T>;
-}
+//   return Object.entries(obj).reduce(
+//     (acc, [k, v]) => {
+//       acc[k] = decodeURIComponent(v).toLowerCase();
+//       return acc;
+//     },
+//     {} as Record<string, string>,
+//   ) as Partial<T>;
+// }
 
 export const getTotalQuantity = <T extends { quantity: number }>(
   items: T[]

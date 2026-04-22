@@ -24,7 +24,7 @@ export type ShopByProductDetailsType = {
   price: number;
   currencySymbol: string;
   currency: string;
-  originalPrice: number,
+  originalPrice: number;
   imageUrl: string;
   images: string[];
   quantityAvailable: number;
@@ -113,4 +113,14 @@ export type SearchDataProductsType = {
 export type SearchResponseType = {
   data: SearchDataProductsType[];
   pagination: PaginationType;
+};
+
+export type BikeDetailResType = {
+  _id: string;
+  brand: ShopByBikeBrandType;
+  name: string;
+  type: string;
+  category: string;
+  imageUrl: string;
+  description: string;
 };

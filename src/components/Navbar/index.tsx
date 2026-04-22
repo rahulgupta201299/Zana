@@ -36,7 +36,6 @@ import {
   getSelectedCurrency,
 } from "@/Redux/Landing/Selectors";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
-import { decodeParams } from "@/Utils/global";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import { convertCurrency } from "./Utils";
@@ -51,7 +50,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const location = useLocation();
   const params = useParams();
 
-  const { bikeType = '' } = decodeParams(params)
+  const { bikeType = '' } = params
 
   const cartDetail = useSelector(cartDetailSelector);
 
