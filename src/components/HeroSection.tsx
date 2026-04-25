@@ -12,7 +12,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
     <Box
       sx={{
         position: "relative",
-        height: { xs: "175px", md: "100vh" },
+        height: { xs: "280px", md: "100vh" },
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
@@ -29,7 +29,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
       >
         <Box
           component="video"
-          src={`https://zana-website-s3.s3.ap-south-1.amazonaws.com/website-videos/Zana-KTM+ADV.mp4`}
+          src={`https://d1bw1i3fxlc6zi.cloudfront.net/Zana+website/Zana-KTM+ADV.mp4`}
           autoPlay
           muted
           loop

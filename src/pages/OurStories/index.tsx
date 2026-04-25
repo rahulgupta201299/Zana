@@ -16,7 +16,7 @@ function OurStories() {
         {/* Background Video */}
         <Box
           component="video"
-          src="https://zana-website-s3.s3.ap-south-1.amazonaws.com/website-videos/Zana-Himalyan+Drop+Test.mp4"
+          src="https://d1bw1i3fxlc6zi.cloudfront.net/Zana+website/Zana-Himalyan+Drop+Test.mp4"
           autoPlay
           loop
           playsInline
