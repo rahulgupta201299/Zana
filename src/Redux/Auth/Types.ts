@@ -20,22 +20,7 @@ export type WishlistProductType = Omit<
   model: ShopByBikeModelsType;
 };
 
-export type T_AUTH_REDUCER = {
-  login: {
-    phoneNumber: string;
-    verified: boolean;
-    firstName?: string;
-    lastName?: string;
-    address?: string;
-  };
-
-  bikeList: BIKE_LIST[];
-
-  wishlist: WishlistProductType[];
-
-  isdCode: IsdCodeType[];
-
-  profileDetails: {
+export type ProfileDetailsType = {
     _id: string;
     firstName: string;
     lastName: string;
@@ -54,6 +39,23 @@ export type T_AUTH_REDUCER = {
     __v: number;
   };
 
+
+export type T_AUTH_REDUCER = {
+  login: {
+    phoneNumber: string;
+    verified: boolean;
+    firstName?: string;
+    lastName?: string;
+    address?: string;
+  };
+
+  bikeList: BIKE_LIST[];
+
+  wishlist: WishlistProductType[];
+
+  isdCode: IsdCodeType[];
+
+  profileDetails: ProfileDetailsType;
   openSignupPopup: boolean;
 };
 
@@ -84,4 +86,5 @@ export type VerifyOtpResType = {
   message: string;
   phoneNumber: string;
   verified: boolean;
+  profile: ProfileDetailsType;
 };
