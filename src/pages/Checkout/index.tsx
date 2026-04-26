@@ -308,6 +308,7 @@ export default function CheckoutPage() {
       const isd = profileDetails.isdCode;
       const payload = {
         ...profileDetails,
+        phoneNumber: phoneNumber,
         isdCode: isd,
         ...(!profileDetails.emailId && { emailId }),
         ...(!profileDetails.firstName && { firstName: shippingFirstName }),
