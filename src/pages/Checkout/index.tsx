@@ -45,6 +45,7 @@ import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfil
 import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
 import { UpdatePaymentResType } from "@/Redux/Cart/Types";
+import { CURRENCY_LIST } from "@/Constants/AppConstant";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -142,6 +143,11 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (isCartLoading) return;
 
+    if (currency !== CURRENCY_LIST.INR) {
+      handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
+      return;
+    }
+
     if (paymentType) {
       handlePaymentOptionChange(paymentType)
       return;
@@ -151,7 +157,7 @@ export default function CheckoutPage() {
       handlePaymentOptionChange(PaymentTypeEnum.COD)
       return;
     }
-  }, [cartDiscountAmount, isCartLoading])
+  }, [cartDiscountAmount, isCartLoading, currency])
 
   // syncing with cart everytime before set-payment-method api call
   useEffect(() => {
@@ -566,7 +572,9 @@ export default function CheckoutPage() {
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA && handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
+                            if (countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA || currency !== CURRENCY_LIST.INR) {
+                              handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
+                            }
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
@@ -935,7 +943,7 @@ export default function CheckoutPage() {
                               showRazorpayInfo = false,
                             } = option;
 
-                            if (value === PaymentTypeEnum.COD && values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA) return null;
+                            if (value === PaymentTypeEnum.COD && (currency !== CURRENCY_LIST.INR || values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA)) return null;
 
                             return (
                               <Box key={value}>
