@@ -50,6 +50,7 @@ export const INITIAL_STATE: T_CART_REDUCER = {
     shippingCost: 0,
     taxAmount: 0,
     discountAmount: 0,
+    codCharges: 0,
     totalAmount: 0,
     status: "",
     appliedCoupon: "",
@@ -101,8 +102,10 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       state.cartDetail.subtotal = subtotal;
       state.cartDetail.totalAmount =
         subtotal +
+        state.cartDetail.taxAmount +
         state.cartDetail.shippingCost -
-        state.cartDetail.discountAmount;
+        state.cartDetail.discountAmount +
+        state.cartDetail.codCharges;
     },
     clearOutofStockItems(state) {
       state.outOfStocks = [];
@@ -149,6 +152,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           couponCode = "",
           currency = "",
           currencySymbol = "",
+          codCharges = 0,
         } = data;
         state.cartDetail = {
           ...state.cartDetail,
@@ -160,6 +164,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           taxAmount,
           discountAmount,
           totalAmount,
+          codCharges,
           status,
           appliedCoupon,
           couponCode,
@@ -203,6 +208,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           taxAmount = 0,
           currency = "",
           currencySymbol = "",
+          codCharges = 0,
         } = action.payload;
 
         state.cartDetail = {
@@ -213,6 +219,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           totalAmount,
           subtotal,
           shippingCost,
+          codCharges,
           taxAmount,
           currency,
           currencySymbol,
@@ -231,6 +238,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           taxAmount = 0,
           currency = "",
           currencySymbol = "",
+          codCharges = 0,
         } = action.payload;
 
         state.cartDetail = {
@@ -242,6 +250,7 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
           subtotal,
           shippingCost,
           taxAmount,
+          codCharges,
           currency,
           currencySymbol,
         };

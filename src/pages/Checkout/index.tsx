@@ -20,13 +20,13 @@ import {
   Stack,
   FormHelperText,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
 import { getFieldErrorState, getHelperOrErrorText } from "@/Utils/Formik";
 import PaymentImg from "@/Assets/Images/Payment.svg";
 import { Minus, Plus } from "lucide-react";
-import { displayRazorpay, handleClearCart, validatePhone } from "./Utils";
+import { displayRazorpay, validatePhone } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useSnackbar } from "notistack";
@@ -38,14 +38,14 @@ import { getLoginDetails, getProfileDetails, isdCodeDetails } from "@/Redux/Auth
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName, updateCartAddressServiceName } from "@/Redux/Cart/Action";
+import { cartModifyServiceName, updateCartAddressServiceName, updatePaymentMethodServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
-import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
 import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
 import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
-import { CreateCodOrderResType } from "@/Redux/Order/Types";
-import { ROUTES } from "@/Constants/Routes";
+import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
+import { UpdatePaymentResType } from "@/Redux/Cart/Types";
+import { CURRENCY_LIST } from "@/Constants/AppConstant";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -73,6 +73,16 @@ interface CheckoutFormValues {
   billingPhone: string;
 }
 
+type PaymentMethodType = {
+  subtotal: number;
+  totalAmount: number;
+  discountAmount: number;
+  shippingCost: number;
+  taxAmount: number;
+  codCharges: number;
+  advanceAmount: number;
+}
+
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, validateCart, getQuantity } = useCart();
 
@@ -90,22 +100,78 @@ export default function CheckoutPage() {
   } = cartAddressSelector
 
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
-    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName
+    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName
   ]));
 
-  const [paymentType, setPaymentType] = useState(PaymentTypeEnum.RAZORPAY);
+  const isCartLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartModifyServiceName]))
+
+  const {
+    subtotal: cartSubtotal = 0,
+    totalAmount: cartTotalAmount = 0,
+    discountAmount: cartDiscountAmount = 0,
+    shippingCost: cartShippingCost = 0,
+    taxAmount: cartTaxAmount = 0,
+    codCharges: cartCodCharges = 0,
+    processedItems = [],
+    couponCode = 0,
+    currencySymbol = '',
+    currency = '',
+  } = cartDetail;
+
+  const [paymentType, setPaymentType] = useState(null);
   const [shippingIsdCode, setShippingIsdCode] = useState<string>('')
   const [billingIsdCode, setBillingIsdCode] = useState<string>('')
+  const [paymentMethodDetails, setPaymentMethodDetails] = useState<PaymentMethodType>({
+    subtotal: cartSubtotal,
+    totalAmount: cartTotalAmount,
+    discountAmount: cartDiscountAmount,
+    shippingCost: cartShippingCost,
+    taxAmount: cartTaxAmount,
+    codCharges: cartCodCharges,
+    advanceAmount: 0
+  });
+
+  const { subtotal, totalAmount, discountAmount, shippingCost, taxAmount, codCharges, advanceAmount } = paymentMethodDetails;
 
   const dispatch = useDispatch<TAppDispatch>();
-  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
-  const { subtotal = 0, totalAmount = 0, discountAmount = 0, processedItems = [], couponCode = '', shippingCost = 0, taxAmount = 0, currencySymbol = '' } = cartDetail
 
   function performOps() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
+    if (currency === CURRENCY_LIST.INR) handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
   }
+
+  useEffect(() => {
+    if (isCartLoading) return;
+
+    if (currency !== CURRENCY_LIST.INR) {
+      handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
+      return;
+    }
+
+    if (paymentType) {
+      handlePaymentOptionChange(paymentType)
+      return;
+    }
+
+    if (codCharges) {
+      handlePaymentOptionChange(PaymentTypeEnum.COD)
+      return;
+    }
+  }, [cartDiscountAmount, isCartLoading, currency])
+
+  // syncing with cart everytime before set-payment-method api call
+  useEffect(() => {
+    setPaymentMethodDetails({
+      subtotal: cartSubtotal,
+      totalAmount: cartTotalAmount,
+      discountAmount: cartDiscountAmount,
+      shippingCost: cartShippingCost,
+      taxAmount: cartTaxAmount,
+      codCharges: cartCodCharges,
+      advanceAmount: 0
+    })
+  }, [cartSubtotal, isCartLoading])
 
   useEffect(() => {
     performOps()
@@ -233,7 +299,7 @@ export default function CheckoutPage() {
 
     const { phoneNumber = '' } = loginDetails
 
-    if (!phoneNumber || !processedItems.length) return;
+    if (!phoneNumber || !processedItems.length || !paymentType) return;
 
     const shouldUpdate =
       !profileDetails.emailId ||
@@ -249,6 +315,7 @@ export default function CheckoutPage() {
       const isd = profileDetails.isdCode;
       const payload = {
         ...profileDetails,
+        phoneNumber: phoneNumber,
         isdCode: isd,
         ...(!profileDetails.emailId && { emailId }),
         ...(!profileDetails.firstName && { firstName: shippingFirstName }),
@@ -280,17 +347,19 @@ export default function CheckoutPage() {
         billingAddress: shippingAddressSameAsBillingAddress ? shippingAddressData : billingAddressData
       }))
 
-      if (paymentType === PaymentTypeEnum.COD) {
-        const { orderId = '' } = await dispatch(createCodOrderServiceAction({ phoneNumber })) as CreateCodOrderResType
-        navigate(ROUTES.ORDER_SUCCESSFUL, { state: { orderId } });
-        handleClearCart();
-        return;
-      }
+      displayRazorpay(paymentType);
 
-      if (paymentType === PaymentTypeEnum.RAZORPAY) {
-        displayRazorpay();
-        return;
-      }
+      // if (paymentType === PaymentTypeEnum.COD) {
+      //   const { orderId = '' } = await dispatch(createCodOrderServiceAction({ phoneNumber })) as CreateCodOrderResType
+      //   navigate(ROUTES.ORDER_SUCCESSFUL, { state: { orderId } });
+      //   handleClearCart();
+      //   return;
+      // }
+
+      // if (paymentType === PaymentTypeEnum.RAZORPAY) {
+      //   displayRazorpay(paymentType);
+      //   return;
+      // }
 
     } catch (error: any) {
       const { message = '' } = error
@@ -312,6 +381,24 @@ export default function CheckoutPage() {
 
     return { shippingFirstName, shippingLastName, billingFirstName, billingLastName }
   }, [shippingAddressSelector.fullName, billingAddressSelector.fullName])
+
+  async function handlePaymentOptionChange(method: PaymentTypeEnum) {
+    const { phoneNumber = '' } = loginDetails
+
+    setPaymentType(method)
+
+    try {
+      const { discountAmount, subtotal, totalAmount, shippingCost, taxAmount, advanceAmount, codCharges } = await dispatch(updatePaymentServiceAction({ method, phoneNumber, currency })) as UpdatePaymentResType;
+      setPaymentMethodDetails({ subtotal, totalAmount, discountAmount, shippingCost, taxAmount, advanceAmount, codCharges })
+    } catch (error) {
+      const { message = '' } = error
+      enqueueSnackbar({
+        variant: "error",
+        message
+      });
+      setPaymentType(paymentType)
+    }
+  }
 
   return (
     <Container sx={{ py: 6 }}>
@@ -422,7 +509,7 @@ export default function CheckoutPage() {
                   });
                 }
 
-                const isSubmitDisabled = !isValid || !processedItems.length
+                const isSubmitDisabled = !isValid || !processedItems.length || !paymentType
 
                 return (
                   <Form>
@@ -487,7 +574,9 @@ export default function CheckoutPage() {
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA && setPaymentType(PaymentTypeEnum.RAZORPAY)
+                            if (paymentType === PaymentTypeEnum.COD && (countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA || currency !== CURRENCY_LIST.INR)) {
+                              handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
+                            }
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
@@ -856,7 +945,7 @@ export default function CheckoutPage() {
                               showRazorpayInfo = false,
                             } = option;
 
-                            if (value === PaymentTypeEnum.COD && values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA) return null;
+                            if (value === PaymentTypeEnum.COD && (currency !== CURRENCY_LIST.INR || values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA)) return null;
 
                             return (
                               <Box key={value}>
@@ -877,7 +966,10 @@ export default function CheckoutPage() {
                                       {label}
                                     </Typography>
                                   }
-                                  onClick={() => setPaymentType(value)}
+                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    e.preventDefault()
+                                    handlePaymentOptionChange(value)
+                                  }}
                                 />
 
                                 {/* Divider after each option except last */}
@@ -1424,7 +1516,10 @@ export default function CheckoutPage() {
               >
                 <Typography>Discount ({couponCode})</Typography>
                 <Typography>
-                  - {currencySymbol} {discountAmount}
+                  - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
                 </Typography>
               </Box>
             </>
@@ -1444,9 +1539,30 @@ export default function CheckoutPage() {
           >
             <Typography>Subtotal</Typography>
             <Typography fontWeight={600}>
-              {currencySymbol} {subtotal}
+              {currencySymbol} {subtotal?.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </Typography>
           </Box>
+          {
+            codCharges > 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mt: "16px",
+                  color: "#F5F4F4",
+                }}
+              >
+                <Typography>COD Charges</Typography>
+                <Typography fontWeight={600}>{currencySymbol} {codCharges?.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}</Typography>
+              </Box>
+            )
+          }
           <Box
             sx={{
               display: "flex",
@@ -1456,7 +1572,25 @@ export default function CheckoutPage() {
             }}
           >
             <Typography>Shipping</Typography>
-            <Typography fontWeight={600}>{currencySymbol} {shippingCost}</Typography>
+            <Typography fontWeight={600}>{currencySymbol} {shippingCost?.toLocaleString('en-IN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}</Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              mt: "16px",
+              color: "#F5F4F4",
+            }}
+          >
+            <Typography>Tax Amount</Typography>
+            <Typography fontWeight={600}>{currencySymbol} {taxAmount?.toLocaleString('en-IN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}</Typography>
           </Box>
 
           <Box
@@ -1474,13 +1608,90 @@ export default function CheckoutPage() {
                 Total
               </Typography>
               <Typography fontWeight={700} fontSize={12}>
-                Including {currencySymbol} {taxAmount?.toLocaleString("en-IN", { minimumFractionDigits: 2 })} in taxes
+                Including {currencySymbol} {taxAmount?.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })} in taxes
               </Typography>
             </Box>
             <Typography color="#F5F4F4" fontWeight={500} fontSize={32}>
-              {currencySymbol} {totalAmount}
+              {currencySymbol} {totalAmount?.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </Typography>
           </Box>
+
+          {
+            advanceAmount > 0 && (
+              <>
+                {/* Advance Payment Row */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                    color: "#F5F4F4",
+                    borderTop: "1px solid rgba(255,255,255,0.1)",
+                    pt: 2,
+                  }}
+                >
+                  <Typography fontWeight={700} fontSize={18}>
+                    Advance Payment (Online)
+                  </Typography>
+
+                  <Typography fontWeight={500} fontSize={28} color="#22C55E">
+                    {currencySymbol} {advanceAmount?.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Typography>
+                </Box>
+
+                {/* Info Card */}
+                <Box
+                  mt={2}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                  px={2.5}
+                  py={1.8}
+                  borderRadius="12px"
+                  sx={{
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: "linear-gradient(90deg, #1a1a1a, #111)",
+                  }}
+                >
+                  {/* Icon */}
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    width={34}
+                    height={34}
+                    borderRadius="50%"
+                    sx={{
+                      backgroundColor: "rgba(59,130,246,0.15)",
+                    }}
+                  >
+                    <InfoOutlinedIcon sx={{ color: "#3B82F6", fontSize: 18 }} />
+                  </Box>
+
+                  {/* Text */}
+                  <Typography fontSize={14} sx={{ color: "rgba(255,255,255,0.7)" }}>
+                    Pay remaining{" "}
+                    <Box component="span" sx={{ color: "#3B82F6", fontWeight: 600 }}>
+                      {currencySymbol} {(totalAmount - advanceAmount)?.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
+                    </Box>{" "}
+                    at the time of delivery.
+                  </Typography>
+                </Box>
+              </>
+            )
+          }
         </Grid>
       </Grid>
     </Container>

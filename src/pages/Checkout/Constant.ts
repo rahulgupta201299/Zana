@@ -1,6 +1,6 @@
 export enum PaymentTypeEnum {
-  COD = "COD",
-  RAZORPAY = "RAZORPAY",
+  COD = "cod",
+  RAZORPAY = "online",
 }
 
 export const paymentOptions = [

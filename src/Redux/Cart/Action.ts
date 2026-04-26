@@ -4,6 +4,9 @@ import { SLICE_NAME } from "./Selectors"
 export const cartModifyServiceName = `${SLICE_NAME}/cartModify`
 export const cartModifyActions = traceActionsCreator(cartModifyServiceName)
 
+export const updatePaymentMethodServiceName = `${SLICE_NAME}/updatePaymentMethod`
+export const updatePaymentMethodActions = traceActionsCreator(updatePaymentMethodServiceName)
+
 export const clearCartServiceName = `${SLICE_NAME}/clearCart`
 export const clearCartActions = traceActionsCreator(clearCartServiceName)
 

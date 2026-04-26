@@ -7,16 +7,35 @@ import {
   StyleSheet,
   Image,
   pdf,
+  Font,
 } from "@react-pdf/renderer";
 import { Button, Box, Tooltip } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PreviewIcon from "@mui/icons-material/Visibility";
-import { OrderType } from "@/pages/OrderDetails/Types";
 
 // ─── Asset import ─────────────────────────────────────────────────────────────
 // @react-pdf/renderer cannot use <img> HTML tags — must use its own <Image>.
 // Import the asset as a URL string (works with Vite and CRA).
 import ZanaLogo from "@/Assets/Icons/Zana.png";
+import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
+import NotoSansRegular from "@/Assets/fonts/NotoSans-Regular.ttf";
+import NotoSansBold from "@/Assets/fonts/NotoSans-Bold.ttf";
+
+Font.register({
+  family: "NotoSans",
+  fonts: [
+    { src: NotoSansRegular, fontWeight: "normal", fontStyle: "normal" },
+    { src: NotoSansRegular, fontWeight: "normal", fontStyle: "italic" },
+  ],
+});
+Font.register({
+  family: "NotoSans-Bold",
+  src: NotoSansBold,
+});
+
+Font.registerHyphenationCallback((word) => [word]);
+
+
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ORANGE = "#fffffc"; // your light-peach header background — kept as-is
@@ -31,8 +50,8 @@ const BORDER = "#cccccc";
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   page: {
-    fontFamily: "Helvetica",
     fontSize: 10,
+    fontFamily: "NotoSans",
     color: BLACK,
     backgroundColor: WHITE,
     paddingBottom: 20,
@@ -60,7 +79,7 @@ const s = StyleSheet.create({
   },
   invoiceTitle: {
     fontSize: 16,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLACK, // ← dark on light-peach bg
     textAlign: "right",
     letterSpacing: 1,
@@ -83,7 +102,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     textAlign: "center",
     fontSize: 8,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: MUTED_TEXT,
     letterSpacing: 1,
     textTransform: "uppercase",
@@ -113,7 +132,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     fontSize: 9,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLACK, // ← dark on light-peach bg
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -128,7 +147,7 @@ const s = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 9.5,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: MUTED_TEXT,
     width: 82,
   },
@@ -145,7 +164,7 @@ const s = StyleSheet.create({
     paddingVertical: 1,
     borderRadius: 3,
     fontSize: 8,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     textTransform: "uppercase",
   },
   badgeSuccess: { backgroundColor: "#e6f4ea", color: "#1e7e34" },
@@ -159,7 +178,7 @@ const s = StyleSheet.create({
   },
   tableHeaderCell: {
     fontSize: 9,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLACK, // ← dark on light-peach bg
     paddingHorizontal: 8,
     paddingVertical: 6,
@@ -190,7 +209,7 @@ const s = StyleSheet.create({
   },
   tableFooterCell: {
     fontSize: 9.5,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRightWidth: 1,
@@ -225,7 +244,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     fontSize: 9,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLACK, // ← dark on light-peach bg
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -243,7 +262,7 @@ const s = StyleSheet.create({
   termNum: {
     fontSize: 9,
     color: DARK_TEXT,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     width: 14,
   },
   termText: {
@@ -264,7 +283,7 @@ const s = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 10,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: MUTED_TEXT,
   },
   summaryVal: { fontSize: 10, color: BLACK },
@@ -277,10 +296,10 @@ const s = StyleSheet.create({
   },
   summaryGrandLabel: {
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLACK,
   },
-  summaryGrandVal: { fontSize: 11, fontFamily: "Helvetica-Bold", color: BLACK },
+  summaryGrandVal: { fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK },
 
   // Signatory
   signatoryWrap: { marginTop: 14, alignItems: "flex-end" },
@@ -292,7 +311,7 @@ const s = StyleSheet.create({
   },
   sigCompany: {
     fontSize: 10,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: DARK_TEXT,
     marginTop: 6,
   },
@@ -306,7 +325,7 @@ const s = StyleSheet.create({
   },
   sigAuth: {
     fontSize: 9,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: MUTED_TEXT,
     marginTop: 5,
   },
@@ -360,7 +379,7 @@ const SectionBox = ({
 );
 
 // ─── Main PDF Document ────────────────────────────────────────────────────────
-const InvoicePDFDocument = ({ data }: { data: OrderType }) => {
+const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
   const { billingAddress: ba, shippingAddress: sa } = data;
 
   const addr = (a: typeof ba) =>
@@ -368,210 +387,264 @@ const InvoicePDFDocument = ({ data }: { data: OrderType }) => {
       .filter(Boolean)
       .join(", ");
 
+  if (!data) return null;
+
   return (
-    <Document title={`Invoice - ${data.orderNumber}`}>
-      <Page size="A4" style={s.page}>
-        {/* ── HEADER ── */}
-        <View style={s.header}>
-          <View>
-            {/*
-              Use @react-pdf/renderer's <Image> — NOT <img>.
-              ZanaLogo is imported as a URL string (Vite/CRA both support this).
-              If your bundler gives a type error, cast: src={ZanaLogo as string}
-            */}
-            <Image src={ZanaLogo as string} style={s.logo} />
-            <Text style={s.companyAddress}>
-              IMT Manesar, Gurugram, Gurgaon, Haryana, 122001{"\n"}
-              9953112277, 9821729377 | onlinesales@zanainternational.com
-            </Text>
-          </View>
-          <View style={{ alignItems: "flex-end" }}>
-            <Text style={s.invoiceTitle}>Invoice</Text>
-            <Text style={s.invoiceMeta}>
-              Invoice Number : {data.orderNumber}
-              {"\n"}
-              Invoice Date : {fmtDate(data.orderDate, true)}
-            </Text>
+  <Document title={`Invoice - ${data.orderNumber}`}>
+  <Page size="A4" style={s.page}>
+    {/* ── HEADER ── */}
+    <View style={s.header}>
+      <View>
+        <Image src={ZanaLogo as string} style={s.logo} />
+        <Text style={s.companyAddress}>
+          IMT Manesar, Gurugram, Gurgaon, Haryana, 122001{"\n"}
+          9953112277, 9821729377 | onlinesales@zanainternational.com
+        </Text>
+      </View>
+      <View style={{ alignItems: "flex-end" }}>
+        <Text style={s.invoiceTitle}>Invoice</Text>
+        <Text style={s.invoiceMeta}>
+          Invoice Number : {data.orderNumber}
+          {"\n"}
+          Invoice Date : {fmtDate(data.orderDate, true)}
+        </Text>
+      </View>
+    </View>
+
+    {/* ── ORIGINAL TAG ── */}
+    <Text style={s.originalTag}>TAX INVOICE · ORIGINAL FOR RECIPIENT</Text>
+
+    <View style={s.body}>
+      {/* ── CUSTOMER + INVOICE DETAILS ── */}
+      <View style={s.twoCol}>
+        <View style={s.col50}>
+          <View style={s.infoBox}>
+            <Text style={s.infoBoxHeader}>Customer Details</Text>
+            <View style={s.infoBoxBody}>
+              <InfoRow label="Name:" value={ba.fullName} />
+              <InfoRow label="Address:" value={addr(ba)} />
+              <InfoRow label="Phone:" value={ba.phone} />
+              <InfoRow label="State:" value={ba.state} />
+              <InfoRow label="Country:" value={ba.country} />
+            </View>
           </View>
         </View>
 
-        {/* ── ORIGINAL TAG ── */}
-        <Text style={s.originalTag}>TAX INVOICE · ORIGINAL FOR RECIPIENT</Text>
-
-        <View style={s.body}>
-          {/* ── CUSTOMER + INVOICE DETAILS ── */}
-          <View style={s.twoCol}>
-            <View style={s.col50}>
-              <View style={s.infoBox}>
-                <Text style={s.infoBoxHeader}>Customer Details</Text>
-                <View style={s.infoBoxBody}>
-                  <InfoRow label="Name:" value={ba.fullName} />
-                  <InfoRow label="Address:" value={addr(ba)} />
-                  <InfoRow label="Phone:" value={ba.phone} />
-                  <InfoRow label="State:" value={ba.state} />
-                  <InfoRow label="Country:" value={ba.country} />
-                </View>
-              </View>
-            </View>
-
-            <View style={s.col50}>
-              <View style={s.infoBox}>
-                <Text style={s.infoBoxHeader}>Invoice Details</Text>
-                <View style={s.infoBoxBody}>
-                  <InfoRow label="Invoice No.:" value={data.orderNumber} />
-                  <InfoRow
-                    label="Invoice Date:"
-                    value={fmtDate(data.orderDate)}
-                  />
-                  <InfoRow label="Pmt Received:" value={data.totalAmount} />
-                  <InfoRow
-                    label="Payment Mode:"
-                    value={
-                      data.paymentMethod.charAt(0).toUpperCase() +
+        <View style={s.col50}>
+          <View style={s.infoBox}>
+            <Text style={s.infoBoxHeader}>Invoice Details</Text>
+            <View style={s.infoBoxBody}>
+              <InfoRow label="Invoice No.:" value={data.orderNumber} />
+              <InfoRow
+                label="Invoice Date:"
+                value={fmtDate(data.orderDate)}
+              />
+              <InfoRow
+                label="Pmt Received:"
+                value={`${data.currencySymbol} ${data.totalAmount} `}
+              />
+              <InfoRow
+                label="Payment Mode:"
+                value={
+                  data.paymentMethod === "cod"
+                    ? "Cash on Delivery"
+                    : data.paymentMethod.charAt(0).toUpperCase() +
                       data.paymentMethod.slice(1)
-                    }
-                  />
-                  <View style={s.infoRow}>
-                    <Text style={s.infoLabel}>Order Status:</Text>
-                    <Badge status={data.orderStatus} />
-                  </View>
-                  <View style={s.infoRow}>
-                    <Text style={s.infoLabel}>Pay Status:</Text>
-                    <Badge status={data.paymentStatus} />
-                  </View>
-                </View>
+                }
+              />
+              <View style={s.infoRow}>
+                <Text style={s.infoLabel}>Order Status:</Text>
+                <Badge
+                  status={data.orderStatus
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                />
+              </View>
+              <View style={s.infoRow}>
+                <Text style={s.infoLabel}>Pay Status:</Text>
+                <Badge
+                  status={data.paymentStatus
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                />
               </View>
             </View>
           </View>
+        </View>
+      </View>
 
-          {/* ── ITEMS TABLE ── */}
-          <View style={{ borderWidth: 1, borderColor: BORDER }}>
-            <View style={s.tableHeaderRow}>
-              <Text style={[s.tableHeaderCell, s.colSno]}>S.No.</Text>
-              <Text style={[s.tableHeaderCell, s.colProduct]}>
-                Product Name
-              </Text>
-              <Text style={[s.tableHeaderCell, s.colSku]}>SKU</Text>
-              <Text style={[s.tableHeaderCell, s.colPrice]}>Price</Text>
-              <Text style={[s.tableHeaderCell, s.colQty]}>Qty</Text>
-              <Text style={[s.tableHeaderCell, s.colTotal]}>Total</Text>
-            </View>
+      {/* ── ITEMS TABLE ── */}
+      <View style={{ borderWidth: 1, borderColor: BORDER }}>
+        <View style={s.tableHeaderRow}>
+          <Text style={[s.tableHeaderCell, s.colSno]}>S.No.</Text>
+          <Text style={[s.tableHeaderCell, s.colProduct]}>Product Name</Text>
+          <Text style={[s.tableHeaderCell, s.colSku]}>SKU</Text>
+          <Text style={[s.tableHeaderCell, s.colPrice]}>Price</Text>
+          <Text style={[s.tableHeaderCell, s.colQty]}>Qty</Text>
+          <Text style={[s.tableHeaderCell, s.colTotal]}>Total</Text>
+        </View>
 
-            {data.items.map((item, idx) => (
-              <View
-                key={idx}
-                style={[s.tableRow, idx % 2 === 1 ? s.tableRowEven : {}]}
-              >
-                <Text style={[s.tableCell, s.colSno]}>{idx + 1}</Text>
-                <Text style={[s.tableCell, s.colProduct]}>
-                  {item.product.name}
-                </Text>
-                <Text style={[s.tableCell, s.colSku]}>
-                  {item.product.productCode}
-                </Text>
-                <Text style={[s.tableCell, s.colPrice]}>{item.price}</Text>
-                <Text style={[s.tableCell, s.colQty]}>{item.quantity}</Text>
-                <Text style={[s.tableCell, s.colTotal]}>{item.totalPrice}</Text>
+        {data.items.map((item, idx) => (
+          <View
+            key={idx}
+            style={[s.tableRow, idx % 2 === 1 ? s.tableRowEven : {}]}
+          >
+            <Text style={[s.tableCell, s.colSno]}>{idx + 1}</Text>
+            <Text style={[s.tableCell, s.colProduct]}>{item.product.name}</Text>
+            <Text style={[s.tableCell, s.colSku]}>{item.product.productCode}</Text>
+            <Text style={[s.tableCell, s.colPrice]}>
+              {`${data.currencySymbol} ${item.price}`}
+            </Text>
+            <Text style={[s.tableCell, s.colQty]}>{item.quantity}</Text>
+            <Text style={[s.tableCell, s.colTotal]}>
+              {`${data.currencySymbol} ${item.totalPrice}`}
+            </Text>
+          </View>
+        ))}
+
+        <View style={s.tableFooterRow}>
+          <Text
+            style={[
+              s.tableFooterCell,
+              s.colSno,
+              s.colProduct,
+              { flex: 1, textAlign: "right" },
+            ]}
+          >
+            Total
+          </Text>
+          <Text style={[s.tableFooterCell, s.colQty]}>
+            {data.items.reduce((sum, i) => sum + i.quantity, 0)}
+          </Text>
+          <Text style={[s.tableFooterCell, s.colTotal]}>
+            {`${data.currencySymbol} ${data.subtotal}`}
+          </Text>
+        </View>
+      </View>
+
+      {/* ── BOTTOM: SHIPPING + TERMS | SUMMARY ── */}
+      <View style={s.bottomRow}>
+        <View style={s.bottomLeft}>
+          <SectionBox title="Shipping Details">
+            <InfoRow label="Name:" value={sa.fullName} />
+            <InfoRow label="Address:" value={addr(sa)} />
+            <InfoRow label="Phone:" value={sa.phone} />
+            <InfoRow label="State:" value={sa.state} />
+            <InfoRow label="Country:" value={sa.country} />
+          </SectionBox>
+
+          <SectionBox title="Terms and Conditions">
+            {[
+              "Subject to Manesar Jurisdiction.",
+              "Our Responsibility Ceases as soon as goods leaves our Premises.",
+              "Goods once sold will not taken back.",
+              "Delivery Ex-Premises.",
+            ].map((t, i) => (
+              <View key={i} style={s.termRow}>
+                <Text style={s.termNum}>{i + 1}.</Text>
+                <Text style={s.termText}>{t}</Text>
               </View>
             ))}
+          </SectionBox>
+        </View>
 
-            <View style={s.tableFooterRow}>
-              <Text
-                style={[
-                  s.tableFooterCell,
-                  s.colSno,
-                  s.colProduct,
-                  { flex: 1, textAlign: "right" },
-                ]}
-              >
-                Total
-              </Text>
-              <Text style={[s.tableFooterCell, s.colQty]}>
-                {data.items.reduce((sum, i) => sum + i.quantity, 0)}
-              </Text>
-              <Text style={[s.tableFooterCell, s.colTotal]}>
-                {data.subtotal}
+        <View style={s.bottomRight}>
+          {/* ── SUMMARY ── */}
+          <View style={{ borderWidth: 1, borderColor: BORDER }}>
+            <View style={s.summaryRow}>
+              <Text style={s.summaryLabel}>Subtotal:</Text>
+              <Text style={s.summaryVal}>
+                {`${data.currencySymbol} ${data.subtotal}`}
               </Text>
             </View>
+
+            <View style={s.summaryRow}>
+              <Text style={s.summaryLabel}>Coupon Discount:</Text>
+              <Text style={s.summaryVal}>
+                {data.discountAmount > 0
+                  ? ` - ${data.currencySymbol} ${data.discountAmount}`
+                  : `${data.currencySymbol} 0`}
+              </Text>
+            </View>
+
+            <View style={s.summaryRow}>
+              <Text style={s.summaryLabel}>Shipping Charge:</Text>
+              <Text style={s.summaryVal}>
+                {data.shippingCost === 0
+                  ? "Free"
+                  : `${data.currencySymbol} ${data.shippingCost}`}
+              </Text>
+            </View>
+
+            {data.taxAmount > 0 && (
+              <View style={s.summaryRow}>
+                <Text style={s.summaryLabel}>Tax Amount:</Text>
+                <Text style={s.summaryVal}>
+                  {`${data.currencySymbol} ${data.taxAmount}`}
+                </Text>
+              </View>
+            )}
+
+            {/* ── COD-ONLY FIELDS ── */}
+            {data.paymentMethod === "cod" && data.codCharges > 0 && (
+              <View style={s.summaryRow}>
+                <Text style={s.summaryLabel}>COD Charges:</Text>
+                <Text style={s.summaryVal}>
+                  {`${data.currencySymbol} ${data.codCharges}`}
+                </Text>
+              </View>
+            )}
+
+            {data.paymentMethod === "cod" && data.advancePaid > 0 && (
+              <View style={s.summaryRow}>
+                <Text style={s.summaryLabel}>Advance Paid:</Text>
+                <Text style={[s.summaryVal, { color: "#16a34a" }]}>
+                  - {`${data.currencySymbol} ${data.advancePaid}`}
+                </Text>
+              </View>
+            )}
+
+            <View style={s.summaryGrand}>
+              <Text style={s.summaryGrandLabel}>Total Amount:</Text>
+              <Text style={s.summaryGrandVal}>
+                {`${data.currencySymbol} ${data.totalAmount}`}
+              </Text>
+            </View>
+
+            {/* COD orders */}
+            {data.paymentMethod === "cod" && data.advancePaid > 0 && (
+              <View style={[s.summaryGrand, { backgroundColor: "#fef9c3" }]}>
+                <Text style={s.summaryGrandLabel}>Balance Due (COD):</Text>
+                <Text style={s.summaryGrandVal}>
+                  {`${data.currencySymbol} ${data.totalAmount - data.advancePaid}`}
+                </Text>
+              </View>
+            )}
           </View>
 
-          {/* ── BOTTOM: SHIPPING + TERMS | SUMMARY ── */}
-          <View style={s.bottomRow}>
-            <View style={s.bottomLeft}>
-              <SectionBox title="Shipping Details">
-                <InfoRow label="Name:" value={sa.fullName} />
-                <InfoRow label="Address:" value={addr(sa)} />
-                <InfoRow label="Phone:" value={sa.phone} />
-                <InfoRow label="State:" value={sa.state} />
-                <InfoRow label="Country:" value={sa.country} />
-              </SectionBox>
-
-              <SectionBox title="Terms and Conditions">
-                {[
-                  "Subject to Manesar Jurisdiction.",
-                  "Our Responsibility Ceases as soon as goods leaves our Premises.",
-                  "Goods once sold will not taken back.",
-                  "Delivery Ex-Premises.",
-                ].map((t, i) => (
-                  <View key={i} style={s.termRow}>
-                    <Text style={s.termNum}>{i + 1}.</Text>
-                    <Text style={s.termText}>{t}</Text>
-                  </View>
-                ))}
-              </SectionBox>
-            </View>
-
-            <View style={s.bottomRight}>
-              <View style={{ borderWidth: 1, borderColor: BORDER }}>
-                <View style={s.summaryRow}>
-                  <Text style={s.summaryLabel}>Subtotal:</Text>
-                  <Text style={s.summaryVal}>{data.subtotal}</Text>
-                </View>
-                <View style={s.summaryRow}>
-                  <Text style={s.summaryLabel}>Coupon Discount:</Text>
-                  <Text style={s.summaryVal}>{data.discountAmount}</Text>
-                </View>
-                <View style={s.summaryRow}>
-                  <Text style={s.summaryLabel}>Shipping Charge:</Text>
-                  <Text style={s.summaryVal}>
-                    {data.shippingCost === 0 ? "Free" : data.shippingCost}
-                  </Text>
-                </View>
-                {data.taxAmount > 0 && (
-                  <View style={s.summaryRow}>
-                    <Text style={s.summaryLabel}>Tax Amount:</Text>
-                    <Text style={s.summaryVal}>{data.taxAmount}</Text>
-                  </View>
-                )}
-                <View style={s.summaryGrand}>
-                  <Text style={s.summaryGrandLabel}>Total Amount:</Text>
-                  <Text style={s.summaryGrandVal}>{data.totalAmount}</Text>
-                </View>
-              </View>
-
-              <View style={s.signatoryWrap}>
-                <Text style={s.sigCertified}>
-                  Certified that the particulars given above are{"\n"}true and
-                  correct.
-                </Text>
-                <Text style={s.sigCompany}>For Zana Motorcycles</Text>
-                <Text style={s.sigNote}>
-                  This is computer generated invoice hence,{"\n"}signature not
-                  required
-                </Text>
-                <Text style={s.sigAuth}>Authorised Signatory</Text>
-              </View>
-            </View>
+          <View style={s.signatoryWrap}>
+            <Text style={s.sigCertified}>
+              Certified that the particulars given above are{"\n"}true and
+              correct.
+            </Text>
+            <Text style={s.sigCompany}>For Zana Motorcycles</Text>
+            <Text style={s.sigNote}>
+              This is computer generated invoice hence,{"\n"}signature not
+              required
+            </Text>
+            <Text style={s.sigAuth}>Authorised Signatory</Text>
           </View>
         </View>
-      </Page>
-    </Document>
+      </View>
+    </View>
+  </Page>
+</Document>
   );
 };
 
 // ─── Buttons ─────────────────────────────────────────────────────────────────
 interface Props {
-  data?: OrderType;
+  data: OrderDetailResponse;
 }
 
 export const InvoiceDownloadButton = ({ data }: Props) => {
@@ -589,6 +662,8 @@ export const InvoiceDownloadButton = ({ data }: Props) => {
       console.error("PDF generation failed:", err);
     }
   };
+
+  if (!data) return null;
 
   return (
     <Tooltip title="Download invoice as PDF">
@@ -622,6 +697,8 @@ export const InvoicePreviewButton = ({ data }: Props) => {
       console.error("PDF preview failed:", err);
     }
   };
+
+  if (!data) return null;
 
   return (
     <Tooltip title="Preview invoice in new tab">

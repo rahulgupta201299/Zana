@@ -26,7 +26,7 @@ import MobileNavMenu from "./MobileNavMenu";
 import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
-import { BikeCategoryEnum, CURRENCY_SYMBOL } from "@/Constants/AppConstant";
+import { BikeCategoryEnum, CURRENCY_LIST, CURRENCY_SYMBOL } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import useCart from "@/hooks/useCart";
@@ -145,7 +145,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
     updatedCartDetail.currencySymbol = newCurrencySymbol;
 
     updatedCartDetail.processedItems = updatedCartDetail.processedItems.map((item) => {
-      const price = convertCurrency(item.product.originalPrice, newCurrency);
+      const price = newCurrency === CURRENCY_LIST.INR ? item.product.originalPrice : convertCurrency(item.product.originalPrice, newCurrency);
       const totalPrice = item.quantity * price;
 
       return {

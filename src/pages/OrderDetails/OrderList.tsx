@@ -6,7 +6,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderName } from "@/Redux/Order/Action";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import getOrderListServiceAction from "@/Redux/Order/Services/GetOrderList";
-import { OrderListType, OrderType } from "./Types";
+import { OrderDetailResponse, OrderListType } from "./Types";
 import { getTotalQuantity, statusColor } from "@/Utils/global";
 
 import { OrderListSkeleton } from "@/components/Skeleton/OrderList";
@@ -20,7 +20,7 @@ const OrderList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [orderList, setOrderList] = useState<OrderType[]>([]);
+  const [orderList, setOrderList] = useState<OrderDetailResponse[]>([]);
 
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [orderName]),

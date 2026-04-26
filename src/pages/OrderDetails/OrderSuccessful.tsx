@@ -69,7 +69,7 @@ const OrderConfirmation = () => {
     pageOps();
   }, [])
 
-  const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', orderStatus = '', items = [], shippingAddress, currencySymbol } = orderData || {};
+  const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', paymentMethod = '', advancePaid = 0, totalAmount = 0, orderStatus = '', items = [], shippingAddress, currencySymbol } = orderData || {};
 
   return (
     <Box
@@ -97,6 +97,7 @@ const OrderConfirmation = () => {
         {/* 🔹 LEFT SIDE (SVG + SUCCESS) */}
         <Box
           sx={{
+            height: "75vh",
             flex: 1,
             p: { xs: 3, md: 5 },
             display: "flex",
@@ -140,28 +141,50 @@ const OrderConfirmation = () => {
           }}
         >
           {/* Order Info */}
-          <Box sx={{
-            fontSize: 14,
-            display: "flex",
-            flexDirection: "column",
-            gap: 1.5,
-          }}
+          <Box
+            sx={{
+              fontSize: 14,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+            }}
           >
-            <Typography>
-              Order Number: <b>{orderNumber ? orderNumber : <Skeleton variant="text" width="30%" height={25} sx={{ bgcolor: "grey.500", display: "inline-block" }} />}</b>
-            </Typography>
-            {
-              razorpayPaymentId && (
-                <Typography>
-                  Payment ID: <b>{razorpayPaymentId ? razorpayPaymentId : <Skeleton variant="text" width="30%" height={25} sx={{ bgcolor: "grey.500", display: "inline-block" }} />}</b>
+            {/* Order Number */}
+            <Box display="flex" justifyContent="space-between">
+              <Typography color="#CFCFCF">Order Number</Typography>
+              <Typography fontWeight={600}>
+                {orderNumber ? orderNumber : (
+                  <Skeleton variant="text" width={100} height={20} sx={{ bgcolor: "grey.500" }} />
+                )}
+              </Typography>
+            </Box>
+
+            {/* Payment ID */}
+            {razorpayPaymentId && (
+              <Box display="flex" justifyContent="space-between">
+                <Typography color="#CFCFCF">Payment ID</Typography>
+                <Typography fontWeight={600}>
+                  {razorpayPaymentId}
                 </Typography>
-              )
-            }
-            <Typography>
-              Order Status:{" "}
+              </Box>
+            )}
+
+            {/* Payment Method */}
+            <Box display="flex" justifyContent="space-between">
+              <Typography color="#CFCFCF">Payment Method</Typography>
+              <Typography fontWeight={600} sx={{ color: "#FAF9F6" }}>
+                {paymentMethod ? paymentMethod.toUpperCase() : (
+                  <Skeleton variant="text" width={100} height={20} sx={{ bgcolor: "grey.500" }} />
+                )}
+              </Typography>
+            </Box>
+
+            {/* Order Status */}
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography color="#CFCFCF">Order Status</Typography>
               {orderStatus ? (
                 <Chip
-                  label={orderStatus}
+                  label={orderStatus.split("_").join(" ")}
                   sx={{
                     backgroundColor: statusColor(orderStatus),
                     color: "#022C22",
@@ -175,19 +198,19 @@ const OrderConfirmation = () => {
                   width={100}
                   height={28}
                   sx={{
-                    display: "inline-block",
-                    verticalAlign: "middle",
                     bgcolor: "grey.500",
-                    borderRadius: "16px", // matches chip shape
+                    borderRadius: "16px",
                   }}
                 />
               )}
-            </Typography>
-            <Typography>
-              Payment Status:{" "}
+            </Box>
+
+            {/* Payment Status */}
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography color="#CFCFCF">Payment Status</Typography>
               {paymentStatus ? (
                 <Chip
-                  label={paymentStatus}
+                  label={paymentStatus.split("_").join(" ")}
                   sx={{
                     backgroundColor: statusColor(paymentStatus),
                     color: "#022C22",
@@ -201,14 +224,55 @@ const OrderConfirmation = () => {
                   width={100}
                   height={28}
                   sx={{
-                    display: "inline-block",
-                    verticalAlign: "middle",
                     bgcolor: "grey.500",
-                    borderRadius: "16px", // matches chip shape
+                    borderRadius: "16px",
                   }}
                 />
               )}
-            </Typography>
+            </Box>
+
+            <Box display="flex" justifyContent="space-between" mt={1}>
+              <Typography color="#CFCFCF">Total Amount</Typography>
+              <Typography sx={{ fontWeight: 600 }}>
+                {currencySymbol}{" "}
+                {totalAmount ? totalAmount?.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }) : <Skeleton variant="text" width={80} height={20} sx={{ bgcolor: "grey.500" }} />}
+              </Typography>
+            </Box>
+
+            {/* Advance Paid */}
+            {
+              advancePaid > 0 && (
+                <Box display="flex" justifyContent="space-between" mt={1}>
+                  <Typography color="#CFCFCF">Advance Paid</Typography>
+                  <Typography sx={{ color: "#22C55E", fontWeight: 600 }}>
+                    {currencySymbol}{" "}
+                    {advancePaid?.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Typography>
+                </Box>
+              )
+            }
+
+            {/* Remaining Amount */}
+            {
+              advancePaid > 0 && (
+                <Box display="flex" justifyContent="space-between" mt={1}>
+                  <Typography color="#CFCFCF">Remaining Amount</Typography>
+                  <Typography sx={{ color: "#FACC15", fontWeight: 600 }}>
+                    {currencySymbol}{" "}
+                    {(totalAmount - advancePaid)?.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Typography>
+                </Box>
+              )
+            }
           </Box>
 
           <Divider sx={{ borderColor: "#1e293b", my: 3 }} />
@@ -271,7 +335,10 @@ const OrderConfirmation = () => {
                       </Typography>
                     </Box>
                     <Typography sx={{ fontWeight: "bold", marginY: 'auto', whiteSpace: 'nowrap' }}>
-                      {currencySymbol} {price}
+                      {currencySymbol} {price?.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}
                     </Typography>
                   </Box>
                 </Box>

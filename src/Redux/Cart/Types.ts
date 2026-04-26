@@ -1,3 +1,4 @@
+import { PaymentTypeEnum } from "@/pages/Checkout/Constant";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export type T_CART_REDUCER = {
@@ -61,6 +62,7 @@ export interface CartDetailResType {
   paymentStatus: string;
   shippingCost: number;
   taxAmount: number;
+  codCharges: number;
   discountAmount: number;
   totalAmount: number;
   status: string;
@@ -71,19 +73,22 @@ export interface CartDetailResType {
   couponRemoved: boolean;
 }
 
-export interface GetCartDetailResType {
+export interface BaseCartOrder {
   _id: string;
+  emailId: string | null;
   items: CartItemDetail[];
   phoneNumber: string;
   subtotal: number;
   paymentStatus: string;
   shippingCost: number;
   taxAmount: number;
+  codCharges: number;
   discountAmount: number;
   totalAmount: number;
   status: string;
   appliedCoupon: string;
   couponCode: string;
+  paymentMethod: PaymentTypeEnum.COD | PaymentTypeEnum.RAZORPAY;
   shippingAddressSameAsBillingAddress: boolean;
   originalSubtotal: number;
   originalDiscountAmount: number;
@@ -92,8 +97,10 @@ export interface GetCartDetailResType {
   originalTotalAmount: number;
   currency: string;
   currencySymbol: string;
+  originalCodCharges: number;
 }
 
+export interface GetCartDetailResType extends BaseCartOrder {}
 export interface CartAddressType {
   fullName: string;
   phone: string;
@@ -155,6 +162,7 @@ export type ApplyCouponResType = {
   totalAmount: number;
   subtotal: number;
   shippingCost: number;
+  codCharges: number;
   taxAmount: number;
   currency: string;
   currencySymbol: string;
@@ -165,7 +173,21 @@ export type RemoveCouponResType = {
   subtotal: number;
   shippingCost: number;
   taxAmount: number;
+  codCharges: number;
   discountAmount: number;
   currency: string;
   currencySymbol: string;
 };
+
+export type UpdatePaymentReqType = {
+  phoneNumber: string;
+  method: string;
+  currency: string;
+};
+
+export interface UpdatePaymentResType extends BaseCartOrder {
+  billingAddress: CartAddressType;
+  shippingAddress: CartAddressType;
+  advanceAmount: number;
+  originalAdvanceAmount: number;
+}

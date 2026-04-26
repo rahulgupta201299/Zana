@@ -7,7 +7,7 @@ import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { resetCart, setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
+import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
@@ -30,8 +30,8 @@ export default function useCart() {
     return createDebounce(handleSaveToDB, 500);
   }, []);
 
-  async function getCartFromDB() {
-    if (!phoneNumber) return;
+  async function getCartFromDB(phoneNumberField?: string) {
+    if (!phoneNumber && !phoneNumberField) return;
 
     try {
       // @ts-ignore
@@ -151,7 +151,10 @@ export default function useCart() {
   }
 
   function saveCartToDB(phoneNumber?: string) {
-    if (!cartItems.length) return;
+    if (!cartItems.length) {
+      getCartFromDB(phoneNumber);
+      return;
+    }
     handleSaveToDB(cartItems, { phoneNumber });
   }
 

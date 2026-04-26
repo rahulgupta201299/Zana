@@ -23,7 +23,9 @@ import {
   InvoiceDownloadButton,
   InvoicePreviewButton,
 } from "@/components/InvoicePdf";
+
 import { OrderTracker } from "./OrderTracker";
+import { OrderDetailResponse } from "./Types";
 
 const Row = ({ label, value }) => (
   <Stack direction="row" justifyContent="space-between">
@@ -57,15 +59,8 @@ const OrderDetails = () => {
   const [showTracker, setShowTracker] = React.useState(false);
 
   const dispatch = useDispatch<TAppDispatch>();
-  
-  const actions = useMemo(
-    () => ({
-      getOrderDetails: (state) => dispatch(getOrderDetailServiceAction(state)),
-    }),
-    [dispatch],
-  );
 
-  const [order, setOrder] = React.useState(null);
+  const [order, setOrder] = React.useState<OrderDetailResponse>(null);
 
   const isDetailsLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [orderDetailByIdName]),
@@ -76,7 +71,7 @@ const OrderDetails = () => {
 
   const fetchOrderDetails = async (id: string) => {
     try {
-      const result = await actions.getOrderDetails(id);
+      const result = await dispatch(getOrderDetailServiceAction(id)) as OrderDetailResponse;
       setOrder(result);
       return result;
     } catch (error) {
@@ -84,11 +79,14 @@ const OrderDetails = () => {
       throw error;
     }
   };
+
   useEffect(() => {
     if (id) {
       fetchOrderDetails(id);
     }
   }, [id, currency]);
+
+  const { items = [], taxAmount = 0, discountAmount = 0, codCharges = 0, advancePaid = 0, shippingCost = 0, shippingAddress = {}, billingAddress = {}, subtotal = 0, totalAmount = 0, currencySymbol = '', logisticsAWBNumber = null } = order || {}
 
   return isDetailsLoading ? (
     <OrderDetailsSkeleton />
@@ -127,7 +125,7 @@ const OrderDetails = () => {
           mb={4}
         >
           <Chip
-            label={order?.orderStatus || ""}
+            label={order?.orderStatus?.split("_")?.join(" ") || ""}
             sx={{
               backgroundColor: statusColor(order?.orderStatus),
               color: "#022C22",
@@ -138,9 +136,9 @@ const OrderDetails = () => {
 
           <Typography
             fontWeight={700}
-            color={order?.paymentStatus === "paid" ? "#ffff" : "error.main"}
+            color={statusColor(order?.paymentStatus)}
           >
-            {order?.paymentStatus?.toUpperCase()}
+            {order?.paymentStatus?.toUpperCase()?.split("_").join(" ")}
           </Typography>
         </Stack>
 
@@ -149,9 +147,9 @@ const OrderDetails = () => {
         </Typography>
 
         <Stack spacing={3}>
-          {order?.items?.map((item) => (
+          {items.map((item) => (
             <Box
-              key={item._id}
+              key={item.product._id}
               sx={{
                 display: "grid",
                 gridTemplateColumns: {
@@ -167,7 +165,7 @@ const OrderDetails = () => {
             >
               <Box
                 component="img"
-                src={item?.product?.imageUrl}
+                src={item.product.imageUrl}
                 sx={{
                   width: { xs: 80, md: 100 },
                   height: { xs: 80, md: 100 },
@@ -178,24 +176,27 @@ const OrderDetails = () => {
 
               <Box>
                 <Typography variant="subtitle1" fontWeight={400}>
-                  {item?.product?.productCode}
+                  {item.product.productCode}
                 </Typography>
-                <Typography fontWeight={600}>{item?.product?.name}</Typography>
+                <Typography fontWeight={600}>{item.product.name}</Typography>
                 <Typography variant="body2" color="grey.400">
-                  {item?.product?.shortDescription}
+                  {item.product.shortDescription}
                 </Typography>
               </Box>
 
               <Typography textAlign={{ xs: "left", md: "center" }}>
-                Qty: {item?.quantity}
+                Qty: {item.quantity}
               </Typography>
 
               <Typography
                 textAlign={{ xs: "right", md: "center" }}
                 fontWeight={600}
               >
-                {item?.currencySymbol}
-                {item?.totalPrice?.toLocaleString("en-IN")}
+                {currencySymbol}{" "}
+                {item.totalPrice.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
               </Typography>
             </Box>
           ))}
@@ -207,19 +208,46 @@ const OrderDetails = () => {
           <Stack spacing={1}>
             <Row
               label="Subtotal"
-              value={`${order?.currencySymbol}${order?.subtotal}`}
+              value={`${currencySymbol} ${subtotal?.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}`}
             />
-            <Row
-              label="Discount"
-              value={`-${order?.currencySymbol}${order?.discountAmount}`}
-            />
+            {
+              discountAmount > 0 && (
+                <Row
+                  label="Discount"
+                  value={`- ${currencySymbol} ${discountAmount?.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}`}
+                />
+              )
+            }
+            {
+              codCharges > 0 && (
+                <Row
+                  label="COD Charges"
+                  value={`${currencySymbol} ${codCharges?.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}`}
+                />
+              )
+            }
             <Row
               label="Shipping"
-              value={`${order?.currencySymbol}${order?.shippingCost}`}
+              value={`${currencySymbol} ${shippingCost?.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}`}
             />
             <Row
               label="Tax"
-              value={`${order?.currencySymbol}${order?.taxAmount}`}
+              value={`${currencySymbol} ${taxAmount?.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}`}
             />
 
             <Divider sx={{ borderColor: "grey.700", my: 1 }} />
@@ -227,10 +255,44 @@ const OrderDetails = () => {
             <Stack direction="row" justifyContent="space-between">
               <Typography fontWeight={700}>Total</Typography>
               <Typography fontWeight={700}>
-                {order?.currencySymbol}
-                {order?.totalAmount?.toLocaleString("en-IN")}
+                {currencySymbol}{" "}
+                {totalAmount?.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
               </Typography>
             </Stack>
+            {
+              advancePaid > 0 && (
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography fontWeight={700}>Advance Paid</Typography>
+                  <Typography color="#22C55E" fontWeight={700}>
+                    {currencySymbol}{" "}
+                    {advancePaid?.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Typography>
+                </Stack>
+              )
+            }
+
+            <Divider sx={{ borderColor: "grey.700", my: 1 }} />
+
+            {
+              advancePaid > 0 && (
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography fontWeight={700}>Remaining Amount</Typography>
+                  <Typography color="#FACC15" fontWeight={700}>
+                    {currencySymbol}{" "}
+                    {(totalAmount - advancePaid)?.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Typography>
+                </Stack>
+              )
+            }
           </Stack>
         </Box>
 
@@ -239,16 +301,16 @@ const OrderDetails = () => {
         <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
           <AddressBlock
             title="Shipping Address"
-            address={order?.shippingAddress}
+            address={shippingAddress}
           />
           <AddressBlock
             title="Billing Address"
-            address={order?.billingAddress}
+            address={billingAddress}
           />
         </Stack>
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={6}>
-          {order?.logisticsAWBNumber && (
+          {logisticsAWBNumber && (
             <Button
               variant="outlined"
               sx={{

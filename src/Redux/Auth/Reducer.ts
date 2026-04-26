@@ -80,21 +80,26 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
     builder.addCase(
       verifyOtpActions.success,
       (state, action: PayloadAction<VerifyOtpResType>) => {
-        const { phoneNumber: isdPhone, verified } = action.payload;
-
+        const { phoneNumber: isdPhone, verified, profile } = action.payload;
         const [isdCode, phoneNumber] = isdPhone.split("-");
-
         state.login = {
           phoneNumber: isdPhone,
           verified,
         };
-
-        state.profileDetails = {
+        if (profile) {
+         state.profileDetails = {
           ...state.profileDetails,
-          isdCode,
-          phoneNumber,
+          ...profile,
         };
-      },
+      }
+      else {
+      state.profileDetails = {
+        ...state.profileDetails,
+        isdCode,
+        phoneNumber,
+      };
+    }
+    }
     );
     builder.addCase(
       addProfileDetailsActions.success,
