@@ -26,6 +26,7 @@ import {
   verifyOtpActions,
   wishlistActions,
 } from "./Actions";
+import { getPhoneNumber } from "@/Utils/global";
 
 export const INITIAL_STATE: T_AUTH_REDUCER = {
   // Note: phone number is stored in format <isdCode>-<phoneNumber> in login reducer
@@ -63,10 +64,6 @@ const cartPersistConfig = {
   blacklist: ["openSignupPopup", "wishlist"],
 };
 
-function getPhoneNumber(phoneNumber: string = ''): string {
-  return phoneNumber.split("-")?.[1] || phoneNumber;
-}
-
 const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
   name: SLICE_NAME,
   initialState: INITIAL_STATE,
@@ -87,19 +84,18 @@ const sliceOptions: CreateSliceOptions<T_AUTH_REDUCER> = {
           verified,
         };
         if (profile) {
-         state.profileDetails = {
-          ...state.profileDetails,
-          ...profile,
-        };
-      }
-      else {
-      state.profileDetails = {
-        ...state.profileDetails,
-        isdCode,
-        phoneNumber,
-      };
-    }
-    }
+          state.profileDetails = {
+            ...state.profileDetails,
+            ...profile,
+          };
+        } else {
+          state.profileDetails = {
+            ...state.profileDetails,
+            isdCode,
+            phoneNumber,
+          };
+        }
+      },
     );
     builder.addCase(
       addProfileDetailsActions.success,

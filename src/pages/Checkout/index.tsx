@@ -46,6 +46,7 @@ import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetai
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
 import { UpdatePaymentResType } from "@/Redux/Cart/Types";
 import { CURRENCY_LIST } from "@/Constants/AppConstant";
+import { getPhoneNumber } from "@/Utils/global";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -439,7 +440,7 @@ export default function CheckoutPage() {
                 shippingCity: shippingAddressSelector.city || profileDetails.city || "",
                 shippingState: shippingAddressSelector.state || profileDetails.state || "",
                 shippingPincode: shippingAddressSelector.postalCode || profileDetails.postalCode || "",
-                shippingPhone: shippingAddressSelector.phone || profileDetails.phoneNumber || "",
+                shippingPhone: shippingAddressSelector.phone || getPhoneNumber(profileDetails.phoneNumber) || "",
                 saveInfo: true,
                 billingCountry: billingAddressSelector.country,
                 billingFirstName: billingFirstName,
@@ -449,7 +450,7 @@ export default function CheckoutPage() {
                 billingCity: billingAddressSelector.city,
                 billingState: billingAddressSelector.state,
                 billingPincode: billingAddressSelector.postalCode,
-                billingPhone: billingAddressSelector.phone || profileDetails.phoneNumber || "",
+                billingPhone: billingAddressSelector.phone || getPhoneNumber(profileDetails.phoneNumber) || "",
                 shippingAddressSameAsBillingAddress,
               }}
               validationSchema={CheckoutSchema}
