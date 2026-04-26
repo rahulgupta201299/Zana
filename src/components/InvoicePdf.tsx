@@ -18,8 +18,8 @@ import PreviewIcon from "@mui/icons-material/Visibility";
 // Import the asset as a URL string (works with Vite and CRA).
 import ZanaLogo from "@/Assets/Icons/Zana.png";
 import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
-import NotoSansRegular from "@/assets/fonts/NotoSans-Regular.ttf";
-import NotoSansBold from "@/assets/fonts/NotoSans-Bold.ttf";
+import NotoSansRegular from "@/Assets/fonts/NotoSans-Regular.ttf";
+import NotoSansBold from "@/Assets/fonts/NotoSans-Bold.ttf";
 
 Font.register({
   family: "NotoSans",
