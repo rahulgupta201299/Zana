@@ -138,6 +138,7 @@ export default function CheckoutPage() {
 
   function performOps() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
+    if (currency === CURRENCY_LIST.INR) handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
   }
 
   useEffect(() => {
@@ -573,7 +574,7 @@ export default function CheckoutPage() {
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            if (countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA || currency !== CURRENCY_LIST.INR) {
+                            if (paymentType === PaymentTypeEnum.COD && (countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA || currency !== CURRENCY_LIST.INR)) {
                               handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
                             }
 

@@ -30,8 +30,8 @@ export default function useCart() {
     return createDebounce(handleSaveToDB, 500);
   }, []);
 
-  async function getCartFromDB() {
-    if (!phoneNumber) return;
+  async function getCartFromDB(phoneNumberField?: string) {
+    if (!phoneNumber && !phoneNumberField) return;
 
     try {
       // @ts-ignore
@@ -151,7 +151,10 @@ export default function useCart() {
   }
 
   function saveCartToDB(phoneNumber?: string) {
-    if (!cartItems.length) return;
+    if (!cartItems.length) {
+      getCartFromDB(phoneNumber);
+      return;
+    }
     handleSaveToDB(cartItems, { phoneNumber });
   }
 
