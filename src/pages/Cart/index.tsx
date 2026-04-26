@@ -15,7 +15,7 @@ export default function Cart() {
 
   const { removeItemFromCart, decrementToCart, incrementToCart, getTotalQuantity, getQuantity } = useCart();
 
-  const { subtotal = 0, discountAmount = 0, totalAmount = 0, processedItems = [], couponCode = '', currencySymbol = '' } = cartDetail
+  const { subtotal = 0, discountAmount = 0, totalAmount = 0, codCharges = 0, shippingCost = 0, taxAmount = 0, processedItems = [], couponCode = '', currencySymbol = '' } = cartDetail
 
   const totalItems = getTotalQuantity()
 
@@ -225,7 +225,7 @@ export default function Cart() {
                     <div className="flex justify-between items-center">
                       <span className="text-white text-xl font-bold">Total</span>
                       <span className="text-yellow-400 text-2xl font-bold">
-                        {currencySymbol} {totalAmount?.toLocaleString('en-IN', {
+                        {currencySymbol} {(totalAmount - shippingCost - taxAmount - codCharges)?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}

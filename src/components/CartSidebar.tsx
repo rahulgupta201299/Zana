@@ -31,7 +31,7 @@ const CartSidebar = ({
 
   const { getTotalQuantity, incrementToCart, decrementToCart, getQuantity } = useCart()
 
-  const { subtotal = 0, discountAmount = 0, totalAmount: total = 0, couponCode = '', processedItems = [], currencySymbol = '' } = cartDetail;
+  const { subtotal = 0, discountAmount = 0, totalAmount = 0, shippingCost = 0, taxAmount = 0, codCharges = 0, couponCode = '', processedItems = [], currencySymbol = '' } = cartDetail;
 
   const totalItems = getTotalQuantity()
 
@@ -325,7 +325,7 @@ const CartSidebar = ({
               fontWeight={800}
               fontSize={32}
             >
-              {currencySymbol} {total?.toLocaleString('en-IN', {
+              {currencySymbol} {((totalAmount - shippingCost - taxAmount - codCharges))?.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}

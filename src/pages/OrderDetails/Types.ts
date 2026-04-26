@@ -1,33 +1,8 @@
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 
 export type OrderListType = {
-  orders: OrderType[];
+  orders: OrderDetailResponse[];
   pagination: Pagination;
-};
-
-export type OrderType = {
-  _id: string;
-  phoneNumber: string;
-  orderNumber: string;
-  orderStatus: string;
-  orderDate: string;
-  estimatedDelivery: string;
-  items: Item[];
-  shippingAddress: AddressType;
-  billingAddress: AddressType;
-  subtotal: number;
-  shippingCost: number;
-  taxAmount: number;
-  discountAmount: number;
-  totalAmount: number;
-  paymentMethod: string;
-  paymentStatus: string;
-  trackingNumber: string;
-  notes: string;
-  currencySymbol: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type Item = {
@@ -66,6 +41,8 @@ export type OrderDetailResponse = {
   paymentStatus: string;
   shippingCost: number;
   taxAmount: number;
+  codCharges: number;
+  advancePaid: number;
   discountAmount: number;
   couponCode: string;
   appliedCoupon: string;
@@ -85,4 +62,7 @@ export type OrderDetailResponse = {
   currencySymbol: string;
   razorpayPaymentId: string;
   razorpaySignature: string;
+  logisticsOrderId: string | null;
+  logisticsReferenceId: string | null;
+  logisticsAWBNumber: string | null;
 };
