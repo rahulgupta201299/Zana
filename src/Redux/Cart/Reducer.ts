@@ -28,6 +28,7 @@ import {
   updateCartAddressActions,
 } from "./Action";
 import { selectedCurrencyActions } from "../Landing/Actions";
+import { getPhoneNumber } from "@/Utils/global";
 
 const INITIAL_CART_ADDRESS = {
   fullName: "",
@@ -76,10 +77,6 @@ const cartPersistConfig = {
   storage,
   whitelist: ["cartDetail", "cartAddress"],
 };
-
-function getPhoneNumber(phoneNumber: string = ""): string {
-  return phoneNumber.split("-")?.[1] || phoneNumber;
-}
 
 const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
   name: SLICE_NAME,

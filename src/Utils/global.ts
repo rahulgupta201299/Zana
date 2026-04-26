@@ -61,3 +61,7 @@ export function statusColor(status: string) {
       return "#A7F3D0";
   }
 }
+
+export function getPhoneNumber(phoneNumber: string = ""): string {
+  return phoneNumber.split("-")?.[1] || phoneNumber;
+}
