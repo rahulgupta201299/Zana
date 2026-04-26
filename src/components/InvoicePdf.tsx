@@ -18,22 +18,9 @@ import PreviewIcon from "@mui/icons-material/Visibility";
 // Import the asset as a URL string (works with Vite and CRA).
 import ZanaLogo from "@/Assets/Icons/Zana.png";
 import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
-import NotoSansRegular from "@/Assets/fonts/NotoSans-Regular.ttf";
-import NotoSansBold from "@/Assets/fonts/NotoSans-Bold.ttf";
 
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: NotoSansRegular, fontWeight: "normal", fontStyle: "normal" },
-    { src: NotoSansRegular, fontWeight: "normal", fontStyle: "italic" },
-  ],
-});
-Font.register({
-  family: "NotoSans-Bold",
-  src: NotoSansBold,
-});
 
-Font.registerHyphenationCallback((word) => [word]);
+
 
 
 
@@ -51,7 +38,7 @@ const BORDER = "#cccccc";
 const s = StyleSheet.create({
   page: {
     fontSize: 10,
-    fontFamily: "NotoSans",
+    fontFamily: "Helvetica",
     color: BLACK,
     backgroundColor: WHITE,
     paddingBottom: 20,
@@ -79,7 +66,7 @@ const s = StyleSheet.create({
   },
   invoiceTitle: {
     fontSize: 16,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: BLACK, // ← dark on light-peach bg
     textAlign: "right",
     letterSpacing: 1,
@@ -102,7 +89,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     textAlign: "center",
     fontSize: 8,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: MUTED_TEXT,
     letterSpacing: 1,
     textTransform: "uppercase",
@@ -132,7 +119,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     fontSize: 9,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: BLACK, // ← dark on light-peach bg
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -147,7 +134,7 @@ const s = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 9.5,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: MUTED_TEXT,
     width: 82,
   },
@@ -164,7 +151,7 @@ const s = StyleSheet.create({
     paddingVertical: 1,
     borderRadius: 3,
     fontSize: 8,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     textTransform: "uppercase",
   },
   badgeSuccess: { backgroundColor: "#e6f4ea", color: "#1e7e34" },
@@ -178,7 +165,7 @@ const s = StyleSheet.create({
   },
   tableHeaderCell: {
     fontSize: 9,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: BLACK, // ← dark on light-peach bg
     paddingHorizontal: 8,
     paddingVertical: 6,
@@ -209,7 +196,7 @@ const s = StyleSheet.create({
   },
   tableFooterCell: {
     fontSize: 9.5,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRightWidth: 1,
@@ -244,7 +231,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     fontSize: 9,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: BLACK, // ← dark on light-peach bg
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -262,7 +249,7 @@ const s = StyleSheet.create({
   termNum: {
     fontSize: 9,
     color: DARK_TEXT,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     width: 14,
   },
   termText: {
@@ -283,7 +270,7 @@ const s = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 10,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: MUTED_TEXT,
   },
   summaryVal: { fontSize: 10, color: BLACK },
@@ -296,10 +283,10 @@ const s = StyleSheet.create({
   },
   summaryGrandLabel: {
     fontSize: 11,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: BLACK,
   },
-  summaryGrandVal: { fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK },
+  summaryGrandVal: { fontSize: 11, fontFamily: "Helvetica-Bold", color: BLACK },
 
   // Signatory
   signatoryWrap: { marginTop: 14, alignItems: "flex-end" },
@@ -311,7 +298,7 @@ const s = StyleSheet.create({
   },
   sigCompany: {
     fontSize: 10,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: DARK_TEXT,
     marginTop: 6,
   },
@@ -325,7 +312,7 @@ const s = StyleSheet.create({
   },
   sigAuth: {
     fontSize: 9,
-    fontFamily: "NotoSans-Bold",
+    fontFamily: "Helvetica-Bold",
     color: MUTED_TEXT,
     marginTop: 5,
   },
@@ -441,7 +428,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               />
               <InfoRow
                 label="Pmt Received:"
-                value={`${data.currencySymbol} ${data.totalAmount} `}
+                value={data.paymentMethod === "cod" ? `${data.advancePaid}` : `${data.totalAmount} `}
               />
               <InfoRow
                 label="Payment Mode:"
@@ -493,11 +480,11 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
             <Text style={[s.tableCell, s.colProduct]}>{item.product.name}</Text>
             <Text style={[s.tableCell, s.colSku]}>{item.product.productCode}</Text>
             <Text style={[s.tableCell, s.colPrice]}>
-              {`${data.currencySymbol} ${item.price}`}
+              {`${item.price}`}
             </Text>
             <Text style={[s.tableCell, s.colQty]}>{item.quantity}</Text>
             <Text style={[s.tableCell, s.colTotal]}>
-              {`${data.currencySymbol} ${item.totalPrice}`}
+              {`${item.totalPrice}`}
             </Text>
           </View>
         ))}
@@ -517,7 +504,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
             {data.items.reduce((sum, i) => sum + i.quantity, 0)}
           </Text>
           <Text style={[s.tableFooterCell, s.colTotal]}>
-            {`${data.currencySymbol} ${data.subtotal}`}
+            {`${data.subtotal}`}
           </Text>
         </View>
       </View>
@@ -554,7 +541,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
             <View style={s.summaryRow}>
               <Text style={s.summaryLabel}>Subtotal:</Text>
               <Text style={s.summaryVal}>
-                {`${data.currencySymbol} ${data.subtotal}`}
+                {`${data.subtotal}`}
               </Text>
             </View>
 
@@ -562,8 +549,8 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <Text style={s.summaryLabel}>Coupon Discount:</Text>
               <Text style={s.summaryVal}>
                 {data.discountAmount > 0
-                  ? ` - ${data.currencySymbol} ${data.discountAmount}`
-                  : `${data.currencySymbol} 0`}
+                  ? ` - ${data.discountAmount}`
+                  : `0`}
               </Text>
             </View>
 
@@ -572,7 +559,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <Text style={s.summaryVal}>
                 {data.shippingCost === 0
                   ? "Free"
-                  : `${data.currencySymbol} ${data.shippingCost}`}
+                  : `${data.shippingCost}`}
               </Text>
             </View>
 
@@ -580,7 +567,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <View style={s.summaryRow}>
                 <Text style={s.summaryLabel}>Tax Amount:</Text>
                 <Text style={s.summaryVal}>
-                  {`${data.currencySymbol} ${data.taxAmount}`}
+                  {`${data.taxAmount}`}
                 </Text>
               </View>
             )}
@@ -590,7 +577,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <View style={s.summaryRow}>
                 <Text style={s.summaryLabel}>COD Charges:</Text>
                 <Text style={s.summaryVal}>
-                  {`${data.currencySymbol} ${data.codCharges}`}
+                  {`${data.codCharges}`}
                 </Text>
               </View>
             )}
@@ -599,7 +586,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <View style={s.summaryRow}>
                 <Text style={s.summaryLabel}>Advance Paid:</Text>
                 <Text style={[s.summaryVal, { color: "#16a34a" }]}>
-                  - {`${data.currencySymbol} ${data.advancePaid}`}
+                  - {`${data.advancePaid}`}
                 </Text>
               </View>
             )}
@@ -607,7 +594,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
             <View style={s.summaryGrand}>
               <Text style={s.summaryGrandLabel}>Total Amount:</Text>
               <Text style={s.summaryGrandVal}>
-                {`${data.currencySymbol} ${data.totalAmount}`}
+                {`${data.totalAmount}`}
               </Text>
             </View>
 
@@ -616,7 +603,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               <View style={[s.summaryGrand, { backgroundColor: "#fef9c3" }]}>
                 <Text style={s.summaryGrandLabel}>Balance Due (COD):</Text>
                 <Text style={s.summaryGrandVal}>
-                  {`${data.currencySymbol} ${data.totalAmount - data.advancePaid}`}
+                  {`${data.totalAmount - data.advancePaid}`}
                 </Text>
               </View>
             )}
