@@ -1572,6 +1572,21 @@ export default function CheckoutPage() {
             sx={{
               display: "flex",
               justifyContent: "space-between",
+              mt: "16px",
+              color: "#F5F4F4",
+            }}
+          >
+            <Typography>Tax Amount</Typography>
+            <Typography fontWeight={600}>{currencySymbol} {taxAmount?.toLocaleString('en-IN', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}</Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
               mt: 2,
               color: "#F5F4F4",
               borderTop: "1px solid rgba(255,255,255,0.1)",
