@@ -38,7 +38,7 @@ import { getLoginDetails, getProfileDetails, isdCodeDetails } from "@/Redux/Auth
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName, getCartDetailServiceName, updateCartAddressServiceName, updatePaymentMethodServiceName } from "@/Redux/Cart/Action";
+import { cartModifyServiceName, updateCartAddressServiceName, updatePaymentMethodServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
@@ -99,8 +99,10 @@ export default function CheckoutPage() {
   } = cartAddressSelector
 
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
-    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName, getCartDetailServiceName
+    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName
   ]));
+
+  const isCartLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartModifyServiceName]))
 
   const {
     subtotal: cartSubtotal = 0,
@@ -138,15 +140,18 @@ export default function CheckoutPage() {
   }
 
   useEffect(() => {
+    if (isCartLoading) return;
+
     if (paymentType) {
       handlePaymentOptionChange(paymentType)
       return;
     }
+
     if (codCharges) {
       handlePaymentOptionChange(PaymentTypeEnum.COD)
       return;
     }
-  }, [cartSubtotal, cartTotalAmount, cartDiscountAmount, cartTaxAmount])
+  }, [cartDiscountAmount, isCartLoading])
 
   useEffect(() => {
     performOps()
