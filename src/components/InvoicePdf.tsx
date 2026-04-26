@@ -441,7 +441,7 @@ const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
               />
               <InfoRow
                 label="Pmt Received:"
-                value={`${data.currencySymbol} ${data.totalAmount} `}
+                value={data.paymentMethod === "cod" ? `${data.advancePaid}` : `${data.currencySymbol} ${data.totalAmount} `}
               />
               <InfoRow
                 label="Payment Mode:"
