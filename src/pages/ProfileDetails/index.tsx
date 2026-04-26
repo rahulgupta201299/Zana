@@ -73,9 +73,12 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
+   if (!bikeDetails.length) actions.getBrandList();
+  if (profileDetails._id) {
     fetchDetails();
-  }, []);
+  }
+}, []);
 
   const renderContent = () => {
     switch (selectedMenu) {
