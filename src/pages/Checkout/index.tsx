@@ -153,6 +153,19 @@ export default function CheckoutPage() {
     }
   }, [cartDiscountAmount, isCartLoading])
 
+  // syncing with cart everytime before set-payment-method api call
+  useEffect(() => {
+    setPaymentMethodDetails({
+      subtotal: cartSubtotal,
+      totalAmount: cartTotalAmount,
+      discountAmount: cartDiscountAmount,
+      shippingCost: cartShippingCost,
+      taxAmount: cartTaxAmount,
+      codCharges: cartCodCharges,
+      advanceAmount: 0
+    })
+  }, [cartSubtotal, isCartLoading])
+
   useEffect(() => {
     performOps()
   }, []);
@@ -553,7 +566,7 @@ export default function CheckoutPage() {
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA && setPaymentType(PaymentTypeEnum.RAZORPAY)
+                            countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA && handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
