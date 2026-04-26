@@ -11,12 +11,12 @@ import {
 import { Button, Box, Tooltip } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PreviewIcon from "@mui/icons-material/Visibility";
-import { OrderType } from "@/pages/OrderDetails/Types";
 
 // ─── Asset import ─────────────────────────────────────────────────────────────
 // @react-pdf/renderer cannot use <img> HTML tags — must use its own <Image>.
 // Import the asset as a URL string (works with Vite and CRA).
 import ZanaLogo from "@/Assets/Icons/Zana.png";
+import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ORANGE = "#fffffc"; // your light-peach header background — kept as-is
@@ -360,13 +360,15 @@ const SectionBox = ({
 );
 
 // ─── Main PDF Document ────────────────────────────────────────────────────────
-const InvoicePDFDocument = ({ data }: { data: OrderType }) => {
+const InvoicePDFDocument = ({ data }: { data: OrderDetailResponse }) => {
   const { billingAddress: ba, shippingAddress: sa } = data;
 
   const addr = (a: typeof ba) =>
     [a.addressLine1, a.addressLine2, a.city, a.state, a.postalCode]
       .filter(Boolean)
       .join(", ");
+
+  if (!data) return null;
 
   return (
     <Document title={`Invoice - ${data.orderNumber}`}>
@@ -571,10 +573,11 @@ const InvoicePDFDocument = ({ data }: { data: OrderType }) => {
 
 // ─── Buttons ─────────────────────────────────────────────────────────────────
 interface Props {
-  data?: OrderType;
+  data: OrderDetailResponse;
 }
 
 export const InvoiceDownloadButton = ({ data }: Props) => {
+
   const handleDownload = async () => {
     if (!data) return;
     try {
@@ -589,6 +592,8 @@ export const InvoiceDownloadButton = ({ data }: Props) => {
       console.error("PDF generation failed:", err);
     }
   };
+
+  if (!data) return null;
 
   return (
     <Tooltip title="Download invoice as PDF">
@@ -613,6 +618,7 @@ export const InvoiceDownloadButton = ({ data }: Props) => {
 };
 
 export const InvoicePreviewButton = ({ data }: Props) => {
+  
   const handlePreview = async () => {
     if (!data) return;
     try {
@@ -622,6 +628,8 @@ export const InvoicePreviewButton = ({ data }: Props) => {
       console.error("PDF preview failed:", err);
     }
   };
+
+  if (!data) return null;
 
   return (
     <Tooltip title="Preview invoice in new tab">

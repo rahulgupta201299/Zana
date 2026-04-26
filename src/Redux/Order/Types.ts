@@ -10,9 +10,13 @@ export type CreatePaymentOrderReqType = {
 };
 
 export interface CreateOrderType {
+  key: string;
+  amount: number;
+  razorpayOrderId: string;
+  currency: string;
+  name: string;
   orderId: string;
   orderNumber: string;
-  paymentMethod: string;
   displayAmount: number;
   displayCurrency: string;
   currencySymbol: string;
@@ -23,16 +27,10 @@ export interface CreateOrderType {
 
 export interface CreateCodOrderResType extends CreateOrderType {
   paymentMethod: string;
-  message: string;
+  displayTotalAmount: number;
 }
 
-export interface CreatePaymentOrderResType extends CreateOrderType {
-  key: string;
-  amount: number;
-  razorpayOrderId: string;
-  currency: string;
-  name: string;
-}
+export interface CreatePaymentOrderResType extends CreateOrderType {}
 
 export type VerifyPaymentOrderReqType = {
   razorpay_order_id: string;

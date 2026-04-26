@@ -4,34 +4,35 @@ import clearCartServiceAction from "@/Redux/Cart/Services/ClearCartService";
 import createPaymentOrderServiceAction from "@/Redux/Order/Services/CreatePaymentOrder";
 import verifyPaymentOrderServiceAction from "@/Redux/Order/Services/VerifyPaymentOrder";
 import {
+  CreateCodOrderResType,
   CreatePaymentOrderResType,
   VerifyPaymentOrderReqType,
   VerifyPaymentOrderResType,
 } from "@/Redux/Order/Types";
 import { loadScript } from "@/Utils/razorpay";
 import { enqueueSnackbar } from "notistack";
-import { COUNTRY_MAPPER } from "./Constant";
+import { COUNTRY_MAPPER, PaymentTypeEnum } from "./Constant";
 import { ROUTES } from "@/Constants/Routes";
 import { getHistory } from "@/Configurations/Routing/AppRouter";
+import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
 
 export async function handleClearCart() {
   const dispatch = AppStore.dispatch;
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
   //@ts-ignore
-   dispatch(clearCart());
+  dispatch(clearCart());
   await dispatch(clearCartServiceAction({ phoneNumber }));
-
-  
- 
 }
 
 export async function verifyPayment(data: VerifyPaymentOrderReqType) {
   const dispatch = AppStore.dispatch;
-  const router = getHistory()
+  const router = getHistory();
 
   try {
-    const { orderId = '' } = await dispatch(verifyPaymentOrderServiceAction(data)) as VerifyPaymentOrderResType;
+    const { orderId = "" } = (await dispatch(
+      verifyPaymentOrderServiceAction(data),
+    )) as VerifyPaymentOrderResType;
 
     router.navigate(ROUTES.ORDER_SUCCESSFUL, { state: { orderId } });
   } catch (error: any) {
@@ -46,7 +47,7 @@ export async function verifyPayment(data: VerifyPaymentOrderReqType) {
   handleClearCart();
 }
 
-export async function displayRazorpay() {
+export async function displayRazorpay(method: PaymentTypeEnum) {
   const dispatch = AppStore.dispatch;
   const state = AppStore.getState();
   const phoneNumber = state.auth.login.phoneNumber;
@@ -62,9 +63,20 @@ export async function displayRazorpay() {
     return;
   }
 
-  const response = (await dispatch(
-    createPaymentOrderServiceAction({ phoneNumber }),
-  )) as CreatePaymentOrderResType;
+  let response: CreatePaymentOrderResType | CreateCodOrderResType;
+
+  if (method === PaymentTypeEnum.RAZORPAY) {
+    response = (await dispatch(
+      createPaymentOrderServiceAction({ phoneNumber }),
+    )) as CreatePaymentOrderResType;
+  }
+
+  if (method === PaymentTypeEnum.COD) {
+    response = (await dispatch(
+      createCodOrderServiceAction({ phoneNumber }),
+    )) as CreateCodOrderResType;
+  }
+
   const { orderId, amount, currency, razorpayOrderId, name, key } = response;
 
   const options = {
