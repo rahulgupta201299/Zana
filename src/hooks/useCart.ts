@@ -6,7 +6,7 @@ import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
-import { TAppDispatch } from "@/Configurations/AppStore";
+import AppStore, { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
@@ -54,7 +54,8 @@ export default function useCart() {
       quantity: item.quantity,
     }));
 
-    const _phoneNumber = optional?.phoneNumber || phoneNumber;
+    const state = AppStore.getState();
+    const _phoneNumber = state.auth.login.phoneNumber || optional?.phoneNumber;
 
     try {
       const response = (await dispatch(
