@@ -131,6 +131,7 @@ export default function CheckoutPage() {
     codCharges: cartCodCharges,
     advanceAmount: 0
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { subtotal, totalAmount, discountAmount, shippingCost, taxAmount, codCharges, advanceAmount } = paymentMethodDetails;
 
@@ -142,7 +143,7 @@ export default function CheckoutPage() {
   }
 
   useEffect(() => {
-    if (isCartLoading) return;
+    if (isCartLoading || loading) return;
 
     if (paymentType) {
       handlePaymentOptionChange(paymentType)
@@ -327,6 +328,8 @@ export default function CheckoutPage() {
       )
     }
 
+    setLoading(true);
+
     try {
       await validateCart(processedItems);
 
@@ -358,6 +361,8 @@ export default function CheckoutPage() {
         variant: "error",
         message
       });
+    } finally {
+      setLoading(false)
     }
   }
 
