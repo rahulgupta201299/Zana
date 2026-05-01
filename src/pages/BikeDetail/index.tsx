@@ -138,7 +138,7 @@ const BikeDetailPage = () => {
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className="bg-white rounded-2xl p-8 md:p-12 flex items-center justify-center">
+            <div className="rounded-2xl flex items-center justify-center">
               {
                 imageUrl ? (
                   <img
