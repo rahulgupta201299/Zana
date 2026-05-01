@@ -56,19 +56,26 @@ const GarageFavorite = () => {
             </div>
           ))}
         </div>
+       <div
+          className="md:hidden grid grid-cols-2 gap-2 p-3"
+          style={{ gridAutoRows: "160px" }}
+        >
+          {productList.slice(0,8).map((product, idx) => {
+            const tallRight = [1, 8];
+            const tallLeft = [4];
 
-        <div className="md:hidden grid grid-cols-3 grid-rows-3 gap-2">
-          {productList.slice(0, 8).map((product, idx) => {
-            const isCenterFeatured = idx === 1;
+            const isTall = [...tallRight, ...tallLeft].includes(idx);
 
             return (
               <div
                 key={product._id}
-                className={isCenterFeatured ? "row-span-2 col-start-2" : ""}
+                style={{
+                  gridRow: isTall ? "span 2" : "span 1",
+                }}
               >
                 <ProductCard
                   product={product}
-                  height={isCenterFeatured ? 310 : 150}
+                  height={isTall ? 328 : 160}
                   count={getQuantity(product._id)}
                   loading={isLoading}
                   onClick={() => handleAddToCart(product._id)}
