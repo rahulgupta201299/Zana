@@ -9,7 +9,7 @@ import { encodedGeneratedPath } from "@/Utils/global";
 const ProductCard = ({
   product,
   onClick,
-  height = 176,
+  height = 186,
   count = 0,
   loading = false,
 }: {
@@ -35,13 +35,25 @@ const ProductCard = ({
     productItem: string,
     productId: string,
   ) {
-    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
+      productCategory,
+      productItem,
+      productId,
+    });
 
-    navigate(path)
+    navigate(path);
   }
 
   return (
-    <div className="relative group" style={{ height }}>
+    <div
+      className="relative group hover:border-yellow-400 transition-all duration-300"
+      style={{
+        height,
+        border: "2px solid #5b5858", 
+        borderRadius: 8,
+        overflow: "hidden",
+      }}
+    >
       {loading ? (
         <Skeleton
           variant="rectangular"
@@ -57,7 +69,6 @@ const ProductCard = ({
             alt={name}
             className="w-full h-full object-fit rounded-lg shadow-lg cursor-pointer"
           />
-
           <div className="absolute bottom-2 left-2 group">
             <button
               style={{

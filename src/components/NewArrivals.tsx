@@ -52,7 +52,7 @@ const NewArrivals = () => {
                   key={idx}
                   product={products[idx]}
                   onClick={() => handleAddToCart(products[idx]._id)}
-                  height={col.length === 1 ? 360 : 176}
+                   height={col.length === 1 ? 380 : 186}
                   count={getQuantity(products[idx]?._id)}
                   loading={isLoading}
                 />
