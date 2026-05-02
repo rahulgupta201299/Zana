@@ -379,6 +379,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
                   isBikeSpecific,
                   price,
                   currencySymbol,
+                  isComingSoon,
                 } = product;
 
                 const quantityAddedInCart = getQuantity(_id);
@@ -421,7 +422,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
                       {quantityAvailable === 0 && (
                         <div className="absolute bottom-3 left-0 right-0 flex justify-center">
                           <div className="bg-white px-4 py-1 rounded text-[13px] font-semibold text-orange-500 shadow-sm">
-                            OUT OF STOCK
+                            {isComingSoon ? "COMING SOON" : "OUT OF STOCK"}
                           </div>
                         </div>
                       )}

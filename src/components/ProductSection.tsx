@@ -122,6 +122,7 @@ const ProductsSection = ({
             price,
             currencySymbol,
             quantityAvailable,
+            isComingSoon,
           } = product;
 
           const quantityAddedInCart = getQuantity(_id);
@@ -198,7 +199,7 @@ const ProductsSection = ({
                         zIndex: 2,
                       }}
                     >
-                      OUT OF STOCK
+                      {isComingSoon ? "COMING SOON" : "OUT OF STOCK"}
                     </Box>
                   )}
 
@@ -330,7 +331,7 @@ const ProductsSection = ({
                       </IconButton>
                       <Box position="relative">
                         <Tooltip
-                          title="Out of stock"
+                          title={isComingSoon ? "Coming Soon" : "Out Of Stock"}
                           arrow
                           disableHoverListener={!isDisabled}
                         >
