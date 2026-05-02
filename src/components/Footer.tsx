@@ -91,11 +91,11 @@ const Footer = () => {
                     Returns and Exchange
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="/blogs" className="hover:underline">
                     Blogs
                   </a>
-                </li>
+                </li> */}
                 {/* <li>
                   <a href="/contact-us" className="hover:underline">
                     Contact Us
