@@ -4,15 +4,15 @@ const InstagramFeed = () => {
   const instagramPosts = [
     {
       id: 1,
-      url: "https://www.instagram.com/reel/DRKZdwsAWyC/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      url: "https://www.instagram.com/reel/DX1vMZNhEQ3/?igsh=MWF4dnE0cTF4eTM0dA==",
     },
     {
       id: 2,
-      url: "https://www.instagram.com/reel/DUsuR-sDJ7h/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      url: "https://www.instagram.com/reel/DXi1mmBgTLI/?igsh=Zm5vN2JiODd3bjR3",
     },
     {
       id: 3,
-      url: "https://www.instagram.com/reel/DTk6xS1Dr6M/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      url: "https://www.instagram.com/reel/DXHYKncEv1L/?igsh=MWFtMndwMDB0bXRlaA==",
     },
   ];
 
