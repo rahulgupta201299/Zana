@@ -22,18 +22,18 @@ import { getLoginDetails } from "@/Redux/Auth/Selectors";
 type ProductFilterPropsType = {
 	page: number
 	category: string
-	categoryService: (page: number) => Promise<unknown>
+	subCategory: string
+	setSubCategory: (val: string) => void
 	onChangeFilterProducts: (data: ShopByProductDetailsType[], pagination?: PaginationType) => void
 	clearFilter: () => void
 }
 
 function ProductFilter(props: ProductFilterPropsType) {
 
-	const { page, category, categoryService, onChangeFilterProducts, clearFilter } = props;
+	const { page, category, subCategory, setSubCategory, onChangeFilterProducts, clearFilter } = props;
 
 	const loginDetails = useSelector(getLoginDetails);
 
-	const [subCategory, setSubCategory] = useState<string>("");
 	const [subCategoryList, setSubCategoryList] = useState<ProductCatergoryCountType[]>([]);
 
 	const dispatch = useDispatch<TAppDispatch>()
@@ -78,11 +78,7 @@ function ProductFilter(props: ProductFilterPropsType) {
 	}, [category])
 
 	useEffect(() => {
-		if (subCategory) {
-			handleApplyFilter(page)
-			return;
-		}
-		categoryService(page)
+		handleApplyFilter(page)
 	}, [page])
 
 	return (

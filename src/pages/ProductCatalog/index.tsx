@@ -54,8 +54,8 @@ const ProductCatalogPage = ({ isDesktop }) => {
     ]),
   );
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>(initialCategory);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
+  const [subCategory, setSubCategory] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
@@ -345,16 +345,15 @@ const ProductCatalogPage = ({ isDesktop }) => {
                 <ProductFilter
                   page={currentPage}
                   category={selectedCategory}
-                  categoryService={(page: number) => handleCategoryService(selectedCategory, page, true)}
+                  subCategory={subCategory}
+                  setSubCategory={setSubCategory}
                   onChangeFilterProducts={(data: ShopByProductDetailsType[], pagination?: PaginationType) => {
                     setFilteredProducts(data)
-                    setModalType(null)
                     pagination?.currentPage && setCurrentPage(pagination.currentPage)
                     pagination?.totalPages && setNumberOfPages(pagination.totalPages)
                   }}
                   clearFilter={() => {
-                    handleCategoryService(selectedCategory, currentPage, true)
-                    setModalType(null)
+                    subCategory && handleCategoryService(selectedCategory, currentPage, true)
                   }}
                 />
               )
@@ -529,6 +528,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
                 boundaryCount={0}
                 onChange={(_, page) => {
                   setCurrentPage(page)
+                 !subCategory && handleCategoryService(selectedCategory, page)
                 }}
                 sx={{
                   "& .MuiPaginationItem-root": {
@@ -582,7 +582,8 @@ const ProductCatalogPage = ({ isDesktop }) => {
               <ProductFilter
                 page={currentPage}
                 category={selectedCategory}
-                categoryService={(page: number) => handleCategoryService(selectedCategory, page, true)}
+                subCategory={subCategory}
+                setSubCategory={setSubCategory}
                 onChangeFilterProducts={(data: ShopByProductDetailsType[], pagination?: PaginationType) => {
                   setFilteredProducts(data)
                   setModalType(null)
@@ -590,7 +591,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
                   pagination?.totalPages && setNumberOfPages(pagination.totalPages)
                 }}
                 clearFilter={() => {
-                  handleCategoryService(selectedCategory, currentPage, true)
+                  subCategory && handleCategoryService(selectedCategory, currentPage, true)
                   setModalType(null)
                 }}
               />
