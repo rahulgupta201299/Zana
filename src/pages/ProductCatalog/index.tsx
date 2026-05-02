@@ -7,8 +7,8 @@ import { Heart, ShoppingCart, X } from "lucide-react";
 import { ALL_CATEGORY } from "@/Constants/AppConstant";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import {
+  PaginationType,
   ProductCatalogDetailsType,
-  ProductCatergoryCountType,
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
 import { ROUTES } from "@/Constants/Routes";
@@ -28,17 +28,14 @@ import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { useSnackbar } from "notistack";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
-// import { ProductDetailParamsType } from "../ProductDetail/Types";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { encodedGeneratedPath } from "@/Utils/global";
-import ProductFilter from "./ProductFilter";
 import { ProductModalType } from "./Constant";
-import { FilterType } from "./Types";
-import ProductSubCategoryCountService from "@/Redux/Product/Services/ProductSubCategoryCountService";
-import FilterProductService from "@/Redux/Product/Services/FilterProductService";
+import ProductFilter from "./ProductFilter";
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
-const ProductCatalogPage = () => {
+const ProductCatalogPage = ({ isDesktop }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,15 +54,15 @@ const ProductCatalogPage = () => {
     ]),
   );
 
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>(initialCategory);
   const [filteredProducts, setFilteredProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
-  const [filters, setFilters] = useState<FilterType>({ category: initialCategory, subCategory: "" });
-  const [subCategoryData, setSubCategoryData] = useState<ProductCatergoryCountType[]>([])
-  const [modalType, setModalType] = useState<string | null>(null)
+  const [modalType, setModalType] = useState<string | null>(null);
 
   const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
@@ -82,14 +79,11 @@ const ProductCatalogPage = () => {
   async function handleCategoryService(type: string, page = 1, skip = false) {
     const { phoneNumber = '' } = loginDetails;
 
-    const { category } = filters;
-
-    if (type === category && page === currentPage && !skip) return;
+    if (type === selectedCategory && page === currentPage && !skip) return;
 
     try {
       setFilteredProducts([]);
-      setSubCategoryData([]);
-      setFilters(prev => ({ ...prev, category: type, subCategory: "" }));
+      setSelectedCategory(type);
 
       const action =
         type === ALL_CATEGORY
@@ -107,68 +101,16 @@ const ProductCatalogPage = () => {
             },
           });
 
-      const [productRes, subCategoryRes] = await Promise.allSettled([
-        dispatch(action),
-        dispatch(ProductSubCategoryCountService(type)),
-      ]);
+      const { data, pagination } = (await dispatch(
+        action,
+      )) as ProductCatalogDetailsType;
 
-      if (productRes.status === "fulfilled") {
-        const { data, pagination } = productRes.value as ProductCatalogDetailsType;
-        setFilteredProducts(data);
-        setNumberOfPages(pagination.totalPages);
-        setCurrentPage(pagination.currentPage);
-      } else {
-        console.error("Product API failed", productRes.reason);
-      }
-
-      if (subCategoryRes.status === "fulfilled") {
-        setSubCategoryData(subCategoryRes.value as ProductCatergoryCountType[]);
-      } else {
-        console.warn("Subcategory API failed", subCategoryRes.reason);
-      }
-
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async function handleFilterService({ category, subCategory }: { category: string, subCategory: string }, page = 1) {
-    const { phoneNumber = '' } = loginDetails;
-
-    if (!subCategory) return;
-
-    try {
-      setFilteredProducts([]);
-      setModalType(null);
-
-      const { data, pagination } = await dispatch(FilterProductService({
-        category, subCategory, queryParams: {
-          page,
-          limit: LIMIT_PER_PAGE,
-          phoneNumber,
-        },
-      })) as ProductCatalogDetailsType
-
-      setFilters(prev => ({ ...prev, subCategory }));
       setFilteredProducts(data);
       setNumberOfPages(pagination.totalPages);
       setCurrentPage(pagination.currentPage);
-
-    } catch (error) {
-      console.error(error)
+    } catch (e) {
+      console.error(e);
     }
-  }
-
-  function handleClearFilter() {
-    const { category, subCategory } = filters;
-
-    setModalType(null)
-
-    if (!subCategory) return;
-
-    setFilters(prev => ({ ...prev, subCategory: "" }))
-
-    handleCategoryService(category, 1, true)
   }
 
   async function handleWishList(product: ShopByProductDetailsType) {
@@ -224,16 +166,13 @@ const ProductCatalogPage = () => {
       0,
     );
     return [
-      { name: ALL_CATEGORY, count: totalCategoryCount },
+      { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
       ...productCategory,
     ];
   }, [productCategory.length]);
 
   async function pageOps() {
-    const { category } = filters;
-
-    if (filteredProducts.length && initialCategory === category) return;
-
+    if (filteredProducts.length && initialCategory === selectedCategory) return;
     try {
       await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
     } catch (error: any) {
@@ -286,7 +225,6 @@ const ProductCatalogPage = () => {
           >
             {categoryDetails.map((category, ind) => {
               const { name, count } = category;
-              const { category: selectedCategory } = filters;
               const categoryName = name.toLowerCase();
 
               return (
@@ -330,48 +268,106 @@ const ProductCatalogPage = () => {
         </div>
       </div>
 
-      <div className="py-8 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <Box
+        sx={{
+          py: {
+            md: 6,
+            xs: 2,
+          },
+          px: {
+            md: 6,
+            xs: 4
+          }
+        }}
+      >
 
-          <div className="lg:hidden flex justify-end">
-            <Button
-              sx={{
-                backgroundColor: "transparent",
+        <Box
+          sx={{
+            display: {
+              md: 'none !important',
+              xs: 'flex'
+            },
+            justifyContent: 'flex-end',
+            mb: 4,
+          }}>
+          <Button
+            sx={{
+              backgroundColor: "transparent",
+              border: "1px solid #FACC15",
+              color: "#FACC15",
+              fontWeight: 800,
+              px: 2.5, // 20px
+              py: 1,   // 8px
+              borderRadius: "8px",
+              textTransform: "none",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                backgroundColor: "#FACC15",
+                color: "#000",
                 border: "1px solid #FACC15",
-                color: "#FACC15",
-                fontWeight: 800,
-                px: 2.5, // 20px
-                py: 1,   // 8px
-                borderRadius: "8px",
-                textTransform: "none",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  backgroundColor: "#FACC15",
-                  color: "#000",
-                  border: "1px solid #FACC15",
-                },
-              }}
-              onClick={() => setModalType(ProductModalType.APPLY_FILTERS)}
-            >
-              Apply Filters
-            </Button>
-          </div>
+              },
+            }}
+            onClick={() => setModalType(ProductModalType.APPLY_FILTERS)}
+          >
+            Apply Filters
+          </Button>
+        </Box>
 
-          {/* ===== MAIN GRID ===== */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
-
-            {/* ================= SIDEBAR ================= */}
-            <div className="lg:col-span-1">
-              <div className="hidden lg:block self-start">
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+          }}
+        >
+          {/* SIDEBAR */}
+          <Box
+            sx={{
+              display: {
+                xs: 'none',
+                md: 'block',
+                lg: 'block',
+              },
+              flexBasis: {
+                lg: "25%",
+                md: "30%"
+              },
+              maxWidth: {
+                lg: "25%",
+                md: "30%"
+              },
+              width: "100%",
+              position: 'sticky',
+              top: 20,
+            }}
+          >
+            {
+              isDesktop && (
                 <ProductFilter
-                  subCategoryData={subCategoryData}
-                  callbackService={handleFilterService}
-                  clearFilter={handleClearFilter}
-                  filterData={filters}
+                  page={currentPage}
+                  category={selectedCategory}
+                  categoryService={(page: number) => handleCategoryService(selectedCategory, page, true)}
+                  onChangeFilterProducts={(data: ShopByProductDetailsType[], pagination?: PaginationType) => {
+                    setFilteredProducts(data)
+                    setModalType(null)
+                    pagination?.currentPage && setCurrentPage(pagination.currentPage)
+                    pagination?.totalPages && setNumberOfPages(pagination.totalPages)
+                  }}
+                  clearFilter={() => {
+                    handleCategoryService(selectedCategory, currentPage, true)
+                    setModalType(null)
+                  }}
                 />
-              </div>
-            </div>
+              )
+            }
+          </Box>
 
+          {/* CONTENT */}
+          <Box
+            sx={{
+              flexGrow: 1, // 👈 takes remaining width
+              flex: 1,
+            }}
+          >
             <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {filteredProducts.map((product) => {
                 const {
@@ -495,78 +491,77 @@ const ProductCatalogPage = () => {
                   </div>
                 );
               })}
+
               {filteredProducts.length === 0 && isProductCategoryLoading && (
                 <ProductSkeleton />
               )}
-            </div>
-          </div>
 
-          {filteredProducts.length === 0 && !isProductCategoryLoading && (
-            <div className="text-center py-16">
-              <p className="text-white/50 text-lg mb-4">
-                No products found in this category
-              </p>
-              <button
-                onClick={() => handleCategoryService(ALL_CATEGORY)}
-                className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
-              >
-                View All Products
-              </button>
             </div>
-          )}
-          <Box
-            sx={{
-              marginTop: "2rem",
-              display: "flex",
-              justifyContent: "center",
-              gap: "1rem",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            <Pagination
-              count={numberOfPages}
-              page={currentPage}
-              siblingCount={1}
-              boundaryCount={0}
-              onChange={(_, page) => {
-                const { category, subCategory } = filters;
-                if (subCategory) {
-                  handleFilterService({ category, subCategory }, page);
-                  return;
-                }
-                handleCategoryService(filters.category, page);
-              }}
+            {filteredProducts.length === 0 && !isProductCategoryLoading && (
+              <div className="text-center py-16">
+                <p className="text-white/50 text-lg mb-4">
+                  No products found in this category
+                </p>
+                <button
+                  onClick={() => handleCategoryService(ALL_CATEGORY)}
+                  className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+                >
+                  View All Products
+                </button>
+              </div>
+            )}
+
+            <Box
               sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "white",
-                  fontSize: "1.25rem",
-                  fontWeight: "bold",
-                },
-                "& .Mui-selected": {
-                  color: "#3B82F6",
-                  backgroundColor: "transparent",
-                },
-                "& .MuiPaginationItem-root:hover": {
-                  color: "yellow",
-                  backgroundColor: "transparent",
-                },
-                "& .Mui-disabled": {
-                  color: "#f9f8f8ff",
-                },
+                marginTop: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                gap: "1rem",
+                color: "white",
+                cursor: "pointer",
               }}
-            />
+            >
+              <Pagination
+                count={numberOfPages}
+                page={currentPage}
+                siblingCount={1}
+                boundaryCount={0}
+                onChange={(_, page) => {
+                  setCurrentPage(page)
+                }}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white",
+                    fontSize: "1.25rem",
+                    fontWeight: "bold",
+                  },
+                  "& .Mui-selected": {
+                    color: "#3B82F6",
+                    backgroundColor: "transparent",
+                  },
+                  "& .MuiPaginationItem-root:hover": {
+                    color: "yellow",
+                    backgroundColor: "transparent",
+                  },
+                  "& .Mui-disabled": {
+                    color: "#f9f8f8ff",
+                  },
+                }}
+              />
+            </Box>
+
           </Box>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {
-        modalType === ProductModalType.APPLY_FILTERS && (
+        !isDesktop && (
           <Dialog
-            open={true}
+            open={modalType === ProductModalType.APPLY_FILTERS}
             onClose={() => setModalType(null)}
             fullWidth
             maxWidth="sm"
+            keepMounted
           >
             <DialogContent sx={{ p: 0, position: "relative" }}>
 
@@ -584,17 +579,26 @@ const ProductCatalogPage = () => {
 
               {/* Filter Component */}
               <ProductFilter
-                subCategoryData={subCategoryData}
-                callbackService={handleFilterService}
-                clearFilter={handleClearFilter}
-                filterData={filters}
+                page={currentPage}
+                category={selectedCategory}
+                categoryService={(page: number) => handleCategoryService(selectedCategory, page, true)}
+                onChangeFilterProducts={(data: ShopByProductDetailsType[], pagination?: PaginationType) => {
+                  setFilteredProducts(data)
+                  setModalType(null)
+                  pagination?.currentPage && setCurrentPage(pagination.currentPage)
+                  pagination?.totalPages && setNumberOfPages(pagination.totalPages)
+                }}
+                clearFilter={() => {
+                  handleCategoryService(selectedCategory, currentPage, true)
+                  setModalType(null)
+                }}
               />
             </DialogContent>
           </Dialog>
         )
       }
-    </div>
+    </div >
   );
 };
 
-export default ProductCatalogPage;
+export default withDeviceDetails(ProductCatalogPage);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -10,32 +10,80 @@ import {
 	Button,
 	Skeleton,
 } from "@mui/material";
-import { ProductCatergoryCountType } from "@/Redux/Product/Types";
-import { useSelector } from "react-redux";
-import { TAppStore } from "@/Configurations/AppStore";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { productSubCategoryCountServiceName } from "@/Redux/Product/Actions";
-import { FilterType } from "./Types";
+import { PaginationType, ProductCatalogDetailsType, ProductCatergoryCountType, ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { useDispatch, useSelector } from "react-redux";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
+import ProductSubCategoryCountService from "@/Redux/Product/Services/ProductSubCategoryCountService";
+import FilterProductService from "@/Redux/Product/Services/FilterProductService";
+import { LIMIT_PER_PAGE } from "./Constant";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
 
 type ProductFilterPropsType = {
-	subCategoryData: ProductCatergoryCountType[]
-	filterData: FilterType
-	callbackService: ({ category, subCategory }: { category: string, subCategory: string }, page?: number) => void
+	page: number
+	category: string
+	categoryService: (page: number) => Promise<unknown>
+	onChangeFilterProducts: (data: ShopByProductDetailsType[], pagination?: PaginationType) => void
 	clearFilter: () => void
 }
 
 function ProductFilter(props: ProductFilterPropsType) {
 
-	const { subCategoryData, filterData, callbackService, clearFilter } = props;
+	const { page, category, categoryService, onChangeFilterProducts, clearFilter } = props;
 
-	const [localFilterData, setLocalFilterData] = useState<FilterType>(filterData)
+	const loginDetails = useSelector(getLoginDetails);
 
-	const isSubCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-		isServiceLoading(state, [productSubCategoryCountServiceName]),
-	);
+	const [subCategory, setSubCategory] = useState<string>("");
+	const [subCategoryList, setSubCategoryList] = useState<ProductCatergoryCountType[]>([]);
 
-	const { category, subCategory } = localFilterData;
+	const dispatch = useDispatch<TAppDispatch>()
+
+	const { phoneNumber = '' } = loginDetails;
+
+	async function handleCategoryChange() {
+		setSubCategoryList([])
+		setSubCategory("")
+
+		try {
+			const response = await dispatch(ProductSubCategoryCountService(category)) as ProductCatergoryCountType[];
+			setSubCategoryList(response)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async function handleApplyFilter(page = 1) {
+		if (!subCategory) return;
+
+		try {
+			onChangeFilterProducts([])
+
+			const { data, pagination } = await dispatch(FilterProductService({
+				category, subCategory, queryParams: {
+					page,
+					limit: LIMIT_PER_PAGE,
+					phoneNumber,
+				},
+			})) as ProductCatalogDetailsType
+
+			onChangeFilterProducts(data, pagination)
+
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	useEffect(() => {
+		handleCategoryChange()
+	}, [category])
+
+	useEffect(() => {
+		if (subCategory) {
+			handleApplyFilter(page)
+			return;
+		}
+		categoryService(page)
+	}, [page])
 
 	return (
 		<Box
@@ -154,10 +202,10 @@ function ProductFilter(props: ProductFilterPropsType) {
 				</Typography>
 
 				<Box>
-					{subCategoryData.map((item) => (
+					{subCategoryList.map((item) => (
 						<Box
 							key={item.name}
-							onClick={() => setLocalFilterData(prev => ({ ...prev, subCategory: item.name.toLowerCase() }))}
+							onClick={() => setSubCategory(item.name.toLowerCase())}
 							sx={{
 								display: "flex",
 								alignItems: "center",
@@ -189,7 +237,7 @@ function ProductFilter(props: ProductFilterPropsType) {
 						</Box>
 					))}
 					{
-						subCategoryData.length === 0 && (
+						subCategoryList.length === 0 && (
 							<Box
 								sx={{
 									color: 'gray',
@@ -221,8 +269,8 @@ function ProductFilter(props: ProductFilterPropsType) {
 						},
 					}}
 					onClick={() => {
-						setLocalFilterData(prev => ({ ...prev, subCategory: "" }));
-						clearFilter();
+						setSubCategory("")
+						clearFilter()
 					}}
 				>
 					Clear
@@ -242,8 +290,8 @@ function ProductFilter(props: ProductFilterPropsType) {
 							opacity: 0.7,
 						},
 					}}
-					disabled={!subCategory || !subCategoryData.length}
-					onClick={() => callbackService({ category, subCategory })}
+					disabled={!subCategory || !subCategoryList.length}
+					onClick={() => handleApplyFilter()}
 				>
 					Apply
 				</Button>
