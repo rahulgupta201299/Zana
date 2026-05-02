@@ -65,16 +65,23 @@ export async function displayRazorpay(method: PaymentTypeEnum) {
 
   let response: CreatePaymentOrderResType | CreateCodOrderResType;
 
-  if (method === PaymentTypeEnum.RAZORPAY) {
-    response = (await dispatch(
-      createPaymentOrderServiceAction({ phoneNumber }),
-    )) as CreatePaymentOrderResType;
-  }
+  try {
+    if (method === PaymentTypeEnum.RAZORPAY) {
+      response = (await dispatch(
+        createPaymentOrderServiceAction({ phoneNumber }),
+      )) as CreatePaymentOrderResType;
+    }
 
-  if (method === PaymentTypeEnum.COD) {
-    response = (await dispatch(
-      createCodOrderServiceAction({ phoneNumber }),
-    )) as CreateCodOrderResType;
+    if (method === PaymentTypeEnum.COD) {
+      response = (await dispatch(
+        createCodOrderServiceAction({ phoneNumber }),
+      )) as CreateCodOrderResType;
+    }
+  } catch (error) {
+    enqueueSnackbar({
+      message: "",
+      variant: 'error'
+    })
   }
 
   const { orderId, amount, currency, razorpayOrderId, name, key } = response;

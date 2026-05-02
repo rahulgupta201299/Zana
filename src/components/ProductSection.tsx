@@ -34,7 +34,7 @@ import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { encodedGeneratedPath } from "@/Utils/global";
 
 type Props = {
-  filteredBikeProducts: any[];
+  filteredBikeProducts: ShopByProductDetailsType[];
   setSelectedCategory: (cat: string) => void;
 };
 
@@ -406,9 +406,11 @@ const ProductsSection = ({
       </Grid>
 
       {/* ================= Loading ================= */}
-      {filteredBikeProducts.length === 0 && isLoading && (
-        <ProductSkeleton gridSize="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6" />
-      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
+        {filteredBikeProducts.length === 0 && isLoading && (
+          <ProductSkeleton />
+        )}
+      </div>
 
       {/* ================= Empty ================= */}
       {filteredBikeProducts.length === 0 && !isLoading && (
