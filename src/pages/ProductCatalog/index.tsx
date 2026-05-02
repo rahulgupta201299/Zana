@@ -1,13 +1,14 @@
 import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Button, Pagination } from "@mui/material";
+import { Box, Button, Dialog, DialogContent, IconButton, Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, X } from "lucide-react";
 import { ALL_CATEGORY } from "@/Constants/AppConstant";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import {
   ProductCatalogDetailsType,
+  ProductCatergoryCountType,
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
 import { ROUTES } from "@/Constants/Routes";
@@ -20,6 +21,7 @@ import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import {
   allProductServiceName,
   categoryProductServiceName,
+  filterProductServiceName,
 } from "@/Redux/Product/Actions";
 import useCart from "@/hooks/useCart";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
@@ -30,6 +32,11 @@ import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { encodedGeneratedPath } from "@/Utils/global";
+import ProductFilter from "./ProductFilter";
+import { ProductModalType } from "./Constant";
+import { FilterType } from "./Types";
+import ProductSubCategoryCountService from "@/Redux/Product/Services/ProductSubCategoryCountService";
+import FilterProductService from "@/Redux/Product/Services/FilterProductService";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -45,18 +52,20 @@ const ProductCatalogPage = () => {
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [
       categoryProductServiceName,
+      filterProductServiceName,
       allProductServiceName,
     ]),
   );
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>(initialCategory);
   const [filteredProducts, setFilteredProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
+  const [filters, setFilters] = useState<FilterType>({ category: initialCategory, subCategory: "" });
+  const [subCategoryData, setSubCategoryData] = useState<ProductCatergoryCountType[]>([])
+  const [modalType, setModalType] = useState<string | null>(null)
 
   const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
@@ -73,11 +82,14 @@ const ProductCatalogPage = () => {
   async function handleCategoryService(type: string, page = 1, skip = false) {
     const { phoneNumber = '' } = loginDetails;
 
-    if (type === selectedCategory && page === currentPage && !skip) return;
+    const { category } = filters;
+
+    if (type === category && page === currentPage && !skip) return;
 
     try {
       setFilteredProducts([]);
-      setSelectedCategory(type);
+      setSubCategoryData([]);
+      setFilters(prev => ({ ...prev, category: type, subCategory: "" }));
 
       const action =
         type === ALL_CATEGORY
@@ -95,16 +107,68 @@ const ProductCatalogPage = () => {
             },
           });
 
-      const { data, pagination } = (await dispatch(
-        action,
-      )) as ProductCatalogDetailsType;
+      const [productRes, subCategoryRes] = await Promise.allSettled([
+        dispatch(action),
+        dispatch(ProductSubCategoryCountService(type)),
+      ]);
 
-      setFilteredProducts(data);
-      setNumberOfPages(pagination.totalPages);
-      setCurrentPage(pagination.currentPage);
+      if (productRes.status === "fulfilled") {
+        const { data, pagination } = productRes.value as ProductCatalogDetailsType;
+        setFilteredProducts(data);
+        setNumberOfPages(pagination.totalPages);
+        setCurrentPage(pagination.currentPage);
+      } else {
+        console.error("Product API failed", productRes.reason);
+      }
+
+      if (subCategoryRes.status === "fulfilled") {
+        setSubCategoryData(subCategoryRes.value as ProductCatergoryCountType[]);
+      } else {
+        console.warn("Subcategory API failed", subCategoryRes.reason);
+      }
+
     } catch (e) {
       console.error(e);
     }
+  }
+
+  async function handleFilterService({ category, subCategory }: { category: string, subCategory: string }, page = 1) {
+    const { phoneNumber = '' } = loginDetails;
+
+    if (!subCategory) return;
+
+    try {
+      setFilteredProducts([]);
+      setModalType(null);
+
+      const { data, pagination } = await dispatch(FilterProductService({
+        category, subCategory, queryParams: {
+          page,
+          limit: LIMIT_PER_PAGE,
+          phoneNumber,
+        },
+      })) as ProductCatalogDetailsType
+
+      setFilters(prev => ({ ...prev, subCategory }));
+      setFilteredProducts(data);
+      setNumberOfPages(pagination.totalPages);
+      setCurrentPage(pagination.currentPage);
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function handleClearFilter() {
+    const { category, subCategory } = filters;
+
+    setModalType(null)
+
+    if (!subCategory) return;
+
+    setFilters(prev => ({ ...prev, subCategory: "" }))
+
+    handleCategoryService(category, 1, true)
   }
 
   async function handleWishList(product: ShopByProductDetailsType) {
@@ -160,13 +224,16 @@ const ProductCatalogPage = () => {
       0,
     );
     return [
-      { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
+      { name: ALL_CATEGORY, count: totalCategoryCount },
       ...productCategory,
     ];
   }, [productCategory.length]);
 
   async function pageOps() {
-    if (filteredProducts.length && initialCategory === selectedCategory) return;
+    const { category } = filters;
+
+    if (filteredProducts.length && initialCategory === category) return;
+
     try {
       await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
     } catch (error: any) {
@@ -219,6 +286,7 @@ const ProductCatalogPage = () => {
           >
             {categoryDetails.map((category, ind) => {
               const { name, count } = category;
+              const { category: selectedCategory } = filters;
               const categoryName = name.toLowerCase();
 
               return (
@@ -262,136 +330,176 @@ const ProductCatalogPage = () => {
         </div>
       </div>
 
-      <div className="py-8 md:py-16 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {filteredProducts.map((product) => {
-              const {
-                _id,
-                category,
-                name,
-                imageUrl,
-                quantityAvailable,
-                isBikeSpecific,
-                price,
-                currencySymbol,
-              } = product;
+      <div className="py-8 px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
 
-              const quantityAddedInCart = getQuantity(_id);
-              const isDisabled = quantityAddedInCart >= quantityAvailable;
+          <div className="lg:hidden flex justify-end">
+            <Button
+              sx={{
+                backgroundColor: "transparent",
+                border: "1px solid #FACC15",
+                color: "#FACC15",
+                fontWeight: 800,
+                px: 2.5, // 20px
+                py: 1,   // 8px
+                borderRadius: "8px",
+                textTransform: "none",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  backgroundColor: "#FACC15",
+                  color: "#000",
+                  border: "1px solid #FACC15",
+                },
+              }}
+              onClick={() => setModalType(ProductModalType.APPLY_FILTERS)}
+            >
+              Apply Filters
+            </Button>
+          </div>
 
-              return (
-                <div
-                  key={_id}
-                  onClick={() => handleProductClick(category, name, _id)}
-                  className="bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-yellow-400 transition-all duration-300 cursor-pointer group"
-                >
-                  {/* Product Image */}
+          {/* ===== MAIN GRID ===== */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+
+            {/* ================= SIDEBAR ================= */}
+            <div className="lg:col-span-1">
+              <div className="hidden lg:block self-start">
+                <ProductFilter
+                  subCategoryData={subCategoryData}
+                  callbackService={handleFilterService}
+                  clearFilter={handleClearFilter}
+                  filterData={filters}
+                />
+              </div>
+            </div>
+
+            <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              {filteredProducts.map((product) => {
+                const {
+                  _id,
+                  category,
+                  name,
+                  imageUrl,
+                  quantityAvailable,
+                  isBikeSpecific,
+                  price,
+                  currencySymbol,
+                } = product;
+
+                const quantityAddedInCart = getQuantity(_id);
+                const isDisabled = quantityAddedInCart >= quantityAvailable;
+
+                return (
                   <div
-                    className="relative bg-white p-4 md:p-6 h-48 md:h-64 flex items-center justify-center"
-
+                    key={_id}
+                    onClick={() => handleProductClick(category, name, _id)}
+                    className="bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-yellow-400 transition-all duration-300 cursor-pointer group"
                   >
-                    <img
-                      src={imageUrl}
-                      alt={name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) =>
-                        (e.currentTarget.src = BikePlaceholderImage)
-                      }
-                      style={{
-                        filter:
-                          quantityAvailable === 0 ? "grayscale(100%)" : "none",
-                        opacity: quantityAvailable === 0 ? 0.6 : 1,
-                      }}
-                    />
-                    {isBikeSpecific && (
-                      <div className="absolute top-2 right-2 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
-                        FEATURED
-                      </div>
-                    )}
-                    {!isBikeSpecific && (
-                      <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                        UNIVERSAL
-                      </div>
-                    )}
-                    {quantityAvailable === 0 && (
-                      <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-                        <div className="bg-white px-4 py-1 rounded text-[13px] font-semibold text-orange-500 shadow-sm">
-                          OUT OF STOCK
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    {/* Product Image */}
+                    <div
+                      className="relative bg-white p-4 md:p-6 h-48 md:h-64 flex items-center justify-center"
 
-                  {/* Product Info */}
-                  <div className="p-3 md:p-4">
-                    <div className="mb-1">
-                      <span className="text-xs text-yellow-400 font-medium">
-                        {category}
-                      </span>
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={name}
+                        className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                        onError={(e) =>
+                          (e.currentTarget.src = BikePlaceholderImage)
+                        }
+                        style={{
+                          filter:
+                            quantityAvailable === 0 ? "grayscale(100%)" : "none",
+                          opacity: quantityAvailable === 0 ? 0.6 : 1,
+                        }}
+                      />
+                      {isBikeSpecific && (
+                        <div className="absolute top-2 right-2 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
+                          FEATURED
+                        </div>
+                      )}
+                      {!isBikeSpecific && (
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                          UNIVERSAL
+                        </div>
+                      )}
+                      {quantityAvailable === 0 && (
+                        <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+                          <div className="bg-white px-4 py-1 rounded text-[13px] font-semibold text-orange-500 shadow-sm">
+                            OUT OF STOCK
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-white text-sm md:text-lg font-bold mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors">
-                      {name}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-yellow-400 text-lg md:text-xl font-bold">
-                        {currencySymbol} {price?.toLocaleString()}
-                      </span>
-                      <div className="flex gap-1 md:gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleWishList(product);
-                          }}
-                          className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                            ${(wishlistMap[product._id] ?? product.isWishlist)
-                              ? "bg-yellow-400 text-black"
-                              : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
-                            }
-   `}
-                        >
-                          <Heart size={14} className="md:w-4 md:h-4" />
-                        </button>
-                        <div className="relative inline-flex">
+
+                    {/* Product Info */}
+                    <div className="p-3 md:p-4">
+                      <div className="mb-1">
+                        <span className="text-xs text-yellow-400 font-medium">
+                          {category}
+                        </span>
+                      </div>
+                      <h3 className="text-white text-sm md:text-lg font-bold mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors">
+                        {name}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <span className="text-yellow-400 text-lg md:text-xl font-bold">
+                          {currencySymbol} {price?.toLocaleString()}
+                        </span>
+                        <div className="flex gap-1 md:gap-2">
                           <button
-                            onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                              handleAddToCart(
-                                e,
-                                product,
-                                _id,
-                                quantityAvailable,
-                              )
-                            }
-                            style={{
-                              cursor: isDisabled ? "not-allowed" : "pointer",
-                              opacity: isDisabled ? 0.7 : 1,
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleWishList(product);
                             }}
-                            className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
+                            className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
+                            ${(wishlistMap[product._id] ?? product.isWishlist)
+                                ? "bg-yellow-400 text-black"
+                                : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                              }
+   `}
                           >
-                            <ShoppingCart size={14} className="md:w-4 md:h-4" />
+                            <Heart size={14} className="md:w-4 md:h-4" />
                           </button>
-                          {quantityAddedInCart > 0 && (
-                            <span
-                              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
+                          <div className="relative inline-flex">
+                            <button
+                              onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                                handleAddToCart(
+                                  e,
+                                  product,
+                                  _id,
+                                  quantityAvailable,
+                                )
+                              }
+                              style={{
+                                cursor: isDisabled ? "not-allowed" : "pointer",
+                                opacity: isDisabled ? 0.7 : 1,
+                              }}
+                              className="p-1.5 md:p-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all"
+                            >
+                              <ShoppingCart size={14} className="md:w-4 md:h-4" />
+                            </button>
+                            {quantityAddedInCart > 0 && (
+                              <span
+                                className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-[5px]
                                 bg-red-600 text-white text-[11px] font-bold
                                 rounded-full flex items-center justify-center
                                 leading-none shadow-md"
-                            >
-                              {quantityAddedInCart}
-                            </span>
-                          )}
+                              >
+                                {quantityAddedInCart}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+              {filteredProducts.length === 0 && isProductCategoryLoading && (
+                <ProductSkeleton />
+              )}
+            </div>
           </div>
-
-          {filteredProducts.length === 0 && isProductCategoryLoading && (
-            <ProductSkeleton gridSize="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" />
-          )}
 
           {filteredProducts.length === 0 && !isProductCategoryLoading && (
             <div className="text-center py-16">
@@ -422,7 +530,12 @@ const ProductCatalogPage = () => {
               siblingCount={1}
               boundaryCount={0}
               onChange={(_, page) => {
-                handleCategoryService(selectedCategory, page);
+                const { category, subCategory } = filters;
+                if (subCategory) {
+                  handleFilterService({ category, subCategory }, page);
+                  return;
+                }
+                handleCategoryService(filters.category, page);
               }}
               sx={{
                 "& .MuiPaginationItem-root": {
@@ -446,6 +559,40 @@ const ProductCatalogPage = () => {
           </Box>
         </div>
       </div>
+
+      {
+        modalType === ProductModalType.APPLY_FILTERS && (
+          <Dialog
+            open={true}
+            onClose={() => setModalType(null)}
+            fullWidth
+            maxWidth="sm"
+          >
+            <DialogContent sx={{ p: 0, position: "relative" }}>
+
+              {/* Close Button */}
+              <IconButton
+                onClick={() => setModalType(null)}
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                }}
+              >
+                <X />
+              </IconButton>
+
+              {/* Filter Component */}
+              <ProductFilter
+                subCategoryData={subCategoryData}
+                callbackService={handleFilterService}
+                clearFilter={handleClearFilter}
+                filterData={filters}
+              />
+            </DialogContent>
+          </Dialog>
+        )
+      }
     </div>
   );
 };

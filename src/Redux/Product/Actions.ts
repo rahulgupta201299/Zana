@@ -19,11 +19,17 @@ export const zProBikeTraceActions = traceActionsCreator(zProBikeServiceName)
 export const categoryProductServiceName = `${SLICE_NAME}/categoryProduct`
 export const categoryProductTraceActions = traceActionsCreator(categoryProductServiceName)
 
+export const filterProductServiceName = `${SLICE_NAME}/filterProduct`
+export const filterProductTraceActions = traceActionsCreator(filterProductServiceName)
+
 export const allProductServiceName = `${SLICE_NAME}/allProduct`
 export const allProductTraceActions = traceActionsCreator(allProductServiceName)
 
 export const productCategoryCountServiceName = `${SLICE_NAME}/productCategoryCount`
 export const productCategoryCountTraceActions = traceActionsCreator(productCategoryCountServiceName)
+
+export const productSubCategoryCountServiceName = `${SLICE_NAME}/productSubCategoryCount`
+export const productSubCategoryCountTraceActions = traceActionsCreator(productSubCategoryCountServiceName)
 
 export const searchServiceName = `${SLICE_NAME}/search`
 export const searchTraceActions = traceActionsCreator(searchServiceName)

@@ -35,6 +35,10 @@ export type ShopByProductDetailsType = {
   isGarageFavorite: boolean;
   isWishlist: boolean;
   productCode: string;
+  priority: number;
+  isActive: boolean;
+  isComingSoon: boolean;
+  subCategory: string;
 };
 
 export type ShopByBikeModelsType = {
@@ -91,7 +95,6 @@ export type ProductCatalogDetailsType = {
 export type ProductCatergoryCountType = {
   count: number;
   name: string;
-  icon: string;
 };
 
 export interface SearchRequestType extends QueryParamsType {
@@ -123,4 +126,11 @@ export type BikeDetailResType = {
   category: string;
   imageUrl: string;
   description: string;
+};
+
+
+export type FilterProductReqType = {
+  category: string;
+  subCategory: string;
+  queryParams?: QueryParamsType;
 };
