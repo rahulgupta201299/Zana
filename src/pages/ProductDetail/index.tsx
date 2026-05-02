@@ -23,9 +23,7 @@ import {
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
-import {
-  handleSocialMedia,
-} from "@/Utils/StringUtils";
+import { handleSocialMedia } from "@/Utils/StringUtils";
 import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
 import { ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
@@ -35,7 +33,10 @@ import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { categoryProductServiceName, productDetailServiceName } from "@/Redux/Product/Actions";
+import {
+  categoryProductServiceName,
+  productDetailServiceName,
+} from "@/Redux/Product/Actions";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
@@ -45,7 +46,7 @@ const ProductDetailPage = () => {
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
-  const { productCategory = '', productId = '', productItem = '' } = params
+  const { productCategory = "", productId = "", productItem = "" } = params;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -74,7 +75,9 @@ const ProductDetailPage = () => {
   );
 
   function handleBackToProducts() {
-    navigate(ROUTES.PRODUCT_CATALOG, { state: { category: productCategory.toLowerCase() } });
+    navigate(ROUTES.PRODUCT_CATALOG, {
+      state: { category: productCategory.toLowerCase() },
+    });
   }
 
   async function handleWishList(productId: string) {
@@ -94,13 +97,13 @@ const ProductDetailPage = () => {
     try {
       const action = prevValue
         ? removeWishlistServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        })
+            phoneNumber,
+            productIds: [productId],
+          })
         : addWishListServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        });
+            phoneNumber,
+            productIds: [productId],
+          });
 
       const result = await dispatch(action);
 
@@ -143,11 +146,19 @@ const ProductDetailPage = () => {
     }
   }
 
-  function handleSuggestedProductClick(productCategory: string, productItem: string, productId: string) {
-    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
+  function handleSuggestedProductClick(
+    productCategory: string,
+    productItem: string,
+    productId: string,
+  ) {
+    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
+      productCategory,
+      productItem,
+      productId,
+    });
 
-    navigate(path)
-    window.scrollTo(0, 0)
+    navigate(path);
+    window.scrollTo(0, 0);
   }
 
   useEffect(() => {
@@ -210,16 +221,17 @@ const ProductDetailPage = () => {
                   <Fragment key={index}>
                     {!isProductLoading ? (
                       <div
-                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all bg-gradient-to-b from-[#7B7575] to-white ${selectedImageIndex === index
-                          ? "border-white"
-                          : "border-gray-600"
-                          }`}
+                        className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all overflow-hidden ${
+                          selectedImageIndex === index
+                            ? "border-white"
+                            : "border-gray-600"
+                        }`}
                         onClick={() => setSelectedImageIndex(index)}
                       >
                         <img
                           src={image}
                           alt={`${name} ${index + 1}`}
-                          className="w-full h-full object-contain p-2"
+                          className="w-full h-full object-cover p-2"
                         />
                       </div>
                     ) : (
@@ -237,7 +249,7 @@ const ProductDetailPage = () => {
 
           {/* Center - Main Product Image */}
           <div className="lg:col-span-5">
-            <div className="bg-gradient-to-b from-[#7B7575] to-white rounded-lg p-8 h-96 lg:h-[600px] flex items-center justify-center">
+            <div className=" rounded-lg  h-96 lg:h-[600px] flex items-center justify-center">
               {!isProductLoading ? (
                 <img
                   src={newImages[selectedImageIndex]}
@@ -275,7 +287,6 @@ const ProductDetailPage = () => {
                   height={60}
                 />
               )}
-
             </div>
 
             {!isProductLoading ? (
@@ -434,10 +445,11 @@ const ProductDetailPage = () => {
                       handleWishList(product._id);
                     }}
                     className={` p-1.5 md:p-2 rounded-lg transition-all duration-200
-                     ${(isWishlisted ?? product.isWishlist)
-                        ? "bg-yellow-400 text-black"
-                        : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
-                      }`}
+                     ${
+                       (isWishlisted ?? product.isWishlist)
+                         ? "bg-yellow-400 text-black"
+                         : "bg-white/10 text-white hover:bg-yellow-400 hover:text-black"
+                     }`}
                   >
                     <Heart size={20} className="md:w-6 md:h-6" />
                   </button>
@@ -453,26 +465,26 @@ const ProductDetailPage = () => {
               onValueChange={setActiveTab}
               className="w-full"
             >
-             <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-[#7B7575] to-white">
-              <TabsTrigger
-                 value="description"
-                 className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
+              <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-[#7B7575] to-white">
+                <TabsTrigger
+                  value="description"
+                  className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
                 >
-                DESCRIPTION
-               </TabsTrigger>
-            <TabsTrigger
-              value="specification"
-              className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
-             >
-             SPECIFICATION
-          </TabsTrigger>
-              <TabsTrigger
-               value="shipping"
-               className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
+                  DESCRIPTION
+                </TabsTrigger>
+                <TabsTrigger
+                  value="specification"
+                  className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
                 >
-             SHIPPING & RETURN
-             </TabsTrigger>
-            </TabsList>
+                  SPECIFICATION
+                </TabsTrigger>
+                <TabsTrigger
+                  value="shipping"
+                  className="text-black font-medium text-[10px] sm:text-sm px-1 py-2"
+                >
+                  SHIPPING & RETURN
+                </TabsTrigger>
+              </TabsList>
 
               <div className="bg-white rounded-b-lg p-6 min-h-[200px] max-h-[300px] overflow-y-auto">
                 <TabsContent
@@ -629,9 +641,10 @@ const ProductDetailPage = () => {
                     </h3>
 
                     <span className="font-bold text-black text-sm whitespace-nowrap">
-                      {currencySymbol} {price?.toLocaleString('en-IN', {
+                      {currencySymbol}{" "}
+                      {price?.toLocaleString("en-IN", {
                         minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </span>
                   </div>

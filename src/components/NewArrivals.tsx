@@ -15,19 +15,24 @@ const NewArrivals = () => {
 
   const { incrementToCart, getQuantity } = useCart();
 
-    function handleAddToCart(productId: string) {
-    const product = products.find(item => item._id === productId)
+  function handleAddToCart(productId: string) {
+    const product = products.find((item) => item._id === productId);
 
     if (!product) return;
 
-    const { quantityAvailable = 0 } = product
+    const { quantityAvailable = 0 } = product;
 
-    incrementToCart(product, productId, quantityAvailable, { easyCheckout: true })
+    incrementToCart(product, productId, quantityAvailable, {
+      easyCheckout: true,
+    });
   }
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
 
   return (
-    <div  className="py-6 md:py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#181818" }}>
+    <div
+      className="py-6 md:py-12 px-4 sm:px-6 lg:px-8"
+      style={{ backgroundColor: "#181818" }}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6 md:mb-12">
@@ -40,14 +45,14 @@ const NewArrivals = () => {
         </div>
 
         <div className="hidden md:grid grid-cols-5 gap-2">
-            {desktopColumns.map((col, colIdx) => (
+          {desktopColumns.map((col, colIdx) => (
             <div key={colIdx} className="flex flex-col gap-2">
               {col.map((idx) => (
                 <ProductCard
                   key={idx}
                   product={products[idx]}
                   onClick={() => handleAddToCart(products[idx]._id)}
-                  height={col.length === 1 ? 360 : 176}
+                   height={col.length === 1 ? 380 : 186}
                   count={getQuantity(products[idx]?._id)}
                   loading={isLoading}
                 />
@@ -56,19 +61,26 @@ const NewArrivals = () => {
           ))}
         </div>
 
-      
-          <div className="md:hidden grid grid-cols-3 grid-rows-3 gap-2">
-          {products.slice(0, 8).map((product, idx) => {
-            const isCenterFeatured = idx === 1;
+        <div
+          className="md:hidden grid grid-cols-2 gap-2 p-3"
+          style={{ gridAutoRows: "160px" }}
+        >
+          {products.slice(0,8).map((product, idx) => {
+            const tallRight = [1, 8];
+            const tallLeft = [4];
+
+            const isTall = [...tallRight, ...tallLeft].includes(idx);
 
             return (
               <div
                 key={product._id}
-                className={isCenterFeatured ? "row-span-2 col-start-2" : ""}
+                style={{
+                  gridRow: isTall ? "span 2" : "span 1",
+                }}
               >
                 <ProductCard
                   product={product}
-                  height={isCenterFeatured ? 310 : 150}
+                  height={isTall ? 328 : 160}
                   count={getQuantity(product._id)}
                   loading={isLoading}
                   onClick={() => handleAddToCart(product._id)}
