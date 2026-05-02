@@ -127,10 +127,14 @@ const OrderConfirmation = () => {
             Thank you for your purchase!
           </Typography>
 
-          <Typography sx={{ color: "#94a3b8", mt: 1 }}>
-            Order placed on{" "}
-            <b style={{ color: "#fff" }}>{dateFormatter(orderDate)}</b>
-          </Typography>
+          <Box display="flex" justifyContent="space-between" gap={1}>
+            <Typography sx={{ color: "#94a3b8", mt: 1 }}>
+              Order placed on
+            </Typography>
+            <Typography sx={{ color: "#fff", fontWeight: 700 }}>
+              {orderDate ? dateFormatter(orderDate) : <Skeleton variant="text" width={100} height={40} sx={{ bgcolor: "grey.500" }} />}
+            </Typography>
+          </Box>
         </Box>
 
         {/* 🔹 RIGHT SIDE (DETAILS) */}

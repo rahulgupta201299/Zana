@@ -139,27 +139,17 @@ export default function CheckoutPage() {
 
   function performOps() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
-    if (currency === CURRENCY_LIST.INR) handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
   }
 
   useEffect(() => {
     if (isCartLoading) return;
-
-    if (currency !== CURRENCY_LIST.INR) {
-      handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
-      return;
-    }
 
     if (paymentType) {
       handlePaymentOptionChange(paymentType)
       return;
     }
 
-    if (codCharges) {
-      handlePaymentOptionChange(PaymentTypeEnum.COD)
-      return;
-    }
-  }, [cartDiscountAmount, isCartLoading, currency])
+  }, [cartDiscountAmount, isCartLoading])
 
   // syncing with cart everytime before set-payment-method api call
   useEffect(() => {
@@ -397,7 +387,7 @@ export default function CheckoutPage() {
         variant: "error",
         message
       });
-      setPaymentType(paymentType)
+      setPaymentType(null)
     }
   }
 
@@ -479,6 +469,18 @@ export default function CheckoutPage() {
                   setShippingIsdCode(shippingIsdCode)
                   setBillingIsdCode(billingIsdCode)
                 }, [isdCode.length, values.shippingPhone, values.billingPhone, values.shippingAddressSameAsBillingAddress])
+
+                useEffect(() => {
+                  const { shippingCountry = '' } = values;
+                  if (!paymentType || currency !== CURRENCY_LIST.INR || (!shippingCountry || shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA)) {
+                    handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY);
+                    return;
+                  }
+                  if (codCharges) {
+                    handlePaymentOptionChange(PaymentTypeEnum.COD);
+                    return;
+                  }
+                }, [currency])
 
                 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
                   const { checked } = e.target;
