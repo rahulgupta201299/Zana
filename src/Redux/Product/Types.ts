@@ -5,6 +5,7 @@ export type T_PRODUCT_REDUCER = {
     shopByBike: ShopByBikeType[];
     zProBikes: ShopByBikeType[];
     productCategory: ProductCatergoryCountType[];
+    bikeProductCategory: ProductCatergoryCountType[];
   };
 };
 

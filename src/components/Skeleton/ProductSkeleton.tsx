@@ -4,14 +4,14 @@ function ProductSkeleton() {
 	return Array(10).fill(0).map((_, ind) => (
 		<div
 			key={ind}
-			className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
+			className="border-2 border-yellow-400 rounded-lg overflow-hidden cursor-pointer  bg-[rgba(255,255,255,0.05)] transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
 		>
-			<div className="bg-white p-6 md:p-8 h-48 md:h-64 flex items-center justify-center">
-				<Skeleton width={256} height={256} />
+			<div className="bg-[rgba(255,255,255,0.05)]  h-80 md:h-80 flex items-center justify-center">
+				<Skeleton width={256} height={300} />
 			</div>
 
 			{/* Info Section */}
-			<div className="bg-gradient-to-br from-white/5 to-white/10 text-black p-4 md:p-6">
+			<div className="bg-gradient-to-br from-white/5 to-white/10 text-black p-1 md:p-1">
 				<div className="mb-2">
 					<span className="text-xs md:text-sm font-medium opacity-80">
 						<Skeleton width={40} />

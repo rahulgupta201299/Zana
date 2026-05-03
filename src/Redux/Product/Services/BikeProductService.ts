@@ -7,8 +7,9 @@ import AppStore from "@/Configurations/AppStore";
 
 const network = new Network();
 
+
 async function bikeProductService(
-  modelId: string,
+ { modelId, category, subCategory }: { modelId: string; category: string; subCategory: string },
 ): Promise<ShopByProductDetailsType[]> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
@@ -18,6 +19,8 @@ async function bikeProductService(
     method: API_METHOD_ENUM.GET,
     params: {
       currency,
+      category,
+      subCategory,
     },
   };
 

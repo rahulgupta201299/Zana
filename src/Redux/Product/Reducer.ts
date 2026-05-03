@@ -11,16 +11,19 @@ import {
 } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
+  bikeCategoryCountTraceActions,
   productCategoryCountTraceActions,
   shopByBikeTraceActions,
   zProBikeTraceActions,
 } from "./Actions";
+import bikeCategoryCountServiceAction from "./Services/BikeCategoryCount";
 
 export const INITIAL_STATE: T_PRODUCT_REDUCER = {
   menu: {
     shopByBike: [],
     productCategory: [],
     zProBikes: [],
+    bikeProductCategory: [],
   },
 };
 
@@ -49,6 +52,12 @@ const sliceOptions: CreateSliceOptions<T_PRODUCT_REDUCER> = {
       productCategoryCountTraceActions.success,
       (state, action: PayloadAction<ProductCatergoryCountType[]>) => {
         state.menu.productCategory = action.payload;
+      },
+    );
+     builder.addCase(
+      bikeCategoryCountTraceActions.success,
+      (state, action: PayloadAction<ProductCatergoryCountType[]>) => {
+        state.menu.bikeProductCategory = action.payload;
       },
     );
   },
