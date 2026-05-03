@@ -138,7 +138,7 @@ const BikeDetailPage = () => {
       { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
       ...productCategory,
     ];
-  }, [productCategory.length]);
+  }, [productCategory]);
 
   const [page, setPage] = useState<number>(1);
 
