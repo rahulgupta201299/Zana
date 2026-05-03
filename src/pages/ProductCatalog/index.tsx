@@ -46,7 +46,6 @@ import ProductSection from "@/components/ProductSection";
 const ProductCatalogPage = ({ isDesktop }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const { category: initialCategory = "" } = location.state || {};
 
   const { enqueueSnackbar } = useSnackbar();
@@ -70,8 +69,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
-  const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
-  const [modalType, setModalType] = useState<string | null>(null);
+
 
   const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
@@ -79,19 +77,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
 
   const LIMIT_PER_PAGE = 12;
 
-  function handleProductClick(
-    productCategory: string,
-    productItem: string,
-    productId: string,
-  ) {
-    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
-      productCategory,
-      productItem,
-      productId,
-    });
 
-    navigate(path);
-  }
 
   async function handleCategoryService(type: string, page = 1, skip = false) {
     const { phoneNumber = "" } = loginDetails;
@@ -130,50 +116,7 @@ const ProductCatalogPage = ({ isDesktop }) => {
     }
   }
 
-  async function handleWishList(product: ShopByProductDetailsType) {
-    const { _id: productId, isWishlist } = product;
-    const { phoneNumber = "" } = loginDetails;
-
-    const currentValue = wishlistMap[productId] ?? isWishlist;
-    if (!phoneNumber) {
-      enqueueSnackbar({
-        message: "Login required to save products to your wishlist.",
-        variant: "info",
-      });
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
-    setWishlistMap((prev) => ({
-      ...prev,
-      [productId]: !currentValue,
-    }));
-
-    try {
-      const action = currentValue
-        ? removeWishlistServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          })
-        : addWishListServiceAction({
-            phoneNumber,
-            productIds: [productId],
-          });
-
-      const result = await dispatch(action);
-
-      if (result) {
-        enqueueSnackbar({
-          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
-          variant: currentValue ? "info" : "success",
-        });
-      }
-    } catch (error) {
-      setWishlistMap((prev) => ({
-        ...prev,
-        [productId]: currentValue,
-      }));
-    }
-  }
+ 
 
   const categoryDetails = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -228,6 +171,8 @@ const ProductCatalogPage = ({ isDesktop }) => {
 
           <ProductSection
             type="catalog"
+            subCategory={subCategory}
+            setSubCategory={setSubCategory}
             products={filteredProducts}
             categoriesWithCount={categoryDetails}
             selectedCategory={selectedCategory}
@@ -247,7 +192,9 @@ const ProductCatalogPage = ({ isDesktop }) => {
             totalPages={numberOfPages}
             onPageChange={(p) => {
               setCurrentPage(p);
-              handleCategoryService(selectedCategory, p);
+              if (!subCategory) {
+                handleCategoryService(selectedCategory, p);
+              }
             }}
           />
 

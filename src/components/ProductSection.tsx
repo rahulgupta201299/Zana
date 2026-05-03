@@ -41,6 +41,7 @@ import ProductFilter from "@/pages/ProductCatalog/ProductFilter";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import Products from "./Product";
+import { ProductModalType } from "@/pages/ProductCatalog/Constant";
 
 const FILTER_MODAL = "APPLY_FILTERS";
 
@@ -61,6 +62,8 @@ type Props = {
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  subCategory: string;
+  setSubCategory: (val: string) => void;
 };
 
 export default function ProductSection({
@@ -76,6 +79,8 @@ export default function ProductSection({
   page = 1,
   totalPages = 0,
   onPageChange,
+  subCategory,
+  setSubCategory,
 }: Props) {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
@@ -95,7 +100,7 @@ export default function ProductSection({
   );
 
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
-  const [subCategory, setSubCategory] = useState<string>("");
+
   const [modalType, setModalType] = useState<string | null>(null);
 
   function handleProductClick(
@@ -240,6 +245,7 @@ export default function ProductSection({
               border: "1px solid #FACC15",
             },
           }}
+          disabled={categoriesWithCount.length === 0 || selectedCategory === ALL_CATEGORY}
           onClick={() => setModalType(FILTER_MODAL)}
         >
           Apply Filters
@@ -324,6 +330,7 @@ export default function ProductSection({
                 page={page}
                 siblingCount={1}
                 boundaryCount={0}
+                
                 onChange={(_, p) => onPageChange?.(p)}
                 sx={{
                   "& .MuiPaginationItem-root": {
@@ -348,9 +355,9 @@ export default function ProductSection({
       </div>
 
       {/* Mobile Modal */}
-      {modalType === FILTER_MODAL && (
+      
         <Dialog
-          open={true}
+          open={modalType === ProductModalType.APPLY_FILTERS}
           onClose={() => setModalType(null)}
           fullWidth
           maxWidth="sm"
@@ -363,13 +370,14 @@ export default function ProductSection({
               },
             },
           }}
+          keepMounted
         >
           <DialogContent sx={{ p: 0, position: "relative" }}>
             <IconButton
               onClick={() => setModalType(null)}
               sx={{ position: "absolute", top: 10, right: 10, color: "white" }}
             >
-              <X />
+              X
             </IconButton>
             <ProductFilter
               type={type}
@@ -378,19 +386,23 @@ export default function ProductSection({
               subCategory={subCategory}
               setSubCategory={setSubCategory}
               category={selectedCategory}
-              onChangeFilterProducts={(data, pagination) => {
-                setModalType(null);
+              onChangeFilterProducts={(data, pagination) => {    
                 onChangeFilterProducts(data, pagination);
+                setTimeout(() => {
+                   setModalType(null);
+                }, 300);
               }}
-              clearFilter={() => {
-                setModalType(null);
+              clearFilter={() => {         
                 setSubCategory("");
                 onClearFilter();
+                 setTimeout(() => {
+                   setModalType(null);
+                }, 300);
               }}
             />
           </DialogContent>
         </Dialog>
-      )}
+      
     </>
   );
 }

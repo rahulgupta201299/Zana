@@ -28,8 +28,7 @@ import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
   const { bikeType: bikeTypeParams = "", bikeId = "" } = params;
-const productCategory =
-    useSelector(bikeProductCategorySelector) ;
+  const productCategory = useSelector(bikeProductCategorySelector);
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA;
 
@@ -57,6 +56,7 @@ const productCategory =
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>(
     [],
   );
+  const [subCategory, setSubCategory] = useState<string>("");
   const [filteredBikeProducts, setFilteredBikeProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
@@ -111,7 +111,6 @@ const productCategory =
     getBikeProducts(val);
   }
 
-
   function handleClearFilter() {
     setFilters({ category: selectedCategory, subCategory: "" });
     getBikeProducts(selectedCategory);
@@ -128,7 +127,7 @@ const productCategory =
     pageOps();
   }, [location.pathname, currency]);
 
-   const categoriesWithCount = useMemo(() => {
+  const categoriesWithCount = useMemo(() => {
     if (productCategory.length === 0) return [];
 
     const totalCategoryCount = productCategory.reduce(
@@ -281,6 +280,8 @@ const productCategory =
           {bikeId && (
             <ProductSection
               type="bike"
+              subCategory={subCategory}
+              setSubCategory={setSubCategory}
               modelId={bikeId}
               products={filteredBikeProducts}
               categoriesWithCount={categoriesWithCount}
