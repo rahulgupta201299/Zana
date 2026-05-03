@@ -1,435 +1,396 @@
+
 import {
   Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
   Button,
-  Chip,
-  Tooltip,
+  Dialog,
+  DialogContent,
+  Grid,
+  IconButton,
+  Pagination,
+  Typography,
 } from "@mui/material";
-import { ROUTES } from "@/Constants/Routes";
-import ProductSkeleton from "./Skeleton/ProductSkeleton";
-import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
-import useCart from "@/hooks/useCart";
-import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { ALL_CATEGORY } from "@/Constants/AppConstant";
+import { ROUTES } from "@/Constants/Routes";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import {
+  allProductServiceName,
   bikeProductServiceName,
+  categoryProductServiceName,
+  filterProductServiceName,
   productCategoryCountServiceName,
   shopByBikeServiceName,
 } from "@/Redux/Product/Actions";
-import { ALL_CATEGORY } from "@/Constants/AppConstant";
-import { Heart, ShoppingCart } from "lucide-react";
+import {
+  PaginationType,
+  ShopByProductDetailsType,
+} from "@/Redux/Product/Types";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
-import { useSnackbar } from "notistack";
-import { getLoginDetails } from "@/Redux/Auth/Selectors";
-import { useState } from "react";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { encodedGeneratedPath } from "@/Utils/global";
+import useCart from "@/hooks/useCart";
+import ProductCard from "@/components/ProductCard";
+import ProductFilter from "@/pages/ProductCatalog/ProductFilter";
+import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import Products from "./Product";
+
+const FILTER_MODAL = "APPLY_FILTERS";
 
 type Props = {
-  filteredBikeProducts: ShopByProductDetailsType[];
-  setSelectedCategory: (cat: string) => void;
+
+  type: "bike" | "catalog";
+  products: ShopByProductDetailsType[];
+  categoriesWithCount: { name: string; count: number }[];
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+  onChangeFilterProducts: (
+    data: ShopByProductDetailsType[],
+    pagination?: PaginationType,
+  ) => void;
+  onClearFilter: () => void;
+  isLoading?: boolean;
+  modelId?: string;
+  page?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
 };
 
-const ProductsSection = ({
-  filteredBikeProducts,
-  setSelectedCategory,
-}: Props) => {
-  const isLoading = useSelector<TAppStore, boolean>((state) =>
+export default function ProductSection({
+  type,
+  products,
+  categoriesWithCount,
+  selectedCategory,
+  onSelectCategory,
+  onChangeFilterProducts,
+  onClearFilter,
+  isLoading,
+  modelId,
+  page = 1,
+  totalPages = 0,
+  onPageChange,
+}: Props) {
+  const dispatch = useDispatch<TAppDispatch>();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const { incrementToCart, getQuantity } = useCart();
+  const loginDetails = useSelector(getLoginDetails);
+
+  const isProductLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [
       bikeProductServiceName,
       shopByBikeServiceName,
       productCategoryCountServiceName,
+      categoryProductServiceName,
+      allProductServiceName,
+      filterProductServiceName,
     ]),
   );
-  const dispatch = useDispatch<TAppDispatch>();
-  const loginDetails = useSelector(getLoginDetails);
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const { incrementToCart, getQuantity } = useCart();
 
-  //This whole logic will change after Be changes///
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
+  const [subCategory, setSubCategory] = useState<string>("");
+  const [modalType, setModalType] = useState<string | null>(null);
 
-  function handleProductClick(productCategory: string, productItem: string, productId: string) {
-    const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, { productCategory, productItem, productId })
-
-    navigate(path);
+  function handleProductClick(
+    productCategory: string,
+    productItem: string,
+    productId: string,
+  ) {
+    navigate(
+      encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
+        productCategory,
+        productItem,
+        productId,
+      }),
+    );
   }
 
-  async function handleWishList(product: ShopByProductDetailsType) {
+  async function handleWishList(
+    e: React.MouseEvent,
+    product: ShopByProductDetailsType,
+  ) {
+    e.stopPropagation();
     const { _id: productId, isWishlist } = product;
     const { phoneNumber = "" } = loginDetails;
     const currentValue = wishlistMap[productId] ?? isWishlist;
+
     if (!phoneNumber) {
       enqueueSnackbar({
         message: "Login required to save products to your wishlist.",
         variant: "info",
       });
       dispatch(setOpenSignupPopup(true));
-      return
+      return;
     }
-    setWishlistMap((prev) => ({
-      ...prev,
-      [productId]: !currentValue,
-    }));
+
+    setWishlistMap((prev) => ({ ...prev, [productId]: !currentValue }));
 
     try {
       const action = currentValue
-        ? removeWishlistServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        })
-        : addWishListServiceAction({
-          phoneNumber,
-          productIds: [productId],
-        });
+        ? removeWishlistServiceAction({ phoneNumber, productIds: [productId] })
+        : addWishListServiceAction({ phoneNumber, productIds: [productId] });
 
       const result = await dispatch(action);
-
       if (result) {
         enqueueSnackbar({
           message: currentValue ? "Removed from wishlist" : "Added to wishlist",
           variant: currentValue ? "info" : "success",
         });
       }
-    } catch (error) {
-      setWishlistMap((prev) => ({
-        ...prev,
-        [productId]: currentValue,
-      }));
+    } catch {
+      setWishlistMap((prev) => ({ ...prev, [productId]: currentValue }));
     }
   }
 
+  function handleAddToCart(
+    e: React.MouseEvent,
+    product: ShopByProductDetailsType,
+  ) {
+    e.stopPropagation();
+    const { _id, quantityAvailable } = product;
+    incrementToCart(product, _id, quantityAvailable, {
+      navigateTo: ROUTES.CART,
+    });
+  }
+
+  const showPagination = type === "catalog" && totalPages > 1;
+
   return (
     <>
-      <Grid container spacing={{ xs: 2, md: 3 }}>
-        {filteredBikeProducts.map((product) => {
-          const {
-            _id,
-            category,
-            name,
-            shortDescription,
-            imageUrl,
-            isBikeSpecific,
-            price,
-            currencySymbol,
-            quantityAvailable,
-            isComingSoon,
-          } = product;
-
-          const quantityAddedInCart = getQuantity(_id);
-          const isDisabled = quantityAddedInCart >= quantityAvailable;
+      {/* Category Pills */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          overflowX: "auto",
+          px: 1,
+          pb: "32px",
+          scrollBehavior: "smooth",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+      >
+        {categoriesWithCount.map((category, ind) => {
+          const { name, count } = category;
+          const categoryName = name.toLowerCase();
 
           return (
-            <Grid size={{ xs: 6, md: 3, sm: 4 }} key={product._id}>
-              <Card
-                onClick={() => handleProductClick(category, name, _id)}
-                sx={{
-                  height: "100%",
-                  cursor: "pointer",
-                  bgcolor: "rgba(255,255,255,0.05)",
-                  borderRadius: 3,
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  transition: "all 0.3s",
-                  "&:hover": {
-                    borderColor: "#facc15",
-                  },
-                }}
-              >
-                {/* Image */}
-                <Box
-                  sx={{
-                    position: "relative",
-                    p: 3,
-                    height: 260,
-                    bgcolor: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={imageUrl}
-                    alt={name}
-                    onError={(e: any) =>
-                      (e.currentTarget.src = BikePlaceholderImage)
-                    }
-                    sx={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      objectFit: "contain",
-                      transition: "transform 0.3s",
-                      ".MuiCard-root:hover &": {
-                        transform: "scale(1.1)",
-                      },
-                      filter:
-                        quantityAvailable === 0 ? "grayscale(100%)" : "none",
-                      opacity: quantityAvailable === 0 ? 0.6 : 1,
-                    }}
-                  />
-                  {quantityAvailable === 0 && (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        bottom: 12,
-                        left: 0,
-                        right: 0,
-                        minWidth: '150px',
-                        width: "150px",
-                        display: 'flex',
-                        alignSelf: 'center',
-                        margin: "0 auto",
-                        bgcolor: "#fff",
-                        px: 2,
-                        py: 0.5,
-                        borderRadius: "4px",
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                        color: "#ff5722",
-                        letterSpacing: "0.5px",
-                        zIndex: 2,
-                      }}
-                    >
-                      {isComingSoon ? "COMING SOON" : "OUT OF STOCK"}
-                    </Box>
-                  )}
-
-                  {isBikeSpecific && (
-                    <Chip
-                      label="FEATURED"
-                      size="small"
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        bgcolor: "#facc15",
-                        color: "black",
-                        fontSize: "0.75rem",
-                        fontWeight: "bold",
-                        borderRadius: "999px",
-                        px: 1,
-                      }}
-                    />
-                  )}
-
-                  {!isBikeSpecific && (
-                    <Chip
-                      label="UNIVERSAL"
-                      size="small"
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        left: 8,
-                        bgcolor: "primary.main",
-                        color: "white",
-                        fontSize: "0.75rem",
-                        fontWeight: "bold",
-                        borderRadius: "999px",
-                        px: 1,
-                      }}
-                    />
-                  )}
-                </Box>
-
-                {/* Content */}
-                <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                  <Typography variant="caption" color="#facc15">
-                    {category}
-                  </Typography>
-
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: "white",
-                      fontWeight: "bold",
-                      mb: 1,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                      transition: "color 0.3s",
-                      "&:hover": {
-                        color: "#facc15",
-                      },
-                    }}
-                  >
-                    {name}
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "rgba(255,255,255,0.6)",
-                      mb: 2,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {shortDescription}
-                  </Typography>
-
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: "#facc15",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {currencySymbol} {price?.toLocaleString('en-IN', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: "8px",
-                      }}
-                    >
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWishList(product);
-                        }}
-                        sx={{
-                          width: { xs: 28, md: 36 },
-                          height: { xs: 28, md: 36 },
-                          borderRadius: 2,
-                          color:
-                            (wishlistMap[product._id] ?? product.isWishlist)
-                              ? "black"
-                              : "white",
-                          bgcolor:
-                            (wishlistMap[product._id] ?? product.isWishlist)
-                              ? "#FACC15"
-                              : "rgba(255,255,255,0.1)",
-                          transition: "all 0.2s",
-                          "&:hover": {
-                            bgcolor: "#FACC15",
-                            color: "black",
-                          },
-                        }}
-                      >
-                        <Heart size={14} className="md:w-4 md:h-4" />
-                      </IconButton>
-                      <Box position="relative">
-                        <Tooltip
-                          title={isComingSoon ? "Coming Soon" : "Out Of Stock"}
-                          arrow
-                          disableHoverListener={!isDisabled}
-                        >
-                          <span>
-                            <IconButton
-                              onClick={(e) => {
-                                if (isDisabled) return;
-                                e.stopPropagation();
-                                incrementToCart(
-                                  product,
-                                  _id,
-                                  quantityAvailable,
-                                  {
-                                    navigateTo: ROUTES.CART,
-                                  },
-                                );
-                              }}
-                              sx={{
-                                width: { xs: 28, md: 36 },
-                                height: { xs: 28, md: 36 },
-                                borderRadius: 2,
-
-                                bgcolor: "#facc15",
-                                color: "black",
-
-                                cursor: isDisabled ? "not-allowed" : "pointer",
-                                opacity: isDisabled ? 0.5 : 1,
-                                pointerEvents: "auto",
-
-                                transition: "all 0.2s",
-
-                                "&:hover": {
-                                  bgcolor: isDisabled ? "#facc15" : "#EAB308",
-                                },
-                              }}
-                            >
-                              <ShoppingCart fontSize="small" />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-
-                        {quantityAddedInCart > 0 && (
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: -4,
-                              right: -4,
-                              minWidth: 18,
-                              height: 18,
-                              px: "5px",
-                              bgcolor: "error.main",
-                              color: "white",
-                              fontSize: 11,
-                              fontWeight: "bold",
-                              borderRadius: "50%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              lineHeight: 1,
-                            }}
-                          >
-                            {quantityAddedInCart}
-                          </Box>
-                        )}
-                      </Box>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Button
+              key={ind}
+              onClick={() => {
+                setSubCategory("");
+                onSelectCategory(categoryName);
+              }}
+              sx={{
+                flexShrink: 0,
+                textTransform: "capitalize",
+                whiteSpace: "nowrap",
+                fontSize: { xs: "0.875rem", md: "1rem" },
+                fontWeight: 500,
+                borderRadius: "8px",
+                px: 2,
+                py: 1,
+                bgcolor:
+                  selectedCategory === categoryName
+                    ? "#facc15"
+                    : "rgba(255,255,255,0.1)",
+                color: selectedCategory === categoryName ? "#000" : "#fff",
+                "&:hover": {
+                  bgcolor:
+                    selectedCategory === categoryName
+                      ? "#facc15"
+                      : "rgba(255,255,255,0.2)",
+                },
+              }}
+            >
+              {categoryName === ALL_CATEGORY ? "All Products" : categoryName} (
+              {count})
+            </Button>
           );
         })}
-      </Grid>
 
-      {/* ================= Loading ================= */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
-        {filteredBikeProducts.length === 0 && isLoading && (
-          <ProductSkeleton />
-        )}
+        {categoriesWithCount.length === 0 && isLoading && <CategorySkeleton />}
+      </Box>
+
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden flex justify-end mb-4">
+        <Button
+          sx={{
+            backgroundColor: "transparent",
+            border: "1px solid #FACC15",
+            color: "#FACC15",
+            fontWeight: 800,
+            px: 2.5,
+            py: 1,
+            borderRadius: "8px",
+            textTransform: "none",
+            transition: "all 0.2s ease",
+            "&:hover": {
+              backgroundColor: "#FACC15",
+              color: "#000",
+              border: "1px solid #FACC15",
+            },
+          }}
+          onClick={() => setModalType(FILTER_MODAL)}
+        >
+          Apply Filters
+        </Button>
       </div>
 
-      {/* ================= Empty ================= */}
-      {filteredBikeProducts.length === 0 && !isLoading && (
-        <Box textAlign="center" py={8}>
-          <Typography color="rgba(255,255,255,0.5)" mb={2}>
-            No products found in this category
-          </Typography>
-          <Button
-            variant="contained"
-            color="warning"
-            onClick={() => setSelectedCategory(ALL_CATEGORY)}
-          >
-            View All Products
-          </Button>
-        </Box>
+      {/* Main Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* Sidebar */}
+        <div className="lg:col-span-1 hidden lg:block self-start sticky top-5">
+          <ProductFilter
+            type={type}
+            modelId={modelId}
+            page={page}
+            subCategory={subCategory}
+            setSubCategory={setSubCategory}
+            category={selectedCategory}
+            onChangeFilterProducts={onChangeFilterProducts}
+            clearFilter={() => {    
+              onClearFilter();
+               setSubCategory("");
+            }}
+          />
+        </div>
+
+        <div className="lg:col-span-3">
+          <Grid container spacing={{ xs: 2, md: 3 }}>
+            {products.map((product) => (
+              <Grid size={{ xs: 6, md: 4, sm: 4 }} key={product._id}>
+                <Products
+                  product={product}
+                  quantityAddedInCart={getQuantity(product._id)}
+                  isWishlisted={wishlistMap[product._id] ?? product.isWishlist}
+                  onProductClick={() =>
+                    handleProductClick(
+                      product.category,
+                      product.name,
+                      product._id,
+                    )
+                  }
+                  onAddToCart={(e) => handleAddToCart(e, product)}
+                  onWishList={(e) => handleWishList(e, product)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* Loading */}
+          {products.length === 0 && isProductLoading && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              <ProductSkeleton />
+            </div>
+          )}
+
+          {/* Empty */}
+          {products.length === 0 && !isProductLoading && (
+            <Box textAlign="center" py={8}>
+              <Typography color="rgba(255,255,255,0.5)" mb={2}>
+                No products found in this category
+              </Typography>
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={() => onSelectCategory(ALL_CATEGORY)}
+              >
+                View All Products
+              </Button>
+            </Box>
+          )}
+
+          {/* Pagination — catalog only */}
+          {showPagination && (
+            <Box
+              sx={{
+                marginTop: "2rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Pagination
+                count={totalPages}
+                page={page}
+                siblingCount={1}
+                boundaryCount={0}
+                onChange={(_, p) => onPageChange?.(p)}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white",
+                    fontSize: "1.25rem",
+                    fontWeight: "bold",
+                  },
+                  "& .Mui-selected": {
+                    color: "#3B82F6",
+                    backgroundColor: "transparent",
+                  },
+                  "& .MuiPaginationItem-root:hover": {
+                    color: "yellow",
+                    backgroundColor: "transparent",
+                  },
+                  "& .Mui-disabled": { color: "#f9f8f8ff" },
+                }}
+              />
+            </Box>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Modal */}
+      {modalType === FILTER_MODAL && (
+        <Dialog
+          open={true}
+          onClose={() => setModalType(null)}
+          fullWidth
+          maxWidth="sm"
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: "#1a1a1a",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "16px",
+              },
+            },
+          }}
+        >
+          <DialogContent sx={{ p: 0, position: "relative" }}>
+            <IconButton
+              onClick={() => setModalType(null)}
+              sx={{ position: "absolute", top: 10, right: 10, color: "white" }}
+            >
+              <X />
+            </IconButton>
+            <ProductFilter
+              type={type}
+              modelId={modelId}
+              page={page}
+              subCategory={subCategory}
+              setSubCategory={setSubCategory}
+              category={selectedCategory}
+              onChangeFilterProducts={(data, pagination) => {
+                setModalType(null);
+                onChangeFilterProducts(data, pagination);
+              }}
+              clearFilter={() => {
+                setModalType(null);
+                setSubCategory("");
+                onClearFilter();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </>
   );
-};
-
-export default ProductsSection;
+}

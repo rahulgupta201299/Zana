@@ -33,3 +33,9 @@ export const productSubCategoryCountTraceActions = traceActionsCreator(productSu
 
 export const searchServiceName = `${SLICE_NAME}/search`
 export const searchTraceActions = traceActionsCreator(searchServiceName)
+
+export const bikeCategoryCountServiceName = `${SLICE_NAME}/bikeCategoryCount`
+export const bikeCategoryCountTraceActions = traceActionsCreator(bikeCategoryCountServiceName)
+
+export const bikeSubCategoryCountServiceName = `${SLICE_NAME}/bikeSubCategoryCount`
+export const bikeSubCategoryCountTraceActions = traceActionsCreator(bikeSubCategoryCountServiceName)

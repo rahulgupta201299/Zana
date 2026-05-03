@@ -1,16 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-	Box,
-	Typography,
-	FormGroup,
-	FormControlLabel,
-	Checkbox,
-	Slider,
-	Radio,
-	Button,
-	Skeleton,
+  Box,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Slider,
+  Radio,
+  Button,
+  Skeleton,
 } from "@mui/material";
-import { PaginationType, ProductCatalogDetailsType, ProductCatergoryCountType, ShopByProductDetailsType } from "@/Redux/Product/Types";
+import {
+  PaginationType,
+  ProductCatalogDetailsType,
+  ProductCatergoryCountType,
+  ShopByProductDetailsType,
+} from "@/Redux/Product/Types";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
@@ -18,282 +23,289 @@ import ProductSubCategoryCountService from "@/Redux/Product/Services/ProductSubC
 import FilterProductService from "@/Redux/Product/Services/FilterProductService";
 import { LIMIT_PER_PAGE } from "./Constant";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import bikeSubCategoryCountServiceAction from "@/Redux/Product/Services/BikeSubCategoryCount";
+import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 
 type ProductFilterPropsType = {
-	page: number
-	category: string
-	subCategory: string
-	setSubCategory: (val: string) => void
-	onChangeFilterProducts: (data: ShopByProductDetailsType[], pagination?: PaginationType) => void
-	clearFilter: () => void
-}
+  page: number;
+  type: string;
+  modelId?: string;
+  category: string;
+  subCategory: string;
+  setSubCategory: (val: string) => void;
+  onChangeFilterProducts: (
+    data: ShopByProductDetailsType[],
+    pagination?: PaginationType,
+  ) => void;
+  clearFilter: () => void;
+};
 
 function ProductFilter(props: ProductFilterPropsType) {
+  const {
+    page,
+    category,
+    subCategory,
+    setSubCategory,
+    onChangeFilterProducts,
+    clearFilter,
+    type,
+    modelId,
+  } = props;
 
-	const { page, category, subCategory, setSubCategory, onChangeFilterProducts, clearFilter } = props;
+  const loginDetails = useSelector(getLoginDetails);
 
-	const loginDetails = useSelector(getLoginDetails);
+  const [subCategoryList, setSubCategoryList] = useState<
+    ProductCatergoryCountType[]
+  >([]);
 
-	const [subCategoryList, setSubCategoryList] = useState<ProductCatergoryCountType[]>([]);
+  const dispatch = useDispatch<TAppDispatch>();
 
-	const dispatch = useDispatch<TAppDispatch>()
+  const { phoneNumber = "" } = loginDetails;
 
-	const { phoneNumber = '' } = loginDetails;
+  async function handleCategoryChange() {
+    console.log("Category changed to:", category);
+    setSubCategoryList([]);
+    setSubCategory("");
+    try {
+      const response =
+        type === "bike"
+          ? ((await dispatch(
+              bikeSubCategoryCountServiceAction({ category, modelId }),
+            )) as ProductCatergoryCountType[])
+          : ((await dispatch(
+              ProductSubCategoryCountService(category),
+            )) as ProductCatergoryCountType[]);
+      setSubCategoryList(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-	async function handleCategoryChange() {
-		setSubCategoryList([])
-		setSubCategory("")
+  async function handleApplyFilter(selectedSubCategory: string, page = 1) {
+  if (!selectedSubCategory) return;
 
-		try {
-			const response = await dispatch(ProductSubCategoryCountService(category)) as ProductCatergoryCountType[];
-			setSubCategoryList(response)
-		} catch (error) {
-			console.error(error)
-		}
-	}
+  try {
+    onChangeFilterProducts([]);
 
-	async function handleApplyFilter(page = 1) {
-		if (!subCategory) return;
+    if (type === "bike") {
+      const response = (await dispatch(
+        BikeProductService({ modelId, category, subCategory: selectedSubCategory }),
+      )) as ShopByProductDetailsType[];
+      onChangeFilterProducts(response);
+    } else {
+      const { data, pagination } = (await dispatch(
+        FilterProductService({
+          category,
+          subCategory: selectedSubCategory,
+          queryParams: { page, limit: LIMIT_PER_PAGE, phoneNumber },
+        }),
+      )) as ProductCatalogDetailsType;
+      onChangeFilterProducts(data, pagination);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-		try {
-			onChangeFilterProducts([])
+  useEffect(() => {
+    handleCategoryChange();
+  }, [category]);
 
-			const { data, pagination } = await dispatch(FilterProductService({
-				category, subCategory, queryParams: {
-					page,
-					limit: LIMIT_PER_PAGE,
-					phoneNumber,
-				},
-			})) as ProductCatalogDetailsType
+  useEffect(() => {
+    handleApplyFilter(subCategory, page);
+  }, [page]);
 
-			onChangeFilterProducts(data, pagination)
+  return (
+    <Box
+      sx={{
+        p: { xs: 2, xl: 2.5 },
+        borderRadius: "16px",
+        backgroundColor: "rgba(255,255,255,0.05)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        backdropFilter: "blur(10px)",
+      }}
+    >
+      {/* Title */}
+      <Typography
+        sx={{
+          fontSize: "16px",
+          fontWeight: 700,
+          mb: 2,
+          color: "#facc15",
+          letterSpacing: "0.5px",
+          textTransform: "uppercase",
+        }}
+      >
+        Refine Your Ride
+      </Typography>
 
-		} catch (error) {
-			console.error(error)
-		}
-	}
+      {/* Subcategory List */}
+      <Box
+        sx={{
+          mb: 2,
+          maxHeight: "350px", 
+          overflowY: "auto", 
+          pr: 0.5,
+        
+          "&::-webkit-scrollbar": {
+            width: "4px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: "4px",
+          },
+        }}
+      >
+        {subCategoryList.map((item) => {
+          const isSelected = item.name.toLowerCase() === subCategory;
+          return (
+            <Box
+              key={item.name}
+              onClick={() => {
+                const val = item.name.toLowerCase();
+                setSubCategory(val);
+                handleApplyFilter(val); 
+              }}
+              sx={{
+                display: "flex",
+                alignItems: "flex-start", 
+                justifyContent: "space-between",
+                gap: 1,
+                mb: 0.25, 
+                cursor: "pointer",
+                px: 1,
+                py: 0.6, 
+                borderRadius: "8px",
+                transition: "all 0.2s",
+                backgroundColor: isSelected
+                  ? "rgba(250,204,21,0.15)"
+                  : "transparent",
+                border: isSelected
+                  ? "1px solid rgba(250,204,21,0.4)"
+                  : "1px solid transparent",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 1.5,
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                {/* Custom radio dot — aligned to top of text */}
+                <Box
+                  sx={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: "50%",
+                    border: "2px solid",
+                    borderColor: isSelected
+                      ? "#facc15"
+                      : "rgba(255,255,255,0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    mt: "1px", 
+                  }}
+                >
+                  {isSelected && (
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#facc15",
+                      }}
+                    />
+                  )}
+                </Box>
 
-	useEffect(() => {
-		handleCategoryChange()
-	}, [category])
+                {/* Name — wraps naturally, no truncation */}
+                <Typography
+                  sx={{
+                    fontSize: "13px",
+                    color: isSelected ? "#facc15" : "rgba(255,255,255,0.8)",
+                    fontWeight: isSelected ? 600 : 400,
+                    textTransform: "capitalize",
+                    lineHeight: 1.4,
+                    textAlign: "left",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {item.name}
+                </Typography>
+              </Box>
 
-	useEffect(() => {
-		handleApplyFilter(page)
-	}, [page])
+              {/* Count — stays on right, aligned to top */}
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  color: "rgba(255,255,255,0.4)",
+                  fontWeight: 500,
+                  flexShrink: 0,
+                  mt: "2px",
+                  lineHeight: 1.4,
+                }}
+              >
+                {item.count}
+              </Typography>
+            </Box>
+          );
+        })}
 
-	return (
-		<Box
-			sx={{
-				p: { xs: 2.5, xl: 3 },
-				borderRadius: "16px",
-				backgroundColor: "#e5e7eb",
-				boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-				border: "1px solid #e5e7eb",
-			}}
-		>
-			{/* Title */}
-			<Typography
-				sx={{
-					fontSize: "18px",
-					fontWeight: 600,
-					mb: 3,
-					color: "#111827",
-				}}
-			>
-				Refine Your Ride
-			</Typography>
+        {subCategoryList.length === 0 && (
+          <Typography
+            sx={{
+              color: "rgba(255,255,255,0.3)",
+              fontSize: "14px",
+              py: 2,
+              textAlign: "center",
+            }}
+          >
+            No Filters Found
+          </Typography>
+        )}
+      </Box>
 
-			{/* Availability */}
-			{/* 
-			<Box sx={{ mb: 3 }}>
-				<Typography sx={{ fontWeight: 500, mb: 2, color: "#1f2937" }}>
-					Availability
-				</Typography>
+      {/* Divider */}
+      <Box sx={{ borderTop: "1px solid rgba(255,255,255,0.08)", mb: 1.5 }} />
 
-				<FormGroup>
-					{FILTERS.availability.map((item) => (
-						<FormControlLabel
-							key={item.value}
-							control={
-								<Checkbox
-									checked={filters.availability.includes(item.value)}
-									onChange={() =>
-										toggleFilter("availability", item.value)
-									}
-									sx={{
-										color: "#9ca3af",
-										"&.Mui-checked": {
-											color: "#EAB308",
-										},
-									}}
-								/>
-							}
-							label={
-								<Typography sx={{ fontSize: "14px", color: "#374151" }}>
-									{item.label}
-								</Typography>
-							}
-							sx={{
-								mb: 1,
-								cursor: "pointer",
-								"&:hover": {
-									backgroundColor: "#f9fafb",
-									borderRadius: "6px",
-								},
-							}}
-						/>
-					))}
-				</FormGroup>
-			</Box> */}
-
-
-			{/* Price */}
-
-			{/* <Box sx={{ mb: 3 }}>
-				<Typography sx={{ fontWeight: 500, mb: 2, color: "#1f2937" }}>
-					Price
-				</Typography>
-
-				<Slider
-					min={1000}
-					max={5000}
-					step={100}
-					value={filters.price}
-					onChange={(_, value) =>
-						setFilters({
-							...filters,
-							price: value as number,
-						})
-					}
-					sx={{
-						color: "#FACC15",
-					}}
-				/>
-
-				<Box
-					sx={{
-						display: "flex",
-						justifyContent: "space-between",
-						fontSize: "14px",
-						color: "#4b5563",
-						mt: 1,
-					}}
-				>
-					<span>₹1000</span>
-					<span>₹{filters.price}</span>
-				</Box>
-			</Box> */}
-
-
-			{/* Products */}
-			<Box>
-				<Typography
-					sx={{
-						fontWeight: 500,
-						mb: 2,
-						color: "#1f2937",
-					}}
-				>
-					Products
-				</Typography>
-
-				<Box>
-					{subCategoryList.map((item) => (
-						<Box
-							key={item.name}
-							onClick={() => setSubCategory(item.name.toLowerCase())}
-							sx={{
-								display: "flex",
-								alignItems: "center",
-								gap: 1,
-								mb: 1,
-								cursor: "pointer",
-								p: 0.5,
-								borderRadius: "6px",
-							}}
-						>
-							<Radio
-								checked={item.name.toLowerCase() === subCategory}
-								sx={{
-									color: "#9ca3af",
-									"&.Mui-checked": {
-										color: "#3b82f6",
-									},
-								}}
-							/>
-
-							<Typography
-								sx={{
-									fontSize: "14px",
-									color: "#374151",
-								}}
-							>
-								{item.name}{' '}({item.count})
-							</Typography>
-						</Box>
-					))}
-					{
-						subCategoryList.length === 0 && (
-							<Box
-								sx={{
-									color: 'gray',
-									mb: '1rem'
-								}}
-							>
-								No Filters Found
-							</Box>
-						)
-					}
-				</Box>
-			</Box>
-			<Box
-				sx={{
-					display: 'flex',
-					justifyContent: {
-						lg: 'space-between',
-						xs: 'flex-end',
-					},
-					gap: '1rem'
-				}}
-			>
-				<Button
-					sx={{
-						background: 'none',
-						fontWeight: 700,
-						"&:hover": {
-							opacity: 0.7,
-						},
-					}}
-					onClick={() => {
-						setSubCategory("")
-						clearFilter()
-					}}
-				>
-					Clear
-				</Button>
-				<Button
-					sx={{
-						backgroundColor: "#FACC15",
-						color: "#000",
-						border: "1px solid #FACC15",
-						fontWeight: 800,
-						px: 2.5, // 20px
-						py: 1,   // 8px
-						borderRadius: "8px",
-						textTransform: "none",
-						transition: "all 0.2s ease",
-						"&:hover": {
-							opacity: 0.7,
-						},
-					}}
-					disabled={!subCategory || !subCategoryList.length}
-					onClick={() => handleApplyFilter()}
-				>
-					Apply
-				</Button>
-			</Box>
-		</Box>
-	);
+      {/* Actions */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1.5 }}>
+        <Button
+          fullWidth
+          disabled={!subCategory || !subCategoryList.length}
+          onClick={() => {
+            
+            clearFilter();
+          }}      
+          sx={{
+            backgroundColor: "#facc15",
+            color: "#000",
+            borderRadius: "8px",
+            fontWeight: 800,
+            textTransform: "none",
+            py: 0.8,
+            transition: "all 0.2s ease",
+            "&:hover": { backgroundColor: "#eab308" },
+            "&.Mui-disabled": {
+              backgroundColor: "rgba(250,204,21,0.2)",
+              color: "rgba(0,0,0,0.3)",
+            },
+          }}
+        >
+          Clear
+        </Button>
+      </Box>
+    </Box>
+  );
 }
 
 export default withDeviceDetails(ProductFilter);
