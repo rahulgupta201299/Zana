@@ -42,6 +42,7 @@ import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import Products from "./Product";
 import { ProductModalType } from "@/pages/ProductCatalog/Constant";
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
 const FILTER_MODAL = "APPLY_FILTERS";
 
@@ -64,9 +65,10 @@ type Props = {
   onPageChange?: (page: number) => void;
   subCategory: string;
   setSubCategory: (val: string) => void;
+  isDesktop: boolean;
 };
 
-export default function ProductSection({
+function ProductSection({
   type,
   products,
   categoriesWithCount,
@@ -81,6 +83,7 @@ export default function ProductSection({
   onPageChange,
   subCategory,
   setSubCategory,
+  isDesktop,
 }: Props) {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
@@ -256,19 +259,23 @@ export default function ProductSection({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1 hidden lg:block self-start sticky top-5">
-          <ProductFilter
-            type={type}
-            modelId={modelId}
-            page={page}
-            subCategory={subCategory}
-            setSubCategory={setSubCategory}
-            category={selectedCategory}
-            onChangeFilterProducts={onChangeFilterProducts}
-            clearFilter={() => {    
-              onClearFilter();
-               setSubCategory("");
-            }}
-          />
+          {
+            isDesktop && (
+              <ProductFilter
+                type={type}
+                modelId={modelId}
+                page={page}
+                subCategory={subCategory}
+                setSubCategory={setSubCategory}
+                category={selectedCategory}
+                onChangeFilterProducts={onChangeFilterProducts}
+                clearFilter={() => {
+                  onClearFilter();
+                  setSubCategory("");
+                }}
+              />
+            )
+          }
         </div>
 
         <div className="lg:col-span-3">
@@ -330,7 +337,6 @@ export default function ProductSection({
                 page={page}
                 siblingCount={1}
                 boundaryCount={0}
-                
                 onChange={(_, p) => onPageChange?.(p)}
                 sx={{
                   "& .MuiPaginationItem-root": {
@@ -355,54 +361,60 @@ export default function ProductSection({
       </div>
 
       {/* Mobile Modal */}
-      
-        <Dialog
-          open={modalType === ProductModalType.APPLY_FILTERS}
-          onClose={() => setModalType(null)}
-          fullWidth
-          maxWidth="sm"
-          slotProps={{
-            paper: {
-              sx: {
-                backgroundColor: "#1a1a1a",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "16px",
-              },
+
+      <Dialog
+        open={modalType === ProductModalType.APPLY_FILTERS}
+        onClose={() => setModalType(null)}
+        fullWidth
+        maxWidth="sm"
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: "#1a1a1a",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "16px",
             },
-          }}
-          keepMounted
-        >
-          <DialogContent sx={{ p: 0, position: "relative" }}>
-            <IconButton
-              onClick={() => setModalType(null)}
-              sx={{ position: "absolute", top: 10, right: 10, color: "white" }}
-            >
-              X
-            </IconButton>
-            <ProductFilter
-              type={type}
-              modelId={modelId}
-              page={page}
-              subCategory={subCategory}
-              setSubCategory={setSubCategory}
-              category={selectedCategory}
-              onChangeFilterProducts={(data, pagination) => {    
-                onChangeFilterProducts(data, pagination);
-                setTimeout(() => {
-                   setModalType(null);
-                }, 300);
-              }}
-              clearFilter={() => {         
-                setSubCategory("");
-                onClearFilter();
-                 setTimeout(() => {
-                   setModalType(null);
-                }, 300);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      
+          },
+        }}
+        keepMounted
+      >
+        <DialogContent sx={{ p: 0, position: "relative" }}>
+          <IconButton
+            onClick={() => setModalType(null)}
+            sx={{ position: "absolute", top: 10, right: 10, color: "white" }}
+          >
+            X
+          </IconButton>
+          {
+            !isDesktop && (
+              <ProductFilter
+                type={type}
+                modelId={modelId}
+                page={page}
+                subCategory={subCategory}
+                setSubCategory={setSubCategory}
+                category={selectedCategory}
+                onChangeFilterProducts={(data, pagination) => {
+                  onChangeFilterProducts(data, pagination);
+                  setTimeout(() => {
+                    setModalType(null);
+                  }, 300);
+                }}
+                clearFilter={() => {
+                  setSubCategory("");
+                  onClearFilter();
+                  setTimeout(() => {
+                    setModalType(null);
+                  }, 300);
+                }}
+              />
+            )
+          }
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 }
+
+export default withDeviceDetails(ProductSection)
