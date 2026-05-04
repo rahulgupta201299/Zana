@@ -146,7 +146,7 @@ function Bikes() {
               const { _id, name, description, type, brandName, imageUrl } =
                 brand;
               return (
-                <Grid size={{ xs: 6, md: 4, sm: 4 }} key={_id}>
+                <Grid size={{ xs: 12, md: 4, sm: 6 }} key={_id}>
                   <Card
                     onClick={() => handleBikeClick(brandName, name, _id)}
                     sx={{
