@@ -174,7 +174,7 @@ const Wishlist = () => {
               <WishlistCardSkeleton key={index} />
             ))
             : wishList.map((product) => {
-              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '', currencySymbol = '' } = product;
+              const { _id = '', name = '', imageUrl = '', quantityAvailable = 0, price = 0, category = '', currencySymbol = '', isComingSoon = false } = product;
 
               const quantityInCart = getQuantity(_id);
 
@@ -277,7 +277,7 @@ const Wishlist = () => {
                             zIndex: 2,
                           }}
                         >
-                          OUT OF STOCK
+                          {isComingSoon ? "COMING SOON" : "OUT OF STOCK"}
                         </Box>
                       )}
                     </Box>

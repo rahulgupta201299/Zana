@@ -201,6 +201,7 @@ const ProductDetailPage = () => {
     specifications = "",
     isBikeSpecific = false,
     productCode = "",
+    isComingSoon = false
   } = product || {};
 
   const isPlusDisabled = quantity >= quantityAvailable;
@@ -352,7 +353,7 @@ const ProductDetailPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  <ShoppingBag /> Out of Stock
+                  <ShoppingBag /> {isComingSoon ? "Coming Soon" : "Out of Stock"}
                 </Button>
               )}
             </div>
