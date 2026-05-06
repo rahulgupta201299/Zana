@@ -9,7 +9,7 @@ export enum MenuItemsName {
   PROFILE = "Profile",
   CART = "Cart",
   SHOP_BY_BIKE = "SHOP BY BIKE",
-  SHOP_BY_PRODUCT = "SHOP BY PRODUCT",
+  SHOP_BY_PRODUCT = "UNIVERSAL PRODUCTS",
   RIDE_STORIES = "RIDE STORIES",
   OUR_STORY = "OUR STORY",
   Z_PRO = "Z PRO",
