@@ -8,6 +8,7 @@ import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
 import Loading from '@/components/Loading'
+import AdminRoutes from '@/Admin/Configurations/AdminRoutes'
 import ErrorBoundary from './ErrorBoundary'
 import AppStore from '../AppStore'
 
@@ -34,6 +35,8 @@ const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), L
 const ReturnExchange = lazyLoadPage(() => import("@/pages/QuickLinks/ReturnAndExchange"), Loading);
 const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuccessful"), Loading);
 
+const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
+
 function DynamicRedirect() {
   const state = AppStore.getState();
   const initialLoading = state.landing.initialLoading
@@ -51,6 +54,13 @@ function DynamicRedirect() {
 }
 
 export const routeObj: RouteObject[] = [
+  {
+    element: <AdminRoutes />,
+    errorElement: <ErrorBoundary />,
+    children: [
+      { path: ROUTES.ADMIN_PRODUCTS, element: AdminProducts },
+    ]
+  },
   {
     element: <PublicRoutes />,
     errorElement: <ErrorBoundary />,
@@ -71,7 +81,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.DISCLAIMER, element: Disclaimer },
       { path: ROUTES.PRIVACYPOLICY, element: PrivacyPolicy },
       { path: ROUTES.RETURN_EXCHANGE, element: ReturnExchange },
-      { path: ROUTES.ANY, element: <DynamicRedirect /> },
+      { path: ROUTES.ANY, element: <DynamicRedirect /> }
     ],
   },
   {
