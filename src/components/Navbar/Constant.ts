@@ -9,7 +9,7 @@ export enum MenuItemsName {
   PROFILE = "Profile",
   CART = "Cart",
   SHOP_BY_BIKE = "SHOP BY BIKE",
-  SHOP_BY_PRODUCT = "SHOP BY PRODUCT",
+  UNIVERSAL_PRODUCT = "UNIVERSAL PRODUCT",
   RIDE_STORIES = "RIDE STORIES",
   OUR_STORY = "OUR STORY",
   Z_PRO = "Z PRO",
@@ -37,7 +37,7 @@ export const MenuItems = [
     route: "",
   },
   {
-    name: MenuItemsName.SHOP_BY_PRODUCT,
+    name: MenuItemsName.UNIVERSAL_PRODUCT,
     route: "",
   },
   {

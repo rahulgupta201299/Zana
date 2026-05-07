@@ -28,7 +28,7 @@ export const getMenuOption = (): MenuOptionsType[] => {
     },
     {
       _id: "2",
-      name: MenuItemsName.SHOP_BY_PRODUCT,
+      name: MenuItemsName.UNIVERSAL_PRODUCT,
       models: productCategoryList,
       route: `${SUB_ROUTES.PRODUCT}`,
     },
