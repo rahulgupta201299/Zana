@@ -4,6 +4,7 @@ export const SUB_ROUTES = Object.freeze({
   BIKES: '/bikes',
   BLOG: '/blog',
   BIKE_ACCESSORIES: '/bike-accessories',
+  ADMIN: '/admin'
 })
 
 export const ROUTES = Object.freeze({
@@ -29,5 +30,6 @@ export const ROUTES = Object.freeze({
   PRIVACYPOLICY: '/privacy-policy',
   RETURN_EXCHANGE: '/return-and-exchange',
   ORDER_SUCCESSFUL: '/success/thank-you',
+  ADMIN_PRODUCTS: `${SUB_ROUTES.ADMIN}/products`,
   ANY: '*'
 })
