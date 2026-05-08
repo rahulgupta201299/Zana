@@ -103,6 +103,7 @@ function Bikes() {
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     handleBrandCategoryClick(initialBikeBrand);
   }, [allBrandDetails.length, initialBikeBrand]);
 

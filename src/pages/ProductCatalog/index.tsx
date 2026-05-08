@@ -106,6 +106,9 @@ const ProductCatalogPage = () => {
   }, [productCategory.length]);
 
   async function pageOps() {
+
+    window.scrollTo(0, 0);
+
     if (filteredProducts.length && initialCategory === selectedCategory) return;
     try {
       await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
