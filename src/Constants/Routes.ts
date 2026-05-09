@@ -30,6 +30,8 @@ export const ROUTES = Object.freeze({
   PRIVACYPOLICY: '/privacy-policy',
   RETURN_EXCHANGE: '/return-and-exchange',
   ORDER_SUCCESSFUL: '/success/thank-you',
+  ADMIN: SUB_ROUTES.ADMIN,
+  ADMIN_LOGIN: `${SUB_ROUTES.ADMIN}/login`,
   ADMIN_PRODUCTS: `${SUB_ROUTES.ADMIN}/products`,
   ANY: '*'
 })
