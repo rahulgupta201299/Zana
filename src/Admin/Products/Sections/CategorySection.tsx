@@ -1,22 +1,32 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import SectionCard from "@/Admin/Components/SectionCard";
 import { Field, SelectInput } from "@/Admin/Components/Field";
-import { CategoryName, UPDATE_ACTIONS } from "../Constant";
+import { UPDATE_ACTIONS } from "../Constant";
 import { useProductCms } from "../ProductCmsContext";
 import { ProductFieldType } from "../Types";
-
-const categories: Record<string, string[]> = {
-  [CategoryName.Luggage]: ["Tank Bags", "Saddlebags", "Top Boxes", "Tail Bags"],
-  [CategoryName.Protection]: ["Crash Guards", "Bash Plates", "Frame Sliders"],
-  [CategoryName.Lighting]: ["Aux Lamps", "Headlight Guards", "Wiring Harnesses"],
-  [CategoryName.Ergonomics]: ["Handlebar Risers", "Foot Pegs", "Seats"],
-  [CategoryName.FogLight]: ["Fog Light Mount", "Fog Light Cover", "Aux Light Bracket"],
-  "Bike Protection": ["Fork Slider", "Crash Guard", "Frame Slider"],
-};
+import { type CategoryCountOption } from "../ProductApi";
 
 export default function CategorySection() {
-  const { dispatchAction, errors, product } = useProductCms();
-  const subCategories = categories[product.category] || [];
+  const {
+    categoriesLoading,
+    categoryLookupError,
+    categoryOptions,
+    dispatchAction,
+    errors,
+    product,
+    subCategoriesLoading,
+    subCategoryOptions,
+    typeOfCategory,
+  } = useProductCms();
+  const categoryOptionsWithCurrent = includeCurrentOption(
+    categoryOptions,
+    product.category,
+  );
+  const subCategoryOptionsWithCurrent = includeCurrentOption(
+    subCategoryOptions,
+    product.subCategory,
+  );
 
   function updateField<K extends keyof ProductFieldType>(
     field: K,
@@ -41,12 +51,19 @@ export default function CategorySection() {
             value={product.category}
             onChange={updatePrimaryCategory}
             error={Boolean(errors.category)}
-            helperText={errors.category}
+            helperText={
+              errors.category ||
+              categoryLookupError ||
+              `Showing ${typeOfCategory.toLowerCase()} categories.`
+            }
+            disabled={categoriesLoading}
           >
-            <option value="">Select category...</option>
-            {Object.keys(categories).map((category) => (
-              <option key={category} value={category}>
-                {category}
+            <option value="">
+              {categoriesLoading ? "Loading categories..." : "Select category..."}
+            </option>
+            {categoryOptionsWithCurrent.map((category) => (
+              <option key={category.name} value={category.name}>
+                {formatCountOption(category)}
               </option>
             ))}
           </SelectInput>
@@ -55,16 +72,20 @@ export default function CategorySection() {
           <SelectInput
             value={product.subCategory}
             onChange={(value) => updateField("subCategory", value)}
-            disabled={!product.category}
+            disabled={!product.category || subCategoriesLoading}
             error={Boolean(errors.subCategory)}
-            helperText={errors.subCategory}
+            helperText={errors.subCategory || categoryLookupError}
           >
             <option value="">
-              {product.category ? "Select sub-category..." : "Select a category first"}
+              {subCategoriesLoading
+                ? "Loading sub-categories..."
+                : product.category
+                  ? "Select sub-category..."
+                  : "Select a category first"}
             </option>
-            {subCategories.map((subCategory) => (
-              <option key={subCategory} value={subCategory}>
-                {subCategory}
+            {subCategoryOptionsWithCurrent.map((subCategory) => (
+              <option key={subCategory.name} value={subCategory.name}>
+                {formatCountOption(subCategory)}
               </option>
             ))}
           </SelectInput>
@@ -72,6 +93,21 @@ export default function CategorySection() {
       </Box>
     </SectionCard>
   );
+}
+
+function includeCurrentOption(
+  options: CategoryCountOption[],
+  currentValue: string,
+): CategoryCountOption[] {
+  if (!currentValue || options.some((option) => option.name === currentValue)) {
+    return options;
+  }
+
+  return [{ name: currentValue, count: 0 }, ...options];
+}
+
+function formatCountOption(option: CategoryCountOption) {
+  return option.count ? `${option.name} (${option.count})` : option.name;
 }
 
 const twoColumnSx = {
