@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
@@ -35,16 +35,22 @@ const OrderList = lazyLoadPage(() => import("@/pages/OrderDetails/OrderList"), L
 const ReturnExchange = lazyLoadPage(() => import("@/pages/QuickLinks/ReturnAndExchange"), Loading);
 const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuccessful"), Loading);
 
+const AdminLogin = lazyLoadPage(() => import("@/Admin/Login"), Loading);
 const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
 
 function DynamicRedirect() {
+  const location = useLocation();
   const state = AppStore.getState();
   const initialLoading = state.landing.initialLoading
+  const isAdminPath = location.pathname === ROUTES.ADMIN || location.pathname.startsWith(`${ROUTES.ADMIN}/`)
 
   return (
     <Navigate
       replace
       to={
+        isAdminPath
+          ? ROUTES.ADMIN
+          :
         initialLoading
           ? ROUTES.PAGE_NOT_FOUND
           : ROUTES.BASE_URL
@@ -55,10 +61,14 @@ function DynamicRedirect() {
 
 export const routeObj: RouteObject[] = [
   {
+    path: ROUTES.ADMIN,
     element: <AdminRoutes />,
     errorElement: <ErrorBoundary />,
     children: [
-      { path: ROUTES.ADMIN_PRODUCTS, element: AdminProducts },
+      { index: true, element: AdminLogin },
+      { path: "login", element: AdminLogin },
+      { path: "products", element: AdminProducts },
+      { path: "*", element: <Navigate replace to={ROUTES.ADMIN_PRODUCTS} /> },
     ]
   },
   {

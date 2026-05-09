@@ -17,6 +17,21 @@ export default function BikeClassificationSection() {
     dispatchAction(UPDATE_ACTIONS.UPDATE_FIELD, { field, value });
   }
 
+  function setBikeSpecific(isBikeSpecific: boolean) {
+    const classificationChanged = product.isBikeSpecific !== isBikeSpecific;
+
+    updateField("isBikeSpecific", isBikeSpecific);
+
+    if (!isBikeSpecific) {
+      updateField("brand", "");
+      updateField("model", "");
+    }
+
+    if (classificationChanged) {
+      updateField("subCategory", "");
+    }
+  }
+
   return (
     <SectionCard
       title="Bike Classification"
@@ -27,13 +42,13 @@ export default function BikeClassificationSection() {
           active={product.isBikeSpecific}
           title="Bike Specific"
           description="Only for the selected brand and model"
-          onClick={() => updateField("isBikeSpecific", true)}
+          onClick={() => setBikeSpecific(true)}
         />
         <FitmentCard
           active={!product.isBikeSpecific}
           title="Universal Fit"
           description="Fits most motorcycles"
-          onClick={() => updateField("isBikeSpecific", false)}
+          onClick={() => setBikeSpecific(false)}
         />
       </Box>
     </SectionCard>

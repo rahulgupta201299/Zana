@@ -31,7 +31,7 @@ const sectionErrorPrefix: Record<CmsSection, string[]> = {
 };
 
 export default function SectionNavigation() {
-  const { activeSection, dispatchAction, errors } = useProductCms();
+  const { activeSection, dispatchAction, errors, product } = useProductCms();
 
   return (
     <Paper
@@ -41,12 +41,19 @@ export default function SectionNavigation() {
         borderRadius: 2,
         boxShadow: "0 18px 50px rgba(24, 31, 38, 0.08)",
         p: 1,
+        position: { md: "sticky" },
+        top: { md: 16 },
       }}
     >
       <Box sx={{ display: "grid", gap: 0.5 }}>
         {cmsSections.map((section) => {
           const hasSectionError = Object.keys(errors).some((key) => {
-            const prefixes = sectionErrorPrefix[section.id] || [section.id];
+            const prefixes =
+              section.id === CmsSectionId.Core && !product.isBikeSpecific
+                ? (sectionErrorPrefix[section.id] || [section.id]).filter(
+                    (prefix) => prefix !== "brand" && prefix !== "model",
+                  )
+                : sectionErrorPrefix[section.id] || [section.id];
             return prefixes.some((prefix: string) => key.startsWith(prefix));
           });
           const active = activeSection === section.id;

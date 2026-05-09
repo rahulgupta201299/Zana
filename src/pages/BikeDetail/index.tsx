@@ -64,18 +64,21 @@ const BikeDetailPage = () => {
     null,
   );
 
-  async function getBikeProducts(category?: string, subCategory?: string) {
-    setFilteredBikeProducts([]);
-    try {
-      const response = (await dispatch(
-        BikeProductService({ modelId: bikeId, category, subCategory }),
-      )) as ShopByProductDetailsType[];
-      setBikeProducts(response);
-      setFilteredBikeProducts(response);
-    } catch (error: any) {
-      console.error(error);
-    }
+ async function getBikeProducts(category?: string, subCategory?: string) {
+  setFilteredBikeProducts([]);
+  try {
+    const response = (await dispatch(
+      BikeProductService({
+        modelId: bikeId,
+        ...(category !== ALL_CATEGORY && { category, subCategory }),
+      }),
+    )) as ShopByProductDetailsType[];
+    setBikeProducts(response);
+    setFilteredBikeProducts(response);
+  } catch (error: any) {
+    console.error(error);
   }
+}
 
   async function getBikeDetails() {
     try {
