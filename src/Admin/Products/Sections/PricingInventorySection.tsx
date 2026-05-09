@@ -21,7 +21,7 @@ export default function PricingInventorySection() {
       title="Pricing & Inventory"
       description="Manage product price, stock, currency, and display priority."
     >
-      <Box sx={twoColumnSx}>
+      <Box sx={pricingGridSx}>
         <Field label="Price">
           <TextInput
             inputMode="decimal"
@@ -45,9 +45,6 @@ export default function PricingInventorySection() {
             onChange={(value) => updateField("originalPrice", Number(value) || 0)}
           />
         </Field>
-      </Box>
-
-      <Box sx={threeColumnSx}>
         <Field label="Quantity available">
           <TextInput
             inputMode="numeric"
@@ -71,14 +68,10 @@ export default function PricingInventorySection() {
   );
 }
 
-const twoColumnSx = {
+const pricingGridSx = {
   display: "grid",
   gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
-  gap: 1.5,
-};
-
-const threeColumnSx = {
-  display: "grid",
-  gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-  gap: 1.5,
+  columnGap: 1.5,
+  rowGap: 1.75,
+  alignItems: "start",
 };

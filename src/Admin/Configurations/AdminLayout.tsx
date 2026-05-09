@@ -53,6 +53,7 @@ function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        minHeight: 0,
       }}
     >
       <Box sx={{ p: 2.5 }}>
@@ -81,7 +82,7 @@ function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
 
-      <List sx={{ flex: 1, px: 1.5, py: 2 }}>
+      <List sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1.5, py: 2 }}>
         {navItems.map((item) => (
           <ListItemButton
             key={item.to}
@@ -144,10 +145,14 @@ export default function AdminLayout() {
         <Box
           component="aside"
           sx={{
-            flex: `0 0 ${drawerWidth}px`,
-            height: "100vh",
-            position: "sticky",
+            bottom: 0,
+            height: "100dvh",
+            left: 0,
+            overflow: "hidden",
+            position: "fixed",
             top: 0,
+            width: drawerWidth,
+            zIndex: (theme) => theme.zIndex.drawer,
           }}
         >
           <AdminSidebar />
@@ -163,7 +168,15 @@ export default function AdminLayout() {
         </Drawer>
       )}
 
-      <Box sx={{ display: "flex", flex: 1, flexDirection: "column", minWidth: 0 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flex: 1,
+          flexDirection: "column",
+          minWidth: 0,
+          ml: { md: `${drawerWidth}px` },
+        }}
+      >
         <Box
           component="header"
           sx={{

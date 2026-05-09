@@ -185,13 +185,13 @@ function ImageTile({
           x
         </IconButton>
       </Box>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography sx={{ fontWeight: 850 }}>{title}</Typography>
+      <Box sx={tileContentSx}>
+        {children ? <Box sx={tileActionSx}>{children}</Box> : null}
+        <Typography sx={tileTitleSx}>{title}</Typography>
         <Typography sx={{ color: "#64748b", fontSize: "0.78rem" }}>
           {imageUrl.startsWith("data:") ? "Base64 ready" : "Existing image"}
         </Typography>
       </Box>
-      {children}
     </Box>
   );
 }
@@ -221,29 +221,64 @@ const sectionHeaderSx = {
   justifyContent: "space-between",
   flexDirection: { xs: "column", sm: "row" },
   gap: 1.5,
+  "& .MuiButton-root": {
+    fontSize: "0.78rem",
+    lineHeight: 1.2,
+    minWidth: 148,
+    whiteSpace: "nowrap",
+  },
 };
 
 const otherGridSx = {
   display: "grid",
-  gridTemplateColumns: { xs: "1fr", lg: "repeat(2, minmax(0, 1fr))" },
+  gridTemplateColumns: "minmax(0, 1fr)",
   gap: 1.25,
 };
 
 const tileSx = {
   display: "grid",
-  gridTemplateColumns: "110px minmax(0, 1fr)",
+  gridTemplateColumns: {
+    xs: "minmax(0, 1fr)",
+    sm: "minmax(180px, 1fr) 220px",
+  },
   gap: 1.25,
-  alignItems: "center",
+  alignItems: { xs: "stretch", sm: "center" },
   p: 1,
   border: "1px solid #d8e0e8",
   borderRadius: 2,
   bgcolor: "#fff",
+  "& .MuiButton-root": {
+    fontSize: "0.76rem",
+    lineHeight: 1.2,
+    minWidth: { xs: "100%", sm: 104 },
+    whiteSpace: "nowrap",
+  },
+};
+
+const tileContentSx = {
+  minWidth: 0,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: 0.4,
+};
+
+const tileActionSx = {
+  width: "100%",
+  mb: 0.35,
+};
+
+const tileTitleSx = {
+  fontWeight: 850,
+  fontSize: "0.9rem",
+  lineHeight: 1.2,
+  whiteSpace: "nowrap",
 };
 
 const imageWrapSx = {
   position: "relative",
-  width: 110,
-  height: 84,
+  width: "100%",
+  height: { xs: 180, sm: 112 },
   overflow: "hidden",
   borderRadius: 1.25,
   bgcolor: "#111827",
