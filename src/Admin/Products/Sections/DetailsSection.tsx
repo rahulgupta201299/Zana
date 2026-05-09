@@ -1,3 +1,4 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -6,36 +7,76 @@ import { Field, SelectInput, TextInput } from "@/Admin/Components/Field";
 import { useProductCms } from "../ProductCmsContext";
 import { ProductFieldType } from "../Types";
 import { UPDATE_ACTIONS } from "../Constant";
-
-const brandOptions = [
-  { id: "69be7516111e9766e928d23d", name: "TVS" },
-  { id: "69be7516111e9766e928d233", name: "Honda" },
-  { id: "royal-enfield", name: "Royal Enfield" },
-  { id: "ktm", name: "KTM" },
-];
-
-const modelOptionsByBrand: Record<string, Array<{ id: string; name: string }>> = {
-  "69be7516111e9766e928d23d": [
-    { id: "69bea3ebc222d7fdd0662a97", name: "Apache RTX 300" },
-    { id: "apache-rr-310", name: "Apache RR 310" },
-  ],
-  "69be7516111e9766e928d233": [
-    { id: "69bea3ebc222d7fdd0662a7b", name: "CB350 HIGHNESS" },
-    { id: "cb350rs", name: "CB350RS" },
-  ],
-  "royal-enfield": [
-    { id: "himalayan-450", name: "Himalayan 450" },
-    { id: "classic-350", name: "Classic 350" },
-  ],
-  ktm: [
-    { id: "adventure-390", name: "Adventure 390" },
-    { id: "duke-390", name: "Duke 390" },
-  ],
-};
+import {
+  type BrandOption,
+  getAdminBrands,
+  getAdminModelsByBrand,
+  type ModelOption,
+} from "../ProductApi";
 
 export default function DetailsSection() {
   const { dispatchAction, errors, product } = useProductCms();
-  const modelOptions = modelOptionsByBrand[product.brand] || [];
+  const [brandOptions, setBrandOptions] = React.useState<BrandOption[]>([]);
+  const [modelOptions, setModelOptions] = React.useState<ModelOption[]>([]);
+  const [brandsLoading, setBrandsLoading] = React.useState(false);
+  const [modelsLoading, setModelsLoading] = React.useState(false);
+  const [lookupError, setLookupError] = React.useState("");
+  const brandModelOptional = !product.isBikeSpecific;
+
+  React.useEffect(() => {
+    let isCurrent = true;
+
+    setBrandsLoading(true);
+    setLookupError("");
+    getAdminBrands()
+      .then((brands) => {
+        if (isCurrent) {
+          setBrandOptions(brands);
+          setLookupError("");
+        }
+      })
+      .catch(() => {
+        if (isCurrent) setLookupError("Unable to load brands.");
+      })
+      .finally(() => {
+        if (isCurrent) setBrandsLoading(false);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let isCurrent = true;
+
+    setModelOptions([]);
+    setLookupError("");
+    if (!product.brand) {
+      return () => {
+        isCurrent = false;
+      };
+    }
+
+    setModelsLoading(true);
+    getAdminModelsByBrand(product.brand)
+      .then((models) => {
+        if (isCurrent) {
+          setModelOptions(models);
+          setLookupError("");
+        }
+      })
+      .catch(() => {
+        if (isCurrent) setLookupError("Unable to load models for this brand.");
+      })
+      .finally(() => {
+        if (isCurrent) setModelsLoading(false);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [product.brand]);
 
   function updateField<K extends keyof ProductFieldType>(
     field: K,
@@ -60,35 +101,51 @@ export default function DetailsSection() {
         />
       </Field>
       <Box sx={twoColumnSx}>
-        <Field label="Brand">
+        <Field label={brandModelOptional ? "Brand (optional)" : "Brand"}>
           <SelectInput
             value={product.brand}
             onChange={updateBrand}
             error={Boolean(errors.brand)}
-            helperText={errors.brand}
+            helperText={
+              errors.brand ||
+              (brandModelOptional ? "Optional for universal products." : "")
+            }
           >
-            <option value="">Select brand...</option>
+            <option value="">
+              {brandsLoading ? "Loading brands..." : "Select brand..."}
+            </option>
             {brandOptions.map((brand) => (
-              <option key={brand.id} value={brand.id}>
+              <option key={brand._id} value={brand._id}>
                 {brand.name}
               </option>
             ))}
           </SelectInput>
         </Field>
-        <Field label="Model">
+        <Field label={brandModelOptional ? "Model (optional)" : "Model"}>
           <SelectInput
             value={product.model}
             onChange={(value) => updateField("model", value)}
-            disabled={!product.brand}
+            disabled={!product.brand || modelsLoading}
             error={Boolean(errors.model)}
-            helperText={errors.model}
+            helperText={
+              errors.model ||
+              lookupError ||
+              (brandModelOptional ? "Optional for universal products." : "")
+            }
           >
             <option value="">
-              {product.brand ? "Select model..." : "Select a brand first"}
+              {modelsLoading
+                ? "Loading models..."
+                : product.brand
+                  ? "Select model..."
+                  : brandModelOptional
+                    ? "Select a brand first, if needed"
+                    : "Select a brand first"}
             </option>
             {modelOptions.map((model) => (
-              <option key={model.id} value={model.id}>
+              <option key={model._id} value={model._id}>
                 {model.name}
+                {model.isActive === false ? " (Inactive)" : ""}
               </option>
             ))}
           </SelectInput>
