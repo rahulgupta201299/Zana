@@ -187,7 +187,7 @@ export default function AdminLogin() {
                   inputProps={{ inputMode: "numeric", maxLength: 6 }}
                   label="OTP"
                   onChange={(event) => setOtp(event.target.value.replace(/\D/g, ""))}
-                  placeholder="123456"
+                  placeholder="please enter the OTP"
                   value={otp}
                 />
                 <Button
