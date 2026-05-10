@@ -3,12 +3,16 @@ import { ProductCatergoryCountType } from "@/Redux/Product/Types";
 import serviceActionCreator from "@/Redux/serviceActionCreator";
 import Network from "@/Configurations/Network";
 import { productSubCategoryCountTraceActions } from "../Actions";
+import { ALL_CATEGORY } from "@/Constants/AppConstant";
 
 const network = new Network();
 
 async function productSubCategoryCountService(category: string): Promise<
   ProductCatergoryCountType[]
 > {
+
+  if (!category || category.toLowerCase() === ALL_CATEGORY) return [];
+
   const options = {
     url: `/api/v1/product/category/${encodeURIComponent(category)}/subcategories/count`,
     method: API_METHOD_ENUM.GET,

@@ -88,19 +88,22 @@ function Bikes() {
     navigate(path);
   }
 
-  function handleBrandCategoryClick(val: string) {
-    if (val === ALL_CATEGORY) setFilteredBrandDetails(allBrandDetails);
-    else {
-      const data =
-        bikeSelector.find((item) => item.name.toLowerCase() === val)?.models ||
-        [];
-      setFilteredBrandDetails(data);
+  function handleBrandCategoryClick(brand: string) {
+    setSelectedBrand(brand);
+
+    if (brand === ALL_CATEGORY) {
+      setFilteredBrandDetails(allBrandDetails);
+      return;
     }
 
-    setSelectedBrand(val);
+    const data = bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
+    setFilteredBrandDetails(data);
+
+    navigate(location.pathname, { state: { brand }, replace: true });
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     handleBrandCategoryClick(initialBikeBrand);
   }, [allBrandDetails.length, initialBikeBrand]);
 
@@ -128,11 +131,10 @@ function Bikes() {
                 <button
                   key={name}
                   onClick={() => handleBrandCategoryClick(brandName)}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
-                    selectedBrand === brandName
-                      ? "bg-yellow-400 text-black"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedBrand === brandName
+                    ? "bg-yellow-400 text-black"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
                 >
                   {brandName.toUpperCase()} ({count})
                 </button>
@@ -179,8 +181,8 @@ function Bikes() {
                           src={imageUrl}
                           alt={name}
                           onError={(e) =>
-                            ((e.currentTarget as HTMLImageElement).src =
-                              BikePlaceholderImage)
+                          ((e.currentTarget as HTMLImageElement).src =
+                            BikePlaceholderImage)
                           }
                           sx={{
                             width: "100%",

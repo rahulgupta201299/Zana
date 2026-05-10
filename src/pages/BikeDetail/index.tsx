@@ -64,18 +64,21 @@ const BikeDetailPage = () => {
     null,
   );
 
-  async function getBikeProducts(category?: string, subCategory?: string) {
-    setFilteredBikeProducts([]);
-    try {
-      const response = (await dispatch(
-        BikeProductService({ modelId: bikeId, category, subCategory }),
-      )) as ShopByProductDetailsType[];
-      setBikeProducts(response);
-      setFilteredBikeProducts(response);
-    } catch (error: any) {
-      console.error(error);
-    }
+ async function getBikeProducts(category?: string, subCategory?: string) {
+  setFilteredBikeProducts([]);
+  try {
+    const response = (await dispatch(
+      BikeProductService({
+        modelId: bikeId,
+        ...(category !== ALL_CATEGORY && { category, subCategory }),
+      }),
+    )) as ShopByProductDetailsType[];
+    setBikeProducts(response);
+    setFilteredBikeProducts(response);
+  } catch (error: any) {
+    console.error(error);
   }
+}
 
   async function getBikeDetails() {
     try {
@@ -191,7 +194,7 @@ const BikeDetailPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {imageUrl ? (
+              {!isBikeProductLoading ? (
                 <img
                   src={imageUrl}
                   alt={modelName}
@@ -206,7 +209,7 @@ const BikeDetailPage = () => {
 
             <div className="text-white">
               <div className="mb-4">
-                {type ? (
+                {!isBikeProductLoading ? (
                   <span
                     style={{ textTransform: "capitalize" }}
                     className="px-4 py-2 bg-yellow-400/20 text-yellow-400 rounded-full text-sm font-medium"
@@ -222,7 +225,7 @@ const BikeDetailPage = () => {
                 )}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                {modelName ? (
+                {!isBikeProductLoading ? (
                   modelName
                 ) : (
                   <Skeleton
@@ -232,7 +235,7 @@ const BikeDetailPage = () => {
                 )}
               </h1>
               <p className="text-xl md:text-2xl text-white/70 mb-6">
-                {description ? (
+                {!isBikeProductLoading ? (
                   description
                 ) : (
                   <Skeleton
@@ -243,11 +246,25 @@ const BikeDetailPage = () => {
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">
-                  {brandName.toUpperCase()}
+                  {
+                    !isBikeProductLoading ? brandName.toUpperCase() : (
+                      <Skeleton
+                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                        width={100}
+                      />
+                    )
+                  }
                 </span>
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
-                  {bikeProducts.length} Products Available
+                  {
+                    !isBikeProductLoading ? `${bikeProducts.length} Products Available` : (
+                      <Skeleton
+                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                        width={150}
+                      />
+                    )
+                  }
                 </span>
               </div>
               <button
