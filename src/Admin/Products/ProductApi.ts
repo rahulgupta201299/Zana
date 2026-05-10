@@ -214,14 +214,17 @@ function buildProductFormData(
   appendValue(formData, "category", product.category);
   appendValue(formData, "subCategory", product.subCategory);
   appendValue(formData, "price", product.price);
-  appendImage(formData, "imageUrl", product.imageUrl, "main-product-image", {
-    onlyNewImages: options.onlyNewImages,
-  });
+ appendImage(formData, "imageUrl", product.imageUrl, "main-product-image", {
+  onlyNewImages: options.onlyNewImages,
+});
+
+if (product.images.length) {
   product.images.forEach((image, index) => {
-    appendImage(formData, "images", image, `product-gallery-${index + 1}`, {
-      onlyNewImages: options.onlyNewImages,
-    });
+    appendImage(formData, "images", image, `product-gallery-${index + 1}`);
   });
+} else {
+  formData.append("images", "");
+}
   appendValue(formData, "quantityAvailable", product.quantityAvailable);
   appendValue(formData, "specifications", product.specifications);
   appendValue(formData, "shippingAndReturn", product.shippingAndReturn);
