@@ -43,7 +43,15 @@ function createApiQueryKey({ url, method, params, data, headers }: NetworkTypes)
 }
 
 export default class Network {
-  async request({ url, method, data, params, headers }: NetworkTypes) {
+  async request({
+    url,
+    method,
+    data,
+    params,
+    headers,
+    signal,
+    cache = true,
+  }: NetworkTypes) {
     const normalizedMethod = method.toUpperCase();
 
     const options = {
@@ -51,7 +59,8 @@ export default class Network {
       method: normalizedMethod,
       data,
       headers,
-      params
+      params,
+      signal,
     }
 
     try {
@@ -61,7 +70,7 @@ export default class Network {
         return data
       }
 
-      if (normalizedMethod === API_METHOD_ENUM.GET) {
+      if (normalizedMethod === API_METHOD_ENUM.GET && cache) {
         return queryClient.fetchQuery({
           queryKey: createApiQueryKey(options),
           queryFn: request,

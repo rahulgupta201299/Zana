@@ -38,13 +38,6 @@ export default function PricingInventorySection() {
             }}
           />
         </Field>
-        <Field label="Original price">
-          <TextInput
-            inputMode="decimal"
-            value={product.originalPrice}
-            onChange={(value) => updateField("originalPrice", Number(value) || 0)}
-          />
-        </Field>
         <Field label="Quantity available">
           <TextInput
             inputMode="numeric"

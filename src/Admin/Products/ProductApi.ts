@@ -83,7 +83,10 @@ export async function getAdminProducts(): Promise<ProductOption[]> {
   return [];
 }
 
-export async function searchAdminProducts(query = ""): Promise<ProductOption[]> {
+export async function searchAdminProducts(
+  query = "",
+  signal?: AbortSignal,
+): Promise<ProductOption[]> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
   const response = await network.request({
@@ -93,6 +96,8 @@ export async function searchAdminProducts(query = ""): Promise<ProductOption[]> 
       query: encodeURIComponent(query),
       currency,
     },
+    signal,
+    cache: false,
   });
 
   assertSuccessfulResponse(response);
@@ -214,14 +219,17 @@ function buildProductFormData(
   appendValue(formData, "category", product.category);
   appendValue(formData, "subCategory", product.subCategory);
   appendValue(formData, "price", product.price);
-  appendImage(formData, "imageUrl", product.imageUrl, "main-product-image", {
-    onlyNewImages: options.onlyNewImages,
-  });
+ appendImage(formData, "imageUrl", product.imageUrl, "main-product-image", {
+  onlyNewImages: options.onlyNewImages,
+});
+
+if (product.images.length) {
   product.images.forEach((image, index) => {
-    appendImage(formData, "images", image, `product-gallery-${index + 1}`, {
-      onlyNewImages: options.onlyNewImages,
-    });
+    appendImage(formData, "images", image, `product-gallery-${index + 1}`);
   });
+} else {
+  formData.append("images", "");
+}
   appendValue(formData, "quantityAvailable", product.quantityAvailable);
   appendValue(formData, "specifications", product.specifications);
   appendValue(formData, "shippingAndReturn", product.shippingAndReturn);

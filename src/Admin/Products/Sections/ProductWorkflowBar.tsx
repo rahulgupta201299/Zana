@@ -3,6 +3,7 @@ import Alert from "@mui/material/Alert";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -69,12 +70,24 @@ export default function ProductWorkflowBar({
 
   React.useEffect(() => {
     let isCurrent = true;
-    const timeoutId = window.setTimeout(() => {
-      const normalizedQuery = searchQuery.trim();
-      if (!normalizedQuery) return;
+    const controller = new AbortController();
+    const normalizedQuery = searchQuery.trim();
 
-      setIsLoadingProducts(true);
-      searchAdminProducts(normalizedQuery)
+    if (!normalizedQuery) {
+      setIsLoadingProducts(false);
+      setProductOptions(selectedProduct ? [selectedProduct] : []);
+
+      return () => {
+        isCurrent = false;
+        controller.abort();
+      };
+    }
+
+    setIsLoadingProducts(true);
+    setProductOptions(selectedProduct ? [selectedProduct] : []);
+
+    const timeoutId = window.setTimeout(() => {
+      searchAdminProducts(normalizedQuery, controller.signal)
         .then((products) => {
           if (isCurrent) {
             setProductOptions((currentOptions) =>
@@ -84,6 +97,8 @@ export default function ProductWorkflowBar({
           }
         })
         .catch((error: any) => {
+          if (isAbortError(error)) return;
+
           if (isCurrent) {
             setSubmitStatus({
               type: "error",
@@ -101,6 +116,7 @@ export default function ProductWorkflowBar({
 
     return () => {
       isCurrent = false;
+      controller.abort();
       window.clearTimeout(timeoutId);
     };
   }, [searchQuery, selectedProduct]);
@@ -324,6 +340,13 @@ export default function ProductWorkflowBar({
           value={selectedProduct}
           inputValue={searchQuery}
           loading={isLoadingProducts}
+          loadingText="Searching live products..."
+          noOptionsText={
+            searchQuery.trim()
+              ? "No matching products found."
+              : "Type a code or product name."
+          }
+          filterOptions={(options) => options}
           isOptionEqualToValue={(option, value) => option._id === value._id}
           getOptionLabel={getProductOptionLabel}
           onChange={(_, value) => {
@@ -339,9 +362,20 @@ export default function ProductWorkflowBar({
               {...params}
               size="small"
               label="Search product code"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isLoadingProducts ? (
+                      <CircularProgress color="inherit" size={18} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
               helperText={
                 isLoadingProducts
-                  ? "Searching product codes..."
+                  ? "Searching live product data..."
                   : "Type a code or product name, then load it to edit."
               }
             />
@@ -384,6 +418,18 @@ export default function ProductWorkflowBar({
         </Alert>
       ) : null}
     </Paper>
+  );
+}
+
+function isAbortError(error: unknown) {
+  return (
+    (error instanceof DOMException && error.name === "AbortError") ||
+    (typeof error === "object" &&
+      error !== null &&
+      ("code" in error || "name" in error) &&
+      ((error as { code?: string; name?: string }).code === "ERR_CANCELED" ||
+        (error as { code?: string; name?: string }).name === "CanceledError" ||
+        (error as { code?: string; name?: string }).name === "AbortError"))
   );
 }
 
@@ -451,7 +497,6 @@ function normalizeProductForForm(product: ProductOption): ProductFieldType {
     productCode: mergedProduct.productCode || "",
     subCategory: mergedProduct.subCategory || "",
     price: Number(product.price) || 0,
-    originalPrice: Number(product.originalPrice) || 0,
     quantityAvailable: Number(product.quantityAvailable) || 0,
     priority: Number(product.priority) || 0,
     isBikeSpecific: Boolean(mergedProduct.isBikeSpecific),
