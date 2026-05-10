@@ -15,11 +15,15 @@ import { useProductCms } from "./ProductCmsContext";
 import ProductWorkflowBar from "./Sections/ProductWorkflowBar";
 import { CmsSectionId } from "./Constant";
 import SectionNavigation from "./Sections/SectionNavigation";
+import { Drawer, IconButton, Typography } from "@mui/material";
+import PreviewPanel from "./PreviewPanel";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function AdminPanel() {
   const { activeSection, errors } = useProductCms();
   const section = sectionRenderers[activeSection] || sectionRenderers.core;
   const errorCount = Object.keys(errors).length;
+  const [previewOpen, setPreviewOpen] = React.useState(false);
 
   return (
     <Box
@@ -27,7 +31,7 @@ export default function AdminPanel() {
       aria-label="Product CMS controls"
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      <ProductWorkflowBar />
+      <ProductWorkflowBar showPreview={() => setPreviewOpen(true)} />
 
       <Box
         sx={{
@@ -47,6 +51,43 @@ export default function AdminPanel() {
           {section}
         </Box>
       </Box>
+       <Drawer
+        anchor="right"
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        slotProps={{
+          paper: {
+            sx: { width: { xs: "100%", sm: 520, md: 720 } },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            px: 2,
+            py: 1.5,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            position: "sticky",
+            top: 0,
+            bgcolor: "background.paper",
+            zIndex: 1,
+          }}
+        >
+          <Typography variant="subtitle1" fontWeight={700}>
+            Product Preview
+          </Typography>
+          <IconButton onClick={() => setPreviewOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ overflowY: "auto", height: "100%" }}>
+          <PreviewPanel />
+        </Box>
+      </Drawer>
     </Box>
   );
 }

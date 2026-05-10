@@ -200,9 +200,10 @@ function buildProductFormData(
   options: { onlyNewImages?: boolean } = {},
 ) {
   const formData = new FormData();
-
-  appendValue(formData, "brand", product.brand);
-  appendValue(formData, "model", product.model);
+   if (product.isBikeSpecific) {
+    appendValue(formData, "brand", product.brand);
+    appendValue(formData, "model", product.model);
+  }
   appendValue(formData, "isBikeSpecific", product.isBikeSpecific);
   appendValue(formData, "productCode", product.productCode);
   appendValue(formData, "isNewArrival", product.isNewArrival);

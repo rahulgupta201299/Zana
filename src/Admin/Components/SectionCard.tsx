@@ -29,10 +29,9 @@ export default function SectionCard({
         component="header"
         sx={{
           display: "flex",
-          alignItems: { xs: "flex-start", sm: "baseline" },
-          justifyContent: "space-between",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
+          alignItems: { xs: "flex-start", sm: "baseline" },     
+          flexDirection: 'column',
+          gap: '4px',
           mb: 2,
         }}
       >
@@ -40,7 +39,7 @@ export default function SectionCard({
           {title}
         </Typography>
         {description ? (
-          <Typography sx={{ color: "#68717d", fontSize: "0.88rem" }}>
+          <Typography sx={{ color: "#68717d", fontSize: "0.8rem" }}>
             {description}
           </Typography>
         ) : null}

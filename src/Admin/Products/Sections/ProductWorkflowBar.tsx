@@ -17,14 +17,20 @@ import {
   updateAdminProduct,
 } from "../ProductApi";
 import type { ProductFieldType } from "../Types";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
-export default function ProductWorkflowBar() {
+export default function ProductWorkflowBar({
+  showPreview,
+}: {
+  showPreview: () => void;
+}) {
   const { dispatchAction, errors, isDirty, product } = useProductCms();
-  const [selectedProduct, setSelectedProduct] = React.useState<ProductOption | null>(
-    null,
-  );
+  const [selectedProduct, setSelectedProduct] =
+    React.useState<ProductOption | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [productOptions, setProductOptions] = React.useState<ProductOption[]>([]);
+  const [productOptions, setProductOptions] = React.useState<ProductOption[]>(
+    [],
+  );
   const [submitStatus, setSubmitStatus] = React.useState<{
     type: "success" | "error";
     message: string;
@@ -122,7 +128,8 @@ export default function ProductWorkflowBar() {
         productOptions.find((item) => item._id === selectedProduct._id) || null;
       const loadedProduct = await getAdminProduct(selectedProduct._id).catch(
         () => {
-          if (!selectedOption) throw new Error("Unable to load selected product.");
+          if (!selectedOption)
+            throw new Error("Unable to load selected product.");
           return selectedOption;
         },
       );
@@ -253,41 +260,52 @@ export default function ProductWorkflowBar() {
           >
             Product CMS
           </Typography>
-          <Typography variant="h1" sx={{ fontSize: "1.45rem", fontWeight: 850 }}>
+          <Typography
+            variant="h1"
+            sx={{ fontSize: "1.45rem", fontWeight: 850 }}
+          >
             Create, edit, preview, save, and publish
           </Typography>
         </Box>
-
         <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            justifyContent: { xs: "flex-start", xl: "flex-end" },
-          }}
+        sx={{
+          display: "flex",
+          width: "100%",     
+          justifyContent: "space-between",
+        }}
         >
-          <Button
-            variant="outlined"
-            type="button"
-            onClick={startNewProduct}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              justifyContent: { xs: "flex-start", xl: "flex-end" },
+            }}
           >
-            New product
-          </Button>
-          <Button
-            variant="outlined"
-            type="button"
-            onClick={resetProduct}
-          >
-            Reset edits
-          </Button>
-          <Button
-            variant="contained"
-            type="button"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Publishing..." : "Publish"}
-          </Button>
+            <Button variant="outlined" type="button" onClick={startNewProduct}>
+              New product
+            </Button>
+            <Button variant="outlined" type="button" onClick={resetProduct}>
+              Reset edits
+            </Button>
+            <Button
+              variant="contained"
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Publishing..." : "Publish"}
+            </Button>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end",  }}>
+            <Button
+              variant="outlined"
+              startIcon={<VisibilityIcon />}
+              onClick={showPreview}
+            >
+              Preview
+            </Button>
+          </Box>
         </Box>
       </Box>
 
@@ -343,9 +361,15 @@ export default function ProductWorkflowBar() {
         <Typography sx={pillSx}>
           Code: {product.productCode || "New product"}
         </Typography>
-        <Typography sx={pillSx}>Status: {product.isActive ? "Active" : "Draft"}</Typography>
-        <Typography sx={pillSx}>{isDirty ? "Unsaved changes" : "Saved"}</Typography>
-        <Typography sx={pillSx}>{product._id ? "Editing existing" : "Creating new"}</Typography>
+        <Typography sx={pillSx}>
+          Status: {product.isActive ? "Active" : "Draft"}
+        </Typography>
+        <Typography sx={pillSx}>
+          {isDirty ? "Unsaved changes" : "Saved"}
+        </Typography>
+        <Typography sx={pillSx}>
+          {product._id ? "Editing existing" : "Creating new"}
+        </Typography>
       </Box>
 
       {errorCount ? (
@@ -366,7 +390,8 @@ export default function ProductWorkflowBar() {
 function validateProduct(product: ProductFieldType) {
   const errors: Record<string, string> = {};
 
-  if (!product.productCode.trim()) errors.productCode = "Product code is required.";
+  if (!product.productCode.trim())
+    errors.productCode = "Product code is required.";
   if (product.isBikeSpecific && !product.brand) {
     errors.brand = "Brand is required for bike-specific products.";
   }
@@ -382,12 +407,14 @@ function validateProduct(product: ProductFieldType) {
   }
   if (!product.category) errors.category = "Category is required.";
   if (!product.subCategory) errors.subCategory = "Sub-category is required.";
-  if (!product.price || product.price <= 0) errors.price = "Price must be greater than 0.";
+  if (!product.price || product.price <= 0)
+    errors.price = "Price must be greater than 0.";
   if (!product.imageUrl) errors.imageUrl = "Main image is required.";
   if (product.quantityAvailable < 0) {
     errors.quantityAvailable = "Quantity cannot be negative.";
   }
-  if (!product.specifications.trim()) errors.specifications = "Specifications are required.";
+  if (!product.specifications.trim())
+    errors.specifications = "Specifications are required.";
   if (!product.shippingAndReturn.trim()) {
     errors.shippingAndReturn = "Shipping and return details are required.";
   }
@@ -403,9 +430,13 @@ function normalizeProductForForm(product: ProductOption): ProductFieldType {
     ...mergedProduct,
     _id: product._id || "",
     brand:
-      typeof product.brand === "string" ? product.brand : product.brand?._id || "",
+      typeof product.brand === "string"
+        ? product.brand
+        : product.brand?._id || "",
     model:
-      typeof product.model === "string" ? product.model : product.model?._id || "",
+      typeof product.model === "string"
+        ? product.model
+        : product.model?._id || "",
     name: mergedProduct.name || "",
     shortDescription: mergedProduct.shortDescription || "",
     longDescription: mergedProduct.longDescription || "",
