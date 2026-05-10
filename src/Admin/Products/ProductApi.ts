@@ -83,7 +83,10 @@ export async function getAdminProducts(): Promise<ProductOption[]> {
   return [];
 }
 
-export async function searchAdminProducts(query = ""): Promise<ProductOption[]> {
+export async function searchAdminProducts(
+  query = "",
+  signal?: AbortSignal,
+): Promise<ProductOption[]> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
   const response = await network.request({
@@ -93,6 +96,8 @@ export async function searchAdminProducts(query = ""): Promise<ProductOption[]> 
       query: encodeURIComponent(query),
       currency,
     },
+    signal,
+    cache: false,
   });
 
   assertSuccessfulResponse(response);

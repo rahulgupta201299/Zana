@@ -4,4 +4,6 @@ export type NetworkTypes = {
   data?: any
   headers?: any
   params?: any
+  signal?: AbortSignal
+  cache?: boolean
 }

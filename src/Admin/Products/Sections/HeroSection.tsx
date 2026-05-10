@@ -16,13 +16,6 @@ export default function HeroSection() {
 
   return (
     <SectionCard title="Core product content" description="Maps to name and shortDescription.">
-      <Field label="Original price">
-        <TextInput
-          inputMode="decimal"
-          value={product.originalPrice}
-          onChange={(value) => updateField("originalPrice", Number(value) || 0)}
-        />
-      </Field>
       <Field label="Name">
         <TextInput
           value={product.name}

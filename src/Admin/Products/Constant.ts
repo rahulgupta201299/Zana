@@ -68,7 +68,6 @@ export const newProductData: ProductFieldType = {
   price: 1149,
   currencySymbol: "₹",
   currency: "INR",
-  originalPrice: 1149,
   imageUrl:
     "https://d1bw1i3fxlc6zi.cloudfront.net/Zana+website/proMImg_02_1770120997.jpg",
   images: productImages,
@@ -100,7 +99,6 @@ export const initialProductField: ProductFieldType = {
   price: 0,
   currencySymbol: "₹",
   currency: "INR",
-  originalPrice: 0,
   imageUrl: "",
   images: [],
   quantityAvailable: 0,

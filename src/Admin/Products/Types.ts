@@ -33,7 +33,6 @@ export type ProductFieldType = {
   price: number;
   currencySymbol: string;
   currency: string;
-  originalPrice: number;
   imageUrl: string;
   images: string[];
   quantityAvailable: number;
