@@ -95,6 +95,7 @@ export async function searchAdminProducts(
     params: {
       query: encodeURIComponent(query),
       currency,
+      all: true
     },
     signal,
     cache: false,
