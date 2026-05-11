@@ -22,6 +22,7 @@ import { onMountChecks } from '../Service/Service'
 import FloatingButtons from '@/components/Floating'
 import { usePageTracking } from '@/hooks/usePageTracking'
 import { useClarityPageTracking } from '@/hooks/useClarityPageTracking'
+import { CanonicalLink } from '@/components/CanonicalLink'
 
 function Wrapper() {
 	const location = useLocation()
@@ -43,6 +44,7 @@ function Wrapper() {
 
 	return (
 		<Box sx={{ minHeight: "100vh" }}>
+			<CanonicalLink />
 			{isLoadig && <Loading />}
 			<Navbar />
 			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: { md: 20.5, xs: 10.5 } }} />}
