@@ -33,5 +33,6 @@ export const ROUTES = Object.freeze({
   ADMIN: SUB_ROUTES.ADMIN,
   ADMIN_LOGIN: `${SUB_ROUTES.ADMIN}/login`,
   ADMIN_PRODUCTS: `${SUB_ROUTES.ADMIN}/products`,
+  ADMIN_ACTIVE_CARTS: `${SUB_ROUTES.ADMIN}/active-carts`,
   ANY: '*'
 })

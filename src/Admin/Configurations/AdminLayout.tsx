@@ -19,6 +19,7 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 import { ROUTES } from "@/Constants/Routes";
 import { clearAdminSession, getAdminEmail } from "./AdminAuth";
@@ -31,6 +32,11 @@ const navItems = [
     label: "Products",
     to: ROUTES.ADMIN_PRODUCTS,
     icon: <Inventory2OutlinedIcon fontSize="small" />,
+  },
+  {
+    label: "Active Carts",
+    to: ROUTES.ADMIN_ACTIVE_CARTS,
+    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
   },
 ];
 

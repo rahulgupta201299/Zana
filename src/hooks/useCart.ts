@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
-import { CartDetailResType, CartItemDetail } from "@/Redux/Cart/Types";
+import { CartDetailResType, CartItemDetail, GetCartDetailResType } from "@/Redux/Cart/Types";
 import AppStore, { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
@@ -35,7 +35,7 @@ export default function useCart() {
 
     try {
       // @ts-ignore
-      (await dispatch(getCartDetailServiceAction())) as CartDetailResType;
+      await dispatch(getCartDetailServiceAction()) as GetCartDetailResType;
     } catch (error: any) {
       throw error;
     }
