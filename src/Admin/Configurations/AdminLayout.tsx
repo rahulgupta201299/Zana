@@ -1,7 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -16,9 +15,7 @@ import { useState } from "react";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 import { ROUTES } from "@/Constants/Routes";
@@ -37,6 +34,11 @@ const navItems = [
     label: "Active Carts",
     to: ROUTES.ADMIN_ACTIVE_CARTS,
     icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+  },
+  {
+    label: "Order list",
+    to: ROUTES.ADMIN_ORDER_LIST,
+    icon: <ReceiptLongOutlinedIcon fontSize="small" />,
   },
 ];
 
