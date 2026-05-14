@@ -92,6 +92,42 @@ export type AdminActiveCartPagination = {
   hasPrevPage?: boolean;
 };
 
+/** `data` object for a successful active-carts list response. */
+export type AdminActiveCartListData = {
+  carts?: AdminActiveCartRecord[];
+  pagination?: AdminActiveCartPagination;
+};
+
+/**
+ * Response body from `GET …/cart/admin/active`.
+ * Supports `{ success, data: { carts, pagination } }` and flattened `{ carts, pagination }`.
+ */
+export type AdminActiveCartsApiResponse = {
+  success?: boolean;
+  message?: string;
+  data?: AdminActiveCartListData;
+  carts?: AdminActiveCartRecord[];
+  pagination?: AdminActiveCartPagination;
+};
+
+export function parseAdminActiveCartsResponse(
+  body: AdminActiveCartsApiResponse | null | undefined,
+): { carts: AdminActiveCartRecord[]; pagination: AdminActiveCartPagination } {
+  const envelope: AdminActiveCartsApiResponse =
+    body != null && typeof body === "object" ? body : {};
+  if (envelope.success === false) {
+    throw new Error(envelope.message?.trim() || "API request failed");
+  }
+  const list: AdminActiveCartListData =
+    envelope.data != null && typeof envelope.data === "object"
+      ? envelope.data
+      : { carts: envelope.carts, pagination: envelope.pagination };
+  const carts = Array.isArray(list.carts) ? list.carts : [];
+  const pagination =
+    list.pagination != null && typeof list.pagination === "object" ? list.pagination : {};
+  return { carts, pagination };
+}
+
 function omitEmptyParams(
   params: Record<string, string | number | undefined | null>,
 ): Record<string, string | number> {
@@ -118,14 +154,14 @@ function buildQueryParams(filters: AdminActiveCartFilters): Record<string, strin
   });
 }
 
-/** Raw response body; callers parse `success` / `data` / carts / pagination. */
 export async function getAdminActiveCarts(
   filters: AdminActiveCartFilters,
-): Promise<unknown> {
-  return network.request({
+): Promise<AdminActiveCartsApiResponse> {
+  const data = await network.request({
     url: ACTIVE_CART_ADMIN_PATH,
     method: API_METHOD_ENUM.GET,
     params: buildQueryParams(filters),
     cache: false,
   });
+  return data as AdminActiveCartsApiResponse;
 }

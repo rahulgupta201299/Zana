@@ -41,6 +41,7 @@ import {
   AdminActiveCartSortBy,
   AdminActiveCartSortOrder,
   AdminActiveCartPagination,
+  parseAdminActiveCartsResponse,
 } from "../Configurations/ActiveCartApi";
 
 /** Slider UI is capped at ₹5,000; open-ended high totals use the "₹5,000 and above" control. */
@@ -292,31 +293,6 @@ function Row(props: {
 
 type AppliedAmount = { min: number; max: number };
 
-function parseAdminActiveCartsResponse(raw: unknown): {
-  carts: AdminActiveCartRecord[];
-  pagination: AdminActiveCartPagination;
-} {
-  const body = (raw && typeof raw === "object" ? raw : {}) as {
-    success?: boolean;
-    message?: string;
-    data?: unknown;
-  };
-  if (body.success === false) {
-    throw new Error(body.message?.trim() || "API request failed");
-  }
-  const data = (
-    body.data && typeof body.data === "object" ? body.data : body
-  ) as Record<string, unknown>;
-  const carts = Array.isArray(data.carts) ? data.carts : [];
-  const pagination = (
-    data.pagination && typeof data.pagination === "object" ? data.pagination : {}
-  ) as AdminActiveCartPagination;
-  return {
-    carts: carts as AdminActiveCartRecord[],
-    pagination,
-  };
-}
-
 export default function ActiveCarts() {
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
@@ -532,8 +508,8 @@ export default function ActiveCarts() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as AdminActiveCartSortBy)}
               >
-                <MenuItem value="updatedAt">Updated at</MenuItem>
-                <MenuItem value="totalAmount">Total amount</MenuItem>
+                <MenuItem value="updatedAt">Last updated</MenuItem>
+                <MenuItem value="totalAmount">Cart total</MenuItem>
               </Select>
             </FormControl>
             <Stack direction="row" spacing={0.5} alignItems="center" aria-label="Sort direction">
