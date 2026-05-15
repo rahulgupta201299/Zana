@@ -37,6 +37,8 @@ const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuc
 
 const AdminLogin = lazyLoadPage(() => import("@/Admin/Login"), Loading);
 const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
+const AdminActiveCarts = lazyLoadPage(() => import("@/Admin/ActiveCarts"), Loading);
+const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
 
 function DynamicRedirect() {
   const location = useLocation();
@@ -68,6 +70,8 @@ export const routeObj: RouteObject[] = [
       { index: true, element: AdminLogin },
       { path: "login", element: AdminLogin },
       { path: "products", element: AdminProducts },
+      { path: "active-carts", element: AdminActiveCarts },
+      { path: "orders", element: AdminOrderList },
       { path: "*", element: <Navigate replace to={ROUTES.ADMIN_PRODUCTS} /> },
     ]
   },
