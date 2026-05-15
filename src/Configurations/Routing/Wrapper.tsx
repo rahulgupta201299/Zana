@@ -53,7 +53,7 @@ function Wrapper() {
 			{isOpenCouponDialog && <CouponDialog />}
 			<Outlet />
 			<Footer />
-			<FloatingButtons />
+			{!location.pathname.includes(ROUTES.ADMIN) && <FloatingButtons />}
 			{outOfStock.length > 0 && <CartAttentionDialog />}
 			{/* {isOpenOrderPopup && <OrderConfirmDialog />} */}
 		</Box>

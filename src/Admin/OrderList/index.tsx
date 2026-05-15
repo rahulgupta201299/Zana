@@ -31,6 +31,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
   getAdminOrderList,
   AdminOrderListFilters,
@@ -143,15 +144,6 @@ function minIsoDate(a: string, b: string): string {
   return a <= b ? a : b;
 }
 
-function formatDateTime(iso: string | null | undefined): string {
-  if (!iso || !iso.trim()) return NULL_PLACEHOLDER;
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
-
 function ProductThumbCell(props: { item: AdminOrderListLineItem }) {
   const { item } = props;
   const src = productImageUrl(item.product);
@@ -197,9 +189,6 @@ function Row(props: {
 
   const items = order.items ?? [];
   const symbol = order.currencySymbol ?? "";
-  const orderDateDisplay = formatDateTime(order.orderDate ?? null);
-  const updatedDisplay = formatDateTime(order.updatedAt ?? null);
-
   const formattedShipping = formatShippingAddress(order.shippingAddress ?? null);
   const shippingAddressText = formattedShipping.length > 0 ? formattedShipping : NULL_PLACEHOLDER;
 
@@ -249,7 +238,9 @@ function Row(props: {
           {totalAmount}
         </TableCell>
         <TableCell>{(order.paymentMethod ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
-        <TableCell>{orderDateDisplay}</TableCell>
+        <TableCell>
+          {formatUtcToIstDateTime(order.orderDate ?? null, NULL_PLACEHOLDER)}
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={TABLE_COL_SPAN}>
@@ -269,7 +260,9 @@ function Row(props: {
                 </Box>
                 <Box>
                   <Typography variant="caption" color="text.secondary">Last updated</Typography>
-                  <Typography variant="body2">{updatedDisplay}</Typography>
+                  <Typography variant="body2">
+                    {formatUtcToIstDateTime(order.updatedAt ?? null, NULL_PLACEHOLDER)}
+                  </Typography>
                 </Box>
               </Stack>
 
@@ -363,7 +356,9 @@ function Row(props: {
                       {history.map((h: AdminOrderStatusHistoryEntry, i: number) => (
                         <TableRow key={`${h.status ?? "s"}-${h.timestamp ?? i}`}>
                           <TableCell>{h.status ?? NULL_PLACEHOLDER}</TableCell>
-                          <TableCell>{formatDateTime(h.timestamp)}</TableCell>
+                          <TableCell>
+                            {formatUtcToIstDateTime(h.timestamp, NULL_PLACEHOLDER)}
+                          </TableCell>
                           <TableCell>{(h.notes ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
                         </TableRow>
                       ))}

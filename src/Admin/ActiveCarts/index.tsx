@@ -31,6 +31,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
   getAdminActiveCarts,
   AdminActiveCartFilters,
@@ -150,8 +151,6 @@ function Row(props: {
   const { cart, expanded, onToggleExpand } = props;
 
   const items = cart.items ?? [];
-  const updatedRaw = cart.updatedAt ?? "";
-  const lastUpdated = updatedRaw ? new Date(updatedRaw).toLocaleString() : "—";
 
   const symbol = cart.currencySymbol ?? "";
 
@@ -198,7 +197,9 @@ function Row(props: {
           {symbol}
           {totalAmount}
         </TableCell>
-        <TableCell>{lastUpdated}</TableCell>
+        <TableCell>
+          {formatUtcToIstDateTime(cart.updatedAt ?? null, NULL_EMAIL_PLACEHOLDER)}
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
