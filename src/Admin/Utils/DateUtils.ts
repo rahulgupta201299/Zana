@@ -28,3 +28,20 @@ export function formatUtcToIstDateTime(
 
   return `${display} (IST)`;
 }
+
+export function formatIsoDate(value: string | null | undefined, fallback = "—"): string {
+  if (!value || !value.trim()) return fallback;
+
+  const [year, month, day] = value.trim().split("-").map(Number);
+  if (!year || !month || !day) return value;
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "long",
+    timeZone: UTC_TIME_ZONE,
+    year: "numeric",
+  }).format(date);
+}

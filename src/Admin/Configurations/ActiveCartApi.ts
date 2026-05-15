@@ -1,5 +1,6 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import Network from "@/Configurations/Network";
+import { getAdminApiBody, omitEmptyParams } from "../Utils/ApiUtils";
 
 const network = new Network();
 
@@ -113,11 +114,7 @@ export type AdminActiveCartsApiResponse = {
 export function parseAdminActiveCartsResponse(
   body: AdminActiveCartsApiResponse | null | undefined,
 ): { carts: AdminActiveCartRecord[]; pagination: AdminActiveCartPagination } {
-  const envelope: AdminActiveCartsApiResponse =
-    body != null && typeof body === "object" ? body : {};
-  if (envelope.success === false) {
-    throw new Error(envelope.message?.trim() || "API request failed");
-  }
+  const envelope = getAdminApiBody<AdminActiveCartListData>(body);
   const list: AdminActiveCartListData =
     envelope.data != null && typeof envelope.data === "object"
       ? envelope.data
@@ -126,18 +123,6 @@ export function parseAdminActiveCartsResponse(
   const pagination =
     list.pagination != null && typeof list.pagination === "object" ? list.pagination : {};
   return { carts, pagination };
-}
-
-function omitEmptyParams(
-  params: Record<string, string | number | undefined | null>,
-): Record<string, string | number> {
-  const out: Record<string, string | number> = {};
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== "") {
-      out[key] = value;
-    }
-  }
-  return out;
 }
 
 /** Serialize filters to query params only; no business rules beyond omitting null/undefined. */

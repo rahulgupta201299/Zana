@@ -12,7 +12,7 @@ function AdminRoutes() {
 
   if (isLoginRoute) {
     return authenticated ? (
-      <Navigate replace to={ROUTES.ADMIN_PRODUCTS} />
+      <Navigate replace to={ROUTES.ADMIN_DASHBOARD} />
     ) : (
       <Outlet />
     )
