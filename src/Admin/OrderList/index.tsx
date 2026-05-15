@@ -56,6 +56,9 @@ const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 const TABLE_COL_SPAN = 8;
 
 type PaymentTypeFilter = "all" | "paid" | "cod";
+type DateFilter = "custom" | "today" | "yesterday" | "1m" | "3m" | "6m" | "1y";
+
+const DEFAULT_DATE_FILTER: DateFilter = "custom";
 
 function productDisplayName(item: AdminOrderListLineItem): string {
   const p = item.product ?? null;
@@ -93,6 +96,47 @@ function formatLocalIsoDate(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+function addDays(d: Date, days: number): Date {
+  const next = new Date(d);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function addMonthsClamped(d: Date, months: number): Date {
+  const next = new Date(d);
+  const originalDay = next.getDate();
+  next.setDate(1);
+  next.setMonth(next.getMonth() + months);
+  const lastDayOfTargetMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+  next.setDate(Math.min(originalDay, lastDayOfTargetMonth));
+  return next;
+}
+
+function resolveDateFilterRange(filter: DateFilter, customStartDate: string, customEndDate: string) {
+  const today = new Date();
+  const todayIso = formatLocalIsoDate(today);
+  if (filter === "custom") {
+    return { startDate: customStartDate, endDate: customEndDate };
+  }
+  if (filter === "today") {
+    return { startDate: todayIso, endDate: todayIso };
+  }
+  if (filter === "yesterday") {
+    const yesterdayIso = formatLocalIsoDate(addDays(today, -1));
+    return { startDate: yesterdayIso, endDate: yesterdayIso };
+  }
+  if (filter === "1m") {
+    return { startDate: formatLocalIsoDate(addMonthsClamped(today, -1)), endDate: todayIso };
+  }
+  if (filter === "3m") {
+    return { startDate: formatLocalIsoDate(addMonthsClamped(today, -3)), endDate: todayIso };
+  }
+  if (filter === "6m") {
+    return { startDate: formatLocalIsoDate(addMonthsClamped(today, -6)), endDate: todayIso };
+  }
+  return { startDate: formatLocalIsoDate(addMonthsClamped(today, -12)), endDate: todayIso };
 }
 
 function minIsoDate(a: string, b: string): string {
@@ -371,6 +415,7 @@ export default function AdminOrderList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [dateFilter, setDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [amountRange, setAmountRange] = useState<[number, number]>([
@@ -385,6 +430,7 @@ export default function AdminOrderList() {
 
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
+  const [appliedDateFilter, setAppliedDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
   const [appliedAmount, setAppliedAmount] = useState<AppliedAmount>({
@@ -449,8 +495,10 @@ export default function AdminOrderList() {
   }, [load, rowsPerPage]);
 
   const handleApplyFilters = () => {
-    setAppliedStartDate(startDate);
-    setAppliedEndDate(endDate);
+    const nextDateRange = resolveDateFilterRange(dateFilter, startDate, endDate);
+    setAppliedDateFilter(dateFilter);
+    setAppliedStartDate(nextDateRange.startDate);
+    setAppliedEndDate(nextDateRange.endDate);
     setAppliedAmount({ min: amountRange[0], max: amountRange[1] });
     setAppliedAmount5000AndAbove(amount5000AndAbove);
     setAppliedSortBy(sortBy);
@@ -459,11 +507,13 @@ export default function AdminOrderList() {
   };
 
   const handleClearFilters = () => {
+    setDateFilter(DEFAULT_DATE_FILTER);
     setStartDate("");
     setEndDate("");
     setAmountRange([DEFAULT_MIN_AMOUNT, DEFAULT_MAX_AMOUNT]);
     setAmount5000AndAbove(false);
     setPaymentType("all");
+    setAppliedDateFilter(DEFAULT_DATE_FILTER);
     setAppliedStartDate("");
     setAppliedEndDate("");
     setAppliedAmount({ min: DEFAULT_MIN_AMOUNT, max: DEFAULT_MAX_AMOUNT });
@@ -475,9 +525,13 @@ export default function AdminOrderList() {
     setAppliedPaymentType("all");
   };
 
+  const isCustomDateFilter = dateFilter === "custom";
+  const isDateFilterUnchanged =
+    dateFilter === appliedDateFilter
+    && (dateFilter !== "custom" || (startDate === appliedStartDate && endDate === appliedEndDate));
+
   const isApplyDisabled =
-    startDate === appliedStartDate
-    && endDate === appliedEndDate
+    isDateFilterUnchanged
     && amountRange[0] === appliedAmount.min
     && amountRange[1] === appliedAmount.max
     && amount5000AndAbove === appliedAmount5000AndAbove
@@ -486,12 +540,14 @@ export default function AdminOrderList() {
     && paymentType === appliedPaymentType;
 
   const isClearDisabled =
-    startDate === ""
+    dateFilter === DEFAULT_DATE_FILTER
+    && startDate === ""
     && endDate === ""
     && amountRange[0] === DEFAULT_MIN_AMOUNT
     && amountRange[1] === DEFAULT_MAX_AMOUNT
     && !amount5000AndAbove
     && paymentType === "all"
+    && appliedDateFilter === DEFAULT_DATE_FILTER
     && appliedStartDate === ""
     && appliedEndDate === ""
     && appliedAmount.min === DEFAULT_MIN_AMOUNT
@@ -537,50 +593,71 @@ export default function AdminOrderList() {
       <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap" useFlexGap alignItems="center">
-            <TextField
-              label="Start date"
-              type="date"
-              variant="outlined"
-              size="small"
-              value={startDate}
-              onChange={(e) => {
-                const next = e.target.value;
-                setStartDate(next);
-                if (next && endDate && next > endDate) {
-                  setEndDate(next);
-                }
-              }}
-              InputLabelProps={{ shrink: true }}
-              slotProps={{
-                htmlInput: {
-                  max: startDateInputMax,
-                },
-              }}
-              sx={{ minWidth: 200 }}
-            />
-            <TextField
-              label="End date"
-              type="date"
-              variant="outlined"
-              size="small"
-              value={endDate}
-              onChange={(e) => {
-                const next = e.target.value;
-                const capped = next && next > todayIso ? todayIso : next;
-                setEndDate(capped);
-                if (capped && startDate && capped < startDate) {
-                  setStartDate(capped);
-                }
-              }}
-              InputLabelProps={{ shrink: true }}
-              slotProps={{
-                htmlInput: {
-                  max: todayIso,
-                  ...(endDateInputMin ? { min: endDateInputMin } : {}),
-                },
-              }}
-              sx={{ minWidth: 200 }}
-            />
+            <FormControl size="small" sx={{ minWidth: 200 }}>
+              <InputLabel id="admin-order-date-filter">Date filter</InputLabel>
+              <Select<DateFilter>
+                labelId="admin-order-date-filter"
+                label="Date filter"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value as DateFilter)}
+              >
+                <MenuItem value="today">Today</MenuItem>
+                <MenuItem value="yesterday">Yesterday</MenuItem>
+                <MenuItem value="1m">1 month</MenuItem>
+                <MenuItem value="3m">3 months</MenuItem>
+                <MenuItem value="6m">6 months</MenuItem>
+                <MenuItem value="1y">1 year</MenuItem>
+                <MenuItem value="custom">Custom date range</MenuItem>
+              </Select>
+            </FormControl>
+            {isCustomDateFilter && (
+              <>
+                <TextField
+                  label="Start date"
+                  type="date"
+                  variant="outlined"
+                  size="small"
+                  value={startDate}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    setStartDate(next);
+                    if (next && endDate && next > endDate) {
+                      setEndDate(next);
+                    }
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    htmlInput: {
+                      max: startDateInputMax,
+                    },
+                  }}
+                  sx={{ minWidth: 200 }}
+                />
+                <TextField
+                  label="End date"
+                  type="date"
+                  variant="outlined"
+                  size="small"
+                  value={endDate}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    const capped = next && next > todayIso ? todayIso : next;
+                    setEndDate(capped);
+                    if (capped && startDate && capped < startDate) {
+                      setStartDate(capped);
+                    }
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    htmlInput: {
+                      max: todayIso,
+                      ...(endDateInputMin ? { min: endDateInputMin } : {}),
+                    },
+                  }}
+                  sx={{ minWidth: 200 }}
+                />
+              </>
+            )}
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <InputLabel id="admin-order-payment-type">Payment type</InputLabel>
               <Select<PaymentTypeFilter>
