@@ -53,7 +53,9 @@ const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
 const NULL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 
-const TABLE_COL_SPAN = 10;
+const TABLE_COL_SPAN = 8;
+
+type PaymentTypeFilter = "all" | "paid" | "cod";
 
 function productDisplayName(item: AdminOrderListLineItem): string {
   const p = item.product ?? null;
@@ -203,8 +205,6 @@ function Row(props: {
           {totalAmount}
         </TableCell>
         <TableCell>{(order.paymentMethod ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
-        <TableCell>{(order.paymentStatus ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
-        <TableCell>{(order.orderStatus ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
         <TableCell>{orderDateDisplay}</TableCell>
       </TableRow>
       <TableRow>
@@ -381,9 +381,7 @@ export default function AdminOrderList() {
   const [sortBy, setSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [sortOrder, setSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
 
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
+  const [paymentType, setPaymentType] = useState<PaymentTypeFilter>("all");
 
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
@@ -396,9 +394,7 @@ export default function AdminOrderList() {
   const [appliedAmount5000AndAbove, setAppliedAmount5000AndAbove] = useState(false);
   const [appliedSortBy, setAppliedSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
-  const [appliedPaymentMethod, setAppliedPaymentMethod] = useState("");
-  const [appliedPaymentStatus, setAppliedPaymentStatus] = useState("");
-  const [appliedOrderStatus, setAppliedOrderStatus] = useState("");
+  const [appliedPaymentType, setAppliedPaymentType] = useState<PaymentTypeFilter>("all");
 
   const load = useCallback(
     async (apiPage: number, limit: number) => {
@@ -409,9 +405,8 @@ export default function AdminOrderList() {
         endDate: appliedEndDate || undefined,
         sortBy: appliedSortBy,
         sortOrder: appliedSortOrder,
-        paymentMethod: appliedPaymentMethod || undefined,
-        paymentStatus: appliedPaymentStatus || undefined,
-        orderStatus: appliedOrderStatus || undefined,
+        paymentMethod: appliedPaymentType === "cod" ? "cod" : undefined,
+        paymentStatus: appliedPaymentType === "paid" ? "paid" : undefined,
         ...(appliedAmount5000AndAbove
           ? { minAmount: AMOUNT_SLIDER_MAX }
           : {
@@ -421,6 +416,7 @@ export default function AdminOrderList() {
       };
       setLoading(true);
       setError(null);
+      setExpandedOrderId(null);
       try {
         const raw = await getAdminOrderList(filters);
         const { orders: nextOrders, pagination } = parseAdminOrderListResponse(raw);
@@ -444,9 +440,7 @@ export default function AdminOrderList() {
       appliedStartDate,
       appliedSortBy,
       appliedSortOrder,
-      appliedPaymentMethod,
-      appliedPaymentStatus,
-      appliedOrderStatus,
+      appliedPaymentType,
     ],
   );
 
@@ -461,9 +455,7 @@ export default function AdminOrderList() {
     setAppliedAmount5000AndAbove(amount5000AndAbove);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
-    setAppliedPaymentMethod(paymentMethod);
-    setAppliedPaymentStatus(paymentStatus);
-    setAppliedOrderStatus(orderStatus);
+    setAppliedPaymentType(paymentType);
   };
 
   const handleClearFilters = () => {
@@ -471,9 +463,7 @@ export default function AdminOrderList() {
     setEndDate("");
     setAmountRange([DEFAULT_MIN_AMOUNT, DEFAULT_MAX_AMOUNT]);
     setAmount5000AndAbove(false);
-    setPaymentMethod("");
-    setPaymentStatus("");
-    setOrderStatus("");
+    setPaymentType("all");
     setAppliedStartDate("");
     setAppliedEndDate("");
     setAppliedAmount({ min: DEFAULT_MIN_AMOUNT, max: DEFAULT_MAX_AMOUNT });
@@ -482,9 +472,7 @@ export default function AdminOrderList() {
     setSortOrder(DEFAULT_SORT_ORDER);
     setAppliedSortBy(DEFAULT_SORT_BY);
     setAppliedSortOrder(DEFAULT_SORT_ORDER);
-    setAppliedPaymentMethod("");
-    setAppliedPaymentStatus("");
-    setAppliedOrderStatus("");
+    setAppliedPaymentType("all");
   };
 
   const isApplyDisabled =
@@ -495,9 +483,7 @@ export default function AdminOrderList() {
     && amount5000AndAbove === appliedAmount5000AndAbove
     && sortBy === appliedSortBy
     && sortOrder === appliedSortOrder
-    && paymentMethod === appliedPaymentMethod
-    && paymentStatus === appliedPaymentStatus
-    && orderStatus === appliedOrderStatus;
+    && paymentType === appliedPaymentType;
 
   const isClearDisabled =
     startDate === ""
@@ -505,17 +491,13 @@ export default function AdminOrderList() {
     && amountRange[0] === DEFAULT_MIN_AMOUNT
     && amountRange[1] === DEFAULT_MAX_AMOUNT
     && !amount5000AndAbove
-    && paymentMethod === ""
-    && paymentStatus === ""
-    && orderStatus === ""
+    && paymentType === "all"
     && appliedStartDate === ""
     && appliedEndDate === ""
     && appliedAmount.min === DEFAULT_MIN_AMOUNT
     && appliedAmount.max === DEFAULT_MAX_AMOUNT
     && !appliedAmount5000AndAbove
-    && appliedPaymentMethod === ""
-    && appliedPaymentStatus === ""
-    && appliedOrderStatus === ""
+    && appliedPaymentType === "all"
     && sortBy === DEFAULT_SORT_BY
     && sortOrder === DEFAULT_SORT_ORDER
     && appliedSortBy === DEFAULT_SORT_BY
@@ -599,49 +581,17 @@ export default function AdminOrderList() {
               }}
               sx={{ minWidth: 200 }}
             />
-            <FormControl size="small" sx={{ minWidth: 150 }}>
-              <InputLabel id="admin-order-payment-method">Payment method</InputLabel>
-              <Select
-                labelId="admin-order-payment-method"
-                label="Payment method"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="online">Online</MenuItem>
-                <MenuItem value="cod">COD</MenuItem>
-              </Select>
-            </FormControl>
             <FormControl size="small" sx={{ minWidth: 160 }}>
-              <InputLabel id="admin-order-payment-status">Payment status</InputLabel>
-              <Select
-                labelId="admin-order-payment-status"
-                label="Payment status"
-                value={paymentStatus}
-                onChange={(e) => setPaymentStatus(e.target.value)}
+              <InputLabel id="admin-order-payment-type">Payment type</InputLabel>
+              <Select<PaymentTypeFilter>
+                labelId="admin-order-payment-type"
+                label="Payment type"
+                value={paymentType}
+                onChange={(e) => setPaymentType(e.target.value as PaymentTypeFilter)}
               >
-                <MenuItem value="">All</MenuItem>
+                <MenuItem value="all">All</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="failed">Failed</MenuItem>
-                <MenuItem value="refunded">Refunded</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl size="small" sx={{ minWidth: 150 }}>
-              <InputLabel id="admin-order-order-status">Order status</InputLabel>
-              <Select
-                labelId="admin-order-order-status"
-                label="Order status"
-                value={orderStatus}
-                onChange={(e) => setOrderStatus(e.target.value)}
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="placed">Placed</MenuItem>
-                <MenuItem value="processing">Processing</MenuItem>
-                <MenuItem value="shipped">Shipped</MenuItem>
-                <MenuItem value="delivered">Delivered</MenuItem>
-                <MenuItem value="cancelled">Cancelled</MenuItem>
+                <MenuItem value="cod">COD</MenuItem>
               </Select>
             </FormControl>
           </Stack>
@@ -655,7 +605,7 @@ export default function AdminOrderList() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as AdminOrderListSortBy)}
               >
-                <MenuItem value="updatedAt">Updated at</MenuItem>
+                <MenuItem value="updatedAt">Last modified</MenuItem>
                 <MenuItem value="totalAmount">Total amount</MenuItem>
               </Select>
             </FormControl>
@@ -789,8 +739,6 @@ export default function AdminOrderList() {
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Subtotal</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Total</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Payment method</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Payment status</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Order status</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Order date</TableCell>
               </TableRow>
             </TableHead>
