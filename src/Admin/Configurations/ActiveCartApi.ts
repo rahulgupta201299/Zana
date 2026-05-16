@@ -115,10 +115,11 @@ export function parseAdminActiveCartsResponse(
   body: AdminActiveCartsApiResponse | null | undefined,
 ): { carts: AdminActiveCartRecord[]; pagination: AdminActiveCartPagination } {
   const envelope = getAdminApiBody<AdminActiveCartListData>(body);
+  const flattened = body != null && typeof body === "object" ? body : {};
   const list: AdminActiveCartListData =
     envelope.data != null && typeof envelope.data === "object"
       ? envelope.data
-      : { carts: envelope.carts, pagination: envelope.pagination };
+      : { carts: flattened.carts, pagination: flattened.pagination };
   const carts = Array.isArray(list.carts) ? list.carts : [];
   const pagination =
     list.pagination != null && typeof list.pagination === "object" ? list.pagination : {};
