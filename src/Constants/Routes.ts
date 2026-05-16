@@ -32,6 +32,7 @@ export const ROUTES = Object.freeze({
   ORDER_SUCCESSFUL: '/success/thank-you',
   ADMIN: SUB_ROUTES.ADMIN,
   ADMIN_LOGIN: `${SUB_ROUTES.ADMIN}/login`,
+  ADMIN_DASHBOARD: `${SUB_ROUTES.ADMIN}/dashboard`,
   ADMIN_PRODUCTS: `${SUB_ROUTES.ADMIN}/products`,
   ADMIN_ACTIVE_CARTS: `${SUB_ROUTES.ADMIN}/active-carts`,
   ADMIN_ORDER_LIST: `${SUB_ROUTES.ADMIN}/orders`,

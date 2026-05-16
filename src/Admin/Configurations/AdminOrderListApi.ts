@@ -1,5 +1,6 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import Network from "@/Configurations/Network";
+import { omitEmptyParams } from "../Utils/ApiUtils";
 
 const network = new Network();
 
@@ -106,18 +107,6 @@ export type AdminOrderListPagination = {
   hasNextPage?: boolean;
   hasPrevPage?: boolean;
 };
-
-function omitEmptyParams(
-  params: Record<string, string | number | undefined | null>,
-): Record<string, string | number> {
-  const out: Record<string, string | number> = {};
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== "") {
-      out[key] = value;
-    }
-  }
-  return out;
-}
 
 function buildQueryParams(filters: AdminOrderListFilters): Record<string, string | number> {
   return omitEmptyParams({
