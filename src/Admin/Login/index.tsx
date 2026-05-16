@@ -26,13 +26,18 @@ function getLoginError(error: unknown) {
 }
 
 function getAdminRedirectPath(from?: string) {
-  const validAdminRedirects = [ROUTES.ADMIN_PRODUCTS];
+  const validAdminRedirects = [
+    ROUTES.ADMIN_DASHBOARD,
+    ROUTES.ADMIN_PRODUCTS,
+    ROUTES.ADMIN_ACTIVE_CARTS,
+    ROUTES.ADMIN_ORDER_LIST,
+  ];
 
   if (from && validAdminRedirects.includes(from)) {
     return from;
   }
 
-  return ROUTES.ADMIN_PRODUCTS;
+  return ROUTES.ADMIN_DASHBOARD;
 }
 
 export default function AdminLogin() {

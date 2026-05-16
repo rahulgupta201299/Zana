@@ -32,6 +32,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
+import { getAdminApiBody } from "../Utils/ApiUtils";
 import {
   getAdminOrderList,
   AdminOrderListFilters,
@@ -380,14 +381,7 @@ function parseAdminOrderListResponse(raw: unknown): {
   orders: AdminOrderListRecord[];
   pagination: AdminOrderListPagination;
 } {
-  const body = (raw && typeof raw === "object" ? raw : {}) as {
-    success?: boolean;
-    message?: string;
-    data?: unknown;
-  };
-  if (body.success === false) {
-    throw new Error(body.message?.trim() || "API request failed");
-  }
+  const body = getAdminApiBody(raw);
   const data = (
     body.data && typeof body.data === "object" ? body.data : body
   ) as Record<string, unknown>;
