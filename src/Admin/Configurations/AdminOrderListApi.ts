@@ -22,6 +22,8 @@ export type AdminOrderListFilters = {
   paymentMethod?: string;
   paymentStatus?: string;
   orderStatus?: string;
+  phoneNumber?: string;
+  emailId?: string;
 };
 
 export type AdminOrderListProduct = {
@@ -122,6 +124,8 @@ function buildQueryParams(filters: AdminOrderListFilters): Record<string, string
     paymentMethod: filters.paymentMethod,
     paymentStatus: filters.paymentStatus,
     orderStatus: filters.orderStatus,
+    phoneNumber: filters.phoneNumber,
+    emailId: filters.emailId,
   });
 }
 

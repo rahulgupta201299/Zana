@@ -19,6 +19,8 @@ export type AdminActiveCartFilters = {
   maxAmount?: number;
   sortBy: AdminActiveCartSortBy;
   sortOrder: AdminActiveCartSortOrder;
+  phoneNumber?: string;
+  emailId?: string;
 };
 
 /** Product on a line item — shape varies by catalog / population. */
@@ -138,6 +140,8 @@ function buildQueryParams(filters: AdminActiveCartFilters): Record<string, strin
     endDate: filters.endDate,
     minAmount: filters.minAmount,
     maxAmount: filters.maxAmount,
+    phoneNumber: filters.phoneNumber,
+    emailId: filters.emailId,
   });
 }
 

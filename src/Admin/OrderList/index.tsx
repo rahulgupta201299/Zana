@@ -42,6 +42,11 @@ import {
   AdminOrderListPagination,
   AdminOrderStatusHistoryEntry,
 } from "../Configurations/AdminOrderListApi";
+import {
+  AdminIsdCode,
+  getAdminIsdCodes,
+} from "../Configurations/AdminIsdCodeApi";
+import IsdCodeAutocomplete from "../Components/IsdCodeAutocomplete";
 
 const DEFAULT_SORT_BY: AdminOrderListSortBy = "updatedAt";
 const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
@@ -55,6 +60,19 @@ type PaymentTypeFilter = "all" | "paid" | "cod";
 type DateFilter = "custom" | "today" | "yesterday" | "1m" | "3m" | "6m" | "1y";
 
 const DEFAULT_DATE_FILTER: DateFilter = "custom";
+const DEFAULT_ISD_CODE = "+91";
+
+function normalizeIsdCode(isd: string): string {
+  const trimmed = isd.trim();
+  if (!trimmed) return DEFAULT_ISD_CODE;
+  return trimmed.startsWith("+") ? trimmed : `+${trimmed}`;
+}
+
+function buildPhoneFilter(isdCode: string, phoneNumber: string): string {
+  const phone = phoneNumber.trim();
+  if (!phone) return "";
+  return `${normalizeIsdCode(isdCode)}-${phone}`;
+}
 
 function productDisplayName(item: AdminOrderListLineItem): string {
   const p = item.product ?? null;
@@ -403,6 +421,10 @@ export default function AdminOrderList() {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isdCodes, setIsdCodes] = useState<AdminIsdCode[]>([]);
+  const [isdCode, setIsdCode] = useState(DEFAULT_ISD_CODE);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailId, setEmailId] = useState("");
   const [sortBy, setSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [sortOrder, setSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -413,6 +435,9 @@ export default function AdminOrderList() {
   const [appliedDateFilter, setAppliedDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
+  const [appliedIsdCode, setAppliedIsdCode] = useState(DEFAULT_ISD_CODE);
+  const [appliedPhoneNumber, setAppliedPhoneNumber] = useState("");
+  const [appliedEmailId, setAppliedEmailId] = useState("");
   const [appliedSortBy, setAppliedSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
   const [appliedPaymentType, setAppliedPaymentType] = useState<PaymentTypeFilter>("all");
@@ -428,6 +453,8 @@ export default function AdminOrderList() {
         sortOrder: appliedSortOrder,
         paymentMethod: appliedPaymentType === "cod" ? "cod" : undefined,
         paymentStatus: appliedPaymentType === "paid" ? "paid" : undefined,
+        phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+        emailId: appliedEmailId.trim() || undefined,
       };
       setLoading(true);
       setError(null);
@@ -454,6 +481,9 @@ export default function AdminOrderList() {
       appliedSortBy,
       appliedSortOrder,
       appliedPaymentType,
+      appliedIsdCode,
+      appliedPhoneNumber,
+      appliedEmailId,
     ],
   );
 
@@ -461,11 +491,34 @@ export default function AdminOrderList() {
     void load(1, rowsPerPage);
   }, [load, rowsPerPage]);
 
+  useEffect(() => {
+    let active = true;
+    getAdminIsdCodes()
+      .then((codes) => {
+        if (!active) return;
+        setIsdCodes(codes);
+        const india = codes.find((code) => normalizeIsdCode(code.isd) === DEFAULT_ISD_CODE);
+        if (india) {
+          setIsdCode(normalizeIsdCode(india.isd));
+          setAppliedIsdCode(normalizeIsdCode(india.isd));
+        }
+      })
+      .catch(() => {
+        if (active) setIsdCodes([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const handleApplyFilters = () => {
     const nextDateRange = resolveDateFilterRange(dateFilter, startDate, endDate);
     setAppliedDateFilter(dateFilter);
     setAppliedStartDate(nextDateRange.startDate);
     setAppliedEndDate(nextDateRange.endDate);
+    setAppliedIsdCode(isdCode);
+    setAppliedPhoneNumber(phoneNumber.trim());
+    setAppliedEmailId(emailId.trim());
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
     setAppliedPaymentType(paymentType);
@@ -475,10 +528,16 @@ export default function AdminOrderList() {
     setDateFilter(DEFAULT_DATE_FILTER);
     setStartDate("");
     setEndDate("");
+    setIsdCode(DEFAULT_ISD_CODE);
+    setPhoneNumber("");
+    setEmailId("");
     setPaymentType("all");
     setAppliedDateFilter(DEFAULT_DATE_FILTER);
     setAppliedStartDate("");
     setAppliedEndDate("");
+    setAppliedIsdCode(DEFAULT_ISD_CODE);
+    setAppliedPhoneNumber("");
+    setAppliedEmailId("");
     setSortBy(DEFAULT_SORT_BY);
     setSortOrder(DEFAULT_SORT_ORDER);
     setAppliedSortBy(DEFAULT_SORT_BY);
@@ -493,6 +552,9 @@ export default function AdminOrderList() {
 
   const isApplyDisabled =
     isDateFilterUnchanged
+    && isdCode === appliedIsdCode
+    && phoneNumber.trim() === appliedPhoneNumber
+    && emailId.trim() === appliedEmailId
     && sortBy === appliedSortBy
     && sortOrder === appliedSortOrder
     && paymentType === appliedPaymentType;
@@ -501,10 +563,16 @@ export default function AdminOrderList() {
     dateFilter === DEFAULT_DATE_FILTER
     && startDate === ""
     && endDate === ""
+    && isdCode === DEFAULT_ISD_CODE
+    && phoneNumber === ""
+    && emailId === ""
     && paymentType === "all"
     && appliedDateFilter === DEFAULT_DATE_FILTER
     && appliedStartDate === ""
     && appliedEndDate === ""
+    && appliedIsdCode === DEFAULT_ISD_CODE
+    && appliedPhoneNumber === ""
+    && appliedEmailId === ""
     && appliedPaymentType === "all"
     && sortBy === DEFAULT_SORT_BY
     && sortOrder === DEFAULT_SORT_ORDER
@@ -534,6 +602,28 @@ export default function AdminOrderList() {
       <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap" useFlexGap alignItems="center">
+            <IsdCodeAutocomplete
+              id="admin-order-isd-code"
+              options={isdCodes}
+              value={isdCode}
+              onChange={setIsdCode}
+            />
+            <TextField
+              label="Phone number"
+              variant="outlined"
+              size="small"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              sx={{ minWidth: 180 }}
+            />
+            <TextField
+              label="Email ID"
+              variant="outlined"
+              size="small"
+              value={emailId}
+              onChange={(e) => setEmailId(e.target.value)}
+              sx={{ minWidth: 240 }}
+            />
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <InputLabel id="admin-order-date-filter">Date filter</InputLabel>
               <Select<DateFilter>
