@@ -17,6 +17,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 
 import { ROUTES } from "@/Constants/Routes";
 import { clearAdminSession, getAdminEmail } from "./AdminAuth";
@@ -25,6 +26,11 @@ import zanaLogo from "@/Assets/Icons/Zana.png";
 const drawerWidth = 264;
 
 const navItems = [
+  {
+    label: "Dashboard",
+    to: ROUTES.ADMIN_DASHBOARD,
+    icon: <DashboardOutlinedIcon fontSize="small" />,
+  },
   {
     label: "Products",
     to: ROUTES.ADMIN_PRODUCTS,
