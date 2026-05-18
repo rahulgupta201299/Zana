@@ -65,3 +65,9 @@ export function statusColor(status: string) {
 export function getPhoneNumber(phoneNumber: string = ""): string {
   return phoneNumber.split("-")?.[1] || phoneNumber;
 }
+
+export const capitalise = (str: string) =>
+  str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')

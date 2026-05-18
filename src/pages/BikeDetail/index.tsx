@@ -25,6 +25,7 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
+import { capitalise } from "@/Utils/global";
 
 type BikeDetailLocationState = {
   category?: string;
@@ -48,11 +49,13 @@ const BikeDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
   const location = useLocation();
-  const { category: initialCategory = ALL_CATEGORY } =
-    (location.state || {}) as BikeDetailLocationState;
+  const { category: categoryFromState = ALL_CATEGORY } = (location.state ||
+    {}) as BikeDetailLocationState;
+  const initialCategory = (categoryFromState || ALL_CATEGORY).toLowerCase();
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>(initialCategory || ALL_CATEGORY);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory || ALL_CATEGORY,
+  );
   const [filters, setFilters] = useState<{
     category: string;
     subCategory: string;
@@ -71,21 +74,25 @@ const BikeDetailPage = () => {
     null,
   );
 
- async function getBikeProducts(category = ALL_CATEGORY, subCategory?: string) {
-  setFilteredBikeProducts([]);
-  try {
-    const response = (await dispatch(
-      BikeProductService({
-        modelId: bikeId,
-        ...(category && category !== ALL_CATEGORY && { category, subCategory }),
-      }),
-    )) as ShopByProductDetailsType[];
-    setBikeProducts(response);
-    setFilteredBikeProducts(response);
-  } catch (error: any) {
-    console.error(error);
+  async function getBikeProducts(
+    category = ALL_CATEGORY,
+    subCategory?: string,
+  ) {
+    setFilteredBikeProducts([]);
+    try {
+      const response = (await dispatch(
+        BikeProductService({
+          modelId: bikeId,
+          ...(category &&
+            category !== ALL_CATEGORY && { category, subCategory }),
+        }),
+      )) as ShopByProductDetailsType[];
+      setBikeProducts(response);
+      setFilteredBikeProducts(response);
+    } catch (error: any) {
+      console.error(error);
+    }
   }
-}
 
   async function getBikeDetails() {
     try {
@@ -197,6 +204,10 @@ const BikeDetailPage = () => {
     imageUrl = "",
     brand: { name: brandName = "" } = {},
   } = bikeDetails || {};
+  const bikeBreadcrumbLabel = isZProPath
+    ? BikeCategoryEnum.ZPRO
+    : "Shop By Bike";
+  const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -207,13 +218,16 @@ const BikeDetailPage = () => {
             className="mb-8"
             items={[
               { label: "Home", to: ROUTES.BASE_URL },
-              { label: "Shop By Bike" },
+              { label: bikeBreadcrumbLabel, to: bikeListPath },
               {
                 label: brandName,
-                to: `/${bikeType}${SUB_ROUTES.BIKES}`,
+                to: bikeListPath,
                 state: { brand: brandName.toLowerCase() },
               },
               { label: modelName },
+              ...(selectedCategory && selectedCategory !== ALL_CATEGORY
+                ? [{ label: capitalise(selectedCategory) }]
+                : []),
             ]}
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -270,25 +284,25 @@ const BikeDetailPage = () => {
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">
-                  {
-                    !isBikeProductLoading ? brandName.toUpperCase() : (
-                      <Skeleton
-                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                        width={100}
-                      />
-                    )
-                  }
+                  {!isBikeProductLoading ? (
+                    brandName.toUpperCase()
+                  ) : (
+                    <Skeleton
+                      sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                      width={100}
+                    />
+                  )}
                 </span>
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
-                  {
-                    !isBikeProductLoading ? `${bikeProducts.length} Products Available` : (
-                      <Skeleton
-                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                        width={150}
-                      />
-                    )
-                  }
+                  {!isBikeProductLoading ? (
+                    `${bikeProducts.length} Products Available`
+                  ) : (
+                    <Skeleton
+                      sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                      width={150}
+                    />
+                  )}
                 </span>
               </div>
               <button
