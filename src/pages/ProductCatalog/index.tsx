@@ -23,6 +23,7 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import ProductSection from "@/components/ProductSection";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
+import { capitalise } from "@/Utils/global";
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
@@ -50,7 +51,6 @@ const ProductCatalogPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
 
-
   const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
 
@@ -68,18 +68,18 @@ const ProductCatalogPage = () => {
       const action =
         type === ALL_CATEGORY
           ? AllProductService({
-            page,
-            limit: LIMIT_PER_PAGE,
-            phoneNumber,
-          })
-          : CategoryProductService({
-            category: type,
-            queryParams: {
               page,
               limit: LIMIT_PER_PAGE,
               phoneNumber,
-            },
-          });
+            })
+          : CategoryProductService({
+              category: type,
+              queryParams: {
+                page,
+                limit: LIMIT_PER_PAGE,
+                phoneNumber,
+              },
+            });
 
       const { data, pagination } = (await dispatch(
         action,
@@ -107,7 +107,6 @@ const ProductCatalogPage = () => {
   }, [productCategory.length]);
 
   async function pageOps() {
-
     window.scrollTo(0, 0);
 
     if (filteredProducts.length && initialCategory === selectedCategory) return;
@@ -143,10 +142,10 @@ const ProductCatalogPage = () => {
             className="mb-8"
             items={[
               { label: "Home", to: ROUTES.BASE_URL },
-              { label: "Products", to: ROUTES.PRODUCT_CATALOG },
-              // ...(selectedCategory && selectedCategory !== ALL_CATEGORY
-              //   ? [{ label: selectedCategory }]
-              //   : []),
+              { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
+              ...(selectedCategory && selectedCategory !== ALL_CATEGORY
+                ? [{ label: capitalise(selectedCategory) }]
+                : []),
             ]}
           />
           <div className="text-center">
@@ -167,8 +166,11 @@ const ProductCatalogPage = () => {
             categoriesWithCount={categoryDetails}
             selectedCategory={selectedCategory}
             onSelectCategory={(category: string) => {
-              handleCategoryService(category)
-              navigate(location.pathname, { state: { category }, replace: true })
+              handleCategoryService(category);
+              navigate(location.pathname, {
+                state: { category },
+                replace: true,
+              });
             }}
             onChangeFilterProducts={(data, pagination) => {
               setFilteredProducts(data);
