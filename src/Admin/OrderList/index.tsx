@@ -16,15 +16,12 @@ import {
   IconButton,
   Collapse,
   Divider,
-  Slider,
   Stack,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Alert,
-  FormControlLabel,
-  Switch,
   Tooltip,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -46,16 +43,13 @@ import {
   AdminOrderStatusHistoryEntry,
 } from "../Configurations/AdminOrderListApi";
 
-const AMOUNT_SLIDER_MAX = 5000;
-const DEFAULT_MIN_AMOUNT = 0;
-const DEFAULT_MAX_AMOUNT = AMOUNT_SLIDER_MAX;
 const DEFAULT_SORT_BY: AdminOrderListSortBy = "updatedAt";
 const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
 
 const NULL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 
-const TABLE_COL_SPAN = 8;
+const TABLE_COL_SPAN = 10;
 
 type PaymentTypeFilter = "all" | "paid" | "cod";
 type DateFilter = "custom" | "today" | "yesterday" | "1m" | "3m" | "6m" | "1y";
@@ -240,6 +234,16 @@ function Row(props: {
         </TableCell>
         <TableCell>{(order.paymentMethod ?? "").trim() || NULL_PLACEHOLDER}</TableCell>
         <TableCell>
+          <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
+            {razorpayOrderId}
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
+            {razorpayPaymentId}
+          </Typography>
+        </TableCell>
+        <TableCell>
           {formatUtcToIstDateTime(order.orderDate ?? null, NULL_PLACEHOLDER)}
         </TableCell>
       </TableRow>
@@ -251,14 +255,6 @@ function Row(props: {
                 Order details
               </Typography>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Razorpay order ID</Typography>
-                  <Typography variant="body2" sx={{ wordBreak: "break-all" }}>{razorpayOrderId}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Razorpay payment ID</Typography>
-                  <Typography variant="body2" sx={{ wordBreak: "break-all" }}>{razorpayPaymentId}</Typography>
-                </Box>
                 <Box>
                   <Typography variant="caption" color="text.secondary">Last updated</Typography>
                   <Typography variant="body2">
@@ -274,6 +270,7 @@ function Row(props: {
                 <TableHead>
                   <TableRow>
                     <TableCell>Product</TableCell>
+                    <TableCell>Product code</TableCell>
                     <TableCell>Price</TableCell>
                     <TableCell>Qty</TableCell>
                     <TableCell>Total</TableCell>
@@ -286,6 +283,7 @@ function Row(props: {
                         <TableCell component="th" scope="row">
                           <ProductThumbCell item={item} />
                         </TableCell>
+                        <TableCell>{item.product?.productCode || NULL_PLACEHOLDER}</TableCell>
                         <TableCell>
                           {item.currencySymbol ?? symbol}
                           {item.price ?? 0}
@@ -299,7 +297,7 @@ function Row(props: {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} align="center">No items</TableCell>
+                      <TableCell colSpan={5} align="center">No items</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -375,8 +373,6 @@ function Row(props: {
   );
 }
 
-type AppliedAmount = { min: number; max: number };
-
 function parseAdminOrderListResponse(raw: unknown): {
   orders: AdminOrderListRecord[];
   pagination: AdminOrderListPagination;
@@ -407,11 +403,6 @@ export default function AdminOrderList() {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [amountRange, setAmountRange] = useState<[number, number]>([
-    DEFAULT_MIN_AMOUNT,
-    DEFAULT_MAX_AMOUNT,
-  ]);
-  const [amount5000AndAbove, setAmount5000AndAbove] = useState(false);
   const [sortBy, setSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [sortOrder, setSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -422,11 +413,6 @@ export default function AdminOrderList() {
   const [appliedDateFilter, setAppliedDateFilter] = useState<DateFilter>(DEFAULT_DATE_FILTER);
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
-  const [appliedAmount, setAppliedAmount] = useState<AppliedAmount>({
-    min: DEFAULT_MIN_AMOUNT,
-    max: DEFAULT_MAX_AMOUNT,
-  });
-  const [appliedAmount5000AndAbove, setAppliedAmount5000AndAbove] = useState(false);
   const [appliedSortBy, setAppliedSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
   const [appliedPaymentType, setAppliedPaymentType] = useState<PaymentTypeFilter>("all");
@@ -442,12 +428,6 @@ export default function AdminOrderList() {
         sortOrder: appliedSortOrder,
         paymentMethod: appliedPaymentType === "cod" ? "cod" : undefined,
         paymentStatus: appliedPaymentType === "paid" ? "paid" : undefined,
-        ...(appliedAmount5000AndAbove
-          ? { minAmount: AMOUNT_SLIDER_MAX }
-          : {
-              minAmount: appliedAmount.min,
-              maxAmount: appliedAmount.max,
-            }),
       };
       setLoading(true);
       setError(null);
@@ -469,8 +449,6 @@ export default function AdminOrderList() {
       }
     },
     [
-      appliedAmount,
-      appliedAmount5000AndAbove,
       appliedEndDate,
       appliedStartDate,
       appliedSortBy,
@@ -488,8 +466,6 @@ export default function AdminOrderList() {
     setAppliedDateFilter(dateFilter);
     setAppliedStartDate(nextDateRange.startDate);
     setAppliedEndDate(nextDateRange.endDate);
-    setAppliedAmount({ min: amountRange[0], max: amountRange[1] });
-    setAppliedAmount5000AndAbove(amount5000AndAbove);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
     setAppliedPaymentType(paymentType);
@@ -499,14 +475,10 @@ export default function AdminOrderList() {
     setDateFilter(DEFAULT_DATE_FILTER);
     setStartDate("");
     setEndDate("");
-    setAmountRange([DEFAULT_MIN_AMOUNT, DEFAULT_MAX_AMOUNT]);
-    setAmount5000AndAbove(false);
     setPaymentType("all");
     setAppliedDateFilter(DEFAULT_DATE_FILTER);
     setAppliedStartDate("");
     setAppliedEndDate("");
-    setAppliedAmount({ min: DEFAULT_MIN_AMOUNT, max: DEFAULT_MAX_AMOUNT });
-    setAppliedAmount5000AndAbove(false);
     setSortBy(DEFAULT_SORT_BY);
     setSortOrder(DEFAULT_SORT_ORDER);
     setAppliedSortBy(DEFAULT_SORT_BY);
@@ -521,9 +493,6 @@ export default function AdminOrderList() {
 
   const isApplyDisabled =
     isDateFilterUnchanged
-    && amountRange[0] === appliedAmount.min
-    && amountRange[1] === appliedAmount.max
-    && amount5000AndAbove === appliedAmount5000AndAbove
     && sortBy === appliedSortBy
     && sortOrder === appliedSortOrder
     && paymentType === appliedPaymentType;
@@ -532,32 +501,15 @@ export default function AdminOrderList() {
     dateFilter === DEFAULT_DATE_FILTER
     && startDate === ""
     && endDate === ""
-    && amountRange[0] === DEFAULT_MIN_AMOUNT
-    && amountRange[1] === DEFAULT_MAX_AMOUNT
-    && !amount5000AndAbove
     && paymentType === "all"
     && appliedDateFilter === DEFAULT_DATE_FILTER
     && appliedStartDate === ""
     && appliedEndDate === ""
-    && appliedAmount.min === DEFAULT_MIN_AMOUNT
-    && appliedAmount.max === DEFAULT_MAX_AMOUNT
-    && !appliedAmount5000AndAbove
     && appliedPaymentType === "all"
     && sortBy === DEFAULT_SORT_BY
     && sortOrder === DEFAULT_SORT_ORDER
     && appliedSortBy === DEFAULT_SORT_BY
     && appliedSortOrder === DEFAULT_SORT_ORDER;
-
-  const amountRangeControlsDisabled = amount5000AndAbove;
-
-  const clampAmountPair = (lo: number, hi: number): [number, number] => {
-    let a = Math.min(Math.max(0, lo), AMOUNT_SLIDER_MAX);
-    let b = Math.min(Math.max(0, hi), AMOUNT_SLIDER_MAX);
-    if (a > b) {
-      [a, b] = [b, a];
-    }
-    return [a, b];
-  };
 
   const todayIso = formatLocalIsoDate(new Date());
   const startDateInputMax = endDate ? minIsoDate(todayIso, endDate) : todayIso;
@@ -699,80 +651,7 @@ export default function AdminOrderList() {
             </Stack>
           </Stack>
 
-          <Box sx={{ px: 1 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Total amount range
-            </Typography>
-            <FormControlLabel
-              sx={{ mb: 1, display: "flex", alignItems: "center" }}
-              control={(
-                <Switch
-                  checked={amount5000AndAbove}
-                  onChange={(_e, checked) => setAmount5000AndAbove(checked)}
-                  color="primary"
-                  inputProps={{ "aria-label": "₹5,000 and above" }}
-                />
-              )}
-              label="₹5,000 and above"
-            />
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              alignItems={{ sm: "center" }}
-              sx={{
-                opacity: amountRangeControlsDisabled ? 0.45 : 1,
-                pointerEvents: amountRangeControlsDisabled ? "none" : "auto",
-              }}
-            >
-              <Box sx={{ flex: "0 0 auto", width: { xs: "100%", sm: 200 }, maxWidth: 220 }}>
-                <Slider
-                  size="small"
-                  value={amountRange}
-                  onChange={(_e, value) => {
-                    const v = value as number[];
-                    setAmountRange(clampAmountPair(v[0], v[1]));
-                  }}
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={AMOUNT_SLIDER_MAX}
-                  step={1000}
-                  disableSwap
-                  disabled={amountRangeControlsDisabled}
-                />
-              </Box>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap sx={{ flex: "1 1 auto", minWidth: 0 }}>
-                <TextField
-                  label="Min amount"
-                  type="number"
-                  size="small"
-                  value={amountRange[0]}
-                  onChange={(e) => {
-                    const n = e.target.value === "" ? 0 : Number(e.target.value);
-                    setAmountRange(clampAmountPair(n, amountRange[1]));
-                  }}
-                  sx={{ width: 140 }}
-                  disabled={amountRangeControlsDisabled}
-                />
-                <TextField
-                  label="Max amount"
-                  type="number"
-                  size="small"
-                  value={amountRange[1]}
-                  onChange={(e) => {
-                    const n = e.target.value === "" ? DEFAULT_MAX_AMOUNT : Number(e.target.value);
-                    setAmountRange(clampAmountPair(amountRange[0], n));
-                  }}
-                  sx={{ width: 140 }}
-                  disabled={amountRangeControlsDisabled}
-                />
-              </Stack>
-            </Stack>
-            {amount5000AndAbove && (
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                Fetches orders with total amount at least ₹5,000 (no upper limit). Apply filters to run the query.
-              </Typography>
-            )}
-          </Box>
+          {/* Amount min/max filter hidden per admin request. */}
 
           <Stack direction="row" spacing={2}>
             <Button
@@ -805,6 +684,8 @@ export default function AdminOrderList() {
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Subtotal</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Total</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Payment method</TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Razorpay order ID</TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Razorpay payment ID</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Order date</TableCell>
               </TableRow>
             </TableHead>
