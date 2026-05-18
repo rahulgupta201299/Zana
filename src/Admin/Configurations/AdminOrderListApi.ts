@@ -35,6 +35,7 @@ export type AdminOrderListProduct = {
   images?: string[];
   shortDescription?: string;
   category?: string;
+  productCode?: string;
   [key: string]: unknown;
 };
 
