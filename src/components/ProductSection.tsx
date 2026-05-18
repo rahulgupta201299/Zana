@@ -47,7 +47,6 @@ import withDeviceDetails from "@/Hocs/withDeviceDetails";
 const FILTER_MODAL = "APPLY_FILTERS";
 
 type Props = {
-
   type: "bike" | "catalog";
   products: ShopByProductDetailsType[];
   categoriesWithCount: { name: string; count: number }[];
@@ -66,6 +65,7 @@ type Props = {
   subCategory: string;
   setSubCategory: (val: string) => void;
   isDesktop: boolean;
+  breadcrumbState?: Record<string, string>;
 };
 
 function ProductSection({
@@ -84,6 +84,7 @@ function ProductSection({
   subCategory,
   setSubCategory,
   isDesktop,
+  breadcrumbState,
 }: Props) {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
@@ -111,12 +112,28 @@ function ProductSection({
     productItem: string,
     productId: string,
   ) {
+    const productDetailState =
+      type === "bike"
+        ? {
+            source: "bike",
+            ...breadcrumbState,
+            productCategory:
+              selectedCategory && selectedCategory !== ALL_CATEGORY
+                ? selectedCategory
+                : productCategory,
+          }
+        : {
+            source: "catalog",
+            productCategory,
+          };
+
     navigate(
       encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
         productCategory,
         productItem,
         productId,
       }),
+      { state: productDetailState },
     );
   }
 

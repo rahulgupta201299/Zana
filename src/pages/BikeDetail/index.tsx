@@ -3,7 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
-import { SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { BikeDetailParamsType } from "./Types";
 import {
   BikeDetailResType,
@@ -25,6 +26,10 @@ import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 
+type BikeDetailLocationState = {
+  category?: string;
+};
+
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
   const { bikeType: bikeTypeParams = "", bikeId = "" } = params;
@@ -43,9 +48,11 @@ const BikeDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
   const location = useLocation();
+  const { category: initialCategory = ALL_CATEGORY } =
+    (location.state || {}) as BikeDetailLocationState;
 
   const [selectedCategory, setSelectedCategory] =
-    useState<string>(ALL_CATEGORY);
+    useState<string>(initialCategory || ALL_CATEGORY);
   const [filters, setFilters] = useState<{
     category: string;
     subCategory: string;
@@ -64,13 +71,13 @@ const BikeDetailPage = () => {
     null,
   );
 
- async function getBikeProducts(category?: string, subCategory?: string) {
+ async function getBikeProducts(category = ALL_CATEGORY, subCategory?: string) {
   setFilteredBikeProducts([]);
   try {
     const response = (await dispatch(
       BikeProductService({
         modelId: bikeId,
-        ...(category !== ALL_CATEGORY && { category, subCategory }),
+        ...(category && category !== ALL_CATEGORY && { category, subCategory }),
       }),
     )) as ShopByProductDetailsType[];
     setBikeProducts(response);
@@ -102,9 +109,13 @@ const BikeDetailPage = () => {
   }
 
   async function pageOps() {
+    const activeCategory = initialCategory || ALL_CATEGORY;
+    setSelectedCategory(activeCategory);
+    setFilters({ category: activeCategory, subCategory: "" });
+    setSubCategory("");
     getBikeDetails();
     getBikeModelCategoryCount();
-    getBikeProducts();
+    getBikeProducts(activeCategory);
   }
 
   function handleSelectCategory(val: string) {
@@ -128,7 +139,7 @@ const BikeDetailPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, [location.pathname, currency]);
+  }, [location.pathname, currency, initialCategory]);
 
   const categoriesWithCount = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -192,6 +203,19 @@ const BikeDetailPage = () => {
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
+          <AppBreadcrumb
+            className="mb-8"
+            items={[
+              { label: "Home", to: ROUTES.BASE_URL },
+              { label: "Shop By Bike" },
+              {
+                label: brandName,
+                to: `/${bikeType}${SUB_ROUTES.BIKES}`,
+                state: { brand: brandName.toLowerCase() },
+              },
+              { label: modelName },
+            ]}
+          />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
               {!isBikeProductLoading ? (
@@ -300,6 +324,12 @@ const BikeDetailPage = () => {
               subCategory={subCategory}
               setSubCategory={setSubCategory}
               modelId={bikeId}
+              breadcrumbState={{
+                bikeType,
+                bikeBrand: brandName,
+                bikeModel: modelName,
+                bikeId,
+              }}
               products={filteredBikeProducts}
               categoriesWithCount={categoriesWithCount}
               selectedCategory={selectedCategory}
