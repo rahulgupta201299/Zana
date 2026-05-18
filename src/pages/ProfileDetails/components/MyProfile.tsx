@@ -41,6 +41,7 @@ import GenerateEmailOtpServiceAction, {
   GEN_EMAIL_OTP_REQ,
 } from "@/Redux/Auth/Services/GenerateEmailOtp";
 import verifyEmailOtpServiceAction from "@/Redux/Auth/Services/VerifyEmailOtp";
+import { handlePostalCodeChange } from "@/Utils/Pincode";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   const [models, setModels] = useState([]);
@@ -504,6 +505,56 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         }}
                       />
                       <Stack direction="row" spacing={2}>
+                          <TextField
+                          fullWidth
+                          name="postalCode"
+                          value={values.postalCode}
+                          onChange={(e) =>
+                            handlePostalCodeChange({
+                              value: e.target.value,
+                              fields: {
+                                pincode: "postalCode",
+                                city: "city",
+                                state: "state",
+                                country: "country",
+                              },
+                              dispatch,
+                              setFieldValue,
+                              onInvalidPincode: () =>
+                                enqueueSnackbar(
+                                  "Pincode not found. Please enter city and state manually.",
+                                  {
+                                    variant: "info",
+                                    anchorOrigin: {
+                                      vertical: "top",
+                                      horizontal: "center",
+                                    },
+                                    autoHideDuration: 2500,
+                                  },
+                                ),
+                            })
+                          }
+                          placeholder="Postal Code"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: { maxLength: 6 },
+                            },
+                          }}
+                        />
                         <TextField
                           fullWidth
                           name="city"
@@ -529,7 +580,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             },
                           }}
                         />
-                        <TextField
+                       
+                      </Stack>
+                      <Stack direction="row" spacing={2}>
+                       <TextField
                           fullWidth
                           name="state"
                           value={values.state}
@@ -543,33 +597,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           helperText={getHelperOrErrorText(
                             { errors, touched },
                             "state",
-                          )}
-                          slotProps={{
-                            input: {
-                              sx: {
-                                backgroundColor: "#FFFFFF",
-                                color: "#000",
-                                borderRadius: "10px",
-                              },
-                            },
-                          }}
-                        />
-                      </Stack>
-                      <Stack direction="row" spacing={2}>
-                        <TextField
-                          fullWidth
-                          name="postalCode"
-                          value={values.postalCode}
-                          onChange={handleChange}
-                          placeholder="Postal Code"
-                          onBlur={handleBlur}
-                          error={getFieldErrorState(
-                            { errors, touched },
-                            "postalCode",
-                          )}
-                          helperText={getHelperOrErrorText(
-                            { errors, touched },
-                            "postalCode",
                           )}
                           slotProps={{
                             input: {

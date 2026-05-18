@@ -179,6 +179,13 @@ export type RemoveCouponResType = {
   currencySymbol: string;
 };
 
+export type PincodeResType = {
+  pincode: string;
+  district: string;
+  state: string;
+  country: string;
+};
+
 export type UpdatePaymentReqType = {
   phoneNumber: string;
   method: string;
