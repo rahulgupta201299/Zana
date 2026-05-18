@@ -27,3 +27,6 @@ export const applyCouponActions = traceActionsCreator(applyCouponServiceName)
 
 export const removeCouponServiceName = `${SLICE_NAME}/removeCoupon`
 export const removeCouponActions = traceActionsCreator(removeCouponServiceName)
+
+export const pinCodeServiceName = `${SLICE_NAME}/pin`
+export const pinCodeActions = traceActionsCreator(pinCodeServiceName)
