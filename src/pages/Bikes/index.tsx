@@ -11,6 +11,7 @@ import { ShopByBikeModelsType } from "@/Redux/Product/Types";
 import { ROUTES } from "@/Constants/Routes";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
+import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { TAppStore } from "@/Configurations/AppStore";
 import {
   shopByBikeServiceName,
@@ -111,6 +112,13 @@ function Bikes() {
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
+          <AppBreadcrumb
+            className="mb-6"
+            items={[
+              { label: "Home", to: ROUTES.BASE_URL },
+              { label: "Shop By Bike" },
+            ]}
+          />
           {/* Header */}
           <div className="mb-8 md:mb-12">
             <h1 className="text-white text-3xl md:text-5xl font-bold mb-4">
