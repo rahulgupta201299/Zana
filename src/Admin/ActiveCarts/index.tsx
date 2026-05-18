@@ -16,15 +16,12 @@ import {
   IconButton,
   Collapse,
   Divider,
-  Slider,
   Stack,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Alert,
-  FormControlLabel,
-  Switch,
   Tooltip,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -45,15 +42,12 @@ import {
   parseAdminActiveCartsResponse,
 } from "../Configurations/ActiveCartApi";
 
-/** Slider UI is capped at ₹5,000; open-ended high totals use the "₹5,000 and above" control. */
-const AMOUNT_SLIDER_MAX = 5000;
-const DEFAULT_MIN_AMOUNT = 0;
-const DEFAULT_MAX_AMOUNT = AMOUNT_SLIDER_MAX;
 const DEFAULT_SORT_BY: AdminActiveCartSortBy = "updatedAt";
 const DEFAULT_SORT_ORDER: AdminActiveCartSortOrder = "desc";
 
 const NULL_EMAIL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
+const TABLE_COL_SPAN = 6;
 
 function productDisplayName(item: AdminActiveCartLineItem): string {
   const p = item.product ?? null;
@@ -202,7 +196,7 @@ function Row(props: {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={TABLE_COL_SPAN}>
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 2, p: 2, bgcolor: "#f8fafc", borderRadius: 2, border: "1px solid #e2e8f0" }}>
               <Typography variant="subtitle1" gutterBottom component="div" fontWeight="bold">
@@ -212,6 +206,7 @@ function Row(props: {
                 <TableHead>
                   <TableRow>
                     <TableCell>Product Name</TableCell>
+                    <TableCell>Product code</TableCell>
                     <TableCell>Price</TableCell>
                     <TableCell>Quantity</TableCell>
                     <TableCell>Total Price</TableCell>
@@ -224,6 +219,7 @@ function Row(props: {
                         <TableCell component="th" scope="row">
                           <ProductThumbCell item={item} />
                         </TableCell>
+                        <TableCell>{item.product?.productCode || NULL_EMAIL_PLACEHOLDER}</TableCell>
                         <TableCell>
                           {item.currencySymbol ?? symbol}
                           {item.price ?? 0}
@@ -237,7 +233,7 @@ function Row(props: {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} align="center">No items found</TableCell>
+                      <TableCell colSpan={5} align="center">No items found</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -292,8 +288,6 @@ function Row(props: {
   );
 }
 
-type AppliedAmount = { min: number; max: number };
-
 export default function ActiveCarts() {
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
@@ -305,11 +299,6 @@ export default function ActiveCarts() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [amountRange, setAmountRange] = useState<[number, number]>([
-    DEFAULT_MIN_AMOUNT,
-    DEFAULT_MAX_AMOUNT,
-  ]);
-  const [amount5000AndAbove, setAmount5000AndAbove] = useState(false);
   const [sortBy, setSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
   const [sortOrder, setSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -318,11 +307,6 @@ export default function ActiveCarts() {
 
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
-  const [appliedAmount, setAppliedAmount] = useState<AppliedAmount>({
-    min: DEFAULT_MIN_AMOUNT,
-    max: DEFAULT_MAX_AMOUNT,
-  });
-  const [appliedAmount5000AndAbove, setAppliedAmount5000AndAbove] = useState(false);
   const [appliedSortBy, setAppliedSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -335,12 +319,6 @@ export default function ActiveCarts() {
         endDate: appliedEndDate || undefined,
         sortBy: appliedSortBy,
         sortOrder: appliedSortOrder,
-        ...(appliedAmount5000AndAbove
-          ? { minAmount: AMOUNT_SLIDER_MAX }
-          : {
-              minAmount: appliedAmount.min,
-              maxAmount: appliedAmount.max,
-            }),
       };
       setLoading(true);
       setError(null);
@@ -361,8 +339,6 @@ export default function ActiveCarts() {
       }
     },
     [
-      appliedAmount,
-      appliedAmount5000AndAbove,
       appliedEndDate,
       appliedStartDate,
       appliedSortBy,
@@ -377,8 +353,6 @@ export default function ActiveCarts() {
   const handleApplyFilters = () => {
     setAppliedStartDate(startDate);
     setAppliedEndDate(endDate);
-    setAppliedAmount({ min: amountRange[0], max: amountRange[1] });
-    setAppliedAmount5000AndAbove(amount5000AndAbove);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
   };
@@ -386,12 +360,8 @@ export default function ActiveCarts() {
   const handleClearFilters = () => {
     setStartDate("");
     setEndDate("");
-    setAmountRange([DEFAULT_MIN_AMOUNT, DEFAULT_MAX_AMOUNT]);
-    setAmount5000AndAbove(false);
     setAppliedStartDate("");
     setAppliedEndDate("");
-    setAppliedAmount({ min: DEFAULT_MIN_AMOUNT, max: DEFAULT_MAX_AMOUNT });
-    setAppliedAmount5000AndAbove(false);
     setSortBy(DEFAULT_SORT_BY);
     setSortOrder(DEFAULT_SORT_ORDER);
     setAppliedSortBy(DEFAULT_SORT_BY);
@@ -401,38 +371,18 @@ export default function ActiveCarts() {
   const isApplyDisabled =
     startDate === appliedStartDate
     && endDate === appliedEndDate
-    && amountRange[0] === appliedAmount.min
-    && amountRange[1] === appliedAmount.max
-    && amount5000AndAbove === appliedAmount5000AndAbove
     && sortBy === appliedSortBy
     && sortOrder === appliedSortOrder;
 
   const isClearDisabled =
     startDate === ""
     && endDate === ""
-    && amountRange[0] === DEFAULT_MIN_AMOUNT
-    && amountRange[1] === DEFAULT_MAX_AMOUNT
-    && !amount5000AndAbove
     && appliedStartDate === ""
     && appliedEndDate === ""
-    && appliedAmount.min === DEFAULT_MIN_AMOUNT
-    && appliedAmount.max === DEFAULT_MAX_AMOUNT
-    && !appliedAmount5000AndAbove
     && sortBy === DEFAULT_SORT_BY
     && sortOrder === DEFAULT_SORT_ORDER
     && appliedSortBy === DEFAULT_SORT_BY
     && appliedSortOrder === DEFAULT_SORT_ORDER;
-
-  const amountRangeControlsDisabled = amount5000AndAbove;
-
-  const clampAmountPair = (lo: number, hi: number): [number, number] => {
-    let a = Math.min(Math.max(0, lo), AMOUNT_SLIDER_MAX);
-    let b = Math.min(Math.max(0, hi), AMOUNT_SLIDER_MAX);
-    if (a > b) {
-      [a, b] = [b, a];
-    }
-    return [a, b];
-  };
 
   const todayIso = formatLocalIsoDate(new Date());
   const startDateInputMax = endDate ? minIsoDate(todayIso, endDate) : todayIso;
@@ -537,80 +487,7 @@ export default function ActiveCarts() {
             </Stack>
           </Stack>
 
-          <Box sx={{ px: 1 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Total amount range
-            </Typography>
-            <FormControlLabel
-              sx={{ mb: 1, display: "flex", alignItems: "center" }}
-              control={(
-                <Switch
-                  checked={amount5000AndAbove}
-                  onChange={(_e, checked) => setAmount5000AndAbove(checked)}
-                  color="primary"
-                  inputProps={{ "aria-label": "₹5,000 and above" }}
-                />
-              )}
-              label="₹5,000 and above"
-            />
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              alignItems={{ sm: "center" }}
-              sx={{
-                opacity: amountRangeControlsDisabled ? 0.45 : 1,
-                pointerEvents: amountRangeControlsDisabled ? "none" : "auto",
-              }}
-            >
-              <Box sx={{ flex: "0 0 auto", width: { xs: "100%", sm: 200 }, maxWidth: 220 }}>
-                <Slider
-                  size="small"
-                  value={amountRange}
-                  onChange={(_e, value) => {
-                    const v = value as number[];
-                    setAmountRange(clampAmountPair(v[0], v[1]));
-                  }}
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={AMOUNT_SLIDER_MAX}
-                  step={1000}
-                  disableSwap
-                  disabled={amountRangeControlsDisabled}
-                />
-              </Box>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap sx={{ flex: "1 1 auto", minWidth: 0 }}>
-                <TextField
-                  label="Min amount"
-                  type="number"
-                  size="small"
-                  value={amountRange[0]}
-                  onChange={(e) => {
-                    const n = e.target.value === "" ? 0 : Number(e.target.value);
-                    setAmountRange(clampAmountPair(n, amountRange[1]));
-                  }}
-                  sx={{ width: 140 }}
-                  disabled={amountRangeControlsDisabled}
-                />
-                <TextField
-                  label="Max amount"
-                  type="number"
-                  size="small"
-                  value={amountRange[1]}
-                  onChange={(e) => {
-                    const n = e.target.value === "" ? DEFAULT_MAX_AMOUNT : Number(e.target.value);
-                    setAmountRange(clampAmountPair(amountRange[0], n));
-                  }}
-                  sx={{ width: 140 }}
-                  disabled={amountRangeControlsDisabled}
-                />
-              </Stack>
-            </Stack>
-            {amount5000AndAbove && (
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                Requests carts with total amount at least ₹5,000 (no upper limit). Apply filters to run the query.
-              </Typography>
-            )}
-          </Box>
+          {/* Amount min/max filter hidden per admin request. */}
 
           <Stack direction="row" spacing={2}>
             <Button
@@ -647,13 +524,13 @@ export default function ActiveCarts() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={TABLE_COL_SPAN} align="center" sx={{ py: 3 }}>
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : carts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={TABLE_COL_SPAN} align="center" sx={{ py: 3 }}>
                     <Typography color="text.secondary">No active carts found</Typography>
                   </TableCell>
                 </TableRow>
