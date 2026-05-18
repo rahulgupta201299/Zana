@@ -144,9 +144,9 @@ const ProductCatalogPage = () => {
             items={[
               { label: "Home", to: ROUTES.BASE_URL },
               { label: "Products", to: ROUTES.PRODUCT_CATALOG },
-              ...(selectedCategory && selectedCategory !== ALL_CATEGORY
-                ? [{ label: selectedCategory }]
-                : []),
+              // ...(selectedCategory && selectedCategory !== ALL_CATEGORY
+              //   ? [{ label: selectedCategory }]
+              //   : []),
             ]}
           />
           <div className="text-center">
