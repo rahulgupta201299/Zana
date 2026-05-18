@@ -31,6 +31,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import { getAdminApiBody } from "../Utils/ApiUtils";
 import {
+  downloadAdminOrderListCsv,
   getAdminOrderList,
   AdminOrderListFilters,
   AdminOrderListRecord,
@@ -413,6 +414,7 @@ export default function AdminOrderList() {
   const [orders, setOrders] = useState<AdminOrderListRecord[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(0);
@@ -490,6 +492,29 @@ export default function AdminOrderList() {
   useEffect(() => {
     void load(1, rowsPerPage);
   }, [load, rowsPerPage]);
+
+  const getAppliedDownloadFilters = () => ({
+    startDate: appliedStartDate || undefined,
+    endDate: appliedEndDate || undefined,
+    sortBy: appliedSortBy,
+    sortOrder: appliedSortOrder,
+    paymentMethod: appliedPaymentType === "cod" ? "cod" : undefined,
+    paymentStatus: appliedPaymentType === "paid" ? "paid" : undefined,
+    phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+    emailId: appliedEmailId.trim() || undefined,
+  });
+
+  const handleDownloadCsv = async () => {
+    setDownloadLoading(true);
+    setError(null);
+    try {
+      await downloadAdminOrderListCsv(getAppliedDownloadFilters());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to download orders CSV.");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -743,7 +768,7 @@ export default function AdminOrderList() {
 
           {/* Amount min/max filter hidden per admin request. */}
 
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
             <Button
               variant="contained"
               onClick={handleApplyFilters}
@@ -757,6 +782,14 @@ export default function AdminOrderList() {
             </Button>
             <Button variant="outlined" onClick={handleClearFilters} disabled={isClearDisabled} color="inherit">
               Clear
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleDownloadCsv}
+              disabled={downloadLoading}
+              color="inherit"
+            >
+              {downloadLoading ? "Downloading..." : "Download CSV"}
             </Button>
           </Stack>
         </Stack>

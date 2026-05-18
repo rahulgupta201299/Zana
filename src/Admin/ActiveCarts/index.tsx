@@ -30,6 +30,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
+  downloadAdminActiveCartsCsv,
   getAdminActiveCarts,
   AdminActiveCartFilters,
   AdminActiveCartRecord,
@@ -310,6 +311,7 @@ export default function ActiveCarts() {
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(0);
@@ -379,6 +381,27 @@ export default function ActiveCarts() {
   useEffect(() => {
     void load(1, rowsPerPage);
   }, [load, rowsPerPage]);
+
+  const getAppliedDownloadFilters = () => ({
+    startDate: appliedStartDate || undefined,
+    endDate: appliedEndDate || undefined,
+    sortBy: appliedSortBy,
+    sortOrder: appliedSortOrder,
+    phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+    emailId: appliedEmailId.trim() || undefined,
+  });
+
+  const handleDownloadCsv = async () => {
+    setDownloadLoading(true);
+    setError(null);
+    try {
+      await downloadAdminActiveCartsCsv(getAppliedDownloadFilters());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to download active carts CSV.");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -579,7 +602,7 @@ export default function ActiveCarts() {
 
           {/* Amount min/max filter hidden per admin request. */}
 
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
             <Button
               variant="contained"
               onClick={handleApplyFilters}
@@ -593,6 +616,14 @@ export default function ActiveCarts() {
             </Button>
             <Button variant="outlined" onClick={handleClearFilters} disabled={isClearDisabled} color="inherit">
               Clear
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleDownloadCsv}
+              disabled={downloadLoading}
+              color="inherit"
+            >
+              {downloadLoading ? "Downloading..." : "Download CSV"}
             </Button>
           </Stack>
         </Stack>

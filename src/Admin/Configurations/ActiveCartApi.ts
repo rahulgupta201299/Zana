@@ -1,11 +1,13 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import Network from "@/Configurations/Network";
 import { getAdminApiBody, omitEmptyParams } from "../Utils/ApiUtils";
+import { downloadAdminCsv } from "../Utils/CsvDownloadUtils";
 
 const network = new Network();
 
 /** Path after `VITE_API_DOMAIN` (contract: `GET …/v1/cart/admin/active`). */
 const ACTIVE_CART_ADMIN_PATH = "/api/v1/cart/admin/active";
+const ACTIVE_CART_ADMIN_DOWNLOAD_PATH = "/api/v1/cart/admin/active/download";
 
 export type AdminActiveCartSortBy = "updatedAt" | "totalAmount";
 export type AdminActiveCartSortOrder = "asc" | "desc";
@@ -22,6 +24,8 @@ export type AdminActiveCartFilters = {
   phoneNumber?: string;
   emailId?: string;
 };
+
+export type AdminActiveCartDownloadFilters = Omit<AdminActiveCartFilters, "page" | "limit">;
 
 /** Product on a line item — shape varies by catalog / population. */
 export type AdminActiveCartProduct = {
@@ -155,4 +159,21 @@ export async function getAdminActiveCarts(
     cache: false,
   });
   return data as AdminActiveCartsApiResponse;
+}
+
+export async function downloadAdminActiveCartsCsv(filters: AdminActiveCartDownloadFilters) {
+  return downloadAdminCsv(
+    ACTIVE_CART_ADMIN_DOWNLOAD_PATH,
+    omitEmptyParams({
+      sortBy: filters.sortBy,
+      sortOrder: filters.sortOrder,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      minAmount: filters.minAmount,
+      maxAmount: filters.maxAmount,
+      phoneNumber: filters.phoneNumber,
+      emailId: filters.emailId,
+    }),
+    "admin-active-carts.csv",
+  );
 }
