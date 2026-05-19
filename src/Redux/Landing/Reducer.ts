@@ -10,11 +10,12 @@ import { CURRENCY_LIST } from "@/Constants/AppConstant";
 import {
   currencyListActions,
   garageFavoriteActions,
+  geoLocationActions,
   initialLoadingActions,
   newArrivalsActions,
   selectedCurrencyActions,
 } from "./Actions";
-import { CurrencyType, T_LANDING_REDUCER } from "./Types";
+import { CurrencyType, GeolocationType, T_LANDING_REDUCER } from "./Types";
 import { SLICE_NAME as LandingSliceName } from "./Selectors";
 import { ShopByProductDetailsType } from "../Product/Types";
 
@@ -67,6 +68,13 @@ const sliceOptions: CreateSliceOptions<T_LANDING_REDUCER> = {
       initialLoadingActions,
       (state, action: PayloadAction<boolean>) => {
         state.initialLoading = action.payload;
+      },
+    );
+     builder.addCase(
+      geoLocationActions.success,
+      (state, action: PayloadAction<GeolocationType>) => {
+        console.log("GeoLocation Success Action Payload:", action.payload);
+        state.selectedCurrency = action.payload?.currencyDetails?.code 
       },
     );
   },

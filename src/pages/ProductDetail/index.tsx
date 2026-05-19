@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductDetailParamsType } from "./Types";
@@ -24,7 +24,10 @@ import {
 } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import { handleSocialMedia } from "@/Utils/StringUtils";
-import { SocialMediaPlatformEnum } from "@/Constants/AppConstant";
+import {
+  BikeCategoryEnum,
+  SocialMediaPlatformEnum,
+} from "@/Constants/AppConstant";
 import { ROUTES } from "@/Constants/Routes";
 import CategoryProductService from "@/Redux/Product/Services/CategoryProductService";
 import { Box, Skeleton, Tooltip } from "@mui/material";
@@ -40,9 +43,21 @@ import {
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
+import AppBreadcrumb from "@/components/AppBreadcrumb";
+import { SUB_ROUTES } from "@/Constants/Routes";
+
+type ProductDetailLocationState = {
+  source?: "bike" | "catalog";
+  bikeType?: string;
+  bikeBrand?: string;
+  bikeModel?: string;
+  bikeId?: string;
+  productCategory?: string;
+};
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
@@ -151,13 +166,25 @@ const ProductDetailPage = () => {
     productItem: string,
     productId: string,
   ) {
+    const currentBreadcrumbState =
+      (location.state || {}) as ProductDetailLocationState;
+    const productDetailState =
+      currentBreadcrumbState.source === "bike"
+        ? {
+            ...currentBreadcrumbState,
+            productCategory,
+          }
+        : {
+            source: "catalog",
+            productCategory,
+          };
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
       productCategory,
       productItem,
       productId,
     });
 
-    navigate(path);
+    navigate(path, { state: productDetailState });
     window.scrollTo(0, 0);
   }
 
@@ -208,11 +235,66 @@ const ProductDetailPage = () => {
   const isMinusDisabled = quantity === 1;
 
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
+  const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
+  const breadcrumbCategory =
+    breadcrumbState.productCategory || category || productCategory;
+  const isBikeBreadcrumb =
+    breadcrumbState.source === "bike" &&
+    breadcrumbState.bikeType &&
+    breadcrumbState.bikeBrand &&
+    breadcrumbState.bikeModel &&
+    breadcrumbState.bikeId;
+  const bikeListPath = isBikeBreadcrumb
+    ? `/${breadcrumbState.bikeType}${SUB_ROUTES.BIKES}`
+    : "";
+  const bikeDetailPath = isBikeBreadcrumb
+    ? encodedGeneratedPath(ROUTES.BIKE_DETAIL, {
+        bikeType: breadcrumbState.bikeType,
+        bikeBrand: breadcrumbState.bikeBrand,
+        bikeModel: breadcrumbState.bikeModel,
+        bikeId: breadcrumbState.bikeId,
+      })
+    : "";
+  const bikeBreadcrumbLabel =
+    breadcrumbState.bikeType?.toLowerCase() === BikeCategoryEnum.ZPRO
+      ? BikeCategoryEnum.ZPRO
+      : "Shop By Bike";
+  const productBreadcrumbItems = isBikeBreadcrumb
+      ? [
+          { label: "Home", to: ROUTES.BASE_URL },
+          { label: bikeBreadcrumbLabel, to: bikeListPath },
+          {
+            label: breadcrumbState.bikeBrand || "",
+            to: bikeListPath,
+            state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
+          },
+          { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
+        {
+          label: breadcrumbCategory,
+          to: bikeDetailPath,
+          state: { category: breadcrumbCategory.toLowerCase() },
+        },
+        { label: name || productItem },
+      ]
+    : [
+        { label: "Home", to: ROUTES.BASE_URL },
+        { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
+        {
+          label: breadcrumbCategory,
+          to: ROUTES.PRODUCT_CATALOG,
+          state: { category: breadcrumbCategory.toLowerCase() },
+        },
+        { label: name || productItem },
+      ];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
+        <AppBreadcrumb
+          className="mb-8"
+          items={productBreadcrumbItems}
+        />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left - Product Images List */}
           <div className="lg:col-span-2">

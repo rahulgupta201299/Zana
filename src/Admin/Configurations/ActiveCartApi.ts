@@ -33,6 +33,7 @@ export type AdminActiveCartProduct = {
   images?: string[];
   shortDescription?: string;
   category?: string;
+  productCode?: string;
   [key: string]: unknown;
 };
 

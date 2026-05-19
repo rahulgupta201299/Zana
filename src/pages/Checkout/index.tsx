@@ -38,15 +38,16 @@ import { getLoginDetails, getProfileDetails, isdCodeDetails } from "@/Redux/Auth
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
-import { cartModifyServiceName, updateCartAddressServiceName, updatePaymentMethodServiceName } from "@/Redux/Cart/Action";
+import { cartModifyServiceName, pinCodeServiceName, updateCartAddressServiceName, updatePaymentMethodServiceName } from "@/Redux/Cart/Action";
 import { createPaymentOrderName, verifyPaymentOrderName } from "@/Redux/Order/Action";
 import DisplayCouponCTA from "@/components/DisplayCouponCTA";
 import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfileDetails";
 import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
 import { UpdatePaymentResType } from "@/Redux/Cart/Types";
-import { CURRENCY_LIST } from "@/Constants/AppConstant";
+import { COUNTRY_INDIA, CURRENCY_LIST } from "@/Constants/AppConstant";
 import { getPhoneNumber } from "@/Utils/global";
+import { handlePostalCodeChange } from "@/Utils/Pincode";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -101,7 +102,7 @@ export default function CheckoutPage() {
   } = cartAddressSelector
 
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
-    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName
+    cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName,pinCodeServiceName
   ]));
 
   const isCartLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [cartModifyServiceName]))
@@ -122,6 +123,8 @@ export default function CheckoutPage() {
   const [paymentType, setPaymentType] = useState(null);
   const [shippingIsdCode, setShippingIsdCode] = useState<string>('')
   const [billingIsdCode, setBillingIsdCode] = useState<string>('')
+  const [invalidShippingPincode, setInvalidShippingPincode] = useState("");
+  const [invalidBillingPincode, setInvalidBillingPincode] = useState("");
   const [paymentMethodDetails, setPaymentMethodDetails] = useState<PaymentMethodType>({
     subtotal: cartSubtotal,
     totalAmount: cartTotalAmount,
@@ -190,7 +193,19 @@ export default function CheckoutPage() {
     shippingCity: Yup.string().required("City is required"),
     shippingState: Yup.string().required("State is required"),
     shippingPincode: Yup.string()
-      .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+      .test("shippingPincode", "Enter a valid postal code", function (value) {
+        const { shippingCountry = "" } = this.parent;
+        if (shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+          if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+          if (value && value === invalidShippingPincode) {
+            return this.createError({ message: "Pincode not found." });
+          }
+          return true;
+        }
+
+        const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+        return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
+      })
       .required("Pincode is required"),
 
     saveInfo: Yup.boolean(),
@@ -224,7 +239,19 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+          .test("billingPincode", "Enter a valid postal code", function (value) {
+            const { billingCountry = "" } = this.parent;
+            if (billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+              if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+              if (value && value === invalidBillingPincode) {
+                return this.createError({ message: "Pincode not found." });
+              }
+              return true;
+            }
+
+            const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+            return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
+          })
           .required("Billing pincode is required")
     ),
     billingPhone: Yup.string().when(
@@ -381,6 +408,8 @@ export default function CheckoutPage() {
   async function handlePaymentOptionChange(method: PaymentTypeEnum) {
     const { phoneNumber = '' } = loginDetails
 
+    if (!phoneNumber) return;
+
     setPaymentType(method)
 
     try {
@@ -460,6 +489,7 @@ export default function CheckoutPage() {
                 setValues,
                 setFieldValue,
                 setFieldTouched,
+                setFieldError,
                 isValid,
               }) => {
 
@@ -579,6 +609,7 @@ export default function CheckoutPage() {
                         <Select
                           name="shippingCountry"
                           value={values.shippingCountry}
+                        
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
@@ -588,8 +619,15 @@ export default function CheckoutPage() {
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
+                            setValues({
+                              ...values,
+                              shippingCountry: countryName,
+                              shippingPincode: '',
+                              shippingCity: '',
+                              shippingState: '',
+                            })
+
                             setShippingIsdCode(isd)
-                            setFieldValue("shippingCountry", countryName, true);
                             setFieldTouched("shippingCountry", true);
                           }}
                           onBlur={handleBlur}
@@ -758,11 +796,73 @@ export default function CheckoutPage() {
                       />
 
                       <Grid container spacing={2}>
+                          <Grid size={4}>
+                          <TextField
+                            fullWidth
+                            name="shippingPincode"
+                            label="Pin code"
+                            value={values.shippingPincode}
+
+                            onChange={(e) => {
+                              handlePostalCodeChange({
+                                value: e.target.value,
+                                country: values.shippingCountry,
+                                invalidPincode: invalidShippingPincode,
+                                fields: {
+                                  pincode: "shippingPincode",
+                                  city: "shippingCity",
+                                  state: "shippingState",
+                                  country: "shippingCountry",
+                                },
+                                dispatch,
+                                setFieldValue,
+                                setFormValues: (updates, shouldValidate) =>
+                                  setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                                setFieldError,
+                                onInvalidPincode: (pincode) => {
+                                  setInvalidShippingPincode(pincode);
+                                  setFieldTouched("shippingPincode", true, false);
+                                  setFieldError("shippingPincode", "Pincode not found.");
+                                },
+                                onValidPincode: () => {
+                                  setInvalidShippingPincode("");
+                                },
+                              });
+                            }}
+                            onBlur={handleBlur}
+                            error={getFieldErrorState(
+                              { errors, touched },
+                              "shippingPincode"
+                            )}
+                            helperText={getHelperOrErrorText(
+                              { errors, touched },
+                              "shippingPincode"
+                            )}
+                            slotProps={{
+                              input: {
+                                sx: {
+                                  backgroundColor: "#fff",
+                                  color: "#000",
+                                  borderRadius: "10px",
+                                },
+                                inputProps: {
+                                  maxLength: values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                },
+                              },
+                              inputLabel: {
+                                sx: {
+                                  color: "#000",
+                                },
+                              },
+                            }}
+                          />
+                        </Grid>
                         <Grid size={4}>
                           <TextField
                             fullWidth
                             name="shippingCity"
                             label="City"
+                                                      disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                             value={values.shippingCity}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -796,6 +896,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingState"
                             label="State"
+                            disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                             value={values.shippingState}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -824,41 +925,7 @@ export default function CheckoutPage() {
                           />
                         </Grid>
 
-                        <Grid size={4}>
-                          <TextField
-                            fullWidth
-                            name="shippingPincode"
-                            label="Pin code"
-                            value={values.shippingPincode}
-                            onChange={(e) => {
-                              if (e.target.value.match(/[^0-9]/)) return;
-                              handleChange(e);
-                            }}
-                            onBlur={handleBlur}
-                            error={getFieldErrorState(
-                              { errors, touched },
-                              "shippingPincode"
-                            )}
-                            helperText={getHelperOrErrorText(
-                              { errors, touched },
-                              "shippingPincode"
-                            )}
-                            slotProps={{
-                              input: {
-                                sx: {
-                                  backgroundColor: "#fff",
-                                  color: "#000",
-                                  borderRadius: "10px",
-                                },
-                              },
-                              inputLabel: {
-                                sx: {
-                                  color: "#000",
-                                },
-                              },
-                            }}
-                          />
-                        </Grid>
+                      
                       </Grid>
 
                       <TextField
@@ -1224,10 +1291,67 @@ export default function CheckoutPage() {
 
                               {/* City / State / Zip */}
                               <Grid container spacing={2} sx={{ mt: 2 }}>
+                                  <Grid size={4}>
+                                  <TextField
+                                    fullWidth
+                                    name="billingPincode"
+                                    label="Pin code"
+                                    value={values.billingPincode}
+                                    onChange={(e) => {
+                                      handlePostalCodeChange({
+                                        value: e.target.value,
+                                        country: values.billingCountry,
+                                        invalidPincode: invalidBillingPincode,
+                                        fields: {
+                                          pincode: "billingPincode",
+                                          city: "billingCity",
+                                          state: "billingState",
+                                          country: "billingCountry",
+                                        },
+                                        dispatch,
+                                        setFieldValue,
+                                        setFormValues: (updates, shouldValidate) =>
+                                          setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                                        setFieldError,
+                                        onInvalidPincode: (pincode) => {
+                                          setInvalidBillingPincode(pincode);
+                                          setFieldTouched("billingPincode", true, false);
+                                          setFieldError("billingPincode", "Pincode not found.");
+                                        },
+                                        onValidPincode: () => {
+                                          setInvalidBillingPincode("");
+                                        },
+                                      });
+                                    }}
+                                    onBlur={handleBlur}
+                                    error={getFieldErrorState(
+                                      { errors, touched },
+                                      "billingPincode"
+                                    )}
+                                    helperText={getHelperOrErrorText(
+                                      { errors, touched },
+                                      "billingPincode"
+                                    )}
+                                    slotProps={{
+                                      input: {
+                                        sx: {
+                                          backgroundColor: "#fff",
+                                          color: "#000",
+                                          borderRadius: "10px",
+                                        },
+                                        inputProps: {
+                                          maxLength: values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                        },
+                                      },
+                                      inputLabel: { sx: { color: "#000" } },
+                                    }}
+                                  />
+                                </Grid>
                                 <Grid size={4}>
                                   <TextField
                                     fullWidth
                                     name="billingCity"
+                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                                     label="City"
                                     value={values.billingCity}
                                     onChange={handleChange}
@@ -1258,6 +1382,7 @@ export default function CheckoutPage() {
                                     fullWidth
                                     name="billingState"
                                     label="State"
+                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                                     value={values.billingState}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -1282,34 +1407,7 @@ export default function CheckoutPage() {
                                   />
                                 </Grid>
 
-                                <Grid size={4}>
-                                  <TextField
-                                    fullWidth
-                                    name="billingPincode"
-                                    label="Pin code"
-                                    value={values.billingPincode}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    error={getFieldErrorState(
-                                      { errors, touched },
-                                      "billingPincode"
-                                    )}
-                                    helperText={getHelperOrErrorText(
-                                      { errors, touched },
-                                      "billingPincode"
-                                    )}
-                                    slotProps={{
-                                      input: {
-                                        sx: {
-                                          backgroundColor: "#fff",
-                                          color: "#000",
-                                          borderRadius: "10px",
-                                        },
-                                      },
-                                      inputLabel: { sx: { color: "#000" } },
-                                    }}
-                                  />
-                                </Grid>
+                              
                               </Grid>
                               <TextField
                                 fullWidth

@@ -26,6 +26,7 @@ import MyProfile from "./components/MyProfile";
 import Faq from "./components/Faq";
 import { ROUTES } from "@/Constants/Routes";
 import { logout } from "./Utils";
+import { pinCodeServiceName } from "@/Redux/Cart/Action";
 
 
 interface PROFILE_PROPS_TYPE {
@@ -105,7 +106,8 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       getBikeBrandName,
       getProfileDetailName,
       verifyEmailOtpName,
-      generateEmailOtpName
+      generateEmailOtpName,
+      pinCodeServiceName
     ]),
   );
 

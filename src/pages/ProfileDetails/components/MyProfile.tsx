@@ -41,9 +41,12 @@ import GenerateEmailOtpServiceAction, {
   GEN_EMAIL_OTP_REQ,
 } from "@/Redux/Auth/Services/GenerateEmailOtp";
 import verifyEmailOtpServiceAction from "@/Redux/Auth/Services/VerifyEmailOtp";
+import { handlePostalCodeChange } from "@/Utils/Pincode";
+import { COUNTRY_INDIA } from "@/Constants/AppConstant";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   const [models, setModels] = useState([]);
+  const [invalidPostalCode, setInvalidPostalCode] = useState("");
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
@@ -93,11 +96,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         bikeOwnedByCustomer:
           values.brand || values.model
             ? [
-              {
-                ...(values.brand && { brand: values.brand }),
-                ...(values.model && { model: values.model }),
-              },
-            ]
+                {
+                  ...(values.brand && { brand: values.brand }),
+                  ...(values.model && { model: values.model }),
+                },
+              ]
             : [],
       };
       let result;
@@ -129,15 +132,14 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   const ProfileSchema = Yup.object().shape({
-    phoneNumber: Yup.string()
-      .required("Phone number is required"),
+    phoneNumber: Yup.string().required("Phone number is required"),
 
     email: Yup.string()
       .required("Email is required")
       .email("Invalid email format")
       .matches(
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Invalid email format"
+        "Invalid email format",
       ),
 
     firstName: Yup.string()
@@ -170,10 +172,23 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
 
     postalCode: Yup.string()
       .required("Postal code is required")
-      .matches(/^[0-9]{6}$/, "Enter a valid 6-digit postal code"),
+      .test("postalCode", "Enter a valid postal code", function (value) {
+        const { country = "" } = this.parent;
+        if (country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+          if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+          if (value && value === invalidPostalCode) {
+            return this.createError({ message: "Pincode not found" });
+          }
+          return true;
+        }
 
-    country: Yup.string()
-      .required("Country is required"),
+        const hyphenCount = (value || "")
+          .split("")
+          .filter((ch) => ch === "-").length;
+        return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
+      }),
+
+    country: Yup.string().required("Country is required"),
 
     notifyOffers: Yup.boolean(),
   });
@@ -187,8 +202,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   //     }
   //   } catch (error) { }
   // };
-
-
 
   return (
     <Box
@@ -291,8 +304,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                 touched,
                 handleChange,
                 handleBlur,
+                setValues,
                 setFieldValue,
                 setFieldTouched,
+                setFieldError,
                 dirty,
                 isValid,
               }) => {
@@ -321,7 +336,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           handleChange(e);
                         }}
                         placeholder="Phone Number"
-                        onBlur={handleBlur}
+                      
                         error={getFieldErrorState(
                           { errors, touched },
                           "phoneNumber",
@@ -380,7 +395,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             //   ) : null,
                           },
                         }}
-
                       />
 
                       <Box sx={{ display: "flex", gap: "16px" }}>
@@ -504,83 +518,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         }}
                       />
                       <Stack direction="row" spacing={2}>
-                        <TextField
-                          fullWidth
-                          name="city"
-                          value={values.city}
-                          onChange={handleChange}
-                          placeholder="City"
-                          onBlur={handleBlur}
-                          error={getFieldErrorState(
-                            { errors, touched },
-                            "city",
-                          )}
-                          helperText={getHelperOrErrorText(
-                            { errors, touched },
-                            "city",
-                          )}
-                          slotProps={{
-                            input: {
-                              sx: {
-                                backgroundColor: "#FFFFFF",
-                                color: "#000",
-                                borderRadius: "10px",
-                              },
-                            },
-                          }}
-                        />
-                        <TextField
-                          fullWidth
-                          name="state"
-                          value={values.state}
-                          onChange={handleChange}
-                          placeholder="State"
-                          onBlur={handleBlur}
-                          error={getFieldErrorState(
-                            { errors, touched },
-                            "state",
-                          )}
-                          helperText={getHelperOrErrorText(
-                            { errors, touched },
-                            "state",
-                          )}
-                          slotProps={{
-                            input: {
-                              sx: {
-                                backgroundColor: "#FFFFFF",
-                                color: "#000",
-                                borderRadius: "10px",
-                              },
-                            },
-                          }}
-                        />
-                      </Stack>
-                      <Stack direction="row" spacing={2}>
-                        <TextField
-                          fullWidth
-                          name="postalCode"
-                          value={values.postalCode}
-                          onChange={handleChange}
-                          placeholder="Postal Code"
-                          onBlur={handleBlur}
-                          error={getFieldErrorState(
-                            { errors, touched },
-                            "postalCode",
-                          )}
-                          helperText={getHelperOrErrorText(
-                            { errors, touched },
-                            "postalCode",
-                          )}
-                          slotProps={{
-                            input: {
-                              sx: {
-                                backgroundColor: "#FFFFFF",
-                                color: "#000",
-                                borderRadius: "10px",
-                              },
-                            },
-                          }}
-                        />
                         <FormControl fullWidth>
                           <Select
                             name="country"
@@ -624,6 +561,117 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             ))}
                           </Select>
                         </FormControl>
+                        <TextField
+                          fullWidth
+                          name="postalCode"
+                          value={values.postalCode}
+                          onChange={(e) =>
+                            handlePostalCodeChange({
+                              value: e.target.value,
+                              country: values.country,
+                              invalidPincode: invalidPostalCode,
+                              fields: {
+                                pincode: "postalCode",
+                                city: "city",
+                                state: "state",
+                                country: "country",
+                              },
+                              dispatch,
+                              setFieldValue,
+                              setFormValues: (updates, shouldValidate) =>
+                                setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                              setFieldError,
+                              onInvalidPincode: (pincode) => {
+                                setInvalidPostalCode(pincode);
+                                setFieldTouched("postalCode", true, false);
+                                setFieldError("postalCode", "Pincode not found");
+                              },
+                              onValidPincode: () => {
+                                setInvalidPostalCode("");
+                              },
+                            })
+                          }
+                          placeholder="Postal Code"
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "postalCode",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                              inputProps: {
+                                maxLength:
+                                  values.country?.toLowerCase() ===
+                                  COUNTRY_INDIA.toLowerCase()
+                                    ? 6
+                                    : 9,
+                              },
+                            },
+                          }}
+                        />
+                      </Stack>
+                      <Stack direction="row" spacing={2}>
+                        <TextField
+                          fullWidth
+                          name="city"
+                          value={values.city}
+                          onChange={handleChange}
+                          placeholder="City"
+                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "city",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "city",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                            },
+                          }}
+                        />
+                        <TextField
+                          fullWidth
+                          name="state"
+                          value={values.state}
+                          onChange={handleChange}
+                          placeholder="State"
+                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                          onBlur={handleBlur}
+                          error={getFieldErrorState(
+                            { errors, touched },
+                            "state",
+                          )}
+                          helperText={getHelperOrErrorText(
+                            { errors, touched },
+                            "state",
+                          )}
+                          slotProps={{
+                            input: {
+                              sx: {
+                                backgroundColor: "#FFFFFF",
+                                color: "#000",
+                                borderRadius: "10px",
+                              },
+                            },
+                          }}
+                        />
                       </Stack>
                       <Box sx={{ display: "flex", gap: "16px" }}>
                         <FormControl fullWidth>
@@ -757,7 +805,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         }
                         label="Notify me with offers and updates"
                       />
-
 
                       <Button
                         type="submit"

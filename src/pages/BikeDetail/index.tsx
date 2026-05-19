@@ -3,7 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
-import { SUB_ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
+import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { BikeDetailParamsType } from "./Types";
 import {
   BikeDetailResType,
@@ -24,6 +25,11 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
+import { capitalise } from "@/Utils/global";
+
+type BikeDetailLocationState = {
+  category?: string;
+};
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
@@ -43,9 +49,13 @@ const BikeDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
   const location = useLocation();
+  const { category: categoryFromState = ALL_CATEGORY } = (location.state ||
+    {}) as BikeDetailLocationState;
+  const initialCategory = (categoryFromState || ALL_CATEGORY).toLowerCase();
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>(ALL_CATEGORY);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory || ALL_CATEGORY,
+  );
   const [filters, setFilters] = useState<{
     category: string;
     subCategory: string;
@@ -64,21 +74,25 @@ const BikeDetailPage = () => {
     null,
   );
 
- async function getBikeProducts(category?: string, subCategory?: string) {
-  setFilteredBikeProducts([]);
-  try {
-    const response = (await dispatch(
-      BikeProductService({
-        modelId: bikeId,
-        ...(category !== ALL_CATEGORY && { category, subCategory }),
-      }),
-    )) as ShopByProductDetailsType[];
-    setBikeProducts(response);
-    setFilteredBikeProducts(response);
-  } catch (error: any) {
-    console.error(error);
+  async function getBikeProducts(
+    category = ALL_CATEGORY,
+    subCategory?: string,
+  ) {
+    setFilteredBikeProducts([]);
+    try {
+      const response = (await dispatch(
+        BikeProductService({
+          modelId: bikeId,
+          ...(category &&
+            category !== ALL_CATEGORY && { category, subCategory }),
+        }),
+      )) as ShopByProductDetailsType[];
+      setBikeProducts(response);
+      setFilteredBikeProducts(response);
+    } catch (error: any) {
+      console.error(error);
+    }
   }
-}
 
   async function getBikeDetails() {
     try {
@@ -102,9 +116,13 @@ const BikeDetailPage = () => {
   }
 
   async function pageOps() {
+    const activeCategory = initialCategory || ALL_CATEGORY;
+    setSelectedCategory(activeCategory);
+    setFilters({ category: activeCategory, subCategory: "" });
+    setSubCategory("");
     getBikeDetails();
     getBikeModelCategoryCount();
-    getBikeProducts();
+    getBikeProducts(activeCategory);
   }
 
   function handleSelectCategory(val: string) {
@@ -128,7 +146,7 @@ const BikeDetailPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, [location.pathname, currency]);
+  }, [location.pathname, currency, initialCategory]);
 
   const categoriesWithCount = useMemo(() => {
     if (productCategory.length === 0) return [];
@@ -186,12 +204,32 @@ const BikeDetailPage = () => {
     imageUrl = "",
     brand: { name: brandName = "" } = {},
   } = bikeDetails || {};
+  const bikeBreadcrumbLabel = isZProPath
+    ? BikeCategoryEnum.ZPRO
+    : "Shop By Bike";
+  const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
+          <AppBreadcrumb
+            className="mb-8"
+            items={[
+              { label: "Home", to: ROUTES.BASE_URL },
+              { label: bikeBreadcrumbLabel, to: bikeListPath },
+              {
+                label: brandName,
+                to: bikeListPath,
+                state: { brand: brandName.toLowerCase() },
+              },
+              { label: modelName },
+              ...(selectedCategory && selectedCategory !== ALL_CATEGORY
+                ? [{ label: capitalise(selectedCategory) }]
+                : []),
+            ]}
+          />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
               {!isBikeProductLoading ? (
@@ -246,25 +284,25 @@ const BikeDetailPage = () => {
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">
-                  {
-                    !isBikeProductLoading ? brandName.toUpperCase() : (
-                      <Skeleton
-                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                        width={100}
-                      />
-                    )
-                  }
+                  {!isBikeProductLoading ? (
+                    brandName.toUpperCase()
+                  ) : (
+                    <Skeleton
+                      sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                      width={100}
+                    />
+                  )}
                 </span>
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
-                  {
-                    !isBikeProductLoading ? `${bikeProducts.length} Products Available` : (
-                      <Skeleton
-                        sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                        width={150}
-                      />
-                    )
-                  }
+                  {!isBikeProductLoading ? (
+                    `${bikeProducts.length} Products Available`
+                  ) : (
+                    <Skeleton
+                      sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                      width={150}
+                    />
+                  )}
                 </span>
               </div>
               <button
@@ -300,6 +338,12 @@ const BikeDetailPage = () => {
               subCategory={subCategory}
               setSubCategory={setSubCategory}
               modelId={bikeId}
+              breadcrumbState={{
+                bikeType,
+                bikeBrand: brandName,
+                bikeModel: modelName,
+                bikeId,
+              }}
               products={filteredBikeProducts}
               categoriesWithCount={categoriesWithCount}
               selectedCategory={selectedCategory}

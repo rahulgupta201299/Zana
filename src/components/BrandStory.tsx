@@ -4,50 +4,67 @@ import { ROUTES } from "@/Constants/Routes";
 import AutumnAdventureSale from '@/Assets/Images/AutumnAdventureSale.png';
 
 const BrandStory = () => {
-
   const navigate = useNavigate()
 
   return (
     <Box
       sx={{
         position: "relative",
-        minHeight: "600px",
+        minHeight: { xs: "400px", sm: "500px", md: "600px" },
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: { xs: "flex-end", md: "flex-start" },
         justifyContent: "flex-start",
         backgroundImage: `url(${AutumnAdventureSale})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      {/* Dark overlay for mobile readability */}
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%)",
+        }}
+      />
+
       <Box
         sx={{
           position: "relative",
           textAlign: "left",
-          color: "black",
-          px: 8,
-          py: 8,
-          maxWidth: "400px",
+          color: { xs: "white", md: "black" },
+          px: { xs: 3, sm: 4, md: 8 },
+          py: { xs: 4, sm: 5, md: 8 },
+          maxWidth: { xs: "100%", md: "400px" },
         }}
       >
         <Typography
           sx={{
             fontWeight: "bold",
             mb: 2,
-            whiteSpace: "nowrap",
-            fontSize: "2.25rem",
-            lineHeight: "2.5rem"
+            whiteSpace: { xs: "normal", md: "nowrap" },
+            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2.25rem" },
+            lineHeight: { xs: "2rem", md: "2.5rem" },
           }}
         >
           AUTUMN ADVENTURE SALE
         </Typography>
 
-        <Typography variant="body1" sx={{ fontSize: "1.125rem", lineHeight: '1.75rem', mb: 4 }}>
-          Get 15% off rugged, all-weather accessories <br />
+        <Typography
+          variant="body1"
+          sx={{
+            fontSize: { xs: "0.9rem", md: "1.125rem" },
+            lineHeight: { xs: "1.5rem", md: "1.75rem" },
+            mb: 4,
+          }}
+        >
+          Get 15% off rugged, all-weather accessories{" "}
+          <br />
           built for every season.
         </Typography>
 
-        <Button
+         <Button
           variant="contained"
           sx={{
             position: "relative",
@@ -74,6 +91,7 @@ const BrandStory = () => {
         >
           EXPLORE
         </Button>
+
       </Box>
     </Box>
   );
