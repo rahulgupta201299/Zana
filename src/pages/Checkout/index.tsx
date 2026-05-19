@@ -123,6 +123,8 @@ export default function CheckoutPage() {
   const [paymentType, setPaymentType] = useState(null);
   const [shippingIsdCode, setShippingIsdCode] = useState<string>('')
   const [billingIsdCode, setBillingIsdCode] = useState<string>('')
+  const [invalidShippingPincode, setInvalidShippingPincode] = useState("");
+  const [invalidBillingPincode, setInvalidBillingPincode] = useState("");
   const [paymentMethodDetails, setPaymentMethodDetails] = useState<PaymentMethodType>({
     subtotal: cartSubtotal,
     totalAmount: cartTotalAmount,
@@ -194,7 +196,11 @@ export default function CheckoutPage() {
       .test("shippingPincode", "Enter a valid postal code", function (value) {
         const { shippingCountry = "" } = this.parent;
         if (shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
-          return /^[1-9][0-9]{5}$/.test(value || "");
+          if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+          if (value && value === invalidShippingPincode) {
+            return this.createError({ message: "Pincode not found." });
+          }
+          return true;
         }
 
         const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
@@ -236,7 +242,11 @@ export default function CheckoutPage() {
           .test("billingPincode", "Enter a valid postal code", function (value) {
             const { billingCountry = "" } = this.parent;
             if (billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
-              return /^[1-9][0-9]{5}$/.test(value || "");
+              if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+              if (value && value === invalidBillingPincode) {
+                return this.createError({ message: "Pincode not found." });
+              }
+              return true;
             }
 
             const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
@@ -599,6 +609,7 @@ export default function CheckoutPage() {
                         <Select
                           name="shippingCountry"
                           value={values.shippingCountry}
+                        
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
@@ -791,10 +802,12 @@ export default function CheckoutPage() {
                             name="shippingPincode"
                             label="Pin code"
                             value={values.shippingPincode}
+
                             onChange={(e) => {
                               handlePostalCodeChange({
                                 value: e.target.value,
                                 country: values.shippingCountry,
+                                invalidPincode: invalidShippingPincode,
                                 fields: {
                                   pincode: "shippingPincode",
                                   city: "shippingCity",
@@ -803,9 +816,14 @@ export default function CheckoutPage() {
                                 },
                                 dispatch,
                                 setFieldValue,
-                                onInvalidPincode: () =>{
-                                  setFieldError("shippingPincode", "Pincode not found.")
-                                }
+                                onInvalidPincode: (pincode) => {
+                                  setInvalidShippingPincode(pincode);
+                                  setFieldTouched("shippingPincode", true, false);
+                                  setFieldError("shippingPincode", "Pincode not found.");
+                                },
+                                onValidPincode: () => {
+                                  setInvalidShippingPincode("");
+                                },
                               });
                             }}
                             onBlur={handleBlur}
@@ -841,6 +859,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingCity"
                             label="City"
+                                                      disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                             value={values.shippingCity}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -874,6 +893,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingState"
                             label="State"
+                            disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                             value={values.shippingState}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -1275,9 +1295,10 @@ export default function CheckoutPage() {
                                     label="Pin code"
                                     value={values.billingPincode}
                                     onChange={(e) => {
-                                     handlePostalCodeChange({
-                                       value: e.target.value,
+                                      handlePostalCodeChange({
+                                        value: e.target.value,
                                         country: values.billingCountry,
+                                        invalidPincode: invalidBillingPincode,
                                         fields: {
                                           pincode: "billingPincode",
                                           city: "billingCity",
@@ -1286,10 +1307,14 @@ export default function CheckoutPage() {
                                         },
                                         dispatch,
                                         setFieldValue,
-                                        onInvalidPincode: () =>{
-                                            setFieldError("billingPincode", "Pincode not found.")
-                                         
-                                        }
+                                        onInvalidPincode: (pincode) => {
+                                          setInvalidBillingPincode(pincode);
+                                          setFieldTouched("billingPincode", true, false);
+                                          setFieldError("billingPincode", "Pincode not found.");
+                                        },
+                                        onValidPincode: () => {
+                                          setInvalidBillingPincode("");
+                                        },
                                       });
                                     }}
                                     onBlur={handleBlur}
@@ -1320,6 +1345,7 @@ export default function CheckoutPage() {
                                   <TextField
                                     fullWidth
                                     name="billingCity"
+                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                                     label="City"
                                     value={values.billingCity}
                                     onChange={handleChange}
@@ -1350,6 +1376,7 @@ export default function CheckoutPage() {
                                     fullWidth
                                     name="billingState"
                                     label="State"
+                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                                     value={values.billingState}
                                     onChange={handleChange}
                                     onBlur={handleBlur}

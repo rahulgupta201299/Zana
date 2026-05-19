@@ -46,6 +46,7 @@ import { COUNTRY_INDIA } from "@/Constants/AppConstant";
 
 const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   const [models, setModels] = useState([]);
+  const [invalidPostalCode, setInvalidPostalCode] = useState("");
   const dispatch = useDispatch<TAppDispatch>();
   const actions = useMemo(
     () => ({
@@ -95,11 +96,11 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
         bikeOwnedByCustomer:
           values.brand || values.model
             ? [
-              {
-                ...(values.brand && { brand: values.brand }),
-                ...(values.model && { model: values.model }),
-              },
-            ]
+                {
+                  ...(values.brand && { brand: values.brand }),
+                  ...(values.model && { model: values.model }),
+                },
+              ]
             : [],
       };
       let result;
@@ -131,15 +132,14 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   const ProfileSchema = Yup.object().shape({
-    phoneNumber: Yup.string()
-      .required("Phone number is required"),
+    phoneNumber: Yup.string().required("Phone number is required"),
 
     email: Yup.string()
       .required("Email is required")
       .email("Invalid email format")
       .matches(
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Invalid email format"
+        "Invalid email format",
       ),
 
     firstName: Yup.string()
@@ -175,15 +175,20 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
       .test("postalCode", "Enter a valid postal code", function (value) {
         const { country = "" } = this.parent;
         if (country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
-          return /^[1-9][0-9]{5}$/.test(value || "");
+          if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+          if (value && value === invalidPostalCode) {
+            return this.createError({ message: "Pincode not found" });
+          }
+          return true;
         }
 
-        const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+        const hyphenCount = (value || "")
+          .split("")
+          .filter((ch) => ch === "-").length;
         return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
       }),
 
-    country: Yup.string()
-      .required("Country is required"),
+    country: Yup.string().required("Country is required"),
 
     notifyOffers: Yup.boolean(),
   });
@@ -197,8 +202,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
   //     }
   //   } catch (error) { }
   // };
-
-
 
   return (
     <Box
@@ -332,7 +335,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           handleChange(e);
                         }}
                         placeholder="Phone Number"
-                        onBlur={handleBlur}
+                      
                         error={getFieldErrorState(
                           { errors, touched },
                           "phoneNumber",
@@ -391,7 +394,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             //   ) : null,
                           },
                         }}
-
                       />
 
                       <Box sx={{ display: "flex", gap: "16px" }}>
@@ -515,7 +517,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         }}
                       />
                       <Stack direction="row" spacing={2}>
-                          <FormControl fullWidth>
+                        <FormControl fullWidth>
                           <Select
                             name="country"
                             value={values.country}
@@ -558,7 +560,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             ))}
                           </Select>
                         </FormControl>
-                          <TextField
+                        <TextField
                           fullWidth
                           name="postalCode"
                           value={values.postalCode}
@@ -566,6 +568,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             handlePostalCodeChange({
                               value: e.target.value,
                               country: values.country,
+                              invalidPincode: invalidPostalCode,
                               fields: {
                                 pincode: "postalCode",
                                 city: "city",
@@ -574,10 +577,14 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                               },
                               dispatch,
                               setFieldValue,
-                              onInvalidPincode: () => {
-                                setFieldError("postalCode", "Pincode not found")
+                              onInvalidPincode: (pincode) => {
+                                setInvalidPostalCode(pincode);
+                                setFieldTouched("postalCode", true, false);
+                                setFieldError("postalCode", "Pincode not found");
                               },
-                              
+                              onValidPincode: () => {
+                                setInvalidPostalCode("");
+                              },
                             })
                           }
                           placeholder="Postal Code"
@@ -598,21 +605,24 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                                 borderRadius: "10px",
                               },
                               inputProps: {
-                                maxLength: values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                maxLength:
+                                  values.country?.toLowerCase() ===
+                                  COUNTRY_INDIA.toLowerCase()
+                                    ? 6
+                                    : 9,
                               },
                             },
                           }}
                         />
-                      
-                       
                       </Stack>
                       <Stack direction="row" spacing={2}>
-                          <TextField
+                        <TextField
                           fullWidth
                           name="city"
                           value={values.city}
                           onChange={handleChange}
                           placeholder="City"
+                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                           onBlur={handleBlur}
                           error={getFieldErrorState(
                             { errors, touched },
@@ -632,12 +642,13 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             },
                           }}
                         />
-                       <TextField
+                        <TextField
                           fullWidth
                           name="state"
                           value={values.state}
                           onChange={handleChange}
                           placeholder="State"
+                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
                           onBlur={handleBlur}
                           error={getFieldErrorState(
                             { errors, touched },
@@ -657,7 +668,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                             },
                           }}
                         />
-                      
                       </Stack>
                       <Box sx={{ display: "flex", gap: "16px" }}>
                         <FormControl fullWidth>
@@ -791,7 +801,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                         }
                         label="Notify me with offers and updates"
                       />
-
 
                       <Button
                         type="submit"

@@ -12,7 +12,7 @@ async function pinCodeService(
   const options = {
     url: `/api/v1/country/validate-pincode/${reqData.pincode}`,
     method: API_METHOD_ENUM.GET,
-   
+    cache: false,
   };
   const response = await network.request(options);
   const { data } = response;
