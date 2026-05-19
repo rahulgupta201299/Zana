@@ -38,12 +38,12 @@ export const getMenuOption = (): MenuOptionsType[] => {
       models: zProBikes,
       route: `${SUB_ROUTES.BIKE_ACCESSORIES}/${BikeCategoryEnum.ZPRO}${SUB_ROUTES.BIKE}`,
     },
-    {
-      _id: "4",
-      name: MenuItemsName.RIDE_STORIES,
-      models: [],
-      route: ROUTES.BLOGS,
-    },
+    // {
+    //   _id: "4",
+    //   name: MenuItemsName.RIDE_STORIES,
+    //   models: [],
+    //   route: ROUTES.BLOGS,
+    // },
     {
       _id: "5",
       name: MenuItemsName.MOTODEVIL,
