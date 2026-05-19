@@ -398,6 +398,8 @@ export default function CheckoutPage() {
   async function handlePaymentOptionChange(method: PaymentTypeEnum) {
     const { phoneNumber = '' } = loginDetails
 
+    if (!phoneNumber) return;
+
     setPaymentType(method)
 
     try {
@@ -606,8 +608,15 @@ export default function CheckoutPage() {
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
 
+                            setValues({
+                              ...values,
+                              shippingCountry: countryName,
+                              shippingPincode: '',
+                              shippingCity: '',
+                              shippingState: '',
+                            })
+
                             setShippingIsdCode(isd)
-                            setFieldValue("shippingCountry", countryName, true);
                             setFieldTouched("shippingCountry", true);
                           }}
                           onBlur={handleBlur}
