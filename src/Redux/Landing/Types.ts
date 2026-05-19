@@ -7,6 +7,17 @@ export type CurrencyType = {
   exchangeRate: number
 }
 
+export type GeolocationType = {
+        countryCode: string,
+        countryName: string,
+        currency: string,
+        currencyDetails: {
+            code: string,
+            name: string,
+            symbol: string
+        }
+};
+
 export type T_LANDING_REDUCER = {
   garageFavoriteList: ShopByProductDetailsType[];
   newArrivalsList: ShopByProductDetailsType[];
@@ -14,3 +25,4 @@ export type T_LANDING_REDUCER = {
   selectedCurrency: string,
   initialLoading: boolean,
 };
+

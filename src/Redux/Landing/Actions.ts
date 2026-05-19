@@ -1,6 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import traceActionsCreator from "../traceActionsCreator"
 import { SLICE_NAME } from "./Selectors";
+import { GeolocationType } from "./Types";
 
 export const newArrivalsName = `${SLICE_NAME}/newArrivals`
 export const newArrivalsActions = traceActionsCreator(newArrivalsName)
@@ -20,3 +21,6 @@ export const initialLoadingName = 'app/initialLoading'
 export const initialLoadingActions = createAction(
   `${initialLoadingName}/setInitialLoading`
 )
+
+export const geoLocationName = `${SLICE_NAME}/geoLocation`
+export const geoLocationActions = traceActionsCreator<GeolocationType>(geoLocationName)
