@@ -8,11 +8,11 @@ const InstagramFeed = () => {
     },
     {
       id: 2,
-      url: "https://www.instagram.com/reel/DX_ai2JhL_O/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      url: "https://www.instagram.com/reel/DX_WeQtheqO/?igsh=MWVzMzZoZmc1Z2dvaw==",
     },
     {
       id: 3,
-      url: "https://www.instagram.com/reel/DYMAzj7hhpy/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      url: "https://www.instagram.com/reel/DYV_7C5hSpl/?igsh=dzE1NG1udHlkam10",
     },
   ];
 
@@ -33,22 +33,16 @@ const InstagramFeed = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-4">
           {instagramPosts.map((post) => (
             <div key={post.id} className="relative group">
-            <div className="w-full max-w-md mx-auto rounded-lg overflow-hidden relative border border-white/20">
-             
-                <div
-                  style={{ height: "calc(100% - 80px)", overflow: "hidden" }}
-                >
-                  <iframe
-                    src={getEmbedUrl(post.url)}
-                    className="w-full border-0"
-                    style={{ height: "calc(100% + 80px)", minHeight: "500px" }}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                    scrolling="no"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
+              <div className="w-full max-w-md mx-auto rounded-lg overflow-hidden">
+              <iframe
+                src={getEmbedUrl(post.url)}
+                className="w-full aspect-[9/16] border-0 "
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                scrolling="no"
+                loading="lazy"            
+                />
+            </div>
             </div>
           ))}
         </div>
