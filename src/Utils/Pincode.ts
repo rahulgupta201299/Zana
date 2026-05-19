@@ -8,6 +8,16 @@ type SetFieldValue = (
   field: string,
   value: string,
   shouldValidate?: boolean,
+) => Promise<unknown> | void;
+
+type SetFormValues = (
+  updates: Record<string, string>,
+  shouldValidate?: boolean,
+) => Promise<unknown> | void;
+
+type SetFieldError = (
+  field: string,
+  message?: string,
 ) => void;
 
 type PincodeFieldNames = {
@@ -24,6 +34,8 @@ type HandlePostalCodeChangeParams = {
   fields: PincodeFieldNames;
   dispatch: TAppDispatch;
   setFieldValue: SetFieldValue;
+  setFormValues?: SetFormValues;
+  setFieldError?: SetFieldError;
   onInvalidPincode: (pincode: string) => void;
   onValidPincode?: () => void;
 };
@@ -47,18 +59,33 @@ export async function handlePostalCodeChange({
   fields,
   dispatch,
   setFieldValue,
+  setFormValues,
+  setFieldError,
   onInvalidPincode,
   onValidPincode,
 }: HandlePostalCodeChangeParams) {
-  setFieldValue(fields.city, "", true);
-  setFieldValue(fields.state, "", true);
+  const applyFieldValues = async (
+    updates: Record<string, string>,
+    shouldValidate = true,
+  ) => {
+    if (setFormValues) {
+      await setFormValues(updates, shouldValidate);
+      return;
+    }
+
+    await Promise.all(
+      Object.entries(updates).map(([field, fieldValue]) =>
+        setFieldValue(field, fieldValue, shouldValidate),
+      ),
+    );
+  };
 
   if (!isIndia(country)) {
     const postalCode = normalizePostalCodeInput(value);
     const hyphenCount = postalCode.split("").filter((ch) => ch === "-").length;
 
     if (postalCode.length > 9 || hyphenCount > 1) return;
-    setFieldValue(fields.pincode, postalCode, true);
+    await applyFieldValues({ [fields.pincode]: postalCode });
     onValidPincode?.();
     return;
   }
@@ -67,17 +94,32 @@ export async function handlePostalCodeChange({
   if (pincode.length > 6) return;
 
   if (pincode[0] === "0") {
-    setFieldValue(fields.pincode, "", true);
+    await applyFieldValues(
+      {
+        [fields.pincode]: "",
+        [fields.city]: "",
+        [fields.state]: "",
+      },
+      false,
+    );
     onValidPincode?.();
     return;
   }
-
-  setFieldValue(fields.pincode, pincode, true);
 
   if (pincode.length !== 6) {
+    await applyFieldValues(
+      {
+        [fields.pincode]: pincode,
+        [fields.city]: "",
+        [fields.state]: "",
+      },
+      false,
+    );
     onValidPincode?.();
     return;
   }
+
+  await applyFieldValues({ [fields.pincode]: pincode });
 
   if (pincode === invalidPincode || pendingPincodeRequests.has(pincode)) return;
 
@@ -92,9 +134,14 @@ export async function handlePostalCodeChange({
       return;
     }
 
-    setFieldValue(fields.city, details.district, true);
-    setFieldValue(fields.state, details.state, true);
-    setFieldValue(fields.country, details.country, true);
+    await applyFieldValues({
+      [fields.pincode]: pincode,
+      [fields.city]: details.district || "",
+      [fields.state]: details.state || "",
+      [fields.country]: details.country || "",
+    });
+    setFieldError?.(fields.city, undefined);
+    setFieldError?.(fields.state, undefined);
     onValidPincode?.();
   } catch {
     onInvalidPincode(pincode);

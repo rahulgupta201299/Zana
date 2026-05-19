@@ -304,6 +304,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                 touched,
                 handleChange,
                 handleBlur,
+                setValues,
                 setFieldValue,
                 setFieldTouched,
                 setFieldError,
@@ -577,6 +578,9 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                               },
                               dispatch,
                               setFieldValue,
+                              setFormValues: (updates, shouldValidate) =>
+                                setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                              setFieldError,
                               onInvalidPincode: (pincode) => {
                                 setInvalidPostalCode(pincode);
                                 setFieldTouched("postalCode", true, false);

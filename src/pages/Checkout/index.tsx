@@ -816,6 +816,9 @@ export default function CheckoutPage() {
                                 },
                                 dispatch,
                                 setFieldValue,
+                                setFormValues: (updates, shouldValidate) =>
+                                  setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                                setFieldError,
                                 onInvalidPincode: (pincode) => {
                                   setInvalidShippingPincode(pincode);
                                   setFieldTouched("shippingPincode", true, false);
@@ -1307,6 +1310,9 @@ export default function CheckoutPage() {
                                         },
                                         dispatch,
                                         setFieldValue,
+                                        setFormValues: (updates, shouldValidate) =>
+                                          setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                                        setFieldError,
                                         onInvalidPincode: (pincode) => {
                                           setInvalidBillingPincode(pincode);
                                           setFieldTouched("billingPincode", true, false);
