@@ -16,6 +16,8 @@ export enum BikeCategoryEnum {
   ZPRO = "zpro",
 }
 
+export const  COUNTRY_INDIA = "India"
+
 export enum SESSION_STORAGE {
   LANDING_POPUP_SHOWN = "landing_popup_shown",
 }

@@ -45,7 +45,7 @@ import updateProfileDetailServiceAction from "@/Redux/Auth/Services/UpdateProfil
 import addProfileDetailServiceAction from "@/Redux/Auth/Services/AddProfileDetails";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
 import { UpdatePaymentResType } from "@/Redux/Cart/Types";
-import { CURRENCY_LIST } from "@/Constants/AppConstant";
+import { COUNTRY_INDIA, CURRENCY_LIST } from "@/Constants/AppConstant";
 import { getPhoneNumber } from "@/Utils/global";
 import { handlePostalCodeChange } from "@/Utils/Pincode";
 
@@ -191,7 +191,15 @@ export default function CheckoutPage() {
     shippingCity: Yup.string().required("City is required"),
     shippingState: Yup.string().required("State is required"),
     shippingPincode: Yup.string()
-      .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+      .test("shippingPincode", "Enter a valid postal code", function (value) {
+        const { shippingCountry = "" } = this.parent;
+        if (shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+          return /^[1-9][0-9]{5}$/.test(value || "");
+        }
+
+        const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+        return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
+      })
       .required("Pincode is required"),
 
     saveInfo: Yup.boolean(),
@@ -225,7 +233,15 @@ export default function CheckoutPage() {
       same
         ? schema
         : schema
-          .matches(/^[0-9]{6}$/, "Enter a valid 6-digit pincode")
+          .test("billingPincode", "Enter a valid postal code", function (value) {
+            const { billingCountry = "" } = this.parent;
+            if (billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+              return /^[1-9][0-9]{5}$/.test(value || "");
+            }
+
+            const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+            return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
+          })
           .required("Billing pincode is required")
     ),
     billingPhone: Yup.string().when(
@@ -461,6 +477,7 @@ export default function CheckoutPage() {
                 setValues,
                 setFieldValue,
                 setFieldTouched,
+                setFieldError,
                 isValid,
               }) => {
 
@@ -768,6 +785,7 @@ export default function CheckoutPage() {
                             onChange={(e) => {
                               handlePostalCodeChange({
                                 value: e.target.value,
+                                country: values.shippingCountry,
                                 fields: {
                                   pincode: "shippingPincode",
                                   city: "shippingCity",
@@ -776,12 +794,9 @@ export default function CheckoutPage() {
                                 },
                                 dispatch,
                                 setFieldValue,
-                                onInvalidPincode: () =>
-                                  enqueueSnackbar({
-                                    variant: "info",
-                                    message:
-                                      "Pincode not found. Please enter city and state manually.",
-                                  }),
+                                onInvalidPincode: () =>{
+                                  setFieldError("shippingPincode", "Pincode not found.")
+                                }
                               });
                             }}
                             onBlur={handleBlur}
@@ -800,7 +815,9 @@ export default function CheckoutPage() {
                                   color: "#000",
                                   borderRadius: "10px",
                                 },
-                                inputProps: { maxLength: 6 },
+                                inputProps: {
+                                  maxLength: values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                },
                               },
                               inputLabel: {
                                 sx: {
@@ -1249,8 +1266,9 @@ export default function CheckoutPage() {
                                     label="Pin code"
                                     value={values.billingPincode}
                                     onChange={(e) => {
-                                      handlePostalCodeChange({
-                                        value: e.target.value,
+                                     handlePostalCodeChange({
+                                       value: e.target.value,
+                                        country: values.billingCountry,
                                         fields: {
                                           pincode: "billingPincode",
                                           city: "billingCity",
@@ -1259,12 +1277,10 @@ export default function CheckoutPage() {
                                         },
                                         dispatch,
                                         setFieldValue,
-                                        onInvalidPincode: () =>
-                                          enqueueSnackbar({
-                                            variant: "info",
-                                            message:
-                                              "Pincode not found. Please enter city and state manually.",
-                                          }),
+                                        onInvalidPincode: () =>{
+                                            setFieldError("billingPincode", "Pincode not found.")
+                                         
+                                        }
                                       });
                                     }}
                                     onBlur={handleBlur}
@@ -1283,7 +1299,9 @@ export default function CheckoutPage() {
                                           color: "#000",
                                           borderRadius: "10px",
                                         },
-                                        inputProps: { maxLength: 6 },
+                                        inputProps: {
+                                          maxLength: values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                        },
                                       },
                                       inputLabel: { sx: { color: "#000" } },
                                     }}
