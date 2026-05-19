@@ -86,7 +86,7 @@ const OrderDetails = () => {
     }
   }, [id, currency]);
 
-  const { items = [], taxAmount = 0, discountAmount = 0, codCharges = 0, advancePaid = 0, shippingCost = 0, shippingAddress = {}, billingAddress = {}, subtotal = 0, totalAmount = 0, currencySymbol = '', logisticsAWBNumber = null } = order || {}
+  const { items = [], taxAmount = 0, discountAmount = 0, codCharges = 0, advancePaid = 0, shippingCost = 0, shippingAddress = {}, billingAddress = {}, subtotal = 0, totalAmount = 0, currencySymbol = '', logisticsAWBNumber = null, paymentStatus ='' } = order || {}
 
   return isDetailsLoading ? (
     <OrderDetailsSkeleton />
@@ -326,7 +326,7 @@ const OrderDetails = () => {
             </Button>
           )}
           {/* <InvoicePreviewButton data={order}/> */}
-          <InvoiceDownloadButton data={order} />
+         { paymentStatus != 'pending' && <InvoiceDownloadButton data={order} />}
         </Stack>
         <Collapse in={showTracker} unmountOnExit>
           <Box
