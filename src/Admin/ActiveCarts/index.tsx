@@ -30,6 +30,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
+  downloadAdminActiveCartsCsv,
   getAdminActiveCarts,
   AdminActiveCartFilters,
   AdminActiveCartRecord,
@@ -41,6 +42,11 @@ import {
   AdminActiveCartPagination,
   parseAdminActiveCartsResponse,
 } from "../Configurations/ActiveCartApi";
+import {
+  AdminIsdCode,
+  getAdminIsdCodes,
+} from "../Configurations/AdminIsdCodeApi";
+import IsdCodeAutocomplete from "../Components/IsdCodeAutocomplete";
 
 const DEFAULT_SORT_BY: AdminActiveCartSortBy = "updatedAt";
 const DEFAULT_SORT_ORDER: AdminActiveCartSortOrder = "desc";
@@ -48,6 +54,19 @@ const DEFAULT_SORT_ORDER: AdminActiveCartSortOrder = "desc";
 const NULL_EMAIL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 const TABLE_COL_SPAN = 6;
+const DEFAULT_ISD_CODE = "+91";
+
+function normalizeIsdCode(isd: string): string {
+  const trimmed = isd.trim();
+  if (!trimmed) return DEFAULT_ISD_CODE;
+  return trimmed.startsWith("+") ? trimmed : `+${trimmed}`;
+}
+
+function buildPhoneFilter(isdCode: string, phoneNumber: string): string {
+  const phone = phoneNumber.trim();
+  if (!phone) return "";
+  return `${normalizeIsdCode(isdCode)}-${phone}`;
+}
 
 function productDisplayName(item: AdminActiveCartLineItem): string {
   const p = item.product ?? null;
@@ -292,6 +311,7 @@ export default function ActiveCarts() {
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(0);
@@ -299,6 +319,10 @@ export default function ActiveCarts() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isdCodes, setIsdCodes] = useState<AdminIsdCode[]>([]);
+  const [isdCode, setIsdCode] = useState(DEFAULT_ISD_CODE);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailId, setEmailId] = useState("");
   const [sortBy, setSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
   const [sortOrder, setSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -307,6 +331,9 @@ export default function ActiveCarts() {
 
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
+  const [appliedIsdCode, setAppliedIsdCode] = useState(DEFAULT_ISD_CODE);
+  const [appliedPhoneNumber, setAppliedPhoneNumber] = useState("");
+  const [appliedEmailId, setAppliedEmailId] = useState("");
   const [appliedSortBy, setAppliedSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
@@ -319,6 +346,8 @@ export default function ActiveCarts() {
         endDate: appliedEndDate || undefined,
         sortBy: appliedSortBy,
         sortOrder: appliedSortOrder,
+        phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+        emailId: appliedEmailId.trim() || undefined,
       };
       setLoading(true);
       setError(null);
@@ -343,6 +372,9 @@ export default function ActiveCarts() {
       appliedStartDate,
       appliedSortBy,
       appliedSortOrder,
+      appliedIsdCode,
+      appliedPhoneNumber,
+      appliedEmailId,
     ],
   );
 
@@ -350,9 +382,53 @@ export default function ActiveCarts() {
     void load(1, rowsPerPage);
   }, [load, rowsPerPage]);
 
+  const getAppliedDownloadFilters = () => ({
+    startDate: appliedStartDate || undefined,
+    endDate: appliedEndDate || undefined,
+    sortBy: appliedSortBy,
+    sortOrder: appliedSortOrder,
+    phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+    emailId: appliedEmailId.trim() || undefined,
+  });
+
+  const handleDownloadCsv = async () => {
+    setDownloadLoading(true);
+    setError(null);
+    try {
+      await downloadAdminActiveCartsCsv(getAppliedDownloadFilters());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to download active carts CSV.");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let active = true;
+    getAdminIsdCodes()
+      .then((codes) => {
+        if (!active) return;
+        setIsdCodes(codes);
+        const india = codes.find((code) => normalizeIsdCode(code.isd) === DEFAULT_ISD_CODE);
+        if (india) {
+          setIsdCode(normalizeIsdCode(india.isd));
+          setAppliedIsdCode(normalizeIsdCode(india.isd));
+        }
+      })
+      .catch(() => {
+        if (active) setIsdCodes([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const handleApplyFilters = () => {
     setAppliedStartDate(startDate);
     setAppliedEndDate(endDate);
+    setAppliedIsdCode(isdCode);
+    setAppliedPhoneNumber(phoneNumber.trim());
+    setAppliedEmailId(emailId.trim());
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
   };
@@ -360,8 +436,14 @@ export default function ActiveCarts() {
   const handleClearFilters = () => {
     setStartDate("");
     setEndDate("");
+    setIsdCode(DEFAULT_ISD_CODE);
+    setPhoneNumber("");
+    setEmailId("");
     setAppliedStartDate("");
     setAppliedEndDate("");
+    setAppliedIsdCode(DEFAULT_ISD_CODE);
+    setAppliedPhoneNumber("");
+    setAppliedEmailId("");
     setSortBy(DEFAULT_SORT_BY);
     setSortOrder(DEFAULT_SORT_ORDER);
     setAppliedSortBy(DEFAULT_SORT_BY);
@@ -371,14 +453,23 @@ export default function ActiveCarts() {
   const isApplyDisabled =
     startDate === appliedStartDate
     && endDate === appliedEndDate
+    && isdCode === appliedIsdCode
+    && phoneNumber.trim() === appliedPhoneNumber
+    && emailId.trim() === appliedEmailId
     && sortBy === appliedSortBy
     && sortOrder === appliedSortOrder;
 
   const isClearDisabled =
     startDate === ""
     && endDate === ""
+    && isdCode === DEFAULT_ISD_CODE
+    && phoneNumber === ""
+    && emailId === ""
     && appliedStartDate === ""
     && appliedEndDate === ""
+    && appliedIsdCode === DEFAULT_ISD_CODE
+    && appliedPhoneNumber === ""
+    && appliedEmailId === ""
     && sortBy === DEFAULT_SORT_BY
     && sortOrder === DEFAULT_SORT_ORDER
     && appliedSortBy === DEFAULT_SORT_BY
@@ -407,6 +498,28 @@ export default function ActiveCarts() {
       <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap" useFlexGap alignItems="center">
+            <IsdCodeAutocomplete
+              id="active-cart-isd-code"
+              options={isdCodes}
+              value={isdCode}
+              onChange={setIsdCode}
+            />
+            <TextField
+              label="Phone number"
+              variant="outlined"
+              size="small"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              sx={{ minWidth: 180 }}
+            />
+            <TextField
+              label="Email ID"
+              variant="outlined"
+              size="small"
+              value={emailId}
+              onChange={(e) => setEmailId(e.target.value)}
+              sx={{ minWidth: 240 }}
+            />
             <TextField
               label="Start date"
               type="date"
@@ -489,7 +602,7 @@ export default function ActiveCarts() {
 
           {/* Amount min/max filter hidden per admin request. */}
 
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
             <Button
               variant="contained"
               onClick={handleApplyFilters}
@@ -503,6 +616,14 @@ export default function ActiveCarts() {
             </Button>
             <Button variant="outlined" onClick={handleClearFilters} disabled={isClearDisabled} color="inherit">
               Clear
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleDownloadCsv}
+              disabled={downloadLoading}
+              color="inherit"
+            >
+              {downloadLoading ? "Downloading..." : "Download CSV"}
             </Button>
           </Stack>
         </Stack>
