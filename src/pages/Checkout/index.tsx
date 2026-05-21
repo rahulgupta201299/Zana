@@ -556,6 +556,7 @@ export default function CheckoutPage() {
                 setFieldTouched,
                 setFieldError,
                 isValid,
+                validateForm,
               }) => {
 
                 console.log("Errors 11112222", errors);
@@ -571,7 +572,10 @@ export default function CheckoutPage() {
                 }, [isdCode.length, values.shippingPhone, values.billingPhone, values.shippingAddressSameAsBillingAddress])
 
                 useEffect(() => {
-                  const { shippingCountry = '' } = values;        
+                  const { shippingCountry = '' } = values;
+
+                  validateForm();
+                  
                   if (!paymentType || currency !== CURRENCY_LIST.INR || (!shippingCountry || !isIndiaCountry(shippingCountry))) {
                     handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY);
                     return;
