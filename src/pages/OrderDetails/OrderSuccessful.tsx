@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -19,6 +19,7 @@ import { getAddressLabel } from "@/Utils/StringUtils";
 import { ROUTES } from "@/Constants/Routes";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderDetailByIdName } from "@/Redux/Order/Action";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 const OrderConfirmation = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const OrderConfirmation = () => {
   const isLoading = useSelector<TAppStore, boolean>(state => isServiceLoading(state, [orderDetailByIdName]));
 
   const [orderData, setOrderData] = useState<OrderDetailResponse>(null);
+  const hasTracked = useRef(false);
 
   const { orderId = '' } = location.state || {}
 
@@ -69,7 +71,21 @@ const OrderConfirmation = () => {
     pageOps();
   }, [])
 
-  const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', paymentMethod = '', advancePaid = 0, totalAmount = 0, orderStatus = '', items = [], shippingAddress, currencySymbol } = orderData || {};
+  const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', paymentMethod = '', advancePaid = 0, totalAmount = 0, orderStatus = '', items = [], shippingAddress, currencySymbol, currency } = orderData || {};
+
+  useEffect(() => {
+    if (currency && VITE_ENABLE_TRACKING && orderNumber && totalAmount && !hasTracked.current) {
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-17772463315/-KwFCMSPgLEcENOJyZpC",
+          value: totalAmount,
+          currency,
+          transaction_id: orderNumber,
+        });
+        hasTracked.current = true;
+      }
+    }
+  }, [currency, orderNumber, totalAmount]);
 
   return (
     <Box
