@@ -29,7 +29,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
       >
         <Box
           component="video"
-          src={`https://d1bw1i3fxlc6zi.cloudfront.net/Zana+website/Zana-KTM+ADV.mp4`}
+          src={`https://d3s3r7gevtfrvd.cloudfront.net/Zana%20website/rtx_himalyan_homepage.mp4`}
           autoPlay
           muted
           loop

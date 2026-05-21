@@ -19,6 +19,10 @@ import {
   InputAdornment,
   Stack,
   FormHelperText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Formik, Form } from "formik";
@@ -30,11 +34,15 @@ import { displayRazorpay, validatePhone } from "./Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useSnackbar } from "notistack";
-import { COUNTRY_MAPPER, paymentOptions, PaymentTypeEnum } from "./Constant";
+import { paymentOptions, PaymentTypeEnum } from "./Constant";
 import Loading from "@/components/Loading";
 import useCart from "@/hooks/useCart";
 import { cartAddressDetails, cartDetailSelector } from "@/Redux/Cart/Selectors";
-import { getLoginDetails, getProfileDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
+import {
+  getLoginDetails,
+  getProfileDetails,
+  isdCodeDetails,
+} from "@/Redux/Auth/Selectors";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
@@ -48,6 +56,8 @@ import { UpdatePaymentResType } from "@/Redux/Cart/Types";
 import { COUNTRY_INDIA, CURRENCY_LIST } from "@/Constants/AppConstant";
 import { getPhoneNumber } from "@/Utils/global";
 import { handlePostalCodeChange } from "@/Utils/Pincode";
+import { getCurrencyList } from "@/Redux/Landing/Selectors";
+import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -83,14 +93,30 @@ type PaymentMethodType = {
   taxAmount: number;
   codCharges: number;
   advanceAmount: number;
+};
+
+function isIndiaCountry(country = ""): boolean {
+  return country.trim().toLowerCase() === COUNTRY_INDIA.toLowerCase();
+}
+
+const INR_OUTSIDE_INDIA_ERROR = "We do not support INR as currency outside India";
+
+function getShippingCountryCurrencyError(country = "", currency = "") {
+  if (!country || currency !== CURRENCY_LIST.INR || isIndiaCountry(country)) {
+    return undefined;
+  }
+
+  return INR_OUTSIDE_INDIA_ERROR;
 }
 
 export default function CheckoutPage() {
-  const { decrementToCart, incrementToCart, validateCart, getQuantity } = useCart();
+  const { decrementToCart, incrementToCart, validateCart, getQuantity } =
+    useCart();
 
-  const cartDetail = useSelector(cartDetailSelector)
-  const isdCode = useSelector(isdCodeDetails)
-  const cartAddressSelector = useSelector(cartAddressDetails)
+  const cartDetail = useSelector(cartDetailSelector);
+  const isdCode = useSelector(isdCodeDetails);
+  const currencies = useSelector(getCurrencyList);
+  const cartAddressSelector = useSelector(cartAddressDetails);
   const profileDetails = useSelector(getProfileDetails);
   const loginDetails = useSelector(getLoginDetails);
 
@@ -99,7 +125,7 @@ export default function CheckoutPage() {
     billingAddress: billingAddressSelector,
     shippingAddressSameAsBillingAddress,
     emailId: cartEmailId,
-  } = cartAddressSelector
+  } = cartAddressSelector;
 
   const isLoading = useSelector<TAppStore, boolean>((state) => isServiceLoading(state, [
     cartModifyServiceName, updateCartAddressServiceName, createPaymentOrderName, verifyPaymentOrderName, updatePaymentMethodServiceName,pinCodeServiceName
@@ -121,39 +147,47 @@ export default function CheckoutPage() {
   } = cartDetail;
 
   const [paymentType, setPaymentType] = useState(null);
-  const [shippingIsdCode, setShippingIsdCode] = useState<string>('')
-  const [billingIsdCode, setBillingIsdCode] = useState<string>('')
+  const [shippingIsdCode, setShippingIsdCode] = useState<string>("");
+  const [billingIsdCode, setBillingIsdCode] = useState<string>("");
   const [invalidShippingPincode, setInvalidShippingPincode] = useState("");
   const [invalidBillingPincode, setInvalidBillingPincode] = useState("");
-  const [paymentMethodDetails, setPaymentMethodDetails] = useState<PaymentMethodType>({
-    subtotal: cartSubtotal,
-    totalAmount: cartTotalAmount,
-    discountAmount: cartDiscountAmount,
-    shippingCost: cartShippingCost,
-    taxAmount: cartTaxAmount,
-    codCharges: cartCodCharges,
-    advanceAmount: 0
-  });
+  const [paymentMethodDetails, setPaymentMethodDetails] =
+    useState<PaymentMethodType>({
+      subtotal: cartSubtotal,
+      totalAmount: cartTotalAmount,
+      discountAmount: cartDiscountAmount,
+      shippingCost: cartShippingCost,
+      taxAmount: cartTaxAmount,
+      codCharges: cartCodCharges,
+      advanceAmount: 0,
+    });
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { subtotal, totalAmount, discountAmount, shippingCost, taxAmount, codCharges, advanceAmount } = paymentMethodDetails;
+  const {
+    subtotal,
+    totalAmount,
+    discountAmount,
+    shippingCost,
+    taxAmount,
+    codCharges,
+    advanceAmount,
+  } = paymentMethodDetails;
 
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
 
   function performOps() {
-    if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true))
+    if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true));
   }
 
   useEffect(() => {
     if (isCartLoading || loading) return;
 
     if (paymentType) {
-      handlePaymentOptionChange(paymentType)
+      handlePaymentOptionChange(paymentType);
       return;
     }
-
-  }, [cartDiscountAmount, isCartLoading])
+  }, [cartDiscountAmount, isCartLoading]);
 
   // syncing with cart everytime before set-payment-method api call
   useEffect(() => {
@@ -164,12 +198,12 @@ export default function CheckoutPage() {
       shippingCost: cartShippingCost,
       taxAmount: cartTaxAmount,
       codCharges: cartCodCharges,
-      advanceAmount: 0
-    })
-  }, [cartSubtotal, isCartLoading])
+      advanceAmount: 0,
+    });
+  }, [cartSubtotal, isCartLoading]);
 
   useEffect(() => {
-    performOps()
+    performOps();
   }, []);
 
   const CheckoutSchema = Yup.object({
@@ -181,7 +215,15 @@ export default function CheckoutPage() {
           return true;
         else return false;
       }),
-    shippingCountry: Yup.string().required("Country is required"),
+    shippingCountry: Yup.string()
+      .required("Country is required")
+      .test(
+        "nonIndiaInrCurrency",
+        INR_OUTSIDE_INDIA_ERROR,
+        (value) => {
+          return !getShippingCountryCurrencyError(value, currency);
+        }
+      ),
     shippingPhone: Yup.string()
       .required("Phone number is required")
       .test("shippingPhone", validatePhone("shippingCountry")),
@@ -195,7 +237,7 @@ export default function CheckoutPage() {
     shippingPincode: Yup.string()
       .test("shippingPincode", "Enter a valid postal code", function (value) {
         const { shippingCountry = "" } = this.parent;
-        if (shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
+        if (isIndiaCountry(shippingCountry)) {
           if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
           if (value && value === invalidShippingPincode) {
             return this.createError({ message: "Pincode not found." });
@@ -203,51 +245,72 @@ export default function CheckoutPage() {
           return true;
         }
 
-        const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
+        const hyphenCount = (value || "")
+          .split("")
+          .filter((ch) => ch === "-").length;
         return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
       })
       .required("Pincode is required"),
 
     saveInfo: Yup.boolean(),
     shippingAddressSameAsBillingAddress: Yup.boolean(),
-    billingCountry: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Country is required")
+    billingCountry: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Country is required"),
     ),
-    billingFirstName: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Billing first name is required")
+    billingFirstName: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Billing first name is required"),
     ),
 
-    billingLastName: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Billing last name is required")
+    billingLastName: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Billing last name is required"),
     ),
 
-    billingAddress: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Billing address is required")
+    billingAddress: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Billing address is required"),
     ),
 
     billingApartment: Yup.string(),
 
-    billingCity: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Billing city is required")
+    billingCity: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Billing city is required"),
     ),
 
-    billingState: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same ? schema : schema.required("Billing state is required")
+    billingState: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same ? schema : schema.required("Billing state is required"),
     ),
 
-    billingPincode: Yup.string().when("shippingAddressSameAsBillingAddress", (same, schema) =>
-      same
-        ? schema
-        : schema
-          .test("billingPincode", "Enter a valid postal code", function (value) {
-            const { billingCountry = "" } = this.parent;
-            if (billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()) {
-              if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
-              if (value && value === invalidBillingPincode) {
-                return this.createError({ message: "Pincode not found." });
-              }
-              return true;
-            }
+    billingPincode: Yup.string().when(
+      "shippingAddressSameAsBillingAddress",
+      (same, schema) =>
+        same
+          ? schema
+          : schema
+              .test(
+                "billingPincode",
+                "Enter a valid postal code",
+                function (value) {
+                  const { billingCountry = "" } = this.parent;
+                  if (isIndiaCountry(billingCountry)) {
+                    if (!/^[1-9][0-9]{5}$/.test(value || "")) return false;
+                    if (value && value === invalidBillingPincode) {
+                      return this.createError({
+                        message: "Pincode not found.",
+                      });
+                    }
+                    return true;
+                  }
 
             const hyphenCount = (value || "").split("").filter((ch) => ch === "-").length;
             return /^[a-zA-Z0-9-]{1,9}$/.test(value || "") && hyphenCount <= 1;
@@ -260,7 +323,7 @@ export default function CheckoutPage() {
         same
           ? schema.notRequired()
           : schema
-            .required("Billing phone number is required")
+              .required("Billing phone number is required")
             .test("billingPhone", validatePhone("billingCountry"))
     )
   });
@@ -361,10 +424,10 @@ export default function CheckoutPage() {
       await validateCart(processedItems);
 
       await dispatch(updateCartAddressServiceAction({
-        phoneNumber,
-        emailId,
-        shippingAddressSameAsBillingAddress,
-        shippingAddress: shippingAddressData,
+          phoneNumber,
+          emailId,
+          shippingAddressSameAsBillingAddress,
+          shippingAddress: shippingAddressData,
         billingAddress: shippingAddressSameAsBillingAddress ? shippingAddressData : billingAddressData
       }))
 
@@ -454,6 +517,8 @@ export default function CheckoutPage() {
             <Formik<CheckoutFormValues>
               enableReinitialize
               validateOnMount
+              validateOnChange
+              validateOnBlur
               initialValues={{
                 emailId: cartEmailId || profileDetails.emailId || "",
                 shippingCountry: shippingAddressSelector.country || profileDetails.country || "",
@@ -491,6 +556,7 @@ export default function CheckoutPage() {
                 setFieldTouched,
                 setFieldError,
                 isValid,
+                validateForm,
               }) => {
 
                 console.log("Errors 11112222", errors);
@@ -507,7 +573,10 @@ export default function CheckoutPage() {
 
                 useEffect(() => {
                   const { shippingCountry = '' } = values;
-                  if (!paymentType || currency !== CURRENCY_LIST.INR || (!shippingCountry || shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA)) {
+
+                  validateForm();
+                  
+                  if (!paymentType || currency !== CURRENCY_LIST.INR || (!shippingCountry || !isIndiaCountry(shippingCountry))) {
                     handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY);
                     return;
                   }
@@ -609,26 +678,30 @@ export default function CheckoutPage() {
                         <Select
                           name="shippingCountry"
                           value={values.shippingCountry}
-                        
                           onChange={(e) => {
                             const countryName = e.target.value as string;
 
-                            if (paymentType === PaymentTypeEnum.COD && (countryName.toUpperCase() !== COUNTRY_MAPPER.INDIA || currency !== CURRENCY_LIST.INR)) {
+                            if (paymentType === PaymentTypeEnum.COD && (!isIndiaCountry(countryName) || currency !== CURRENCY_LIST.INR)) {
                               handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY)
                             }
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
-
-                            setValues({
+                            const nextValues = {
                               ...values,
                               shippingCountry: countryName,
                               shippingPincode: '',
                               shippingCity: '',
                               shippingState: '',
-                            })
+                            };
+
+                            setValues(nextValues, true)
 
                             setShippingIsdCode(isd)
-                            setFieldTouched("shippingCountry", true);
+                            setFieldTouched("shippingCountry", true, false);
+                            setFieldError(
+                              "shippingCountry",
+                              getShippingCountryCurrencyError(countryName, currency)
+                            );
                           }}
                           onBlur={handleBlur}
                           displayEmpty
@@ -796,7 +869,7 @@ export default function CheckoutPage() {
                       />
 
                       <Grid container spacing={2}>
-                          <Grid size={4}>
+                        <Grid size={4}>
                           <TextField
                             fullWidth
                             name="shippingPincode"
@@ -846,7 +919,7 @@ export default function CheckoutPage() {
                                   borderRadius: "10px",
                                 },
                                 inputProps: {
-                                  maxLength: values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                  maxLength: isIndiaCountry(values.shippingCountry) ? 6 : 9,
                                 },
                               },
                               inputLabel: {
@@ -862,7 +935,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingCity"
                             label="City"
-                                                      disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                            disabled={isIndiaCountry(values.shippingCountry)}
                             value={values.shippingCity}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -896,7 +969,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingState"
                             label="State"
-                            disabled={values.shippingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                            disabled={isIndiaCountry(values.shippingCountry)}
                             value={values.shippingState}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -1020,7 +1093,7 @@ export default function CheckoutPage() {
                               showRazorpayInfo = false,
                             } = option;
 
-                            if (value === PaymentTypeEnum.COD && (currency !== CURRENCY_LIST.INR || values.shippingCountry.toUpperCase() !== COUNTRY_MAPPER.INDIA)) return null;
+                            if (value === PaymentTypeEnum.COD && (currency !== CURRENCY_LIST.INR || !isIndiaCountry(values.shippingCountry))) return null;
 
                             return (
                               <Box key={value}>
@@ -1291,7 +1364,7 @@ export default function CheckoutPage() {
 
                               {/* City / State / Zip */}
                               <Grid container spacing={2} sx={{ mt: 2 }}>
-                                  <Grid size={4}>
+                                <Grid size={4}>
                                   <TextField
                                     fullWidth
                                     name="billingPincode"
@@ -1340,7 +1413,7 @@ export default function CheckoutPage() {
                                           borderRadius: "10px",
                                         },
                                         inputProps: {
-                                          maxLength: values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase() ? 6 : 9,
+                                          maxLength: isIndiaCountry(values.billingCountry) ? 6 : 9,
                                         },
                                       },
                                       inputLabel: { sx: { color: "#000" } },
@@ -1351,18 +1424,18 @@ export default function CheckoutPage() {
                                   <TextField
                                     fullWidth
                                     name="billingCity"
-                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                                    disabled={isIndiaCountry(values.billingCountry)}
                                     label="City"
                                     value={values.billingCity}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     error={getFieldErrorState(
                                       { errors, touched },
-                                      "billingCity"
+                                      "billingCity",
                                     )}
                                     helperText={getHelperOrErrorText(
                                       { errors, touched },
-                                      "billingCity"
+                                      "billingCity",
                                     )}
                                     slotProps={{
                                       input: {
@@ -1382,7 +1455,7 @@ export default function CheckoutPage() {
                                     fullWidth
                                     name="billingState"
                                     label="State"
-                                    disabled={values.billingCountry?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                                    disabled={isIndiaCountry(values.billingCountry)}
                                     value={values.billingState}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -1406,8 +1479,6 @@ export default function CheckoutPage() {
                                     }}
                                   />
                                 </Grid>
-
-                              
                               </Grid>
                               <TextField
                                 fullWidth
@@ -1415,7 +1486,7 @@ export default function CheckoutPage() {
                                 label="Phone"
                                 value={values.billingPhone}
                                 sx={{
-                                  mt: '16px'
+                                  mt: "16px",
                                 }}
                                 onChange={(e) => {
                                   if (e.target.value.match(/[^0-9]/)) return;
@@ -1424,11 +1495,11 @@ export default function CheckoutPage() {
                                 onBlur={handleBlur}
                                 error={getFieldErrorState(
                                   { errors, touched },
-                                  "billingPhone"
+                                  "billingPhone",
                                 )}
                                 helperText={getHelperOrErrorText(
                                   { errors, touched },
-                                  "billingPhone"
+                                  "billingPhone",
                                 )}
                                 InputProps={{
                                   startAdornment: (
@@ -1459,7 +1530,9 @@ export default function CheckoutPage() {
                         variant="outlined"
                         size="large"
                         sx={{
-                          backgroundColor: isSubmitDisabled ? "#00000033" : "black",
+                          backgroundColor: isSubmitDisabled
+                            ? "#00000033"
+                            : "black",
                           opacity: 1,
                           color: isSubmitDisabled ? "black" : "white",
                           mb: "32px",
@@ -1493,10 +1566,22 @@ export default function CheckoutPage() {
             }}
           >
             {processedItems.map((item) => {
-              const { product, quantity = 0, price = 0, totalPrice = 0, currencySymbol = '' } = item;
-              const { _id: productId = '', imageUrl = '', name = '', shortDescription = '', quantityAvailable = 0 } = product || {}
+              const {
+                product,
+                quantity = 0,
+                price = 0,
+                totalPrice = 0,
+                currencySymbol = "",
+              } = item;
+              const {
+                _id: productId = "",
+                imageUrl = "",
+                name = "",
+                shortDescription = "",
+                quantityAvailable = 0,
+              } = product || {};
 
-              const productQuantity = getQuantity(productId)
+              const productQuantity = getQuantity(productId);
               const isPlusDisabled = productQuantity >= quantityAvailable;
 
               return (
@@ -1542,7 +1627,10 @@ export default function CheckoutPage() {
                     }}
                   >
                     <Box>
-                      <Typography fontWeight="900" fontSize={{ xs: 16, md: 18 }}>
+                      <Typography
+                        fontWeight="900"
+                        fontSize={{ xs: 16, md: 18 }}
+                      >
                         {name}
                       </Typography>
                     </Box>
@@ -1569,7 +1657,7 @@ export default function CheckoutPage() {
                           bgcolor: "rgba(255,255,255,0.1)",
                           borderRadius: 2,
                         }}
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <IconButton
                           onClick={() => decrementToCart(productId)}
@@ -1586,7 +1674,13 @@ export default function CheckoutPage() {
                         </Typography>
 
                         <IconButton
-                          onClick={() => incrementToCart(product, productId, quantityAvailable)}
+                          onClick={() =>
+                            incrementToCart(
+                              product,
+                              productId,
+                              quantityAvailable,
+                            )
+                          }
                           sx={{
                             color: "white",
                             "&:hover": { color: "yellow" },
@@ -1600,7 +1694,7 @@ export default function CheckoutPage() {
                     </Box>
                   </Box>
                 </Box>
-              )
+              );
             })}
           </Box>
 
@@ -1622,9 +1716,10 @@ export default function CheckoutPage() {
               >
                 <Typography>Discount ({couponCode})</Typography>
                 <Typography>
-                  - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
+                  - {currencySymbol}{" "}
+                  {discountAmount?.toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                   })}
                 </Typography>
               </Box>
@@ -1653,20 +1748,20 @@ export default function CheckoutPage() {
           </Box>
           {
             codCharges > 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mt: "16px",
-                  color: "#F5F4F4",
-                }}
-              >
-                <Typography>COD Charges</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: "16px",
+                color: "#F5F4F4",
+              }}
+            >
+              <Typography>COD Charges</Typography>
                 <Typography fontWeight={600}>{currencySymbol} {codCharges?.toLocaleString('en-IN', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}</Typography>
-              </Box>
+            </Box>
             )
           }
           <Box
@@ -1679,7 +1774,7 @@ export default function CheckoutPage() {
           >
             <Typography>Shipping</Typography>
             <Typography fontWeight={600}>{currencySymbol} {shippingCost?.toLocaleString('en-IN', {
-              minimumFractionDigits: 2,
+                minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}</Typography>
           </Box>
@@ -1694,7 +1789,7 @@ export default function CheckoutPage() {
           >
             <Typography>Tax Amount</Typography>
             <Typography fontWeight={600}>{currencySymbol} {taxAmount?.toLocaleString('en-IN', {
-              minimumFractionDigits: 2,
+                minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}</Typography>
           </Box>
@@ -1730,72 +1825,72 @@ export default function CheckoutPage() {
 
           {
             advanceAmount > 0 && (
-              <>
-                {/* Advance Payment Row */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mt: 2,
-                    color: "#F5F4F4",
-                    borderTop: "1px solid rgba(255,255,255,0.1)",
-                    pt: 2,
-                  }}
-                >
-                  <Typography fontWeight={700} fontSize={18}>
-                    Advance Payment (Online)
-                  </Typography>
+            <>
+              {/* Advance Payment Row */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mt: 2,
+                  color: "#F5F4F4",
+                  borderTop: "1px solid rgba(255,255,255,0.1)",
+                  pt: 2,
+                }}
+              >
+                <Typography fontWeight={700} fontSize={18}>
+                  Advance Payment (Online)
+                </Typography>
 
-                  <Typography fontWeight={500} fontSize={28} color="#22C55E">
+                <Typography fontWeight={500} fontSize={28} color="#22C55E">
                     {currencySymbol} {advanceAmount?.toLocaleString('en-IN', {
-                      minimumFractionDigits: 2,
+                    minimumFractionDigits: 2,
                       maximumFractionDigits: 2
-                    })}
-                  </Typography>
-                </Box>
+                  })}
+                </Typography>
+              </Box>
 
-                {/* Info Card */}
+              {/* Info Card */}
+              <Box
+                mt={2}
+                display="flex"
+                alignItems="center"
+                gap={2}
+                px={2.5}
+                py={1.8}
+                borderRadius="12px"
+                sx={{
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "linear-gradient(90deg, #1a1a1a, #111)",
+                }}
+              >
+                {/* Icon */}
                 <Box
-                  mt={2}
                   display="flex"
                   alignItems="center"
-                  gap={2}
-                  px={2.5}
-                  py={1.8}
-                  borderRadius="12px"
+                  justifyContent="center"
+                  width={34}
+                  height={34}
+                  borderRadius="50%"
                   sx={{
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    background: "linear-gradient(90deg, #1a1a1a, #111)",
+                    backgroundColor: "rgba(59,130,246,0.15)",
                   }}
                 >
-                  {/* Icon */}
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    width={34}
-                    height={34}
-                    borderRadius="50%"
-                    sx={{
-                      backgroundColor: "rgba(59,130,246,0.15)",
-                    }}
-                  >
-                    <InfoOutlinedIcon sx={{ color: "#3B82F6", fontSize: 18 }} />
-                  </Box>
+                  <InfoOutlinedIcon sx={{ color: "#3B82F6", fontSize: 18 }} />
+                </Box>
 
-                  {/* Text */}
+                {/* Text */}
                   <Typography fontSize={14} sx={{ color: "rgba(255,255,255,0.7)" }}>
-                    Pay remaining{" "}
+                  Pay remaining{" "}
                     <Box component="span" sx={{ color: "#3B82F6", fontWeight: 600 }}>
                       {currencySymbol} {(totalAmount - advanceAmount)?.toLocaleString('en-IN', {
-                        minimumFractionDigits: 2,
+                      minimumFractionDigits: 2,
                         maximumFractionDigits: 2
-                      })}
-                    </Box>{" "}
-                    at the time of delivery.
-                  </Typography>
-                </Box>
-              </>
+                    })}
+                  </Box>{" "}
+                  at the time of delivery.
+                </Typography>
+              </Box>
+            </>
             )
           }
         </Grid>

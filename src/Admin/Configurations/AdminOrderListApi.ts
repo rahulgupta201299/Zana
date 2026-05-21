@@ -1,11 +1,13 @@
 import { API_METHOD_ENUM } from "@/Configurations/Network/Constant";
 import Network from "@/Configurations/Network";
 import { omitEmptyParams } from "../Utils/ApiUtils";
+import { downloadAdminCsv } from "../Utils/CsvDownloadUtils";
 
 const network = new Network();
 
 /** Path after `VITE_API_DOMAIN` (contract: `GET …/api/v1/order/admin/all`). */
 const ADMIN_ORDER_LIST_PATH = "/api/v1/order/admin/all";
+const ADMIN_ORDER_LIST_DOWNLOAD_PATH = "/api/v1/order/admin/all/download";
 
 export type AdminOrderListSortBy = "updatedAt" | "totalAmount";
 export type AdminOrderListSortOrder = "asc" | "desc";
@@ -22,7 +24,11 @@ export type AdminOrderListFilters = {
   paymentMethod?: string;
   paymentStatus?: string;
   orderStatus?: string;
+  phoneNumber?: string;
+  emailId?: string;
 };
+
+export type AdminOrderListDownloadFilters = Omit<AdminOrderListFilters, "page" | "limit">;
 
 export type AdminOrderListProduct = {
   _id?: string;
@@ -122,6 +128,8 @@ function buildQueryParams(filters: AdminOrderListFilters): Record<string, string
     paymentMethod: filters.paymentMethod,
     paymentStatus: filters.paymentStatus,
     orderStatus: filters.orderStatus,
+    phoneNumber: filters.phoneNumber,
+    emailId: filters.emailId,
   });
 }
 
@@ -132,4 +140,24 @@ export async function getAdminOrderList(filters: AdminOrderListFilters): Promise
     params: buildQueryParams(filters),
     cache: false,
   });
+}
+
+export async function downloadAdminOrderListCsv(filters: AdminOrderListDownloadFilters) {
+  return downloadAdminCsv(
+    ADMIN_ORDER_LIST_DOWNLOAD_PATH,
+    omitEmptyParams({
+      sortBy: filters.sortBy,
+      sortOrder: filters.sortOrder,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      minAmount: filters.minAmount,
+      maxAmount: filters.maxAmount,
+      paymentMethod: filters.paymentMethod,
+      paymentStatus: filters.paymentStatus,
+      orderStatus: filters.orderStatus,
+      phoneNumber: filters.phoneNumber,
+      emailId: filters.emailId,
+    }),
+    "admin-orders.csv",
+  );
 }

@@ -1,7 +1,7 @@
 import { useLayoutEffect } from 'react'
 import { useLocation } from 'react-router'
 
-import { CANONICAL_ORIGIN } from '@/Configurations/env'
+import { APP_DOMAIN_URL } from '@/Configurations/env'
 
 const REL = 'canonical'
 
@@ -21,13 +21,13 @@ export function CanonicalLink() {
 	const { pathname } = useLocation()
 
 	useLayoutEffect(() => {
-		if (!CANONICAL_ORIGIN) {
+		if (!APP_DOMAIN_URL) {
 			const existing = document.querySelector(`link[rel="${REL}"]`)
 			existing?.remove()
 			return
 		}
 
-		const href = buildCanonicalHref(CANONICAL_ORIGIN, pathname)
+		const href = buildCanonicalHref(APP_DOMAIN_URL, pathname)
 		let link = document.querySelector(`link[rel="${REL}"]`) as HTMLLinkElement | null
 
 		if (!link) {
