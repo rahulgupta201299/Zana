@@ -11,25 +11,18 @@ export const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
 export const API_TIME_OUT = Number(import.meta.env.VITE_API_TIME_OUT) || 60000;
 export const VITE_ENABLE_TRACKING = import.meta.env.VITE_ENABLE_TRACKING === "true";
 
-function browserCanonicalOrigin(): string | null {
-	if (typeof window === "undefined") return null;
-	return window.location.origin;
-}
-
-function parseCanonicalOrigin(): string | null {
-  const raw = viteEnv("VITE_CANONICAL_ORIGIN");
+function parseAppDomainUrl(): string | null {
+  const raw = viteEnv("APP_DOMAIN_URL");
 	if (raw === "") return null;
 	if (typeof raw === "string") {
 		const trimmed = raw.trim();
-		if (trimmed !== "") return trimmed.replace(/\/+$/, "");
+		if (trimmed !== "") return new URL(trimmed).origin;
 	}
-	if (isProduction) return browserCanonicalOrigin();
 	return null;
 }
 
 /**
- * Absolute origin only (no path). Empty `VITE_CANONICAL_ORIGIN` opts out.
- * In production builds without an override, uses `window.location.origin` when
- * evaluated in a browser; otherwise null (e.g. SSR / non-browser import).
+ * Absolute app origin only (no path). Set `APP_DOMAIN_URL` per environment so
+ * canonical URLs and generated SEO files use the same frontend domain.
  */
-export const CANONICAL_ORIGIN = parseCanonicalOrigin();
+export const APP_DOMAIN_URL = parseAppDomainUrl();
