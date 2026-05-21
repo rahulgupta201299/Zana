@@ -935,7 +935,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingCity"
                             label="City"
-                            disabled={isIndiaCountry(values.shippingCountry)}
+                            // disabled={isIndiaCountry(values.shippingCountry)}
                             value={values.shippingCity}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -969,7 +969,7 @@ export default function CheckoutPage() {
                             fullWidth
                             name="shippingState"
                             label="State"
-                            disabled={isIndiaCountry(values.shippingCountry)}
+                            // disabled={isIndiaCountry(values.shippingCountry)}
                             value={values.shippingState}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -1424,7 +1424,7 @@ export default function CheckoutPage() {
                                   <TextField
                                     fullWidth
                                     name="billingCity"
-                                    disabled={isIndiaCountry(values.billingCountry)}
+                                    // disabled={isIndiaCountry(values.billingCountry)}
                                     label="City"
                                     value={values.billingCity}
                                     onChange={handleChange}
@@ -1455,7 +1455,7 @@ export default function CheckoutPage() {
                                     fullWidth
                                     name="billingState"
                                     label="State"
-                                    disabled={isIndiaCountry(values.billingCountry)}
+                                    // disabled={isIndiaCountry(values.billingCountry)}
                                     value={values.billingState}
                                     onChange={handleChange}
                                     onBlur={handleBlur}

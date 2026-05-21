@@ -10,6 +10,7 @@ export const APP_TITLE = import.meta.env.VITE_APP_TITLE;
 export const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
 export const API_TIME_OUT = Number(import.meta.env.VITE_API_TIME_OUT) || 60000;
 export const VITE_ENABLE_TRACKING = import.meta.env.VITE_ENABLE_TRACKING === "true";
+export const VITE_VIDEO_URL = import.meta.env.VITE_VIDEO_URL;
 
 function parseAppDomainUrl(): string | null {
   const raw = viteEnv("APP_DOMAIN_URL");

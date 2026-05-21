@@ -91,7 +91,14 @@ export async function handlePostalCodeChange({
   }
 
   const pincode = normalizePincodeInput(value);
-  if (pincode.length > 6) return;
+
+  // extra code start - remove later
+  if (pincode[0] === "0" || pincode.length > 6) return;
+
+  await applyFieldValues({ [fields.pincode]: pincode });
+
+  return;
+  // extra code end
 
   if (pincode[0] === "0") {
     await applyFieldValues(

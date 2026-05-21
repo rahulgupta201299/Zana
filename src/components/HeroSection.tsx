@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.png";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
+import { VITE_VIDEO_URL } from "@/Configurations/env";
 
 const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
       >
         <Box
           component="video"
-          src={`https://d1bw1i3fxlc6zi.cloudfront.net/Zana+website/Zana-KTM+ADV.mp4`}
+          src={VITE_VIDEO_URL}
           autoPlay
           muted
           loop
