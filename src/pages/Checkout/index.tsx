@@ -99,6 +99,16 @@ function isIndiaCountry(country = ""): boolean {
   return country.trim().toLowerCase() === COUNTRY_INDIA.toLowerCase();
 }
 
+const INR_OUTSIDE_INDIA_ERROR = "We do not support INR as currency outside India";
+
+function getShippingCountryCurrencyError(country = "", currency = "") {
+  if (!country || currency !== CURRENCY_LIST.INR || isIndiaCountry(country)) {
+    return undefined;
+  }
+
+  return INR_OUTSIDE_INDIA_ERROR;
+}
+
 export default function CheckoutPage() {
   const { decrementToCart, incrementToCart, validateCart, getQuantity } =
     useCart();
@@ -209,11 +219,9 @@ export default function CheckoutPage() {
       .required("Country is required")
       .test(
         "nonIndiaInrCurrency",
-        "We do not support INR as currency outside India",
+        INR_OUTSIDE_INDIA_ERROR,
         (value) => {
-          if (!value) return true;
-          if (currency !== CURRENCY_LIST.INR) return true;
-          return isIndiaCountry(value);
+          return !getShippingCountryCurrencyError(value, currency);
         }
       ),
     shippingPhone: Yup.string()
@@ -563,7 +571,7 @@ export default function CheckoutPage() {
                 }, [isdCode.length, values.shippingPhone, values.billingPhone, values.shippingAddressSameAsBillingAddress])
 
                 useEffect(() => {
-                  const { shippingCountry = '' } = values;
+                  const { shippingCountry = '' } = values;        
                   if (!paymentType || currency !== CURRENCY_LIST.INR || (!shippingCountry || !isIndiaCountry(shippingCountry))) {
                     handlePaymentOptionChange(PaymentTypeEnum.RAZORPAY);
                     return;
@@ -674,17 +682,22 @@ export default function CheckoutPage() {
                             }
 
                             const isd = isdCode.find(c => c.name.toLowerCase() === countryName.toLowerCase())?.isd || ''
-
-                            setValues({
+                            const nextValues = {
                               ...values,
                               shippingCountry: countryName,
                               shippingPincode: '',
                               shippingCity: '',
                               shippingState: '',
-                            })
+                            };
+
+                            setValues(nextValues, true)
 
                             setShippingIsdCode(isd)
-                            setFieldTouched("shippingCountry", true);
+                            setFieldTouched("shippingCountry", true, false);
+                            setFieldError(
+                              "shippingCountry",
+                              getShippingCountryCurrencyError(countryName, currency)
+                            );
                           }}
                           onBlur={handleBlur}
                           displayEmpty
