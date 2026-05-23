@@ -45,6 +45,7 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
+import { SeoMeta } from "@/components/SeoMeta";
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -61,7 +62,7 @@ const ProductDetailPage = () => {
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
-  const { productCategory = "", productId = "", productItem = "" } = params;
+  const { productCategory = "", productId = "" } = params;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -177,7 +178,7 @@ const ProductDetailPage = () => {
 
   function handleSuggestedProductClick(
     productCategory: string,
-    productItem: string,
+    name: string,
     productId: string,
   ) {
     const currentBreadcrumbState =
@@ -194,7 +195,7 @@ const ProductDetailPage = () => {
           };
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
       productCategory,
-      productItem,
+      name,
       productId,
     });
 
@@ -212,6 +213,11 @@ const ProductDetailPage = () => {
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: "#181818" }}
       >
+        <SeoMeta
+          title="Product Not Found | Zana Motorcycles"
+          description="The requested Zana motorcycle accessory could not be found."
+          noIndex
+        />
         <div className="text-center">
           <h1 className="text-white text-4xl font-bold mb-4">
             Product Not Found
@@ -251,7 +257,7 @@ const ProductDetailPage = () => {
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
   const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
   const breadcrumbCategory =
-    breadcrumbState.productCategory || category || productCategory;
+    breadcrumbState.productCategory || category;
   const isBikeBreadcrumb =
     breadcrumbState.source === "bike" &&
     breadcrumbState.bikeType &&
@@ -288,7 +294,7 @@ const ProductDetailPage = () => {
           to: bikeDetailPath,
           state: { category: breadcrumbCategory.toLowerCase() },
         },
-        { label: name || productItem },
+        { label: name },
       ]
     : [
         { label: "Home", to: ROUTES.BASE_URL },
@@ -298,11 +304,21 @@ const ProductDetailPage = () => {
           to: ROUTES.PRODUCT_CATALOG,
           state: { category: breadcrumbCategory.toLowerCase() },
         },
-        { label: name || productItem },
+        { label: name },
       ];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
+      <SeoMeta
+        title={`${name} | ${breadcrumbCategory || "Motorcycle Accessories"} | Zana Motorcycles`}
+        description={
+          shortDescription ||
+          longDescription ||
+          `Shop ${name} motorcycle accessories from Zana Motorcycles.`
+        }
+        image={newImages[0]}
+        type="product"
+      />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <AppBreadcrumb

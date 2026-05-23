@@ -26,6 +26,7 @@ import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 import { capitalise } from "@/Utils/global";
+import { SeoMeta } from "@/components/SeoMeta";
 
 type BikeDetailLocationState = {
   category?: string;
@@ -213,6 +214,11 @@ const BikeDetailPage = () => {
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: "#181818" }}
       >
+        <SeoMeta
+          title="Bike Not Found | Zana Motorcycles"
+          description="The requested bike model could not be found."
+          noIndex
+        />
         <div className="text-center">
           <h1 className="text-white text-4xl font-bold mb-4">Bike Not Found</h1>
           <button
@@ -240,6 +246,14 @@ const BikeDetailPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
+      <SeoMeta
+        title={`${brandName} ${modelName} Accessories | Zana Motorcycles`}
+        description={
+          description ||
+          `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
+        }
+        image={imageUrl}
+      />
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto">

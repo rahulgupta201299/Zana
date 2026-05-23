@@ -1,0 +1,257 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+
+const DIST_DIR = resolve("dist");
+const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
+const DIST_SITEMAP_FILE = join(DIST_DIR, "sitemap.xml");
+const PUBLIC_SITEMAP_FILE = resolve("public/sitemap.xml");
+const SITE_ORIGIN_ENV_KEY = "APP_DOMAIN_URL";
+
+function loadEnvFile(filePath) {
+  if (!existsSync(filePath)) return {};
+
+  return readFileSync(filePath, "utf8")
+    .split(/\r?\n/)
+    .reduce((env, line) => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (!match || match[1].startsWith("#")) return env;
+
+      env[match[1]] = (match[2] || "").replace(/^['"]|['"]$/g, "");
+      return env;
+    }, {});
+}
+
+const env = {
+  ...loadEnvFile(resolve(".env")),
+  ...process.env,
+};
+
+function normalizeOrigin(value) {
+  const normalizedValue = String(value || "").trim();
+  if (!normalizedValue) return "";
+
+  return new URL(normalizedValue).origin;
+}
+
+const siteOrigin = normalizeOrigin(env[SITE_ORIGIN_ENV_KEY]);
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function stripHtml(value) {
+  return String(value || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncate(value, maxLength) {
+  const stripped = stripHtml(value);
+  if (stripped.length <= maxLength) return stripped;
+  return `${stripped.slice(0, maxLength - 1).trim()}...`;
+}
+
+function titleCaseSlug(value) {
+  return String(value || "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function readSitemapUrls() {
+  const sitemapFile = existsSync(DIST_SITEMAP_FILE)
+    ? DIST_SITEMAP_FILE
+    : PUBLIC_SITEMAP_FILE;
+  if (!existsSync(sitemapFile)) return [];
+
+  const sitemap = readFileSync(sitemapFile, "utf8");
+  return [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)]
+    .map(([, loc]) => loc.trim())
+    .filter(Boolean);
+}
+
+function getSeoForPath(pathname) {
+  const parts = pathname.split("/").filter(Boolean);
+
+  if (pathname === "/product-catalog") {
+    return {
+      title: "Motorcycle Accessories Catalog | Zana Motorcycles",
+      description:
+        "Explore Zana motorcycle accessories by category, fitment, and price.",
+      type: "website",
+    };
+  }
+
+  if (parts.length === 2 && parts[1] === "bikes") {
+    const label = parts[0].toLowerCase() === "zpro" ? "ZPro" : "Zana";
+    return {
+      title: `${label} Bike Accessories | Zana Motorcycles`,
+      description:
+        "Find motorcycle accessories matched to your bike model from Zana Motorcycles.",
+      type: "website",
+    };
+  }
+
+  if (
+    parts[0] === "bike-accessories" &&
+    parts[2] === "bike" &&
+    parts.length >= 6
+  ) {
+    const brand = titleCaseSlug(parts[3]);
+    const model = titleCaseSlug(parts[4]);
+    return {
+      title: `${brand} ${model} Accessories | Zana Motorcycles`,
+      description: `Shop crash guards, racks, guards, and motorcycle accessories for ${brand} ${model}.`,
+      type: "website",
+    };
+  }
+
+  if (parts[0] === "product" && parts.length >= 4) {
+    const category = titleCaseSlug(parts[1]);
+    const productName = titleCaseSlug(parts[2]);
+    return {
+      title: `${productName} | ${category} | Zana Motorcycles`,
+      description: `Shop ${productName} motorcycle accessories from Zana Motorcycles.`,
+      type: "product",
+    };
+  }
+
+  if (pathname === "/blogs") {
+    return {
+      title: "Motorcycle Stories and Guides | Zana Motorcycles",
+      description:
+        "Read motorcycle accessory guides, product stories, and Zana updates.",
+      type: "website",
+    };
+  }
+
+  if (parts[0] === "blog") {
+    return {
+      title: "Motorcycle Guide | Zana Motorcycles",
+      description:
+        "Read motorcycle accessory guides, product stories, and Zana updates.",
+      type: "article",
+    };
+  }
+
+  if (pathname === "/contact-us") {
+    return {
+      title: "Contact Zana Motorcycles",
+      description:
+        "Contact Zana Motorcycles for product support, fitment help, and order assistance.",
+      type: "website",
+    };
+  }
+
+  return {
+    title: "Zana Motorcycles",
+    description: "ZANA Motorcycles",
+    type: "website",
+  };
+}
+
+function upsertTitle(html, title) {
+  const escapedTitle = escapeHtml(truncate(title, 70));
+  if (/<title>[\s\S]*?<\/title>/i.test(html)) {
+    return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapedTitle}</title>`);
+  }
+  return html.replace(/<head>/i, `<head>\n    <title>${escapedTitle}</title>`);
+}
+
+function upsertMetaName(html, name, content) {
+  const escapedContent = escapeHtml(content);
+  const regex = new RegExp(
+    `<meta\\s+name=["']${name}["'][^>]*>`,
+    "i",
+  );
+  const tag = `<meta name="${name}" content="${escapedContent}" />`;
+  if (regex.test(html)) return html.replace(regex, tag);
+  return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
+}
+
+function upsertMetaProperty(html, property, content) {
+  const escapedContent = escapeHtml(content);
+  const regex = new RegExp(
+    `<meta\\s+property=["']${property}["'][^>]*>`,
+    "i",
+  );
+  const tag = `<meta property="${property}" content="${escapedContent}" />`;
+  if (regex.test(html)) return html.replace(regex, tag);
+  return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
+}
+
+function upsertCanonical(html, href) {
+  const escapedHref = escapeHtml(href);
+  const tag = `<link rel="canonical" href="${escapedHref}" />`;
+  if (/<link\s+rel=["']canonical["'][^>]*>/i.test(html)) {
+    return html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, tag);
+  }
+  return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
+}
+
+function addStaticRouteMarker(html, pathname) {
+  return html.replace(
+    /<html([^>]*)>/i,
+    `<html$1 data-static-route="${escapeHtml(pathname)}">`,
+  );
+}
+
+function createRouteHtml(baseHtml, absoluteUrl, pathname) {
+  const seo = getSeoForPath(pathname);
+  const title = truncate(seo.title, 70);
+  const description = truncate(seo.description, 160);
+  let html = baseHtml;
+
+  html = addStaticRouteMarker(html, pathname);
+  html = upsertTitle(html, title);
+  html = upsertMetaName(html, "description", description);
+  html = upsertMetaName(html, "robots", "index, follow, max-image-preview:large");
+  html = upsertMetaProperty(html, "og:title", title);
+  html = upsertMetaProperty(html, "og:description", description);
+  html = upsertMetaProperty(html, "og:type", seo.type);
+  html = upsertMetaProperty(html, "og:url", absoluteUrl);
+  html = upsertMetaName(html, "twitter:title", title);
+  html = upsertMetaName(html, "twitter:description", description);
+  html = upsertCanonical(html, absoluteUrl);
+
+  return html;
+}
+
+function outputFileForPath(pathname) {
+  const normalizedPath = pathname.replace(/^\/+|\/+$/g, "");
+  return normalizedPath
+    ? join(DIST_DIR, normalizedPath, "index.html")
+    : DIST_INDEX_FILE;
+}
+
+function main() {
+  if (!existsSync(DIST_INDEX_FILE)) {
+    throw new Error("Missing dist/index.html. Run this script after vite build.");
+  }
+
+  const baseHtml = readFileSync(DIST_INDEX_FILE, "utf8");
+  const urls = readSitemapUrls();
+  let generatedCount = 0;
+
+  for (const loc of urls) {
+    const url = new URL(loc);
+    const pathname = url.pathname.replace(/\/+$/, "") || "/";
+    if (pathname === "/" || /\.[a-z0-9]+$/i.test(pathname)) continue;
+    if (siteOrigin && url.origin !== siteOrigin) continue;
+
+    const outputFile = outputFileForPath(pathname);
+    mkdirSync(dirname(outputFile), { recursive: true });
+    writeFileSync(outputFile, createRouteHtml(baseHtml, url.href, pathname));
+    generatedCount += 1;
+  }
+
+  console.log(`Generated ${generatedCount} static SEO route pages in ${DIST_DIR}.`);
+}
+
+main();
