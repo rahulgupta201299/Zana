@@ -11,7 +11,6 @@ import { lazyLoadPage } from '@/Helpers/Route'
 import Loading from '@/components/Loading'
 import AdminRoutes from '@/Admin/Configurations/AdminRoutes'
 import ErrorBoundary from './ErrorBoundary'
-import AppStore from '../AppStore'
 
 import ProductCatalogPage from "@/pages/ProductCatalog";
 import BikeDetailPage from "@/pages/BikeDetail";
@@ -49,13 +48,11 @@ const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
 function DynamicRedirect() {
   const location = useLocation();
   const [productRedirectTarget, setProductRedirectTarget] = useState<string | null>()
-  const state = AppStore.getState();
-  const initialLoading = state.landing.initialLoading
   const isAdminPath = location.pathname === ROUTES.ADMIN || location.pathname.startsWith(`${ROUTES.ADMIN}/`)
 
   useEffect(() => {
     let isActive = true
-    setProductRedirectTarget(null)
+    setProductRedirectTarget(undefined)
 
     import('@/Constants/ProductRedirectMappings').then(({ getProductRedirectTarget }) => {
       if (!isActive) return
@@ -67,13 +64,11 @@ function DynamicRedirect() {
     }
   }, [location.pathname])
 
-  if (!productRedirectTarget) return <Loading />
+  if (productRedirectTarget === undefined) return <Loading />
 
   if (productRedirectTarget) return <Navigate replace to={productRedirectTarget} />
 
   if (isAdminPath) return <Navigate replace to={ROUTES.ADMIN} />
-
-  if (initialLoading) return <Navigate replace to={ROUTES.PAGE_NOT_FOUND} />
 
   return <Navigate replace to={ROUTES.BASE_URL} />
 }
