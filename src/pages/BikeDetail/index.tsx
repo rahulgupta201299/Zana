@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
@@ -73,11 +73,22 @@ const BikeDetailPage = () => {
   const [bikeDetails, setBikeDetails] = useState<BikeDetailResType | null>(
     null,
   );
+  const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
+  const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  const bikeProductsRequestRef = useRef(0);
+  const bikeDetailsRequestRef = useRef(0);
+  const isBikeProductsPending =
+    isBikeProductLoading || isBikeProductsHydrating;
+  const isBikeDetailsPending = isBikeDetailLoading || isBikeDetailsHydrating;
 
   async function getBikeProducts(
     category = ALL_CATEGORY,
     subCategory?: string,
   ) {
+    const requestId = bikeProductsRequestRef.current + 1;
+    bikeProductsRequestRef.current = requestId;
+
+    setIsBikeProductsHydrating(true);
     setFilteredBikeProducts([]);
     try {
       const response = (await dispatch(
@@ -87,20 +98,37 @@ const BikeDetailPage = () => {
             category !== ALL_CATEGORY && { category, subCategory }),
         }),
       )) as ShopByProductDetailsType[];
+      if (bikeProductsRequestRef.current !== requestId) return;
       setBikeProducts(response);
       setFilteredBikeProducts(response);
+      setIsBikeProductsHydrating(false);
     } catch (error: any) {
+      if (bikeProductsRequestRef.current === requestId) {
+        setBikeProducts([]);
+        setFilteredBikeProducts([]);
+        setIsBikeProductsHydrating(false);
+      }
       console.error(error);
     }
   }
 
   async function getBikeDetails() {
+    const requestId = bikeDetailsRequestRef.current + 1;
+    bikeDetailsRequestRef.current = requestId;
+
+    setIsBikeDetailsHydrating(true);
     try {
       const response = (await dispatch(
         BikeDetailService(bikeId),
       )) as BikeDetailResType;
+      if (bikeDetailsRequestRef.current !== requestId) return;
       setBikeDetails(response);
+      setIsBikeDetailsHydrating(false);
     } catch (error: any) {
+      if (bikeDetailsRequestRef.current === requestId) {
+        setBikeDetails(null);
+        setIsBikeDetailsHydrating(false);
+      }
       console.error(error);
     }
   }
@@ -176,9 +204,10 @@ const BikeDetailPage = () => {
   ) {
     setFilteredBikeProducts(data);
     if (pagination) setPage(pagination.currentPage);
+    setIsBikeProductsHydrating(false);
   }
 
-  if (!bikeDetails && !isBikeDetailLoading) {
+  if (!bikeDetails && !isBikeDetailsPending) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -232,7 +261,7 @@ const BikeDetailPage = () => {
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {!isBikeProductLoading ? (
+              {!isBikeDetailsPending ? (
                 <img
                   src={imageUrl}
                   alt={modelName}
@@ -247,7 +276,7 @@ const BikeDetailPage = () => {
 
             <div className="text-white">
               <div className="mb-4">
-                {!isBikeProductLoading ? (
+                {!isBikeDetailsPending ? (
                   <span
                     style={{ textTransform: "capitalize" }}
                     className="px-4 py-2 bg-yellow-400/20 text-yellow-400 rounded-full text-sm font-medium"
@@ -263,7 +292,7 @@ const BikeDetailPage = () => {
                 )}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                {!isBikeProductLoading ? (
+                {!isBikeDetailsPending ? (
                   modelName
                 ) : (
                   <Skeleton
@@ -273,7 +302,7 @@ const BikeDetailPage = () => {
                 )}
               </h1>
               <p className="text-xl md:text-2xl text-white/70 mb-6">
-                {!isBikeProductLoading ? (
+                {!isBikeDetailsPending ? (
                   description
                 ) : (
                   <Skeleton
@@ -284,7 +313,7 @@ const BikeDetailPage = () => {
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <span className="text-yellow-400 text-lg font-medium">
-                  {!isBikeProductLoading ? (
+                  {!isBikeDetailsPending ? (
                     brandName.toUpperCase()
                   ) : (
                     <Skeleton
@@ -295,7 +324,7 @@ const BikeDetailPage = () => {
                 </span>
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
-                  {!isBikeProductLoading ? (
+                  {!isBikeProductsPending ? (
                     `${bikeProducts.length} Products Available`
                   ) : (
                     <Skeleton
@@ -348,9 +377,9 @@ const BikeDetailPage = () => {
               categoriesWithCount={categoriesWithCount}
               selectedCategory={selectedCategory}
               onSelectCategory={handleSelectCategory}
-              onChangeFilterProducts={(data) => setFilteredBikeProducts(data)} // no pagination
+              onChangeFilterProducts={handleChangeFilterProducts}
               onClearFilter={handleClearFilter}
-              isLoading={isBikeProductLoading}
+              isLoading={isBikeProductsPending}
             />
           )}
         </div>

@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { replace, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
@@ -50,18 +50,29 @@ const ProductCatalogPage = () => {
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
+  const [isCatalogProductsHydrating, setIsCatalogProductsHydrating] =
+    useState(true);
+  const catalogRequestRef = useRef(0);
 
   const loginDetails = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
 
   const LIMIT_PER_PAGE = 12;
+  const isCatalogProductsPending =
+    isProductCategoryLoading || isCatalogProductsHydrating;
 
   async function handleCategoryService(type: string, page = 1, skip = false) {
+    const requestId = catalogRequestRef.current + 1;
+    catalogRequestRef.current = requestId;
     const { phoneNumber = "" } = loginDetails;
 
-    if (type === selectedCategory && page === currentPage && !skip) return;
+    if (type === selectedCategory && page === currentPage && !skip) {
+      setIsCatalogProductsHydrating(false);
+      return;
+    }
 
     try {
+      setIsCatalogProductsHydrating(true);
       setFilteredProducts([]);
       setSelectedCategory(type);
 
@@ -85,10 +96,18 @@ const ProductCatalogPage = () => {
         action,
       )) as ProductCatalogDetailsType;
 
+      if (catalogRequestRef.current !== requestId) return;
       setFilteredProducts(data);
       setNumberOfPages(pagination.totalPages);
       setCurrentPage(pagination.currentPage);
+      setIsCatalogProductsHydrating(false);
     } catch (e) {
+      if (catalogRequestRef.current === requestId) {
+        setFilteredProducts([]);
+        setNumberOfPages(0);
+        setCurrentPage(page);
+        setIsCatalogProductsHydrating(false);
+      }
       console.error(e);
     }
   }
@@ -178,11 +197,12 @@ const ProductCatalogPage = () => {
                 setCurrentPage(pagination.currentPage);
                 setNumberOfPages(pagination.totalPages);
               }
+              setIsCatalogProductsHydrating(false);
             }}
             onClearFilter={() =>
               handleCategoryService(selectedCategory, currentPage, true)
             }
-            isLoading={isProductCategoryLoading}
+            isLoading={isCatalogProductsPending}
             page={currentPage}
             totalPages={numberOfPages}
             onPageChange={(p) => {

@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -102,6 +102,9 @@ function ProductSection({
       filterProductServiceName,
     ]),
   );
+  const [isProductsHydrating, setIsProductsHydrating] = useState(true);
+  const isProductListLoading = Boolean(isLoading) || isProductLoading;
+  const isProductListPending = isProductListLoading || isProductsHydrating;
 
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
 
@@ -186,6 +189,19 @@ function ProductSection({
   }
 
   const showPagination = type === "catalog" && totalPages > 1;
+
+  useEffect(() => {
+    if (isProductListLoading) {
+      setIsProductsHydrating(true);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsProductsHydrating(false);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isProductListLoading, products]);
 
   return (
     <>
@@ -318,14 +334,14 @@ function ProductSection({
           </Grid>
 
           {/* Loading */}
-          {products.length === 0 && isProductLoading && (
+          {products.length === 0 && isProductListPending && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               <ProductSkeleton />
             </div>
           )}
 
           {/* Empty */}
-          {products.length === 0 && !isProductLoading && (
+          {products.length === 0 && !isProductListPending && (
             <Box textAlign="center" py={8}>
               <Typography color="rgba(255,255,255,0.5)" mb={2}>
                 No products found in this category
