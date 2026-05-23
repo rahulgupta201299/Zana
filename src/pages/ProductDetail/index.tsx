@@ -61,7 +61,7 @@ const ProductDetailPage = () => {
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
-  const { productCategory = "", productId = "", productItem = "" } = params;
+  const { productCategory = "", productId = "" } = params;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -177,7 +177,7 @@ const ProductDetailPage = () => {
 
   function handleSuggestedProductClick(
     productCategory: string,
-    productItem: string,
+    name: string,
     productId: string,
   ) {
     const currentBreadcrumbState =
@@ -194,7 +194,7 @@ const ProductDetailPage = () => {
           };
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
       productCategory,
-      productItem,
+      name,
       productId,
     });
 
@@ -251,7 +251,7 @@ const ProductDetailPage = () => {
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
   const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
   const breadcrumbCategory =
-    breadcrumbState.productCategory || category || productCategory;
+    breadcrumbState.productCategory || category;
   const isBikeBreadcrumb =
     breadcrumbState.source === "bike" &&
     breadcrumbState.bikeType &&
@@ -288,7 +288,7 @@ const ProductDetailPage = () => {
           to: bikeDetailPath,
           state: { category: breadcrumbCategory.toLowerCase() },
         },
-        { label: name || productItem },
+        { label: name },
       ]
     : [
         { label: "Home", to: ROUTES.BASE_URL },
@@ -298,7 +298,7 @@ const ProductDetailPage = () => {
           to: ROUTES.PRODUCT_CATALOG,
           state: { category: breadcrumbCategory.toLowerCase() },
         },
-        { label: name || productItem },
+        { label: name },
       ];
 
   return (
