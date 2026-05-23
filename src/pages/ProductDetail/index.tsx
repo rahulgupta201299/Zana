@@ -45,6 +45,7 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
+import { SeoMeta } from "@/components/SeoMeta";
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -212,6 +213,11 @@ const ProductDetailPage = () => {
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: "#181818" }}
       >
+        <SeoMeta
+          title="Product Not Found | Zana Motorcycles"
+          description="The requested Zana motorcycle accessory could not be found."
+          noIndex
+        />
         <div className="text-center">
           <h1 className="text-white text-4xl font-bold mb-4">
             Product Not Found
@@ -303,6 +309,16 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
+      <SeoMeta
+        title={`${name} | ${breadcrumbCategory || "Motorcycle Accessories"} | Zana Motorcycles`}
+        description={
+          shortDescription ||
+          longDescription ||
+          `Shop ${name} motorcycle accessories from Zana Motorcycles.`
+        }
+        image={newImages[0]}
+        type="product"
+      />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <AppBreadcrumb

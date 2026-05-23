@@ -22,7 +22,7 @@ import { onMountChecks } from '../Service/Service'
 import FloatingButtons from '@/components/Floating'
 import { usePageTracking } from '@/hooks/usePageTracking'
 import { useClarityPageTracking } from '@/hooks/useClarityPageTracking'
-import { CanonicalLink } from '@/components/CanonicalLink'
+import { SeoMeta, getRouteSeo } from '@/components/SeoMeta'
 
 function Wrapper() {
 	const location = useLocation()
@@ -32,6 +32,7 @@ function Wrapper() {
 	const isOpenCouponDialog = useSelector((state: TAppStore) => state.cart.isOpenCouponDialog)
 	// const isOpenOrderPopup = useSelector((state: TAppStore) => state.order.openOrderPopup)
 	const outOfStock = useSelector(outOfStockDetails)
+	const routeSeo = getRouteSeo(location.pathname)
 
 	useNetwork()
 	usePageTracking();
@@ -44,7 +45,7 @@ function Wrapper() {
 
 	return (
 		<Box sx={{ minHeight: "100vh" }}>
-			<CanonicalLink />
+			{Object.keys(routeSeo).length > 0 && <SeoMeta {...routeSeo} />}
 			{isLoadig && <Loading />}
 			<Navbar />
 			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: { md: 20.5, xs: 10.5 } }} />}
