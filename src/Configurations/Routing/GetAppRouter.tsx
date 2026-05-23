@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router-dom'
 import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
@@ -47,23 +48,34 @@ const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
 
 function DynamicRedirect() {
   const location = useLocation();
+  const [productRedirectTarget, setProductRedirectTarget] = useState<string | null>()
   const state = AppStore.getState();
   const initialLoading = state.landing.initialLoading
   const isAdminPath = location.pathname === ROUTES.ADMIN || location.pathname.startsWith(`${ROUTES.ADMIN}/`)
 
-  return (
-    <Navigate
-      replace
-      to={
-        isAdminPath
-          ? ROUTES.ADMIN
-          :
-        initialLoading
-          ? ROUTES.PAGE_NOT_FOUND
-          : ROUTES.BASE_URL
-      }
-    />
-  );
+  useEffect(() => {
+    let isActive = true
+    setProductRedirectTarget(null)
+
+    import('@/Constants/ProductRedirectMappings').then(({ getProductRedirectTarget }) => {
+      if (!isActive) return
+      setProductRedirectTarget(getProductRedirectTarget(location.pathname) || null)
+    })
+
+    return () => {
+      isActive = false
+    }
+  }, [location.pathname])
+
+  if (!productRedirectTarget) return <Loading />
+
+  if (productRedirectTarget) return <Navigate replace to={productRedirectTarget} />
+
+  if (isAdminPath) return <Navigate replace to={ROUTES.ADMIN} />
+
+  if (initialLoading) return <Navigate replace to={ROUTES.PAGE_NOT_FOUND} />
+
+  return <Navigate replace to={ROUTES.BASE_URL} />
 }
 
 export const routeObj: RouteObject[] = [
