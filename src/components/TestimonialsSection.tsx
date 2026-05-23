@@ -3,22 +3,22 @@ const TestimonialsSection = () => {
     {
       id: 1,
       text: "The quality is just next level. My bike has never looked or felt better. The crash guards saved my bike on a tough trail. Worth every penny.",
-      name: "John D.",
-      initials: "JD",
+      name: "Ashish Behl",
+      initials: "AB",
       status: "Verified Buyer"
     },
     {
       id: 2,
       text: "I was skeptical about the price, but you get what you pay for. The fit and finish of the panniers are perfect. Installation was a breeze.",
-      name: "Maria S.",
-      initials: "MS",
+      name: "Sandeep Berry",
+      initials: "SB",
       status: "Verified Buyer"
     },
     {
       id: 3,
       text: "Customer service was fantastic. They helped me choose the right skid plate for my model, and it arrived faster than expected. Highly recommend.",
-      name: "Alex L.",
-      initials: "AL",
+      name: "Mandy Singh",
+      initials: "MS",
       status: "Verified Buyer"
     }
   ];
