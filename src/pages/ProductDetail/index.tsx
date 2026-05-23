@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState, Fragment } from "react";
+import { MouseEvent, useEffect, useRef, useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { useSnackbar } from "notistack";
@@ -71,6 +71,8 @@ const ProductDetailPage = () => {
     ShopByProductDetailsType[]
   >([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isProductHydrating, setIsProductHydrating] = useState(true);
+  const productRequestRef = useRef(0);
 
   const dispatch = useDispatch<TAppDispatch>();
   const { enqueueSnackbar } = useSnackbar();
@@ -88,6 +90,7 @@ const ProductDetailPage = () => {
   const isProductLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [productDetailServiceName]),
   );
+  const isProductDetailPending = isProductLoading || isProductHydrating;
 
   function handleBackToProducts() {
     navigate(ROUTES.PRODUCT_CATALOG, {
@@ -134,9 +137,12 @@ const ProductDetailPage = () => {
   }
 
   async function pageOps() {
+    const requestId = productRequestRef.current + 1;
+    productRequestRef.current = requestId;
     const { phoneNumber = "" } = loginDetails;
 
     setQuantity(getQuantityValue || 1);
+    setIsProductHydrating(true);
 
     try {
       const response = (await dispatch(
@@ -145,7 +151,9 @@ const ProductDetailPage = () => {
           phoneNumber,
         }),
       )) as ShopByProductDetailsType;
+      if (productRequestRef.current !== requestId) return;
       setProduct(response);
+      setIsProductHydrating(false);
 
       const { category } = response;
 
@@ -155,8 +163,14 @@ const ProductDetailPage = () => {
           queryParams: { page: 1, limit: 10 },
         }),
       )) as ProductCatalogDetailsType;
+      if (productRequestRef.current !== requestId) return;
       setSuggestedProducts(data);
     } catch (error: any) {
+      if (productRequestRef.current === requestId) {
+        setProduct(null);
+        setSuggestedProducts([]);
+        setIsProductHydrating(false);
+      }
       console.error(error);
     }
   }
@@ -192,7 +206,7 @@ const ProductDetailPage = () => {
     pageOps();
   }, [currency, location.pathname]);
 
-  if (!product && !isProductLoading) {
+  if (!product && !isProductDetailPending) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -302,7 +316,7 @@ const ProductDetailPage = () => {
               {newImages.map((image, index) => {
                 return (
                   <Fragment key={index}>
-                    {!isProductLoading ? (
+                    {!isProductDetailPending ? (
                       <div
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all overflow-hidden ${
                           selectedImageIndex === index
@@ -333,7 +347,7 @@ const ProductDetailPage = () => {
           {/* Center - Main Product Image */}
           <div className="lg:col-span-5">
             <div className=" rounded-lg  h-96 lg:h-[600px] flex items-center justify-center">
-              {!isProductLoading ? (
+              {!isProductDetailPending ? (
                 <img
                   src={newImages[selectedImageIndex]}
                   alt={name}
@@ -348,7 +362,7 @@ const ProductDetailPage = () => {
           {/* Right - Product Info */}
           <div className="lg:col-span-5">
             <div className="flex justify-end gap-4 mb-2">
-              {!isProductLoading ? (
+              {!isProductDetailPending ? (
                 <p className="text-white text-lg mb-2 leading-relaxed">
                   {productCode}
                 </p>
@@ -361,7 +375,7 @@ const ProductDetailPage = () => {
               )}
             </div>
             <div className="flex items-center justify-between">
-              {!isProductLoading ? (
+              {!isProductDetailPending ? (
                 <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
               ) : (
                 <Skeleton
@@ -372,7 +386,7 @@ const ProductDetailPage = () => {
               )}
             </div>
 
-            {!isProductLoading ? (
+            {!isProductDetailPending ? (
               <p className="text-white text-lg mb-6 leading-relaxed">
                 {shortDescription}
               </p>
@@ -385,7 +399,7 @@ const ProductDetailPage = () => {
             )}
 
             <div className="flex items-center justify-between mb-6">
-              {!isProductLoading ? (
+              {!isProductDetailPending ? (
                 <span className="text-2xl font-bold text-white">
                   {currencySymbol} {price?.toLocaleString()}
                 </span>
@@ -397,7 +411,13 @@ const ProductDetailPage = () => {
                 />
               )}
 
-              {quantityAvailable > 0 ? (
+              {isProductDetailPending ? (
+                <Skeleton
+                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
+                  width={180}
+                  height={48}
+                />
+              ) : quantityAvailable > 0 ? (
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -440,7 +460,7 @@ const ProductDetailPage = () => {
               )}
             </div>
 
-            {quantityAvailable > 0 && (
+            {!isProductDetailPending && quantityAvailable > 0 && (
               <div className="flex gap-4 mb-6">
                 <Button
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
