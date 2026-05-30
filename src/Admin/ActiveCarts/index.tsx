@@ -28,8 +28,11 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import PaymentIcon from "@mui/icons-material/Payment";
+import { useSnackbar } from "notistack";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
+  createAdminActiveCartPaymentLink,
   downloadAdminActiveCartsCsv,
   getAdminActiveCarts,
   AdminActiveCartFilters,
@@ -53,7 +56,7 @@ const DEFAULT_SORT_ORDER: AdminActiveCartSortOrder = "desc";
 
 const NULL_EMAIL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
-const TABLE_COL_SPAN = 6;
+const TABLE_COL_SPAN = 7;
 const DEFAULT_ISD_CODE = "+91";
 
 function normalizeIsdCode(isd: string): string {
@@ -158,10 +161,20 @@ function ProductThumbCell(props: { item: AdminActiveCartLineItem }) {
 
 function Row(props: {
   cart: AdminActiveCartRecord;
+  rowId: string;
   expanded: boolean;
+  paymentLinkLoading: boolean;
   onToggleExpand: () => void;
+  onGeneratePaymentLink: (cart: AdminActiveCartRecord, rowId: string) => void;
 }) {
-  const { cart, expanded, onToggleExpand } = props;
+  const {
+    cart,
+    rowId,
+    expanded,
+    paymentLinkLoading,
+    onToggleExpand,
+    onGeneratePaymentLink,
+  } = props;
 
   const items = cart.items ?? [];
 
@@ -178,6 +191,7 @@ function Row(props: {
   const shippingCost = cart.shippingCost ?? 0;
   const discountAmount = cart.discountAmount ?? 0;
   const codCharges = cart.codCharges ?? 0;
+  const hasPhoneNumber = Boolean((cart.phoneNumber ?? "").trim());
 
   return (
     <React.Fragment>
@@ -212,6 +226,35 @@ function Row(props: {
         </TableCell>
         <TableCell>
           {formatUtcToIstDateTime(cart.updatedAt ?? null, NULL_EMAIL_PLACEHOLDER)}
+        </TableCell>
+        <TableCell>
+          <Tooltip
+            title={
+              hasPhoneNumber
+                ? "Generate payment link"
+                : "Phone number is required"
+            }
+            enterDelay={300}
+          >
+            <span>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={
+                  paymentLinkLoading ? (
+                    <CircularProgress size={14} />
+                  ) : (
+                    <PaymentIcon fontSize="small" />
+                  )
+                }
+                disabled={!hasPhoneNumber || paymentLinkLoading}
+                onClick={() => onGeneratePaymentLink(cart, rowId)}
+                sx={{ whiteSpace: "nowrap" }}
+              >
+                Payment Link
+              </Button>
+            </span>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -312,7 +355,9 @@ export default function ActiveCarts() {
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [paymentLinkLoadingCartId, setPaymentLinkLoadingCartId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -400,6 +445,31 @@ export default function ActiveCarts() {
       setError(e instanceof Error ? e.message : "Failed to download active carts CSV.");
     } finally {
       setDownloadLoading(false);
+    }
+  };
+
+  const handleGeneratePaymentLink = async (
+    cart: AdminActiveCartRecord,
+    rowId: string,
+  ) => {
+    const phoneNumber = (cart.phoneNumber ?? "").trim();
+
+    if (!phoneNumber) {
+      enqueueSnackbar("Phone number is required to generate payment link.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    setPaymentLinkLoadingCartId(rowId);
+    try {
+      const response = await createAdminActiveCartPaymentLink(phoneNumber);
+      enqueueSnackbar(response.message, { variant: "success" });
+    } catch (error: any) {
+      const { message = 'Failed to generate payment link.'} = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setPaymentLinkLoadingCartId(null);
     }
   };
 
@@ -640,6 +710,7 @@ export default function ActiveCarts() {
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Subtotal</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Total Amount</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Last Updated</TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -662,10 +733,13 @@ export default function ActiveCarts() {
                     <Row
                       key={rowId}
                       cart={cart}
+                      rowId={rowId}
                       expanded={expandedCartId === rowId}
+                      paymentLinkLoading={paymentLinkLoadingCartId === rowId}
                       onToggleExpand={() => {
                         toggleExpandedRow(rowId);
                       }}
+                      onGeneratePaymentLink={handleGeneratePaymentLink}
                     />
                   );
                 })
