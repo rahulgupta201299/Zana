@@ -80,10 +80,21 @@ function productDisplayName(item: AdminActiveCartLineItem): string {
   return "Unknown Product";
 }
 
-function formatShippingAddress(addr: AdminActiveCartAddress | null | undefined): string {
+function formatShippingAddress(
+  addr: AdminActiveCartAddress | null | undefined,
+): string {
   if (addr == null) return "";
-  const line3 = [addr.city, addr.state, addr.postalCode].filter((s) => typeof s === "string" && s.trim()).join(", ");
-  const lines = [addr.fullName, addr.phone, addr.addressLine1, addr.addressLine2, line3, addr.country]
+  const line3 = [addr.city, addr.state, addr.postalCode]
+    .filter((s) => typeof s === "string" && s.trim())
+    .join(", ");
+  const lines = [
+    addr.fullName,
+    addr.phone,
+    addr.addressLine1,
+    addr.addressLine2,
+    line3,
+    addr.country,
+  ]
     .map((s) => (typeof s === "string" ? s.trim() : ""))
     .filter(Boolean);
   return lines.join("\n");
@@ -97,7 +108,9 @@ function appliedCouponDisplay(cart: AdminActiveCartRecord): string {
   return name || code;
 }
 
-function productImageUrl(product: AdminActiveCartProduct | null): string | null {
+function productImageUrl(
+  product: AdminActiveCartProduct | null,
+): string | null {
   if (product === null) return null;
   if (typeof product.imageUrl === "string" && product.imageUrl.trim()) {
     return product.imageUrl;
@@ -181,9 +194,11 @@ function Row(props: {
   const symbol = cart.currencySymbol ?? "";
 
   const formattedShipping = formatShippingAddress(cart.shippingAddress ?? null);
-  const shippingAddressText = formattedShipping.length > 0 ? formattedShipping : NULL_EMAIL_PLACEHOLDER;
+  const shippingAddressText =
+    formattedShipping.length > 0 ? formattedShipping : NULL_EMAIL_PLACEHOLDER;
   const couponLine = appliedCouponDisplay(cart);
-  const appliedCouponText = couponLine.length > 0 ? couponLine : NULL_EMAIL_PLACEHOLDER;
+  const appliedCouponText =
+    couponLine.length > 0 ? couponLine : NULL_EMAIL_PLACEHOLDER;
 
   const subtotal = cart.subtotal ?? 0;
   const totalAmount = cart.totalAmount ?? 0;
@@ -191,7 +206,24 @@ function Row(props: {
   const shippingCost = cart.shippingCost ?? 0;
   const discountAmount = cart.discountAmount ?? 0;
   const codCharges = cart.codCharges ?? 0;
+  const REQUIRED_ADDRESS_FIELDS = [
+    "fullName",
+    "addressLine1",
+    "city",
+    "state",
+    "postalCode",
+    "country",
+    "phone",
+  ] as const;
+
+  type AddressField = (typeof REQUIRED_ADDRESS_FIELDS)[number];
+
+  const isValidAddress = (address: AdminActiveCartAddress): boolean =>
+    REQUIRED_ADDRESS_FIELDS.every((field) => Boolean(address?.[field]?.trim()));
+
   const hasPhoneNumber = Boolean((cart.phoneNumber ?? "").trim());
+  const hasValidAddresses =
+    isValidAddress(cart.shippingAddress) && isValidAddress(cart.billingAddress);
 
   return (
     <React.Fragment>
@@ -210,7 +242,9 @@ function Row(props: {
             {(cart.phoneNumber ?? "").trim() ? (cart.phoneNumber ?? "") : "N/A"}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {cart.emailId === null || cart.emailId === undefined || cart.emailId === ""
+            {cart.emailId === null ||
+            cart.emailId === undefined ||
+            cart.emailId === ""
               ? NULL_EMAIL_PLACEHOLDER
               : cart.emailId}
           </Typography>
@@ -225,14 +259,19 @@ function Row(props: {
           {totalAmount}
         </TableCell>
         <TableCell>
-          {formatUtcToIstDateTime(cart.updatedAt ?? null, NULL_EMAIL_PLACEHOLDER)}
+          {formatUtcToIstDateTime(
+            cart.updatedAt ?? null,
+            NULL_EMAIL_PLACEHOLDER,
+          )}
         </TableCell>
         <TableCell>
           <Tooltip
             title={
-              hasPhoneNumber
-                ? "Generate payment link"
-                : "Phone number is required"
+              !hasValidAddresses
+                ? "Update cart with valid shipping and billing addresses"
+                : !hasPhoneNumber
+                  ? "Phone number is required"
+                  : "Generate payment link"
             }
             enterDelay={300}
           >
@@ -247,7 +286,9 @@ function Row(props: {
                     <PaymentIcon fontSize="small" />
                   )
                 }
-                disabled={!hasPhoneNumber || paymentLinkLoading}
+                disabled={
+                  !hasPhoneNumber || paymentLinkLoading || !hasValidAddresses
+                }
                 onClick={() => onGeneratePaymentLink(cart, rowId)}
                 sx={{ whiteSpace: "nowrap" }}
               >
@@ -258,10 +299,26 @@ function Row(props: {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={TABLE_COL_SPAN}>
+        <TableCell
+          style={{ paddingBottom: 0, paddingTop: 0 }}
+          colSpan={TABLE_COL_SPAN}
+        >
           <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 2, p: 2, bgcolor: "#f8fafc", borderRadius: 2, border: "1px solid #e2e8f0" }}>
-              <Typography variant="subtitle1" gutterBottom component="div" fontWeight="bold">
+            <Box
+              sx={{
+                margin: 2,
+                p: 2,
+                bgcolor: "#f8fafc",
+                borderRadius: 2,
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                component="div"
+                fontWeight="bold"
+              >
                 Cart Items Details
               </Typography>
               <Table size="small" aria-label="cart items">
@@ -281,7 +338,9 @@ function Row(props: {
                         <TableCell component="th" scope="row">
                           <ProductThumbCell item={item} />
                         </TableCell>
-                        <TableCell>{item.product?.productCode || NULL_EMAIL_PLACEHOLDER}</TableCell>
+                        <TableCell>
+                          {item.product?.productCode || NULL_EMAIL_PLACEHOLDER}
+                        </TableCell>
                         <TableCell>
                           {item.currencySymbol ?? symbol}
                           {item.price ?? 0}
@@ -295,50 +354,69 @@ function Row(props: {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">No items found</TableCell>
+                      <TableCell colSpan={5} align="center">
+                        No items found
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
               <Divider sx={{ my: 2 }} />
-              <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                gutterBottom
+              >
                 Shipping address
               </Typography>
-              <Typography variant="body2" sx={{ whiteSpace: "pre-line", mb: 2 }}>
+              <Typography
+                variant="body2"
+                sx={{ whiteSpace: "pre-line", mb: 2 }}
+              >
                 {shippingAddressText}
               </Typography>
               <Box sx={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Tax Amount:</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Tax Amount:
+                  </Typography>
                   <Typography variant="body2">
                     {symbol}
                     {taxAmount}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Shipping Cost:</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Shipping Cost:
+                  </Typography>
                   <Typography variant="body2">
                     {symbol}
                     {shippingCost}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Discount Amount:</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Discount Amount:
+                  </Typography>
                   <Typography variant="body2" color="error">
-                    -
-                    {symbol}
+                    -{symbol}
                     {discountAmount}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">COD charges:</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    COD charges:
+                  </Typography>
                   <Typography variant="body2">
                     {symbol}
                     {codCharges}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Applied coupon:</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Applied coupon:
+                  </Typography>
                   <Typography variant="body2">{appliedCouponText}</Typography>
                 </Box>
               </Box>
@@ -355,7 +433,9 @@ export default function ActiveCarts() {
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
-  const [paymentLinkLoadingCartId, setPaymentLinkLoadingCartId] = useState<string | null>(null);
+  const [paymentLinkLoadingCartId, setPaymentLinkLoadingCartId] = useState<
+    string | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -369,7 +449,8 @@ export default function ActiveCarts() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [emailId, setEmailId] = useState("");
   const [sortBy, setSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
-  const [sortOrder, setSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
+  const [sortOrder, setSortOrder] =
+    useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
   /** At most one expanded cart row (accordion). */
   const [expandedCartId, setExpandedCartId] = useState<string | null>(null);
@@ -379,8 +460,10 @@ export default function ActiveCarts() {
   const [appliedIsdCode, setAppliedIsdCode] = useState(DEFAULT_ISD_CODE);
   const [appliedPhoneNumber, setAppliedPhoneNumber] = useState("");
   const [appliedEmailId, setAppliedEmailId] = useState("");
-  const [appliedSortBy, setAppliedSortBy] = useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
-  const [appliedSortOrder, setAppliedSortOrder] = useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
+  const [appliedSortBy, setAppliedSortBy] =
+    useState<AdminActiveCartSortBy>(DEFAULT_SORT_BY);
+  const [appliedSortOrder, setAppliedSortOrder] =
+    useState<AdminActiveCartSortOrder>(DEFAULT_SORT_ORDER);
 
   const load = useCallback(
     async (apiPage: number, limit: number) => {
@@ -391,14 +474,16 @@ export default function ActiveCarts() {
         endDate: appliedEndDate || undefined,
         sortBy: appliedSortBy,
         sortOrder: appliedSortOrder,
-        phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+        phoneNumber:
+          buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
         emailId: appliedEmailId.trim() || undefined,
       };
       setLoading(true);
       setError(null);
       try {
         const raw = await getAdminActiveCarts(filters);
-        const { carts: nextCarts, pagination } = parseAdminActiveCartsResponse(raw);
+        const { carts: nextCarts, pagination } =
+          parseAdminActiveCartsResponse(raw);
         setCarts(nextCarts);
         setTotalCarts(pagination.totalCarts ?? 0);
         const serverPage = Math.max(1, pagination.currentPage ?? apiPage);
@@ -406,7 +491,8 @@ export default function ActiveCarts() {
       } catch (e: unknown) {
         setCarts([]);
         setTotalCarts(0);
-        const message = e instanceof Error ? e.message : "Failed to load active carts.";
+        const message =
+          e instanceof Error ? e.message : "Failed to load active carts.";
         setError(message);
       } finally {
         setLoading(false);
@@ -432,7 +518,8 @@ export default function ActiveCarts() {
     endDate: appliedEndDate || undefined,
     sortBy: appliedSortBy,
     sortOrder: appliedSortOrder,
-    phoneNumber: buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
+    phoneNumber:
+      buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
     emailId: appliedEmailId.trim() || undefined,
   });
 
@@ -442,7 +529,9 @@ export default function ActiveCarts() {
     try {
       await downloadAdminActiveCartsCsv(getAppliedDownloadFilters());
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to download active carts CSV.");
+      setError(
+        e instanceof Error ? e.message : "Failed to download active carts CSV.",
+      );
     } finally {
       setDownloadLoading(false);
     }
@@ -466,7 +555,7 @@ export default function ActiveCarts() {
       const response = await createAdminActiveCartPaymentLink(phoneNumber);
       enqueueSnackbar(response.message, { variant: "success" });
     } catch (error: any) {
-      const { message = 'Failed to generate payment link.'} = error;
+      const { message = "Failed to generate payment link." } = error;
       enqueueSnackbar(message, { variant: "error" });
     } finally {
       setPaymentLinkLoadingCartId(null);
@@ -479,7 +568,9 @@ export default function ActiveCarts() {
       .then((codes) => {
         if (!active) return;
         setIsdCodes(codes);
-        const india = codes.find((code) => normalizeIsdCode(code.isd) === DEFAULT_ISD_CODE);
+        const india = codes.find(
+          (code) => normalizeIsdCode(code.isd) === DEFAULT_ISD_CODE,
+        );
         if (india) {
           setIsdCode(normalizeIsdCode(india.isd));
           setAppliedIsdCode(normalizeIsdCode(india.isd));
@@ -521,29 +612,29 @@ export default function ActiveCarts() {
   };
 
   const isApplyDisabled =
-    startDate === appliedStartDate
-    && endDate === appliedEndDate
-    && isdCode === appliedIsdCode
-    && phoneNumber.trim() === appliedPhoneNumber
-    && emailId.trim() === appliedEmailId
-    && sortBy === appliedSortBy
-    && sortOrder === appliedSortOrder;
+    startDate === appliedStartDate &&
+    endDate === appliedEndDate &&
+    isdCode === appliedIsdCode &&
+    phoneNumber.trim() === appliedPhoneNumber &&
+    emailId.trim() === appliedEmailId &&
+    sortBy === appliedSortBy &&
+    sortOrder === appliedSortOrder;
 
   const isClearDisabled =
-    startDate === ""
-    && endDate === ""
-    && isdCode === DEFAULT_ISD_CODE
-    && phoneNumber === ""
-    && emailId === ""
-    && appliedStartDate === ""
-    && appliedEndDate === ""
-    && appliedIsdCode === DEFAULT_ISD_CODE
-    && appliedPhoneNumber === ""
-    && appliedEmailId === ""
-    && sortBy === DEFAULT_SORT_BY
-    && sortOrder === DEFAULT_SORT_ORDER
-    && appliedSortBy === DEFAULT_SORT_BY
-    && appliedSortOrder === DEFAULT_SORT_ORDER;
+    startDate === "" &&
+    endDate === "" &&
+    isdCode === DEFAULT_ISD_CODE &&
+    phoneNumber === "" &&
+    emailId === "" &&
+    appliedStartDate === "" &&
+    appliedEndDate === "" &&
+    appliedIsdCode === DEFAULT_ISD_CODE &&
+    appliedPhoneNumber === "" &&
+    appliedEmailId === "" &&
+    sortBy === DEFAULT_SORT_BY &&
+    sortOrder === DEFAULT_SORT_ORDER &&
+    appliedSortBy === DEFAULT_SORT_BY &&
+    appliedSortOrder === DEFAULT_SORT_ORDER;
 
   const todayIso = formatLocalIsoDate(new Date());
   const startDateInputMax = endDate ? minIsoDate(todayIso, endDate) : todayIso;
@@ -555,7 +646,10 @@ export default function ActiveCarts() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, minHeight: "100vh", bgcolor: "#f8fafc" }}>
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold", color: "#111827" }}>
+      <Typography
+        variant="h5"
+        sx={{ mb: 3, fontWeight: "bold", color: "#111827" }}
+      >
         Active Carts
       </Typography>
 
@@ -567,7 +661,13 @@ export default function ActiveCarts() {
 
       <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack spacing={2}>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap" useFlexGap alignItems="center">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            flexWrap="wrap"
+            useFlexGap
+            alignItems="center"
+          >
             <IsdCodeAutocomplete
               id="active-cart-isd-code"
               options={isdCodes}
@@ -640,13 +740,20 @@ export default function ActiveCarts() {
                 labelId="active-cart-sort-by"
                 label="Sort by"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as AdminActiveCartSortBy)}
+                onChange={(e) =>
+                  setSortBy(e.target.value as AdminActiveCartSortBy)
+                }
               >
                 <MenuItem value="updatedAt">Last updated</MenuItem>
                 <MenuItem value="totalAmount">Cart total</MenuItem>
               </Select>
             </FormControl>
-            <Stack direction="row" spacing={0.5} alignItems="center" aria-label="Sort direction">
+            <Stack
+              direction="row"
+              spacing={0.5}
+              alignItems="center"
+              aria-label="Sort direction"
+            >
               <Tooltip title="Ascending" enterDelay={300}>
                 <IconButton
                   size="small"
@@ -678,13 +785,20 @@ export default function ActiveCarts() {
               onClick={handleApplyFilters}
               disabled={isApplyDisabled}
               sx={{
-                bgcolor: isApplyDisabled ? "action.disabledBackground" : "#e10600",
+                bgcolor: isApplyDisabled
+                  ? "action.disabledBackground"
+                  : "#e10600",
                 "&:hover": { bgcolor: "#c00500" },
               }}
             >
               Apply filters
             </Button>
-            <Button variant="outlined" onClick={handleClearFilters} disabled={isClearDisabled} color="inherit">
+            <Button
+              variant="outlined"
+              onClick={handleClearFilters}
+              disabled={isClearDisabled}
+              color="inherit"
+            >
               Clear
             </Button>
             <Button
@@ -705,25 +819,47 @@ export default function ActiveCarts() {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50, bgcolor: "#f1f5f9" }} />
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>User</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Items</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Subtotal</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Total Amount</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Last Updated</TableCell>
-                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Action</TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  User
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  Items
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  Subtotal
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  Total Amount
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  Last Updated
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={TABLE_COL_SPAN} align="center" sx={{ py: 3 }}>
+                  <TableCell
+                    colSpan={TABLE_COL_SPAN}
+                    align="center"
+                    sx={{ py: 3 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : carts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={TABLE_COL_SPAN} align="center" sx={{ py: 3 }}>
-                    <Typography color="text.secondary">No active carts found</Typography>
+                  <TableCell
+                    colSpan={TABLE_COL_SPAN}
+                    align="center"
+                    sx={{ py: 3 }}
+                  >
+                    <Typography color="text.secondary">
+                      No active carts found
+                    </Typography>
                   </TableCell>
                 </TableRow>
               ) : (
