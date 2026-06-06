@@ -91,7 +91,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
   }
 
   const handleRequestOtp = async () => {
-    const phoneRegex = /^[6-9]\d{9}$/;
+    const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone)) {
       setPhoneError("Enter a valid 10-digit phone number");
       return;
