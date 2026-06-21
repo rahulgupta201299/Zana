@@ -23,6 +23,7 @@ import {
   ShopByProductDetailsType,
 } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
+import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 import { handleSocialMedia } from "@/Utils/StringUtils";
 import {
   BikeCategoryEnum,
@@ -156,16 +157,27 @@ const ProductDetailPage = () => {
       setProduct(response);
       setIsProductHydrating(false);
 
-      const { category } = response;
+      const { category, isBikeSpecific, model } = response;
 
-      const { data } = (await dispatch(
-        CategoryProductService({
-          category,
-          queryParams: { page: 1, limit: 10 },
-        }),
-      )) as ProductCatalogDetailsType;
+      let relatedProductsData: ShopByProductDetailsType[] = [];
+
+      if (isBikeSpecific) {
+        relatedProductsData = (await dispatch(
+          BikeProductService({ modelId: model, category, queryParams: { page: 1, limit: 10 } })
+        )) as ShopByProductDetailsType[];
+      } else {
+        const { data } = (await dispatch(
+          CategoryProductService({
+            category,
+            queryParams: { page: 1, limit: 10 },
+          }),
+        )) as ProductCatalogDetailsType;
+
+        relatedProductsData = data;
+      }
+
       if (productRequestRef.current !== requestId) return;
-      setSuggestedProducts(data);
+      setSuggestedProducts(relatedProductsData);
     } catch (error: any) {
       if (productRequestRef.current === requestId) {
         setProduct(null);
