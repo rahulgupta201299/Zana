@@ -1,7 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import traceActionsCreator from "../traceActionsCreator"
 import { SLICE_NAME } from "./Selectors";
-import { GeolocationType } from "./Types";
+import { GeolocationType, IpLocationCurrencyType } from "./Types";
 
 export const newArrivalsName = `${SLICE_NAME}/newArrivals`
 export const newArrivalsActions = traceActionsCreator(newArrivalsName)
@@ -24,3 +24,6 @@ export const initialLoadingActions = createAction(
 
 export const geoLocationName = `${SLICE_NAME}/geoLocation`
 export const geoLocationActions = traceActionsCreator<GeolocationType>(geoLocationName)
+
+export const ipLocationCurrencyName = `${SLICE_NAME}/ipLocationCurrency`
+export const ipLocationCurrencyActions = traceActionsCreator<IpLocationCurrencyType>(ipLocationCurrencyName)

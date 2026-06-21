@@ -10,27 +10,30 @@ import { useSelector } from "react-redux";
 import { getLoginDetails, isdCodeDetails } from "@/Redux/Auth/Selectors";
 import getIsdListServiceAction from "@/Redux/Auth/Services/GetIsdCodes";
 import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
-import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
 
-import { GeolocationType } from "@/Redux/Landing/Types";
+import ipLocationCurrencyServiceAction from "@/Redux/Landing/Services/IpLocationCurrency";
+import { IpLocationCurrencyType } from "@/Redux/Landing/Types";
 
-function getCurrentPosition(): Promise<GeolocationPosition> {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error("Geolocation is not supported"));
-      return;
-    }
+// import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
+// import { GeolocationType } from "@/Redux/Landing/Types";
 
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      enableHighAccuracy: false,
-      maximumAge: 30 * 60 * 1000,
-      timeout: 5000,
-    });
-  });
-}
+// function getCurrentPosition(): Promise<GeolocationPosition> {
+//   return new Promise((resolve, reject) => {
+//     if (!navigator.geolocation) {
+//       reject(new Error("Geolocation is not supported"));
+//       return;
+//     }
 
-function isGeolocationResponse(response: unknown): response is GeolocationType {
-  return !!response && typeof response === "object" && "currencyDetails" in response;
+//     navigator.geolocation.getCurrentPosition(resolve, reject, {
+//       enableHighAccuracy: false,
+//       maximumAge: 30 * 60 * 1000,
+//       timeout: 5000,
+//     });
+//   });
+// }
+
+function isIpLocationCurrencyResponse(response: unknown): response is IpLocationCurrencyType {
+  return !!response && typeof response === "object" && "ip" in response && "currencyDetails" in response;
 }
 
 export function useNetwork() {
@@ -56,12 +59,14 @@ export function useNetwork() {
     if (geolocationCurrencyLoaded.current) return;
 
     try {
-      const position = await getCurrentPosition();
-      const { latitude: lat, longitude: lng } = position.coords;
-      const geoLocation = await dispatch(geoLocationServiceAction({ lat, lng }));
-      if (!isGeolocationResponse(geoLocation)) return;
+      // const position = await getCurrentPosition();
+      // const { latitude: lat, longitude: lng } = position.coords;
+      // const geoLocation = await dispatch(geoLocationServiceAction({ lat, lng }));
+      const ipLocationCurrency = await dispatch(ipLocationCurrencyServiceAction());
+      if (!isIpLocationCurrencyResponse(ipLocationCurrency)) return;
 
-      const currency = geoLocation.currency || geoLocation.currencyDetails?.code;
+      geolocationCurrencyLoaded.current = true;
+      const currency = ipLocationCurrency.currency || ipLocationCurrency.currencyDetails?.code;
 
      
     } catch (error) {

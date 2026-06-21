@@ -7,15 +7,21 @@ export type CurrencyType = {
   exchangeRate: number
 }
 
-export type GeolocationType = {
-        countryCode: string,
-        countryName: string,
-        currency: string,
-        currencyDetails: {
-            code: string,
-            name: string,
-            symbol: string
-        }
+export type CountryCurrencyDetailsType = {
+  code: string;
+  name: string;
+  symbol: string;
+};
+
+export interface GeolocationType {
+  countryCode: string;
+  countryName: string;
+  currency: string;
+  currencyDetails: CountryCurrencyDetailsType;
+};
+
+export interface IpLocationCurrencyType extends GeolocationType {
+  ip: string;
 };
 
 export type T_LANDING_REDUCER = {
