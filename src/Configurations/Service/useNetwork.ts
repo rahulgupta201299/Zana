@@ -32,10 +32,6 @@ import { IpLocationCurrencyType } from "@/Redux/Landing/Types";
 //   });
 // }
 
-function isIpLocationCurrencyResponse(response: unknown): response is IpLocationCurrencyType {
-  return !!response && typeof response === "object" && "ip" in response && "currencyDetails" in response;
-}
-
 export function useNetwork() {
   const state = AppStore.getState();
   const dispatch = AppStore.dispatch;
@@ -55,20 +51,19 @@ export function useNetwork() {
 
   const retry = autoRetry()
 
-  async function setCurrencyFromGeolocation() {
+  async function setCurrencyFromGeolocation(): Promise<IpLocationCurrencyType> {
     if (geolocationCurrencyLoaded.current) return;
 
     try {
       // const position = await getCurrentPosition();
       // const { latitude: lat, longitude: lng } = position.coords;
       // const geoLocation = await dispatch(geoLocationServiceAction({ lat, lng }));
-      const ipLocationCurrency = await dispatch(ipLocationCurrencyServiceAction());
-      if (!isIpLocationCurrencyResponse(ipLocationCurrency)) return;
+      const ipLocationCurrency = await dispatch(ipLocationCurrencyServiceAction()) as IpLocationCurrencyType;
 
       geolocationCurrencyLoaded.current = true;
-      const currency = ipLocationCurrency.currency || ipLocationCurrency.currencyDetails?.code;
+      // const currency = ipLocationCurrency.currency || ipLocationCurrency.currencyDetails?.code;
 
-     
+     return ipLocationCurrency;
     } catch (error) {
       return;
     }
@@ -78,12 +73,13 @@ export function useNetwork() {
     const requests: Promise<any>[] = []
   
     try {
-      await setCurrencyFromGeolocation();
+      const ipLocationCurrency = await setCurrencyFromGeolocation();
+      const newCurrency = ipLocationCurrency?.currency || ipLocationCurrency?.currencyDetails?.code;
 
       if (!shopByBike.length) requests.push(retry(() => dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))))
       if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))
       if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
-      if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB()))
+      if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB({ newCurrency })))
       if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
       if (!currencies.length) requests.push(retry(()  => dispatch(currencyListServiceAction())))
 
