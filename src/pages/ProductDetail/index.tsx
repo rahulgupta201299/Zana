@@ -38,6 +38,7 @@ import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import {
+  bikeProductServiceName,
   categoryProductServiceName,
   productDetailServiceName,
 } from "@/Redux/Product/Actions";
@@ -86,7 +87,7 @@ const ProductDetailPage = () => {
   const currency = useSelector(getSelectedCurrency);
 
   const isCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [categoryProductServiceName]),
+    isServiceLoading(state, [categoryProductServiceName, bikeProductServiceName]),
   );
 
   const isProductLoading = useSelector<TAppStore, boolean>((state) =>
