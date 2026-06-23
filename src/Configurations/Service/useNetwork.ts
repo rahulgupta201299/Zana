@@ -13,6 +13,8 @@ import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
 
 import ipLocationCurrencyServiceAction from "@/Redux/Landing/Services/IpLocationCurrency";
 import { IpLocationCurrencyType } from "@/Redux/Landing/Types";
+import { createProductConverter } from "@/components/Navbar/Utils";
+import { cartModifyActions } from "@/Redux/Cart/Action";
 
 // import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
 // import { GeolocationType } from "@/Redux/Landing/Types";
@@ -75,6 +77,11 @@ export function useNetwork() {
     try {
       const ipLocationCurrency = await setCurrencyFromGeolocation();
       const newCurrency = ipLocationCurrency?.currency || ipLocationCurrency?.currencyDetails?.code;
+
+      if (!phoneNumber && newCurrency) {
+        const newCartDetail = createProductConverter(newCurrency);
+        dispatch(cartModifyActions.success(newCartDetail));
+      }
 
       if (!shopByBike.length) requests.push(retry(() => dispatch(ShopByBikeService({ category: BikeCategoryEnum.ZANA }))))
       if (!zProBike.length) requests.push(retry(() => dispatch(ZProBikeService({ category: BikeCategoryEnum.ZPRO }))))

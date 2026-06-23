@@ -3,6 +3,7 @@ import { MenuItemsName } from "./Constant";
 import { MenuOptionsType } from "./Types";
 import AppStore from "@/Configurations/AppStore";
 import { BikeCategoryEnum } from "@/Constants/AppConstant";
+import { CURRENCY_LIST, CURRENCY_SYMBOL } from "@/Constants/AppConstant";
 
 export const getMenuOption = (): MenuOptionsType[] => {
   const state = AppStore.getState();
@@ -70,4 +71,42 @@ export function convertCurrency(originalPrice: number, toCurrency: string) {
   const result = originalPrice * 1.7 * rates;
   
   return Number(result.toFixed(2)); // rounded to 2 decimals
+}
+
+export function createProductConverter(newCurrency: string) {
+  const state = AppStore.getState();
+  const cartDetail = state.cart.cartDetail;
+  const currencies = state.landing.currencyList;
+
+  const updatedCartDetail = structuredClone(cartDetail);
+
+  updatedCartDetail.currency = newCurrency;
+
+  const newCurrencySymbol = currencies.find(item => item.code === newCurrency)?.symbol || CURRENCY_SYMBOL.INR;
+  updatedCartDetail.currencySymbol = newCurrencySymbol;
+
+  updatedCartDetail.processedItems = updatedCartDetail.processedItems.map((item) => {
+    const price = newCurrency === CURRENCY_LIST.INR ? item.product.originalPrice : convertCurrency(item.product.originalPrice, newCurrency);
+    const totalPrice = item.quantity * price;
+
+    return {
+      ...item,
+      currency: newCurrency,
+      currencySymbol: newCurrencySymbol,
+      price,
+      totalPrice,
+      product: {
+        ...item.product,
+        price,
+        currency: newCurrency,
+        currencySymbol: newCurrencySymbol,
+      },
+    }
+  })
+
+  const totalAmount = updatedCartDetail.processedItems.reduce((acc, item) => acc + item.totalPrice, 0);
+
+  updatedCartDetail.totalAmount = updatedCartDetail.subtotal = totalAmount;
+
+  return updatedCartDetail;
 }
