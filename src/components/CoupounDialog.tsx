@@ -392,7 +392,7 @@ export default function CouponDialog() {
 							</Box>
 
 							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-								<Typography sx={{ color: "#10B981", fontWeight: 600 }}>
+								<Typography sx={{ color: "#10B981", fontWeight: 600, whiteSpace: "nowrap" }}>
 									- {currencySymbol}{discountAmount}
 								</Typography>
 

@@ -1593,7 +1593,8 @@ export default function CheckoutPage() {
                     transition: "0.2s",
                     display: "flex",
                     alignItems: "center",
-                    gap: "24px",
+                    gap: { xs: "16px", md: "24px" },
+                    minWidth: 0,
                   }}
                 >
                   <Box
@@ -1621,15 +1622,22 @@ export default function CheckoutPage() {
                   <Box
                     sx={{
                       flex: 1,
+                      minWidth: 0,
                       display: "flex",
                       flexDirection: "column",
                       gap: "16px",
                     }}
                   >
-                    <Box>
+                    <Box sx={{ minWidth: 0 }}>
                       <Typography
                         fontWeight="900"
                         fontSize={{ xs: 16, md: 18 }}
+                        sx={{
+                          overflow: "hidden",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                        }}
                       >
                         {name}
                       </Typography>
@@ -1638,16 +1646,23 @@ export default function CheckoutPage() {
                     <Box
                       sx={{
                         display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: { xs: "stretch", sm: "center" },
+                        gap: { xs: 1, sm: 0 },
                       }}
                     >
                       <Typography
                         color="#FFFFFF"
                         fontWeight={300}
-                        fontSize={{ xs: 18, md: 22 }}
+                        fontSize={{ xs: 16, md: 22 }}
+                        sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
                       >
-                        {currencySymbol} {price}
+                        {currencySymbol}{" "}
+                        {price?.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </Typography>
 
                       <Box
@@ -1656,6 +1671,8 @@ export default function CheckoutPage() {
                           alignItems: "center",
                           bgcolor: "rgba(255,255,255,0.1)",
                           borderRadius: 2,
+                          flexShrink: 0,
+                          alignSelf: { xs: "flex-end", sm: "auto" },
                         }}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -1663,13 +1680,20 @@ export default function CheckoutPage() {
                           onClick={() => decrementToCart(productId)}
                           sx={{
                             color: "white",
+                            p: { xs: 0.75, md: 1 },
                             "&:hover": { color: "yellow" },
                           }}
                         >
                           <Minus size={18} />
                         </IconButton>
 
-                        <Typography sx={{ width: 30, textAlign: "center" }}>
+                        <Typography
+                          sx={{
+                            width: { xs: 24, md: 30 },
+                            textAlign: "center",
+                            flexShrink: 0,
+                          }}
+                        >
                           {quantity}
                         </Typography>
 
@@ -1683,6 +1707,7 @@ export default function CheckoutPage() {
                           }
                           sx={{
                             color: "white",
+                            p: { xs: 0.75, md: 1 },
                             "&:hover": { color: "yellow" },
                             "&.Mui-disabled": { color: "gray" },
                           }}
@@ -1700,9 +1725,14 @@ export default function CheckoutPage() {
 
           {discountAmount > 0 && (
             <>
-              <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6">
-                <p className="text-green-400 text-sm text-center">
-                  🎉 You saved {currencySymbol} {discountAmount}!
+              <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 mt-6 overflow-hidden">
+                <p className="text-green-400 text-sm text-center whitespace-nowrap">
+                  🎉 You saved {currencySymbol}{" "}
+                  {discountAmount?.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                  !
                 </p>
               </div>
               <Box
@@ -1712,10 +1742,11 @@ export default function CheckoutPage() {
                   mb: 1,
                   color: "#4ade80",
                   mt: 3,
+                  gap: 1,
                 }}
               >
-                <Typography>Discount ({couponCode})</Typography>
-                <Typography>
+                <Typography sx={{ minWidth: 0 }}>Discount ({couponCode})</Typography>
+                <Typography sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
                   - {currencySymbol}{" "}
                   {discountAmount?.toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
@@ -1736,13 +1767,15 @@ export default function CheckoutPage() {
               justifyContent: "space-between",
               mt: "16px",
               color: "#F5F4F4",
+              gap: 1,
             }}
           >
-            <Typography>Subtotal</Typography>
-            <Typography fontWeight={600}>
-              {currencySymbol} {subtotal?.toLocaleString('en-IN', {
+            <Typography sx={{ flexShrink: 0 }}>Subtotal</Typography>
+            <Typography fontWeight={600} sx={{ whiteSpace: "nowrap" }}>
+              {currencySymbol}{" "}
+              {subtotal?.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               })}
             </Typography>
           </Box>
@@ -1754,13 +1787,17 @@ export default function CheckoutPage() {
                 justifyContent: "space-between",
                 mt: "16px",
                 color: "#F5F4F4",
+                gap: 1,
               }}
             >
-              <Typography>COD Charges</Typography>
-                <Typography fontWeight={600}>{currencySymbol} {codCharges?.toLocaleString('en-IN', {
+              <Typography sx={{ flexShrink: 0 }}>COD Charges</Typography>
+              <Typography fontWeight={600} sx={{ whiteSpace: "nowrap" }}>
+                {currencySymbol}{" "}
+                {codCharges?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}</Typography>
+                  maximumFractionDigits: 2,
+                })}
+              </Typography>
             </Box>
             )
           }
@@ -1770,13 +1807,17 @@ export default function CheckoutPage() {
               justifyContent: "space-between",
               mt: "16px",
               color: "#F5F4F4",
+              gap: 1,
             }}
           >
-            <Typography>Shipping</Typography>
-            <Typography fontWeight={600}>{currencySymbol} {shippingCost?.toLocaleString('en-IN', {
+            <Typography sx={{ flexShrink: 0 }}>Shipping</Typography>
+            <Typography fontWeight={600} sx={{ whiteSpace: "nowrap" }}>
+              {currencySymbol}{" "}
+              {shippingCost?.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}</Typography>
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
           </Box>
 
           <Box
@@ -1785,40 +1826,54 @@ export default function CheckoutPage() {
               justifyContent: "space-between",
               mt: "16px",
               color: "#F5F4F4",
+              gap: 1,
             }}
           >
-            <Typography>Tax Amount</Typography>
-            <Typography fontWeight={600}>{currencySymbol} {taxAmount?.toLocaleString('en-IN', {
+            <Typography sx={{ flexShrink: 0 }}>Tax Amount</Typography>
+            <Typography fontWeight={600} sx={{ whiteSpace: "nowrap" }}>
+              {currencySymbol}{" "}
+              {taxAmount?.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}</Typography>
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
           </Box>
 
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "flex-end",
               mt: 2,
               color: "#F5F4F4",
               borderTop: "1px solid rgba(255,255,255,0.1)",
               pt: 2,
+              gap: 1,
             }}
           >
-            <Box>
+            <Box sx={{ flexShrink: 0 }}>
               <Typography fontWeight={700} fontSize={18}>
                 Total
               </Typography>
-              <Typography fontWeight={700} fontSize={12}>
-                Including {currencySymbol} {taxAmount?.toLocaleString('en-IN', {
+              <Typography fontWeight={700} fontSize={12} sx={{ whiteSpace: "nowrap" }}>
+                Including {currencySymbol}{" "}
+                {taxAmount?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })} in taxes
+                  maximumFractionDigits: 2,
+                })}{" "}
+                in taxes
               </Typography>
             </Box>
-            <Typography color="#F5F4F4" fontWeight={500} fontSize={32}>
-              {currencySymbol} {totalAmount?.toLocaleString('en-IN', {
+            <Typography
+              color="#F5F4F4"
+              fontWeight={500}
+              fontSize={{ xs: 24, md: 32 }}
+              sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+            >
+              {currencySymbol}{" "}
+              {totalAmount?.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               })}
             </Typography>
           </Box>
@@ -1831,20 +1886,28 @@ export default function CheckoutPage() {
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
+                  alignItems: "flex-end",
                   mt: 2,
                   color: "#F5F4F4",
                   borderTop: "1px solid rgba(255,255,255,0.1)",
                   pt: 2,
+                  gap: 1,
                 }}
               >
-                <Typography fontWeight={700} fontSize={18}>
+                <Typography fontWeight={700} fontSize={18} sx={{ flexShrink: 0 }}>
                   Advance Payment (Online)
                 </Typography>
 
-                <Typography fontWeight={500} fontSize={28} color="#22C55E">
-                    {currencySymbol} {advanceAmount?.toLocaleString('en-IN', {
+                <Typography
+                  fontWeight={500}
+                  fontSize={{ xs: 22, md: 28 }}
+                  color="#22C55E"
+                  sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                >
+                  {currencySymbol}{" "}
+                  {advanceAmount?.toLocaleString("en-IN", {
                     minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                   })}
                 </Typography>
               </Box>
@@ -1879,14 +1942,18 @@ export default function CheckoutPage() {
                 </Box>
 
                 {/* Text */}
-                  <Typography fontSize={14} sx={{ color: "rgba(255,255,255,0.7)" }}>
+                  <Typography fontSize={14} sx={{ color: "rgba(255,255,255,0.7)", minWidth: 0 }}>
                   Pay remaining{" "}
-                    <Box component="span" sx={{ color: "#3B82F6", fontWeight: 600 }}>
-                      {currencySymbol} {(totalAmount - advanceAmount)?.toLocaleString('en-IN', {
-                      minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    })}
-                  </Box>{" "}
+                    <Box
+                      component="span"
+                      sx={{ color: "#3B82F6", fontWeight: 600, whiteSpace: "nowrap" }}
+                    >
+                      {currencySymbol}{" "}
+                      {(totalAmount - advanceAmount)?.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Box>{" "}
                   at the time of delivery.
                 </Typography>
               </Box>

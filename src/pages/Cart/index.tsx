@@ -67,9 +67,12 @@ export default function Cart() {
                       className="bg-white/5 rounded-lg border border-white/10 overflow-hidden hover:border-yellow-400 transition-colors"
                       onClick={() => handleProductClick(category, name, productId)}
                     >
-                      <div style={{ cursor: 'pointer' }} className="flex gap-4 p-4">
+                      <div
+                        style={{ cursor: 'pointer' }}
+                        className="flex gap-3 sm:gap-4 p-3 sm:p-4 min-w-0 overflow-hidden"
+                      >
                         {/* Product Image */}
-                        <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-white rounded-lg overflow-hidden shrink-0">
                           <img
                             src={imageUrl}
                             alt={name}
@@ -81,72 +84,78 @@ export default function Cart() {
                         </div>
 
                         {/* Product Info */}
-                        <div className="flex-1 flex flex-col justify-between">
-                          <div>
-                            <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                          <div className="min-w-0">
+                            <h3 className="text-white font-bold text-lg md:text-xl mb-1 hover:text-yellow-400 transition-colors line-clamp-2">
                               {name}
                             </h3>
-                            <p className="text-white/60 text-sm md:text-base">
+                            <p className="text-white/60 text-sm md:text-base truncate">
                               {shortDescription || 'Premium motorcycle accessory'}
                             </p>
                           </div>
 
-                          <div className="flex items-center justify-between mt-4">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-3 sm:mt-4">
                             {/* Price */}
-                            <div>
-                              <span className="text-yellow-400 font-bold text-xl md:text-2xl">
-                                {currencySymbol} {price?.toLocaleString('en-IN', {
+                            <div className="shrink-0">
+                              <span className="text-yellow-400 font-bold text-base md:text-2xl whitespace-nowrap">
+                                {currencySymbol}{" "}
+                                {price?.toLocaleString("en-IN", {
                                   minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2
+                                  maximumFractionDigits: 2,
                                 })}
                               </span>
                               {quantity > 1 && (
-                                <p className="text-white/40 text-sm">
-                                  {currencySymbol} {(totalPrice)?.toLocaleString('en-IN', {
+                                <p className="text-white/40 text-sm whitespace-nowrap">
+                                  {currencySymbol}{" "}
+                                  {totalPrice?.toLocaleString("en-IN", {
                                     minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                  })} total
+                                    maximumFractionDigits: 2,
+                                  })}{" "}
+                                  total
                                 </p>
                               )}
                             </div>
 
                             {/* Quantity Controls */}
                             <div
-                              className="flex items-center gap-4"
-                              onClick={e => e.stopPropagation()}
+                              className="flex items-center gap-2 md:gap-4 self-end shrink-0"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="flex items-center gap-2 bg-white/10 rounded-lg">
+                              <div className="flex items-center bg-white/10 rounded-lg shrink-0">
                                 <button
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    decrementToCart(productId)
+                                    e.stopPropagation();
+                                    decrementToCart(productId);
                                   }}
-                                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
+                                  className="w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 flex items-center justify-center text-white hover:text-yellow-400 transition-colors"
                                 >
-                                  <Minus size={20} />
+                                  <Minus size={18} />
                                 </button>
-                                <span className="text-white font-medium w-8 text-center text-lg">
+                                <span className="text-white font-medium w-6 md:w-8 text-center text-base md:text-lg">
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => incrementToCart(product, productId, quantityAvailable)}
-                                  className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors ${isPlusDisabled
-                                    ? "text-black cursor-not-allowed"
-                                    : "text-white hover:text-yellow-400"
-                                    }`}
+                                  onClick={() =>
+                                    incrementToCart(product, productId, quantityAvailable)
+                                  }
+                                  className={`w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 flex items-center justify-center transition-colors ${
+                                    isPlusDisabled
+                                      ? "text-black cursor-not-allowed"
+                                      : "text-white hover:text-yellow-400"
+                                  }`}
                                   disabled={isPlusDisabled}
                                 >
-                                  <Plus size={20} />
+                                  <Plus size={18} />
                                 </button>
                               </div>
 
                               {/* Remove Button */}
                               <button
                                 onClick={() => removeItemFromCart(productId)}
-                                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors"
+                                className="w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 flex items-center justify-center text-white/60 hover:text-red-400 transition-colors shrink-0"
                                 title="Remove item"
                               >
-                                <X size={24} />
+                                <X size={22} />
                               </button>
                             </div>
                           </div>
@@ -167,16 +176,17 @@ export default function Cart() {
             </div>
 
             {/* Right: Order Summary */}
-            <div className="lg:col-span-4">
-              <div className="bg-white/5 rounded-lg border border-white/10 p-6 sticky top-6">
+            <div className="lg:col-span-4 min-w-0">
+              <div className="bg-white/5 rounded-lg border border-white/10 p-4 sm:p-6 sticky top-6 overflow-hidden">
                 <h2 className="text-white text-2xl font-bold mb-6">Order Summary</h2>
 
                 <div className="space-y-4">
                   {/* Items Count */}
-                  <div className="flex justify-between text-white/80">
-                    <span>Items ({totalItems})</span>
-                    <span>
-                      {currencySymbol} {subtotal?.toLocaleString('en-IN', {
+                  <div className="flex justify-between text-white/80 gap-2">
+                    <span className="shrink-0">Items ({totalItems})</span>
+                    <span className="whitespace-nowrap">
+                      {currencySymbol}{" "}
+                      {subtotal?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
@@ -184,10 +194,11 @@ export default function Cart() {
                   </div>
 
                   {/* Subtotal */}
-                  <div className="flex justify-between text-white">
-                    <span className="font-semibold">Subtotal</span>
-                    <span className="font-semibold">
-                      {currencySymbol} {subtotal?.toLocaleString('en-IN', {
+                  <div className="flex justify-between text-white gap-2">
+                    <span className="font-semibold shrink-0">Subtotal</span>
+                    <span className="font-semibold whitespace-nowrap">
+                      {currencySymbol}{" "}
+                      {subtotal?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                       })}
@@ -196,10 +207,11 @@ export default function Cart() {
 
                   {/* Discount (if applicable) */}
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-400">
-                      <span className="font-semibold">Discount ({couponCode})</span>
-                      <span className="font-semibold">
-                        - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
+                    <div className="flex justify-between text-green-400 gap-2">
+                      <span className="font-semibold min-w-0">Discount ({couponCode})</span>
+                      <span className="font-semibold whitespace-nowrap shrink-0">
+                        - {currencySymbol}{" "}
+                        {discountAmount?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}
@@ -209,12 +221,14 @@ export default function Cart() {
 
                   {/* Discount success message */}
                   {discountAmount > 0 && (
-                    <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3">
-                      <p className="text-green-400 text-sm text-center">
-                        🎉 You saved {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
+                    <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3 overflow-hidden">
+                      <p className="text-green-400 text-sm text-center whitespace-nowrap">
+                        🎉 You saved {currencySymbol}{" "}
+                        {discountAmount?.toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
-                        })}!
+                          maximumFractionDigits: 2,
+                        })}
+                        !
                       </p>
                     </div>
                   )}
@@ -222,10 +236,11 @@ export default function Cart() {
                   <DisplayCouponCTA />
 
                   <div className="border-t border-white/20 pt-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-white text-xl font-bold">Total</span>
-                      <span className="text-yellow-400 text-2xl font-bold">
-                        {currencySymbol} {(totalAmount - shippingCost - taxAmount - codCharges)?.toLocaleString('en-IN', {
+                    <div className="flex justify-between items-end gap-2">
+                      <span className="text-white text-xl font-bold shrink-0">Total</span>
+                      <span className="text-yellow-400 text-xl md:text-2xl font-bold whitespace-nowrap shrink-0">
+                        {currencySymbol}{" "}
+                        {(totalAmount - shippingCost - taxAmount - codCharges)?.toLocaleString('en-IN', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
                         })}

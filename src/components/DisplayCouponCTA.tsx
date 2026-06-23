@@ -40,7 +40,7 @@ function DisplayCouponCTA() {
 	}
 
 	return (
-		<Stack direction="row" justifyContent="space-between">
+		<Stack direction="row" justifyContent="space-between" gap={1}>
 			{isLoading && <Loading />}
 			{
 				discountAmount > 0 && (

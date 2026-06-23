@@ -251,48 +251,54 @@ const OrderConfirmation = () => {
               )}
             </Box>
 
-            <Box display="flex" justifyContent="space-between" mt={1}>
-              <Typography color="#CFCFCF">Total Amount</Typography>
-              <Typography sx={{ fontWeight: 600 }}>
+            <Box display="flex" justifyContent="space-between" mt={1} gap={1}>
+              <Typography color="#CFCFCF" sx={{ flexShrink: 0 }}>
+                Total Amount
+              </Typography>
+              <Typography sx={{ fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
                 {currencySymbol}{" "}
-                {totalAmount ? totalAmount?.toLocaleString('en-IN', {
+                {totalAmount ? totalAmount?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 }) : <Skeleton variant="text" width={80} height={20} sx={{ bgcolor: "grey.500" }} />}
               </Typography>
             </Box>
 
             {/* Advance Paid */}
-            {
-              advancePaid > 0 && (
-                <Box display="flex" justifyContent="space-between" mt={1}>
-                  <Typography color="#CFCFCF">Advance Paid</Typography>
-                  <Typography sx={{ color: "#22C55E", fontWeight: 600 }}>
+            {advancePaid > 0 && (
+                <Box display="flex" justifyContent="space-between" mt={1} gap={1}>
+                  <Typography color="#CFCFCF" sx={{ flexShrink: 0 }}>
+                    Advance Paid
+                  </Typography>
+                  <Typography
+                    sx={{ color: "#22C55E", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}
+                  >
                     {currencySymbol}{" "}
-                    {advancePaid?.toLocaleString('en-IN', {
+                    {advancePaid?.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                      maximumFractionDigits: 2,
                     })}
                   </Typography>
                 </Box>
-              )
-            }
+              )}
 
             {/* Remaining Amount */}
-            {
-              advancePaid > 0 && (
-                <Box display="flex" justifyContent="space-between" mt={1}>
-                  <Typography color="#CFCFCF">Remaining Amount</Typography>
-                  <Typography sx={{ color: "#FACC15", fontWeight: 600 }}>
+            {advancePaid > 0 && (
+                <Box display="flex" justifyContent="space-between" mt={1} gap={1}>
+                  <Typography color="#CFCFCF" sx={{ flexShrink: 0 }}>
+                    Remaining Amount
+                  </Typography>
+                  <Typography
+                    sx={{ color: "#FACC15", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}
+                  >
                     {currencySymbol}{" "}
-                    {(totalAmount - advancePaid)?.toLocaleString('en-IN', {
+                    {(totalAmount - advancePaid)?.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                      maximumFractionDigits: 2,
                     })}
                   </Typography>
                 </Box>
-              )
-            }
+              )}
           </Box>
 
           <Divider sx={{ borderColor: "#1e293b", my: 3 }} />
@@ -346,15 +352,23 @@ const OrderConfirmation = () => {
                       justifyContent: "space-between",
                       width: "100%",
                       gap: 1.5,
+                      minWidth: 0,
                     }}
                   >
-                    <Box>
+                    <Box sx={{ minWidth: 0 }}>
                       <Typography fontWeight="500">{it.product.name}</Typography>
                       <Typography sx={{ color: "#94a3b8", fontSize: 13 }}>
                         Qty: {quantity}
                       </Typography>
                     </Box>
-                    <Typography sx={{ fontWeight: "bold", marginY: 'auto', whiteSpace: 'nowrap' }}>
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        marginY: "auto",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    >
                       {currencySymbol} {price?.toLocaleString('en-IN', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2

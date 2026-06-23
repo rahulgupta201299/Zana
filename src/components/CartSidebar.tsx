@@ -117,7 +117,7 @@ const CartSidebar = ({
                   p: 2,
                   display: "flex",
                   gap: 2,
-                  cursor: 'pointer',
+                  cursor: "pointer",
                   ":hover": { borderColor: "yellow" },
                 }}
                 onClick={() => handleProductClick(category, name, productId)}
@@ -149,23 +149,36 @@ const CartSidebar = ({
                 <Box
                   sx={{
                     flex: 1,
+                    minWidth: 0,
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                   }}
                 >
-                  <Box>
+                  <Box sx={{ minWidth: 0 }}>
                     <Typography
                       fontWeight="bold"
                       fontSize={{ xs: 16, md: 18 }}
                       sx={{
                         mb: 0.5,
                         ":hover": { color: "yellow" },
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                       }}
                     >
                       {name}
                     </Typography>
-                    <Typography sx={{ opacity: 0.6, fontSize: 14 }}>
+                    <Typography
+                      sx={{
+                        opacity: 0.6,
+                        fontSize: 14,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {shortDescription || "Premium motorcycle accessory"}
                     </Typography>
                   </Box>
@@ -174,18 +187,22 @@ const CartSidebar = ({
                     sx={{
                       mt: 1.5,
                       display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
                       justifyContent: "space-between",
-                      alignItems: "center",
+                      alignItems: { xs: "stretch", sm: "center" },
+                      gap: { xs: 1, sm: 0 },
                     }}
                   >
                     <Typography
                       color="yellow"
                       fontWeight={700}
-                      fontSize={{ xs: 18, md: 22 }}
+                      fontSize={{ xs: 16, md: 22 }}
+                      sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
                     >
-                      {currencySymbol} {price?.toLocaleString('en-IN', {
+                      {currencySymbol}{" "}
+                      {price?.toLocaleString("en-IN", {
                         minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </Typography>
                     <Box
@@ -194,17 +211,20 @@ const CartSidebar = ({
                         alignItems: "center",
                         bgcolor: "rgba(255,255,255,0.1)",
                         borderRadius: 2,
+                        flexShrink: 0,
+                        alignSelf: { xs: "flex-end", sm: "auto" },
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          decrementToCart(productId)
+                          decrementToCart(productId);
                         }}
                         sx={{
                           color: "white",
                           cursor: "pointer",
+                          p: { xs: 0.75, md: 1 },
                           "&:hover": { color: "yellow" },
                         }}
                         disabled={isMinusDisabled}
@@ -212,17 +232,28 @@ const CartSidebar = ({
                         <Minus size={18} />
                       </IconButton>
 
-                      <Typography sx={{ width: 30, textAlign: "center" }}>
+                      <Typography
+                        sx={{
+                          width: { xs: 24, md: 30 },
+                          textAlign: "center",
+                          flexShrink: 0,
+                        }}
+                      >
                         {productQuantity}
                       </Typography>
 
                       <IconButton
                         onClick={() => {
-                          incrementToCart(product, item.product._id, item.product.quantityAvailable)
+                          incrementToCart(
+                            product,
+                            item.product._id,
+                            item.product.quantityAvailable,
+                          );
                         }}
                         sx={{
                           color: "white",
                           cursor: "pointer",
+                          p: { xs: 0.75, md: 1 },
                           "&:hover": { color: "yellow" },
                         }}
                         disabled={isPlusDisabled}
@@ -269,13 +300,14 @@ const CartSidebar = ({
 
 
           <Box
-            sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+            sx={{ display: "flex", justifyContent: "space-between", mb: 1, gap: 1 }}
           >
-            <Typography sx={{ opacity: 0.7 }}>Subtotal</Typography>
-            <Typography fontWeight={600}>
-              {currencySymbol} {subtotal?.toLocaleString('en-IN', {
+            <Typography sx={{ opacity: 0.7, flexShrink: 0 }}>Subtotal</Typography>
+            <Typography fontWeight={600} sx={{ whiteSpace: "nowrap" }}>
+              {currencySymbol}{" "}
+              {subtotal?.toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               })}
             </Typography>
           </Box>
@@ -288,13 +320,15 @@ const CartSidebar = ({
                 justifyContent: "space-between",
                 color: "lightgreen",
                 mb: 1,
+                gap: 1,
               }}
             >
-              <Typography>Discount ({couponCode})</Typography>
-              <Typography>
-                - {currencySymbol} {discountAmount?.toLocaleString('en-IN', {
+              <Typography sx={{ minWidth: 0 }}>Discount ({couponCode})</Typography>
+              <Typography sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
+                - {currencySymbol}{" "}
+                {discountAmount?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })}
               </Typography>
             </Box>
@@ -306,12 +340,14 @@ const CartSidebar = ({
             sx={{
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "flex-end",
               mt: 2,
               borderTop: "1px solid rgba(255,255,255,0.1)",
               pt: 2,
+              gap: 1,
             }}
           >
-            <Box>
+            <Box sx={{ flexShrink: 0 }}>
               <Typography sx={{ opacity: 0.6, fontSize: 12 }}>
                 Total Cart Value
               </Typography>
@@ -323,12 +359,17 @@ const CartSidebar = ({
             <Typography
               color="yellow"
               fontWeight={800}
-              fontSize={32}
+              fontSize={{ xs: 24, md: 32 }}
+              sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
             >
-              {currencySymbol} {((totalAmount - shippingCost - taxAmount - codCharges))?.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })}
+              {currencySymbol}{" "}
+              {(totalAmount - shippingCost - taxAmount - codCharges)?.toLocaleString(
+                "en-IN",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                },
+              )}
             </Typography>
           </Box>
 

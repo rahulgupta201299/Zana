@@ -427,10 +427,14 @@ const ProductDetailPage = () => {
               />
             )}
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
               {!isProductDetailPending ? (
-                <span className="text-2xl font-bold text-white">
-                  {currencySymbol} {price?.toLocaleString()}
+                <span className="text-xl md:text-2xl font-bold text-white whitespace-nowrap shrink-0">
+                  {currencySymbol}{" "}
+                  {price?.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </span>
               ) : (
                 <Skeleton
@@ -447,18 +451,18 @@ const ProductDetailPage = () => {
                   height={48}
                 />
               ) : quantityAvailable > 0 ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
                     disabled={isMinusDisabled}
                     onClick={() => setQuantity((p) => p - 1)}
                     style={{ cursor: "pointer" }}
-                    className="text-white hover:bg-white/10 w-10 h-10 border border-white"
+                    className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
                   >
                     <Minus className="w-4 h-4" />
                   </Button>
-                  <span className="px-4 py-2 text-white font-semibold min-w-[50px] text-center">
+                  <span className="px-3 sm:px-4 py-2 text-white font-semibold min-w-[40px] sm:min-w-[50px] text-center">
                     {quantity}
                   </span>
                   <Button
@@ -467,7 +471,7 @@ const ProductDetailPage = () => {
                     disabled={isPlusDisabled}
                     onClick={() => setQuantity((p) => p + 1)}
                     style={{ cursor: "pointer" }}
-                    className="text-white hover:bg-white/10 w-10 h-10 border border-white"
+                    className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
                   >
                     <Plus className="w-4 h-4" />
                   </Button>

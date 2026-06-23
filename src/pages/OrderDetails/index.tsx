@@ -28,9 +28,11 @@ import { OrderTracker } from "./OrderTracker";
 import { OrderDetailResponse } from "./Types";
 
 const Row = ({ label, value }) => (
-  <Stack direction="row" justifyContent="space-between">
-    <Typography color="grey.400">{label}</Typography>
-    <Typography>{value?.toLocaleString("en-IN")}</Typography>
+  <Stack direction="row" justifyContent="space-between" gap={1}>
+    <Typography color="grey.400" sx={{ flexShrink: 0 }}>
+      {label}
+    </Typography>
+    <Typography sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>{value}</Typography>
   </Stack>
 );
 
@@ -174,7 +176,7 @@ const OrderDetails = () => {
                 }}
               />
 
-              <Box>
+              <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" fontWeight={400}>
                   {item.product.productCode}
                 </Typography>
@@ -182,20 +184,42 @@ const OrderDetails = () => {
                 <Typography variant="body2" color="grey.400">
                   {item.product.shortDescription}
                 </Typography>
+                <Box
+                  sx={{
+                    display: { xs: "flex", md: "none" },
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mt: 1,
+                    gap: 1,
+                  }}
+                >
+                  <Typography variant="body2">Qty: {item.quantity}</Typography>
+                  <Typography fontWeight={600} sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {currencySymbol}{" "}
+                    {item.totalPrice.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </Typography>
+                </Box>
               </Box>
 
-              <Typography textAlign={{ xs: "left", md: "center" }}>
+              <Typography
+                textAlign={{ xs: "left", md: "center" }}
+                sx={{ display: { xs: "none", md: "block" } }}
+              >
                 Qty: {item.quantity}
               </Typography>
 
               <Typography
                 textAlign={{ xs: "right", md: "center" }}
                 fontWeight={600}
+                sx={{ display: { xs: "none", md: "block" }, whiteSpace: "nowrap" }}
               >
                 {currencySymbol}{" "}
-                {item.totalPrice.toLocaleString('en-IN', {
+                {item.totalPrice.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })}
               </Typography>
             </Box>
@@ -252,42 +276,54 @@ const OrderDetails = () => {
 
             <Divider sx={{ borderColor: "grey.700", my: 1 }} />
 
-            <Stack direction="row" justifyContent="space-between">
-              <Typography fontWeight={700}>Total</Typography>
-              <Typography fontWeight={700}>
+            <Stack direction="row" justifyContent="space-between" gap={1}>
+              <Typography fontWeight={700} sx={{ flexShrink: 0 }}>
+                Total
+              </Typography>
+              <Typography fontWeight={700} sx={{ whiteSpace: "nowrap", flexShrink: 0 }}>
                 {currencySymbol}{" "}
-                {totalAmount?.toLocaleString('en-IN', {
+                {totalAmount?.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })}
               </Typography>
             </Stack>
-            {
-              advancePaid > 0 && (
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography fontWeight={700}>Advance Paid</Typography>
-                  <Typography color="#22C55E" fontWeight={700}>
+            {advancePaid > 0 && (
+                <Stack direction="row" justifyContent="space-between" gap={1}>
+                  <Typography fontWeight={700} sx={{ flexShrink: 0 }}>
+                    Advance Paid
+                  </Typography>
+                  <Typography
+                    color="#22C55E"
+                    fontWeight={700}
+                    sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                  >
                     {currencySymbol}{" "}
-                    {advancePaid?.toLocaleString('en-IN', {
+                    {advancePaid?.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                      maximumFractionDigits: 2,
                     })}
                   </Typography>
                 </Stack>
-              )
-            }
+              )}
 
             <Divider sx={{ borderColor: "grey.700", my: 1 }} />
 
             {
               advancePaid > 0 && (
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography fontWeight={700}>Remaining Amount</Typography>
-                  <Typography color="#FACC15" fontWeight={700}>
+                <Stack direction="row" justifyContent="space-between" gap={1}>
+                  <Typography fontWeight={700} sx={{ flexShrink: 0 }}>
+                    Remaining Amount
+                  </Typography>
+                  <Typography
+                    color="#FACC15"
+                    fontWeight={700}
+                    sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                  >
                     {currencySymbol}{" "}
-                    {(totalAmount - advancePaid)?.toLocaleString('en-IN', {
+                    {(totalAmount - advancePaid)?.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                      maximumFractionDigits: 2,
                     })}
                   </Typography>
                 </Stack>
