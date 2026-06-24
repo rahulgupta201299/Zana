@@ -36,6 +36,7 @@ export type AdminActiveCartProduct = {
   "Bike model name"?: string;
   name?: string;
   price?: number;
+  quantityAvailable?: number;
   imageUrl?: string;
   images?: string[];
   shortDescription?: string;
@@ -88,6 +89,7 @@ export type AdminActiveCartRecord = {
   couponCode?: string | null;
   shippingAddress?: AdminActiveCartAddress | null;
   billingAddress?: AdminActiveCartAddress | null;
+  shippingAddressSameAsBillingAddress?: boolean;
   paymentMethod?: string | null;
   razorpayOrderId?: string | null;
 };
