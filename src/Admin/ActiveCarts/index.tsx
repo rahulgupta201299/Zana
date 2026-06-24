@@ -18,18 +18,41 @@ import {
   Divider,
   Stack,
   FormControl,
+  FormControlLabel,
   InputLabel,
   Select,
   MenuItem,
   Alert,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Checkbox,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import PaymentIcon from "@mui/icons-material/Payment";
+import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useSnackbar } from "notistack";
+import { useDispatch } from "react-redux";
+import type { TAppDispatch } from "@/Configurations/AppStore";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
+import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
+import SearchService from "@/Redux/Product/Services/SearchService";
+import type {
+  CartAddressType,
+  UpdateCartAddressReqType,
+} from "@/Redux/Cart/Types";
+import type {
+  SearchDataProductsType,
+  SearchResponseType,
+} from "@/Redux/Product/Types";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
   createAdminActiveCartPaymentLink,
@@ -58,6 +81,62 @@ const NULL_EMAIL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 const TABLE_COL_SPAN = 7;
 const DEFAULT_ISD_CODE = "+91";
+const EMPTY_CART_ADDRESS: CartAddressType = {
+  fullName: "",
+  phone: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "",
+};
+
+type EditableCartAddressField = keyof CartAddressType;
+
+const CART_ADDRESS_FIELDS: Array<{
+  name: EditableCartAddressField;
+  label: string;
+  required?: boolean;
+}> = [
+  { name: "fullName", label: "Full name", required: true },
+  { name: "phone", label: "Phone", required: true },
+  { name: "addressLine1", label: "Address line 1", required: true },
+  { name: "addressLine2", label: "Address line 2" },
+  { name: "city", label: "City", required: true },
+  { name: "state", label: "State", required: true },
+  { name: "postalCode", label: "Postal code", required: true },
+  { name: "country", label: "Country", required: true },
+];
+
+function toCartAddress(
+  address: AdminActiveCartAddress | null | undefined,
+): CartAddressType {
+  return {
+    ...EMPTY_CART_ADDRESS,
+    ...(address ?? {}),
+  };
+}
+
+function isAddressPopulated(
+  addr: AdminActiveCartAddress | null | undefined,
+): boolean {
+  if (addr == null) return false;
+  return Object.values(addr).some((value) =>
+    typeof value === "string" ? value.trim().length > 0 : false,
+  );
+}
+
+function isValidEmail(email: string): boolean {
+  return /\S+@\S+\.\S+/.test(email.trim());
+}
+
+function hasRequiredAddressFields(address: CartAddressType): boolean {
+  return CART_ADDRESS_FIELDS.every((field) => {
+    if (!field.required) return true;
+    return address[field.name].trim().length > 0;
+  });
+}
 
 function normalizeIsdCode(isd: string): string {
   const trimmed = isd.trim();
@@ -78,6 +157,36 @@ function productDisplayName(item: AdminActiveCartLineItem): string {
   const bikeName = p["Bike model name"];
   if (typeof bikeName === "string" && bikeName.trim()) return bikeName;
   return "Unknown Product";
+}
+
+function getLineItemProductId(item: AdminActiveCartLineItem): string {
+  const product = item.product;
+  if (product && typeof product === "object" && typeof product._id === "string") {
+    return product._id;
+  }
+
+  const itemWithProductId = item as AdminActiveCartLineItem & {
+    productId?: string | { _id?: string };
+  };
+  if (typeof itemWithProductId.productId === "string") {
+    return itemWithProductId.productId;
+  }
+  if (
+    itemWithProductId.productId &&
+    typeof itemWithProductId.productId === "object" &&
+    typeof itemWithProductId.productId._id === "string"
+  ) {
+    return itemWithProductId.productId._id;
+  }
+
+  return "";
+}
+
+function getCartModifyItems(cartItems: AdminActiveCartLineItem[]) {
+  return cartItems.map((lineItem) => ({
+    productId: getLineItemProductId(lineItem),
+    quantity: lineItem.quantity ?? 0,
+  }));
 }
 
 function formatShippingAddress(
@@ -172,12 +281,341 @@ function ProductThumbCell(props: { item: AdminActiveCartLineItem }) {
   );
 }
 
+function CartAddressFields(props: {
+  title: string;
+  value: CartAddressType;
+  onChange: (next: CartAddressType) => void;
+  disabled?: boolean;
+}) {
+  const { title, value, onChange, disabled = false } = props;
+
+  const handleFieldChange =
+    (field: EditableCartAddressField) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChange({ ...value, [field]: event.target.value });
+    };
+
+  return (
+    <Box>
+      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>
+        {title}
+      </Typography>
+      <Box
+        sx={{
+          display: "grid",
+          gap: 1.5,
+          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+        }}
+      >
+        {CART_ADDRESS_FIELDS.map((field) => (
+          <TextField
+            key={field.name}
+            label={field.label}
+            value={value[field.name]}
+            onChange={handleFieldChange(field.name)}
+            required={field.required}
+            disabled={disabled}
+            size="small"
+            fullWidth
+            sx={
+              field.name === "addressLine1" || field.name === "addressLine2"
+                ? { gridColumn: { sm: "1 / -1" } }
+                : undefined
+            }
+          />
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+function CartAddressDialog(props: {
+  open: boolean;
+  cart: AdminActiveCartRecord | null;
+  saving: boolean;
+  onClose: () => void;
+  onSave: (payload: UpdateCartAddressReqType) => Promise<void>;
+}) {
+  const { open, cart, saving, onClose, onSave } = props;
+  const [emailId, setEmailId] = useState("");
+  const [shippingAddress, setShippingAddress] =
+    useState<CartAddressType>(EMPTY_CART_ADDRESS);
+  const [billingAddress, setBillingAddress] =
+    useState<CartAddressType>(EMPTY_CART_ADDRESS);
+  const [shippingAddressSameAsBillingAddress, setSameAsBilling] =
+    useState(true);
+
+  useEffect(() => {
+    if (!open || cart == null) return;
+
+    const shipping = toCartAddress(cart.shippingAddress);
+    const billing = toCartAddress(cart.billingAddress);
+    const hasBilling = isAddressPopulated(cart.billingAddress);
+
+    setEmailId(cart.emailId ?? "");
+    setShippingAddress(shipping);
+    setBillingAddress(hasBilling ? billing : shipping);
+    setSameAsBilling(cart.shippingAddressSameAsBillingAddress ?? !hasBilling);
+  }, [cart, open]);
+
+  const phoneNumber = (cart?.phoneNumber ?? "").trim();
+  const effectiveBillingAddress = shippingAddressSameAsBillingAddress
+    ? shippingAddress
+    : billingAddress;
+  const isInvalid =
+    !phoneNumber ||
+    !isValidEmail(emailId) ||
+    !hasRequiredAddressFields(shippingAddress) ||
+    !hasRequiredAddressFields(effectiveBillingAddress);
+
+  const handleSubmit = async () => {
+    if (isInvalid) return;
+
+    await onSave({
+      phoneNumber,
+      emailId: emailId.trim(),
+      shippingAddress,
+      billingAddress: effectiveBillingAddress,
+      shippingAddressSameAsBillingAddress,
+    });
+  };
+
+  return (
+    <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="md">
+      <DialogTitle>Cart contact details</DialogTitle>
+      <DialogContent dividers>
+        {!phoneNumber && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This cart needs a phone number before contact details can be saved.
+          </Alert>
+        )}
+        <Stack spacing={2.5} sx={{ pt: 0.5 }}>
+          <TextField
+            label="Email ID"
+            value={emailId}
+            onChange={(event) => setEmailId(event.target.value)}
+            error={emailId.trim().length > 0 && !isValidEmail(emailId)}
+            helperText={
+              emailId.trim().length > 0 && !isValidEmail(emailId)
+                ? "Enter a valid email address"
+                : " "
+            }
+            required
+            size="small"
+            fullWidth
+          />
+          <CartAddressFields
+            title="Shipping address"
+            value={shippingAddress}
+            onChange={setShippingAddress}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={shippingAddressSameAsBillingAddress}
+                onChange={(event) => setSameAsBilling(event.target.checked)}
+              />
+            }
+            label="Billing address is same as shipping address"
+          />
+          <CartAddressFields
+            title="Billing address"
+            value={effectiveBillingAddress}
+            onChange={setBillingAddress}
+            disabled={shippingAddressSameAsBillingAddress}
+          />
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={saving} color="inherit">
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={saving || isInvalid}
+          startIcon={saving ? <CircularProgress size={16} /> : undefined}
+        
+        >
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function AddProductDialog(props: {
+  open: boolean;
+  cart: AdminActiveCartRecord | null;
+  addingProductId: string | null;
+  onClose: () => void;
+  onAddProduct: (cart: AdminActiveCartRecord, product: SearchDataProductsType) => void;
+}) {
+  const { open, cart, addingProductId, onClose, onAddProduct } = props;
+  const dispatch = useDispatch<TAppDispatch>();
+  const [query, setQuery] = useState("");
+  const [products, setProducts] = useState<SearchDataProductsType[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+
+    let active = true;
+    setLoading(true);
+    const timer = window.setTimeout(() => {
+      dispatch(SearchService({ query: trimmedQuery, page: 1, limit: 8 }))
+        .then((response) => {
+          if (!active) return;
+          const { data = [] } = response as SearchResponseType;
+          setProducts(Array.isArray(data) ? data : []);
+        })
+        .catch(() => {
+          if (active) setProducts([]);
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
+    }, 400);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [dispatch, open, query]);
+
+  return (
+    <Dialog open={open} onClose={addingProductId ? undefined : onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Add product to cart</DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <TextField
+            label="Search products"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            autoFocus
+            size="small"
+            fullWidth
+          />
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : products.length === 0 ? (
+            <Typography color="text.secondary" sx={{ py: 2 }}>
+              {query.trim() ? "No products found." : "Search by product name."}
+            </Typography>
+          ) : (
+            <Stack spacing={1.25}>
+              {products.map((product) => {
+                const isAdding = addingProductId === product._id;
+                return (
+                  <Button
+                    key={product._id}
+                    color="inherit"
+                    disabled={!cart || addingProductId != null}
+                    onClick={() => {
+                      if (cart) onAddProduct(cart, product);
+                    }}
+                    sx={{
+                      justifyContent: "flex-start",
+                      textAlign: "left",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: 1,
+                      p: 1,
+                      textTransform: "none",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", gap: 1.5, width: "100%" }}>
+                      <Box
+                        component="img"
+                        src={product.imageUrl}
+                        alt={product.name}
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          objectFit: "cover",
+                          borderRadius: 1,
+                          bgcolor: "action.hover",
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 700, color: "text.primary" }}
+                        >
+                          {product.name}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {product.shortDescription || "No description"}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ mt: 0.5, fontWeight: 700, color: "#111827" }}
+                        >
+                          {product.currencySymbol}
+                          {product.price?.toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Typography>
+                      </Box>
+                      {isAdding && (
+                        <CircularProgress size={18} sx={{ alignSelf: "center" }} />
+                      )}
+                    </Box>
+                  </Button>
+                );
+              })}
+            </Stack>
+          )}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={addingProductId != null} color="inherit">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 function Row(props: {
   cart: AdminActiveCartRecord;
   rowId: string;
   expanded: boolean;
   paymentLinkLoading: boolean;
+  cartItemLoadingKey: string | null;
   onToggleExpand: () => void;
+  onEditContactDetails: (cart: AdminActiveCartRecord) => void;
+  onOpenAddProduct: (cart: AdminActiveCartRecord) => void;
+  onUpdateCartItemQuantity: (
+    cart: AdminActiveCartRecord,
+    item: AdminActiveCartLineItem,
+    nextQuantity: number,
+    itemKey: string,
+  ) => void;
   onGeneratePaymentLink: (cart: AdminActiveCartRecord, rowId: string) => void;
 }) {
   const {
@@ -185,7 +623,11 @@ function Row(props: {
     rowId,
     expanded,
     paymentLinkLoading,
+    cartItemLoadingKey,
     onToggleExpand,
+    onEditContactDetails,
+    onOpenAddProduct,
+    onUpdateCartItemQuantity,
     onGeneratePaymentLink,
   } = props;
 
@@ -194,8 +636,15 @@ function Row(props: {
   const symbol = cart.currencySymbol ?? "";
 
   const formattedShipping = formatShippingAddress(cart.shippingAddress ?? null);
+  const formattedBilling = formatShippingAddress(cart.billingAddress ?? null);
   const shippingAddressText =
     formattedShipping.length > 0 ? formattedShipping : NULL_EMAIL_PLACEHOLDER;
+  const billingAddressText =
+    formattedBilling.length > 0 ? formattedBilling : NULL_EMAIL_PLACEHOLDER;
+  const emailText =
+    cart.emailId === null || cart.emailId === undefined || cart.emailId === ""
+      ? NULL_EMAIL_PLACEHOLDER
+      : cart.emailId;
   const couponLine = appliedCouponDisplay(cart);
   const appliedCouponText =
     couponLine.length > 0 ? couponLine : NULL_EMAIL_PLACEHOLDER;
@@ -216,14 +665,13 @@ function Row(props: {
     "phone",
   ] as const;
 
-  type AddressField = (typeof REQUIRED_ADDRESS_FIELDS)[number];
-
   const isValidAddress = (address: AdminActiveCartAddress): boolean =>
     REQUIRED_ADDRESS_FIELDS.every((field) => Boolean(address?.[field]?.trim()));
 
   const hasPhoneNumber = Boolean((cart.phoneNumber ?? "").trim());
   const hasValidAddresses =
-    isValidAddress(cart.shippingAddress) && isValidAddress(cart.billingAddress);
+    isValidAddress(cart.shippingAddress ?? {}) &&
+    isValidAddress(cart.billingAddress ?? {});
 
   return (
     <React.Fragment>
@@ -313,14 +761,30 @@ function Row(props: {
                 border: "1px solid #e2e8f0",
               }}
             >
-              <Typography
-                variant="subtitle1"
-                gutterBottom
-                component="div"
-                fontWeight="bold"
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                alignItems={{ xs: "stretch", sm: "center" }}
+                justifyContent="space-between"
+                spacing={1}
+                sx={{ mb: 1 }}
               >
-                Cart Items Details
-              </Typography>
+                <Typography
+                  variant="subtitle1"
+                  component="div"
+                  fontWeight="bold"
+                >
+                  Cart Items Details
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<AddIcon fontSize="small" />}
+                  onClick={() => onOpenAddProduct(cart)}
+                  sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
+                >
+                  Add product
+                </Button>
+              </Stack>
               <Table size="small" aria-label="cart items">
                 <TableHead>
                   <TableRow>
@@ -333,25 +797,135 @@ function Row(props: {
                 </TableHead>
                 <TableBody>
                   {items.length > 0 ? (
-                    items.map((item, lineIdx) => (
-                      <TableRow key={item._id ?? `line-${lineIdx}`}>
-                        <TableCell component="th" scope="row">
-                          <ProductThumbCell item={item} />
-                        </TableCell>
-                        <TableCell>
-                          {item.product?.productCode || NULL_EMAIL_PLACEHOLDER}
-                        </TableCell>
-                        <TableCell>
-                          {item.currencySymbol ?? symbol}
-                          {item.price ?? 0}
-                        </TableCell>
-                        <TableCell>{item.quantity ?? 0}</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          {item.currencySymbol ?? symbol}
-                          {item.totalPrice ?? 0}
-                        </TableCell>
-                      </TableRow>
-                    ))
+                    items.map((item, lineIdx) => {
+                      const itemKey = item._id ?? `line-${lineIdx}`;
+                      const quantity = item.quantity ?? 0;
+                      const productId = getLineItemProductId(item);
+                      const quantityAvailable =
+                        typeof item.product?.quantityAvailable === "number"
+                          ? item.product.quantityAvailable
+                          : null;
+                      const isPlusDisabled =
+                        !productId ||
+                        cartItemLoadingKey != null ||
+                        (quantityAvailable != null &&
+                          quantity >= quantityAvailable);
+                      const isMinusDisabled =
+                        !productId || cartItemLoadingKey != null || quantity <= 0;
+                      const isRemoveDisabled =
+                        !productId || cartItemLoadingKey != null;
+                      const isThisItemLoading =
+                        cartItemLoadingKey === `${rowId}:${itemKey}`;
+
+                      return (
+                        <TableRow key={itemKey}>
+                          <TableCell component="th" scope="row">
+                            <ProductThumbCell item={item} />
+                          </TableCell>
+                          <TableCell>
+                            {item.product?.productCode || NULL_EMAIL_PLACEHOLDER}
+                          </TableCell>
+                          <TableCell>
+                            {item.currencySymbol ?? symbol}
+                            {item.price ?? 0}
+                          </TableCell>
+                          <TableCell>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={0.75}
+                              sx={{ minWidth: 132 }}
+                            >
+                              <Tooltip title="Decrease" enterDelay={300}>
+                                <span>
+                                  <IconButton
+                                    size="small"
+                                    aria-label="Decrease item quantity"
+                                    disabled={isMinusDisabled}
+                                    onClick={() =>
+                                      onUpdateCartItemQuantity(
+                                        cart,
+                                        item,
+                                        quantity - 1,
+                                        itemKey,
+                                      )
+                                    }
+                                  >
+                                    <RemoveIcon fontSize="small" />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
+                              <Typography
+                                variant="body2"
+                                sx={{ width: 24, textAlign: "center" }}
+                              >
+                                {isThisItemLoading ? (
+                                  <CircularProgress size={14} />
+                                ) : (
+                                  quantity
+                                )}
+                              </Typography>
+                              <Tooltip
+                                title={
+                                  !productId
+                                    ? "Product unavailable"
+                                    : quantityAvailable != null &&
+                                        quantity >= quantityAvailable
+                                      ? "No more stock available"
+                                      : "Increase"
+                                }
+                                enterDelay={300}
+                              >
+                                <span>
+                                  <IconButton
+                                    size="small"
+                                    aria-label="Increase item quantity"
+                                    disabled={isPlusDisabled}
+                                    onClick={() =>
+                                      onUpdateCartItemQuantity(
+                                        cart,
+                                        item,
+                                        quantity + 1,
+                                        itemKey,
+                                      )
+                                    }
+                                  >
+                                    <AddIcon fontSize="small" />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
+                            
+                            </Stack>
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: "bold" }}>
+                            {item.currencySymbol ?? symbol}
+                            {item.totalPrice ?? 0}
+                          </TableCell>
+                          <TableCell>
+                              <Tooltip title="Remove item" enterDelay={300}>
+                                <span>
+                                  <IconButton
+                                    size="small"
+                                    color="error"
+                                    aria-label="Remove item from cart"
+                                    disabled={isRemoveDisabled}
+                                    onClick={() =>
+                                      onUpdateCartItemQuantity(
+                                        cart,
+                                        item,
+                                        0,
+                                        itemKey,
+                                      )
+                                    }
+                                  >
+                                    <DeleteOutlineIcon fontSize="small" />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   ) : (
                     <TableRow>
                       <TableCell colSpan={5} align="center">
@@ -362,20 +936,80 @@ function Row(props: {
                 </TableBody>
               </Table>
               <Divider sx={{ my: 2 }} />
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                display="block"
-                gutterBottom
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "minmax(180px, 0.8fr) 1fr 1fr",
+                  },
+                  gap: 2,
+                  mb: 2,
+                }}
               >
-                Shipping address
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ whiteSpace: "pre-line", mb: 2 }}
-              >
-                {shippingAddressText}
-              </Typography>
+                {[
+                  {
+                    label: "Email ID",
+                    value: emailText,
+                    hasValue: emailText !== NULL_EMAIL_PLACEHOLDER,
+                  },
+                  {
+                    label: "Shipping address",
+                    value: shippingAddressText,
+                    hasValue: formattedShipping.length > 0,
+                  },
+                  {
+                    label: "Billing address",
+                    value: billingAddressText,
+                    hasValue: formattedBilling.length > 0,
+                  },
+                ].map((section) => (
+                  <Box
+                    key={section.label}
+                    sx={{
+                      border: "1px solid #e2e8f0",
+                      borderRadius: 1,
+                      p: 1.5,
+                      bgcolor: "#fff",
+                      minWidth: 0,
+                    }}
+                  >
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      spacing={1}
+                      sx={{ mb: 0.5 }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        {section.label}
+                      </Typography>
+                      <Tooltip
+                        title={section.hasValue ? "Edit" : "Add"}
+                        enterDelay={300}
+                      >
+                        <IconButton
+                          size="small"
+                          aria-label={`${section.hasValue ? "Edit" : "Add"} ${section.label}`}
+                          onClick={() => onEditContactDetails(cart)}
+                        >
+                          {section.hasValue ? (
+                            <EditIcon fontSize="small" />
+                          ) : (
+                            <AddIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                    <Typography
+                      variant="body2"
+                      sx={{ whiteSpace: "pre-line", wordBreak: "break-word" }}
+                    >
+                      {section.value}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
               <Box sx={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                 <Box>
                   <Typography variant="caption" color="text.secondary">
@@ -429,6 +1063,7 @@ function Row(props: {
 }
 
 export default function ActiveCarts() {
+  const dispatch = useDispatch<TAppDispatch>();
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -436,6 +1071,15 @@ export default function ActiveCarts() {
   const [paymentLinkLoadingCartId, setPaymentLinkLoadingCartId] = useState<
     string | null
   >(null);
+  const [cartItemLoadingKey, setCartItemLoadingKey] = useState<string | null>(
+    null,
+  );
+  const [addProductCart, setAddProductCart] =
+    useState<AdminActiveCartRecord | null>(null);
+  const [addingProductId, setAddingProductId] = useState<string | null>(null);
+  const [contactDialogCart, setContactDialogCart] =
+    useState<AdminActiveCartRecord | null>(null);
+  const [contactSaveLoading, setContactSaveLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -559,6 +1203,140 @@ export default function ActiveCarts() {
       enqueueSnackbar(message, { variant: "error" });
     } finally {
       setPaymentLinkLoadingCartId(null);
+    }
+  };
+
+  const handleSaveContactDetails = async (
+    payload: UpdateCartAddressReqType,
+  ) => {
+    setContactSaveLoading(true);
+    try {
+      await dispatch(updateCartAddressServiceAction(payload));
+      enqueueSnackbar("Cart contact details updated.", {
+        variant: "success",
+      });
+      setContactDialogCart(null);
+      await load(page + 1, rowsPerPage);
+    } catch (error: any) {
+      const { message = "Failed to update cart contact details." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setContactSaveLoading(false);
+    }
+  };
+
+  const handleUpdateCartItemQuantity = async (
+    cart: AdminActiveCartRecord,
+    item: AdminActiveCartLineItem,
+    nextQuantity: number,
+    loadingKey: string,
+  ) => {
+    const phoneNumber = (cart.phoneNumber ?? "").trim();
+    const productId = getLineItemProductId(item);
+
+    if (!phoneNumber) {
+      enqueueSnackbar("Phone number is required to update this cart.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    if (!productId) {
+      enqueueSnackbar("This product is unavailable and cannot be updated.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    const cartItems = cart.items ?? [];
+    const currentItems = getCartModifyItems(cartItems);
+    if (currentItems.some((lineItem) => !lineItem.productId)) {
+      enqueueSnackbar(
+        "Cart has unavailable product lines. Please resolve them before changing quantities.",
+        { variant: "warning" },
+      );
+      return;
+    }
+
+    const items = currentItems.map((lineItem) => ({
+      ...lineItem,
+      quantity:
+        lineItem.productId === productId
+          ? Math.max(0, nextQuantity)
+          : lineItem.quantity,
+    }));
+
+    setCartItemLoadingKey(loadingKey);
+    try {
+      await dispatch(
+        cartModifyServiceAction({
+          phoneNumber,
+          items,
+        }),
+      );
+      enqueueSnackbar(
+        nextQuantity > 0 ? "Cart item quantity updated." : "Item removed from cart.",
+        { variant: "success" },
+      );
+      await load(page + 1, rowsPerPage);
+    } catch (error: any) {
+      const { message = "Failed to update cart item." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setCartItemLoadingKey(null);
+    }
+  };
+
+  const handleAddProductToCart = async (
+    cart: AdminActiveCartRecord,
+    product: SearchDataProductsType,
+  ) => {
+    const phoneNumber = (cart.phoneNumber ?? "").trim();
+
+    if (!phoneNumber) {
+      enqueueSnackbar("Phone number is required to update this cart.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    const cartItems = cart.items ?? [];
+    const currentItems = getCartModifyItems(cartItems);
+    if (currentItems.some((lineItem) => !lineItem.productId)) {
+      enqueueSnackbar(
+        "Cart has unavailable product lines. Please resolve them before adding products.",
+        { variant: "warning" },
+      );
+      return;
+    }
+
+    const existingItem = currentItems.find(
+      (lineItem) => lineItem.productId === product._id,
+    );
+    const items = existingItem
+      ? currentItems.map((lineItem) =>
+          lineItem.productId === product._id
+            ? { ...lineItem, quantity: lineItem.quantity + 1 }
+            : lineItem,
+        )
+      : [...currentItems, { productId: product._id, quantity: 1 }];
+
+    setAddingProductId(product._id);
+    try {
+      await dispatch(
+        cartModifyServiceAction({
+          phoneNumber,
+          items,
+        }),
+      );
+      enqueueSnackbar("Product added to cart.", { variant: "success" });
+      setAddProductCart(null);
+      await load(page + 1, rowsPerPage);
+    } catch (error: any) {
+      const { message = "Failed to add product to cart." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setAddingProductId(null);
     }
   };
 
@@ -872,9 +1650,13 @@ export default function ActiveCarts() {
                       rowId={rowId}
                       expanded={expandedCartId === rowId}
                       paymentLinkLoading={paymentLinkLoadingCartId === rowId}
+                      cartItemLoadingKey={cartItemLoadingKey}
                       onToggleExpand={() => {
                         toggleExpandedRow(rowId);
                       }}
+                      onEditContactDetails={setContactDialogCart}
+                      onOpenAddProduct={setAddProductCart}
+                      onUpdateCartItemQuantity={handleUpdateCartItemQuantity}
                       onGeneratePaymentLink={handleGeneratePaymentLink}
                     />
                   );
@@ -898,6 +1680,20 @@ export default function ActiveCarts() {
           }}
         />
       </Paper>
+      <CartAddressDialog
+        open={contactDialogCart != null}
+        cart={contactDialogCart}
+        saving={contactSaveLoading}
+        onClose={() => setContactDialogCart(null)}
+        onSave={handleSaveContactDetails}
+      />
+      <AddProductDialog
+        open={addProductCart != null}
+        cart={addProductCart}
+        addingProductId={addingProductId}
+        onClose={() => setAddProductCart(null)}
+        onAddProduct={handleAddProductToCart}
+      />
     </Box>
   );
 }
