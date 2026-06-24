@@ -20,12 +20,12 @@ const ContactSchema = Yup.object().shape({
     }),
   phone: Yup.string()
     .required("Phone Number is required")
-    .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
-      if (/^\d{10}$/.test(value)) return true;
-      else return false;
-    })
-    .min(10, "Please enter valid 10 digit Phone Number")
-    .max(10, "Please enter valid 10 digit Phone Number"),
+    // .test("phone", "Please enter valid 10 digit Phone Number", (value) => {
+    //   if (/^\d{10}$/.test(value)) return true;
+    //   else return false;
+    // })
+    .min(5, "Please enter valid Phone Number")
+    .max(11, "Please enter valid Phone Number"),
   subject: Yup.string().required("Subject is required"),
   message: Yup.string(),
 });
