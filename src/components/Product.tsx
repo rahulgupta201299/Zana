@@ -122,17 +122,26 @@ export default function Products({
         </Typography>
 
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt="auto">
-          <Typography variant="h6" sx={{
-            color: "#facc15",
-            fontWeight: "bold",
-            fontSize: { xs: "0.85rem", md: "1rem" },
-            textAlign: "left",
-          }}>
-            {currencySymbol} {price?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mt="auto" gap={1}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#facc15",
+              fontWeight: "bold",
+              fontSize: { xs: "0.85rem", md: "1rem" },
+              textAlign: "left",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+            }}
+          >
+            {currencySymbol}{" "}
+            {price?.toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </Typography>
 
-          <Box sx={{ display: "flex", gap: "8px" }}>
+          <Box sx={{ display: "flex", gap: "8px", flexShrink: 0 }}>
             <IconButton
               onClick={onWishList}
               sx={{

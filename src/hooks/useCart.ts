@@ -30,12 +30,11 @@ export default function useCart() {
     return createDebounce(handleSaveToDB, 500);
   }, []);
 
-  async function getCartFromDB(phoneNumberField?: string) {
+  async function getCartFromDB({ phoneNumberField, newCurrency }: { phoneNumberField?: string; newCurrency?: string }) {
     if (!phoneNumber && !phoneNumberField) return;
 
     try {
-      // @ts-ignore
-      await dispatch(getCartDetailServiceAction()) as GetCartDetailResType;
+      await dispatch(getCartDetailServiceAction(newCurrency)) as GetCartDetailResType;
     } catch (error: any) {
       throw error;
     }
@@ -153,7 +152,7 @@ export default function useCart() {
 
   function saveCartToDB(phoneNumber?: string) {
     if (!cartItems.length) {
-      getCartFromDB(phoneNumber);
+      getCartFromDB({ phoneNumberField: phoneNumber });
       return;
     }
     handleSaveToDB(cartItems, { phoneNumber });

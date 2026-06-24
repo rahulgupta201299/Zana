@@ -236,9 +236,17 @@ const OrderList = () => {
                       },
                     }}
                   >
-                    <Typography fontWeight={700} fontSize={18}>
+                    <Typography
+                      fontWeight={700}
+                      fontSize={18}
+                      sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                    >
                       {`${order.currencySymbol}${order.totalAmount?.toLocaleString(
                         "en-IN",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        },
                       )}`}
                     </Typography>
                     <Button

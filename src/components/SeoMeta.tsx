@@ -4,6 +4,12 @@ import { useLocation } from "react-router";
 import { APP_DOMAIN_URL } from "@/Configurations/env";
 
 const SITE_NAME = "Zana Motorcycles";
+const DEFAULT_OG_IMAGE = "/og-image.jpg";
+const DEFAULT_OG_IMAGE_WIDTH = "1200";
+const DEFAULT_OG_IMAGE_HEIGHT = "630";
+const DEFAULT_OG_IMAGE_ALT =
+  "Zana motorcycle accessories mounted on an adventure motorcycle";
+const CUSTOM_OG_IMAGE_ALT = "Zana motorcycle product preview";
 const DEFAULT_TITLE =
   "Zana Motorcycles | Premium Motorcycle Accessories Online in India";
 const DEFAULT_DESCRIPTION =
@@ -67,6 +73,10 @@ function getMetaByProperty(property: string): HTMLMetaElement {
   return element;
 }
 
+function removeMetaByProperty(property: string) {
+  document.querySelector(`meta[property="${property}"]`)?.remove();
+}
+
 function setLink(rel: string, href: string) {
   let link = document.querySelector(
     `link[rel="${rel}"]`,
@@ -95,7 +105,8 @@ export function SeoMeta({
     const origin = APP_DOMAIN_URL || window.location.origin;
     const path = normalizePath(canonicalPath || pathname);
     const canonicalUrl = `${origin}${path}`;
-    const imageUrl = absoluteUrl(image || "/placeholder.svg");
+    const usesDefaultImage = !image;
+    const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
 
     document.title = pageTitle;
     getMetaByName("description").content = pageDescription;
@@ -115,7 +126,24 @@ export function SeoMeta({
 
     if (imageUrl) {
       getMetaByProperty("og:image").content = imageUrl;
+      getMetaByProperty("og:image:secure_url").content = imageUrl;
+      getMetaByProperty("og:image:alt").content = usesDefaultImage
+        ? DEFAULT_OG_IMAGE_ALT
+        : CUSTOM_OG_IMAGE_ALT;
       getMetaByName("twitter:image").content = imageUrl;
+      getMetaByName("twitter:image:alt").content = usesDefaultImage
+        ? DEFAULT_OG_IMAGE_ALT
+        : CUSTOM_OG_IMAGE_ALT;
+
+      if (usesDefaultImage) {
+        getMetaByProperty("og:image:type").content = "image/jpeg";
+        getMetaByProperty("og:image:width").content = DEFAULT_OG_IMAGE_WIDTH;
+        getMetaByProperty("og:image:height").content = DEFAULT_OG_IMAGE_HEIGHT;
+      } else {
+        removeMetaByProperty("og:image:type");
+        removeMetaByProperty("og:image:width");
+        removeMetaByProperty("og:image:height");
+      }
     }
 
     setLink("canonical", canonicalUrl);

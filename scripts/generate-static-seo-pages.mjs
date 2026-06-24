@@ -6,6 +6,11 @@ const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
 const DIST_SITEMAP_FILE = join(DIST_DIR, "sitemap.xml");
 const PUBLIC_SITEMAP_FILE = resolve("public/sitemap.xml");
 const SITE_ORIGIN_ENV_KEY = "APP_DOMAIN_URL";
+const DEFAULT_OG_IMAGE_PATH = "/og-image.jpg";
+const DEFAULT_OG_IMAGE_WIDTH = "1200";
+const DEFAULT_OG_IMAGE_HEIGHT = "630";
+const DEFAULT_OG_IMAGE_ALT =
+  "Zana motorcycle accessories mounted on an adventure motorcycle";
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -206,18 +211,29 @@ function createRouteHtml(baseHtml, absoluteUrl, pathname) {
   const seo = getSeoForPath(pathname);
   const title = truncate(seo.title, 70);
   const description = truncate(seo.description, 160);
+  const ogImageUrl = new URL(DEFAULT_OG_IMAGE_PATH, absoluteUrl).href;
   let html = baseHtml;
 
   html = addStaticRouteMarker(html, pathname);
   html = upsertTitle(html, title);
   html = upsertMetaName(html, "description", description);
   html = upsertMetaName(html, "robots", "index, follow, max-image-preview:large");
+  html = upsertMetaProperty(html, "og:site_name", "Zana Motorcycles");
   html = upsertMetaProperty(html, "og:title", title);
   html = upsertMetaProperty(html, "og:description", description);
   html = upsertMetaProperty(html, "og:type", seo.type);
   html = upsertMetaProperty(html, "og:url", absoluteUrl);
+  html = upsertMetaProperty(html, "og:image", ogImageUrl);
+  html = upsertMetaProperty(html, "og:image:secure_url", ogImageUrl);
+  html = upsertMetaProperty(html, "og:image:type", "image/jpeg");
+  html = upsertMetaProperty(html, "og:image:width", DEFAULT_OG_IMAGE_WIDTH);
+  html = upsertMetaProperty(html, "og:image:height", DEFAULT_OG_IMAGE_HEIGHT);
+  html = upsertMetaProperty(html, "og:image:alt", DEFAULT_OG_IMAGE_ALT);
+  html = upsertMetaName(html, "twitter:card", "summary_large_image");
   html = upsertMetaName(html, "twitter:title", title);
   html = upsertMetaName(html, "twitter:description", description);
+  html = upsertMetaName(html, "twitter:image", ogImageUrl);
+  html = upsertMetaName(html, "twitter:image:alt", DEFAULT_OG_IMAGE_ALT);
   html = upsertCanonical(html, absoluteUrl);
 
   return html;

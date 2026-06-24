@@ -26,7 +26,7 @@ import MobileNavMenu from "./MobileNavMenu";
 import WebNavMenu from "./WebNavMenu";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { useDispatch, useSelector } from "react-redux";
-import { BikeCategoryEnum, CURRENCY_LIST, CURRENCY_SYMBOL } from "@/Constants/AppConstant";
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
 import { TAppDispatch } from "@/Configurations/AppStore";
 import { setOpenCart } from "@/Redux/Cart/Reducer";
 import useCart from "@/hooks/useCart";
@@ -37,9 +37,8 @@ import {
 } from "@/Redux/Landing/Selectors";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
-import { cartDetailSelector } from "@/Redux/Cart/Selectors";
-import { convertCurrency } from "./Utils";
 import { cartModifyActions } from "@/Redux/Cart/Action";
+import { createProductConverter } from "./Utils";
 
 type NavbarPropsType = {
   isMobile: boolean;
@@ -52,7 +51,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
   const { bikeType = '' } = params
 
-  const cartDetail = useSelector(cartDetailSelector);
+  // const cartDetail = useSelector(cartDetailSelector);
 
   const [selectedMenuItem, setSelectedMenuItem] =
     useState<MenuItemsName | null>(null);
@@ -135,40 +134,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     return () => observer.disconnect();
   }, [location.pathname]);
-
-  function createProductConverter(newCurrency: string) {
-    const updatedCartDetail = structuredClone(cartDetail);
-
-    updatedCartDetail.currency = newCurrency;
-
-    const newCurrencySymbol = currencies.find(item => item.code === newCurrency)?.symbol || CURRENCY_SYMBOL.INR;
-    updatedCartDetail.currencySymbol = newCurrencySymbol;
-
-    updatedCartDetail.processedItems = updatedCartDetail.processedItems.map((item) => {
-      const price = newCurrency === CURRENCY_LIST.INR ? item.product.originalPrice : convertCurrency(item.product.originalPrice, newCurrency);
-      const totalPrice = item.quantity * price;
-
-      return {
-        ...item,
-        currency: newCurrency,
-        currencySymbol: newCurrencySymbol,
-        price,
-        totalPrice,
-        product: {
-          ...item.product,
-          price,
-          currency: newCurrency,
-          currencySymbol: newCurrencySymbol,
-        },
-      }
-    })
-
-    const totalAmount = updatedCartDetail.processedItems.reduce((acc, item) => acc + item.totalPrice, 0);
-
-    updatedCartDetail.totalAmount = updatedCartDetail.subtotal = totalAmount;
-
-    return updatedCartDetail;
-  }
 
   async function handleChange(value: string) {
     // @ts-ignore

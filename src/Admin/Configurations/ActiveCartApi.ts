@@ -8,6 +8,7 @@ const network = new Network();
 /** Path after `VITE_API_DOMAIN` (contract: `GET …/v1/cart/admin/active`). */
 const ACTIVE_CART_ADMIN_PATH = "/api/v1/cart/admin/active";
 const ACTIVE_CART_ADMIN_DOWNLOAD_PATH = "/api/v1/cart/admin/active/download";
+const CREATE_PAYMENT_LINK_PATH = "/api/v1/payment/create-payment-link";
 
 export type AdminActiveCartSortBy = "updatedAt" | "totalAmount";
 export type AdminActiveCartSortOrder = "asc" | "desc";
@@ -100,6 +101,22 @@ export type AdminActiveCartPagination = {
   hasPrevPage?: boolean;
 };
 
+export type AdminCreatePaymentLinkData = {
+  orderId?: string;
+  orderNumber?: string;
+  cartId?: string;
+  paymentLinkId?: string;
+  paymentLink?: string;
+  amount?: number;
+  currency?: string;
+};
+
+export type AdminCreatePaymentLinkResponse = {
+  success?: boolean;
+  message?: string;
+  data?: AdminCreatePaymentLinkData;
+};
+
 /** `data` object for a successful active-carts list response. */
 export type AdminActiveCartListData = {
   carts?: AdminActiveCartRecord[];
@@ -176,4 +193,15 @@ export async function downloadAdminActiveCartsCsv(filters: AdminActiveCartDownlo
     }),
     "admin-active-carts.csv",
   );
+}
+
+export async function createAdminActiveCartPaymentLink(
+  phoneNumber: string,
+): Promise<AdminCreatePaymentLinkResponse> {
+  return network.request({
+    url: CREATE_PAYMENT_LINK_PATH,
+    method: API_METHOD_ENUM.POST,
+    data: { phoneNumber },
+    cache: false,
+  }) as Promise<AdminCreatePaymentLinkResponse>;
 }

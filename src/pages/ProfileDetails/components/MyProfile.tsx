@@ -296,6 +296,7 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
               }}
               enableReinitialize
               validationSchema={ProfileSchema}
+              validateOnMount
               onSubmit={handleSubmit}
             >
               {({
@@ -317,6 +318,15 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                   fetchBrandModels(brand);
                 }, []);
 
+                useEffect(() => {
+                  if (Object.keys(errors).length > 0) {
+                    Object.keys(errors).forEach((field) => {
+                      setFieldTouched(field, true, false);
+                    });
+                  }
+                }, [Object.keys(errors).length]);
+
+
                 return (
                   <Form>
                     <Box
@@ -336,7 +346,6 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           handleChange(e);
                         }}
                         placeholder="Phone Number"
-                      
                         error={getFieldErrorState(
                           { errors, touched },
                           "phoneNumber",
@@ -579,12 +588,21 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                               dispatch,
                               setFieldValue,
                               setFormValues: (updates, shouldValidate) =>
-                                setValues((currentValues) => ({ ...currentValues, ...updates }), shouldValidate),
+                                setValues(
+                                  (currentValues) => ({
+                                    ...currentValues,
+                                    ...updates,
+                                  }),
+                                  shouldValidate,
+                                ),
                               setFieldError,
                               onInvalidPincode: (pincode) => {
                                 setInvalidPostalCode(pincode);
                                 setFieldTouched("postalCode", true, false);
-                                setFieldError("postalCode", "Pincode not found");
+                                setFieldError(
+                                  "postalCode",
+                                  "Pincode not found",
+                                );
                               },
                               onValidPincode: () => {
                                 setInvalidPostalCode("");
@@ -626,7 +644,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           value={values.city}
                           onChange={handleChange}
                           placeholder="City"
-                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                          disabled={
+                            values.country?.toLowerCase() ===
+                            COUNTRY_INDIA.toLowerCase()
+                          }
                           onBlur={handleBlur}
                           error={getFieldErrorState(
                             { errors, touched },
@@ -652,7 +673,10 @@ const MyProfile = ({ isMobile }: { isMobile: boolean }) => {
                           value={values.state}
                           onChange={handleChange}
                           placeholder="State"
-                          disabled={values.country?.toLowerCase() === COUNTRY_INDIA.toLowerCase()}
+                          disabled={
+                            values.country?.toLowerCase() ===
+                            COUNTRY_INDIA.toLowerCase()
+                          }
                           onBlur={handleBlur}
                           error={getFieldErrorState(
                             { errors, touched },

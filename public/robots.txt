@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://www.zanamotorcycles.com/sitemap.xml
+Sitemap: https://staging.dc5j4f0as6jwq.amplifyapp.com/sitemap.xml

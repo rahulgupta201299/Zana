@@ -248,10 +248,17 @@ export default function Search({ onClose }: SearchPropsType) {
                         {trimByLength(shortDescription, 35)}
                       </Typography>
 
-                      <Typography sx={{ color: "#cccccc", mt: 0.3, fontSize: "0.9rem" }}>
-                        {currencySymbol} {price?.toLocaleString('en-IN', {
+                      <Typography
+                        sx={{
+                          mt: 0.3,
+                          fontSize: "0.9rem",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {currencySymbol}{" "}
+                        {price?.toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
+                          maximumFractionDigits: 2,
                         })}
                       </Typography>
                     </Box>
