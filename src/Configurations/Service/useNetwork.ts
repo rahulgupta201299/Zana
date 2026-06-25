@@ -78,7 +78,9 @@ export function useNetwork() {
       const ipLocationCurrency = await setCurrencyFromGeolocation();
       const newCurrency = ipLocationCurrency?.currency || ipLocationCurrency?.currencyDetails?.code;
 
-      if (!currencies.length) await dispatch(currencyListServiceAction());
+      const currencyListRequest = !currencies.length
+        ? retry(() => dispatch(currencyListServiceAction()))
+        : null;
 
       if (!phoneNumber && newCurrency) {
         const newCartDetail = createProductConverter(newCurrency);
@@ -90,8 +92,7 @@ export function useNetwork() {
       if (!productCategory.length) requests.push(retry(() => dispatch(ProductCategoryCountService())));
       if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB({ newCurrency })))
       if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
-      // Recalling if failed before, so that we can get the latest currency list and update the cart accordingly
-      if (!currencies.length) requests.push(retry(()  => dispatch(currencyListServiceAction())))
+      if (currencyListRequest) requests.push(currencyListRequest)
 
       await Promise.allSettled(requests)
     } catch (error: any) {

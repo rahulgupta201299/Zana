@@ -16,7 +16,7 @@ import {
   verifyAdminEmailOtp,
 } from "@/Admin/Configurations/AdminOtpApi";
 import { setAdminSession } from "@/Admin/Configurations/AdminAuth";
-import zanaLogo from "@/Assets/Icons/Zana.png";
+import zanaLogo from "@/Assets/Icons/Zana.webp";
 
 type LoginStep = "email" | "otp";
 

@@ -14,7 +14,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import Zana from "@/Assets/Icons/Zana.png";
+import Zana from "@/Assets/Icons/Zana.webp";
 import ZPro from "@/Assets/Icons/ZPro.webp";
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
 import { MenuItemsType } from "./Types";
@@ -198,6 +198,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
+                fetchPriority="high"
+                decoding="async"
                 style={{
                   height: isMobile ? "3.5rem" : "5rem",
                   width: "auto",

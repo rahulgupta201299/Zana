@@ -1,8 +1,5 @@
 // FloatingButtons.tsx
-import { useState } from "react";
-import { Box, Tooltip, Zoom } from "@mui/material";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import ChatIcon from "@mui/icons-material/Chat";
+import { Box } from "@mui/material";
 import WhatsAppButton from "./WhatsAppButton";
 import TawkChat from "./TawkChat";
 

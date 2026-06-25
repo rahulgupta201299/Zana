@@ -2,7 +2,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import Zana from "@/Assets/Icons/Zana.png";
+import Zana from "@/Assets/Icons/Zana.webp";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { VITE_VIDEO_URL } from "@/Configurations/env";
 
@@ -72,6 +72,8 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           <img
             src={Zana}
             alt={`Zana Logo`}
+            fetchPriority="high"
+            decoding="async"
             style={{
               height: isMobile ? "3.5rem" : "5rem",
               width: "auto",

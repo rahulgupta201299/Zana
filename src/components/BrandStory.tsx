@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import AutumnAdventureSale from '@/Assets/Images/AutumnAdventureSale.png';
+import AutumnAdventureSale from '@/Assets/Images/AutumnAdventureSale.jpg';
 
 const BrandStory = () => {
   const navigate = useNavigate()

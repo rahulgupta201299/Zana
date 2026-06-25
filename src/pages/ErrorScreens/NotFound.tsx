@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BikeErrorImg from '@/Assets/Images/BikeErrorImg.png'
+import BikeErrorImg from '@/Assets/Images/BikeErrorImg.jpg'
 import { ROUTES } from "@/Constants/Routes";
 
 const NotFound = () => {
@@ -12,6 +12,8 @@ const NotFound = () => {
         <img
           src={BikeErrorImg}
           alt="Not Found"
+          loading="lazy"
+          decoding="async"
           className="w-60 opacity-80"
         />
       </div>
