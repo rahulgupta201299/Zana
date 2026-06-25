@@ -67,6 +67,8 @@ const ProductCard = ({
             onClick={() => handleProductClick(category, name, _id)}
             src={imageUrl}
             alt={name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-fit rounded-lg shadow-lg cursor-pointer"
           />
           <div className="absolute bottom-2 left-2 group">

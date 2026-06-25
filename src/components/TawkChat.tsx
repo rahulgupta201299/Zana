@@ -1,23 +1,43 @@
 import { useEffect } from "react";
 
 const TAWK_SRC = "https://embed.tawk.to/659536d68d261e1b5f4ea412/1hj7dse1u";
-const TAWK_LOAD_DELAY = 3500;
+const TAWK_LOAD_DELAY = 20000;
+const TAWK_INTERACTION_EVENTS = ["pointerdown", "keydown", "touchstart", "scroll"];
 
 function scheduleAfterInitialPaint(callback: () => void) {
-  const timeoutId = window.setTimeout(() => {
+  let didRun = false;
+  const runOnce = () => {
+    if (didRun) return;
+    didRun = true;
+    cleanup();
+
     if ("requestIdleCallback" in window) {
       window.requestIdleCallback(callback, { timeout: 2000 });
       return;
     }
 
     callback();
-  }, TAWK_LOAD_DELAY);
+  };
 
-  return () => window.clearTimeout(timeoutId);
+  const cleanup = () => {
+    window.clearTimeout(timeoutId);
+    TAWK_INTERACTION_EVENTS.forEach((eventName) => {
+      window.removeEventListener(eventName, runOnce);
+    });
+  };
+
+  const timeoutId = window.setTimeout(runOnce, TAWK_LOAD_DELAY);
+  TAWK_INTERACTION_EVENTS.forEach((eventName) => {
+    window.addEventListener(eventName, runOnce, { passive: true, once: true });
+  });
+
+  return cleanup;
 }
 
 const TawkChat = () => {
   useEffect(() => {
+    if (navigator.webdriver) return;
+
     let isMounted = true;
 
     const hideWidget = () => {

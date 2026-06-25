@@ -1,29 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit'
-import localforage from 'localforage'
 import {
   FLUSH,
   PAUSE,
   PERSIST,
-  persistReducer,
   persistStore,
   PURGE,
   REGISTER,
   REHYDRATE
 } from 'redux-persist'
 
-import type { TReducers } from '@/Redux/Reducers.ts'
-import reducers, { persistedReducers } from '@/Redux/Reducers.ts'
-import { APP_TITLE, NODE_ENV } from './env'
-
-const persistConfig = {
-  key: APP_TITLE || 'APP_TITLE',
-  version: 1,
-  storage: localforage,
-  whitelist: persistedReducers
-}
+import reducers from '@/Redux/Reducers.ts'
+import { NODE_ENV } from './env'
 
 const AppStore = configureStore({
-  reducer: persistReducer<TReducers>(persistConfig, reducers),
+  reducer: reducers,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {

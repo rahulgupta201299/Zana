@@ -198,6 +198,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
+                width={isZProPath ? 120 : 404}
+                height={isZProPath ? 120 : 316}
                 fetchPriority="high"
                 decoding="async"
                 style={{

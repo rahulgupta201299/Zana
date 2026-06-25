@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import PhilosophyImage from "@/Assets/Images/Philosophy.jpeg";
+import PhilosophyImage from "@/Assets/Images/PhilosophyOptimized.jpg";
 
 const OurPhilosophy = () => {
   const navigate = useNavigate();
@@ -13,7 +13,12 @@ const OurPhilosophy = () => {
           <img 
            src={PhilosophyImage} 
            alt="Motorcycle rider on autumn road" 
-           className="w-full h-auto md:w-[600px] md:h-[500px] object-cover rounded-lg shadow-lg"
+           width={600}
+           height={500}
+           className="w-full aspect-square md:w-[600px] md:h-[500px] object-cover rounded-lg shadow-lg"
+           fetchPriority="high"
+           loading="eager"
+           decoding="async"
            />
         </div>
           
