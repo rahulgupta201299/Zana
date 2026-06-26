@@ -55,6 +55,7 @@ const NewArrivals = () => {
                    height={col.length === 1 ? 380 : 186}
                   count={getQuantity(products[idx]?._id)}
                   loading={isLoading}
+                  priority={idx === 0}
                 />
               ))}
             </div>
@@ -83,6 +84,7 @@ const NewArrivals = () => {
                   height={isTall ? 328 : 160}
                   count={getQuantity(product._id)}
                   loading={isLoading}
+                  priority={idx === 0}
                   onClick={() => handleAddToCart(product._id)}
                 />
               </div>

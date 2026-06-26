@@ -1,25 +1,13 @@
 // FloatingButtons.tsx
-import { Box } from "@mui/material";
 import WhatsAppButton from "./WhatsAppButton";
 import TawkChat from "./TawkChat";
 
 const FloatingButtons = () => {
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        bottom: 24,
-        right: 24,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        gap: "12px",
-        zIndex: 9999,
-      }}
-    >
+    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3">
       <TawkChat />
       <WhatsAppButton />
-    </Box>
+    </div>
   );
 };
 

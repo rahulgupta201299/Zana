@@ -1,6 +1,4 @@
-import SearchIcon from "@mui/icons-material/Search";
-import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { Search, ShoppingCart, User } from "lucide-react";
 import { TopLevelItemsType } from "./Types";
 import { ROUTES } from "@/Constants/Routes";
 
@@ -19,15 +17,15 @@ export enum MenuItemsName {
 export const TopLevelItems: TopLevelItemsType[] = [
   {
     name: MenuItemsName.SEARCH,
-    Component: SearchIcon,
+    Component: Search,
   },
   {
     name: MenuItemsName.PROFILE,
-    Component: PermIdentityOutlinedIcon,
+    Component: User,
   },
   {
     name: MenuItemsName.CART,
-    Component: ShoppingCartOutlinedIcon,
+    Component: ShoppingCart,
   },
 ];
 

@@ -85,7 +85,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     if (route) {
       setSelectedMenuItem(null);
-      name === MenuItemsName.MOTODEVIL ? window.open(route, "_blank") : navigate(route);
+      if (name === MenuItemsName.MOTODEVIL) {
+        window.open(route, "_blank");
+      } else {
+        navigate(route);
+      }
       return;
     }
 
@@ -136,7 +140,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   }, [location.pathname]);
 
   async function handleChange(value: string) {
-    // @ts-ignore
+    // @ts-expect-error selectedCurrencyActions accepts known currency codes from the API.
     dispatch(selectedCurrencyActions(value));
 
     const newCartDetail = createProductConverter(value);

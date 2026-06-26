@@ -243,6 +243,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
       {showClose && (
         <IconButton
           onClick={handleClose}
+          aria-label="Close login dialog"
           sx={{
             position: "absolute",
             top: 16,
@@ -276,73 +277,67 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
               Enter your phone number and we'll send you a 6-digit OTP
             </Typography>
 
-            <TextField
-              fullWidth
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <Box
-                      sx={{
-                        borderRight: "1px solid #000",
-                        mr: "16px",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        renderValue={(selected) => selected}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          borderRadius: "10px",
-                          ".MuiSelect-select": { display: "flex", gap: "8px" },
-                          ".MuiOutlinedInput-notchedOutline": {
-                            border: "none",
-                          },
-                          backgroundColor: "#fff",
-                          height: "100%",
-                          minWidth: "80px",
-                        }}
-                      >
-                        {isdCode.map((c) => (
-                          <MenuItem
-                            key={c.isd}
-                            value={c.isd}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "8px",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span>{c.isd}</span>
-                            <span>{c.name}</span>
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Box>
-                  ),
-                  sx: {
-                    backgroundColor: "#FFFFFF",
-                    color: "#000",
-                    p: 0,
-                    borderRadius: "10px",
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+              <Select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                renderValue={(selected) => selected}
+                inputProps={{
+                  "aria-label": "Country calling code",
+                }}
+                sx={{
+                  backgroundColor: "#fff",
+                  borderRadius: "10px",
+                  color: "#000",
+                  height: "56px",
+                  minWidth: "88px",
+                  ".MuiSelect-select": { display: "flex", gap: "8px" },
+                }}
+              >
+                {isdCode.map((c) => (
+                  <MenuItem
+                    key={c.isd}
+                    value={c.isd}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span>{c.isd}</span>
+                    <span>{c.name}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+
+              <TextField
+                fullWidth
+                slotProps={{
+                  input: {
+                    sx: {
+                      backgroundColor: "#FFFFFF",
+                      color: "#000",
+                      borderRadius: "10px",
+                    },
+                    inputProps: {
+                      maxLength: 10,
+                      "aria-label": "Phone number",
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    },
                   },
-                  inputProps: { maxLength: 10 },
-                },
-              }}
-              value={phone}
-              onChange={(e) => {
-                if (/\D/.test(e.target.value)) return;
-                setPhoneError("");
-                setPhone(e.target.value);
-              }}
-              error={!!phoneError}
-              helperText={phoneError}
-            />
+                }}
+                value={phone}
+                onChange={(e) => {
+                  if (/\D/.test(e.target.value)) return;
+                  setPhoneError("");
+                  setPhone(e.target.value);
+                }}
+                error={!!phoneError}
+                helperText={phoneError}
+              />
+            </Box>
 
             <Button
               size="large"
@@ -375,6 +370,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
                 <Typography variant="body2">{countryCode}-{phone}</Typography>
 
                 <IconButton
+                  aria-label="Edit phone number"
                   sx={{
                     color: '#facc15'
                   }}
@@ -418,7 +414,12 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
                         textAlign: "center",
                         fontSize: "20px",
                       },
-                      inputProps: { maxLength: 10 },
+                      inputProps: {
+                        maxLength: 1,
+                        "aria-label": `OTP digit ${index + 1}`,
+                        inputMode: "numeric",
+                        pattern: "[0-9]*",
+                      },
                     },
                   }}
                   sx={{ width: "48px", color: "#000" }}

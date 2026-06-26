@@ -158,7 +158,7 @@ export default function CouponDialog() {
 					</Typography>
 				</Box>
 
-				<IconButton onClick={onClose}>
+				<IconButton onClick={onClose} aria-label="Close coupons dialog">
 					<CloseIcon sx={{ color: "#aaa" }} />
 				</IconButton>
 			</DialogTitle>
@@ -399,6 +399,7 @@ export default function CouponDialog() {
 								<IconButton
 									size="small"
 									onClick={handleRemoveCoupon}
+									aria-label="Remove applied coupon"
 									sx={{
 										color: "#10B981",
 										"&:hover": {

@@ -58,7 +58,7 @@ function LazyOnVisible({
 }
 
 
-function index() {
+function Landing() {
   const garageFavoriteList = useSelector(getGarageFavorite)
   const newArrivalsList = useSelector(getNewArrivalsList)
   const currency = useSelector(getSelectedCurrency)
@@ -86,7 +86,20 @@ function index() {
   };
 
   useEffect(() => {
-    fetchData();
+    const loadLandingProducts = () => {
+      void fetchData();
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadLandingProducts, { timeout: 5000 });
+        return;
+      }
+
+      loadLandingProducts();
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
   }, [currency]);
 
   return (
@@ -116,4 +129,4 @@ function index() {
   );
 }
 
-export default index;
+export default Landing;

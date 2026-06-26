@@ -10,26 +10,9 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        height: { xs: "280px", md: "100vh" },
-        display: "flex",
-        alignItems: "center",
-        overflow: "hidden",
-      }}
-    >
-      {/* Background */}
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          overflow: "hidden",
-          bgcolor: "black",
-        }}
-      >
-        <Box
-          component="video"
+    <section className="relative flex h-[280px] items-center overflow-hidden md:h-screen">
+      <div className="absolute inset-0 overflow-hidden bg-black">
+        <video
           src={VITE_VIDEO_URL}
           autoPlay
           muted
@@ -37,37 +20,16 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           playsInline
           controls={false}
           preload="metadata"
-          // alt="Motorcycle hero background"
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          className="h-full w-full object-cover"
         />
 
-        {/* Dark Overlay */}
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
-          }}
-        />
-      </Box>
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-      {/* LOGO */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-      >
-        <Link
-          component={RouterLink}
+      <div className="absolute left-1/2 top-5 -translate-x-1/2">
+        <RouterLink
           to={ROUTES.BASE_URL}
-          sx={{ display: "flex", cursor: "pointer" }}
+          className="flex cursor-pointer"
         >
           <img
             src={Zana}
@@ -80,57 +42,25 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
               cursor: "pointer",
               transition: "opacity 0.2s",
               filter:
-                "brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)",
+              "brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)",
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
             onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
           />
-        </Link>
-      </Box>
+        </RouterLink>
+      </div>
 
-      {/* Content */}
-      <Box
-        sx={{
-          position: "relative",
-          maxWidth: "1280px",
-          mx: "auto",
-          px: { xs: 2, md: 3 },
-          width: "100%",
-        }}
-      >
-        <Box sx={{ maxWidth: "650px" }}>
-          <Typography
-            variant="h1"
-            sx={{
-              fontWeight: 700,
-              color: "white",
-              mb: { xs: 1, md: 3 },
-              fontSize: {
-                xs: "1.5rem",
-                md: "4rem",
-                lg: "5rem",
-              },
-              lineHeight: 1.1,
-            }}
-          >
+      <div className="relative mx-auto w-full max-w-7xl px-4 md:px-6">
+        <div className="max-w-[650px]">
+          <h1 className="mb-1 text-2xl font-bold leading-[1.1] text-white md:mb-3 md:text-6xl lg:text-7xl">
             FORGED IN FIRE
             <br />
             MORE THAN METAL
-          </Typography>
+          </h1>
 
-          <Typography
-            sx={{
-              color: "rgba(255,255,255,0.9)",
-              mb: { xs: 2, md: 4 },
-              fontSize: {
-                xs: "0.75rem",
-                md: "1.25rem",
-                lg: "1.75rem",
-              },
-            }}
-          >
+          <p className="mb-2 text-xs text-white/90 md:mb-4 md:text-xl lg:text-3xl">
             Made in India - Ridden Everywhere
-          </Typography>
+          </p>
 
           {/* Animated Button */}
           <Button
@@ -153,7 +83,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
               backgroundPosition: "0% 0%",
 
               "&:hover": {
-                backgroundPosition: "100% 100%",
+              backgroundPosition: "100% 100%",
                 color: "#000",
                 borderColor: "white",
               },
@@ -161,9 +91,9 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           >
             Explore the Collection
           </Button>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </section>
   );
 };
 

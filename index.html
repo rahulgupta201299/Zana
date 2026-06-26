@@ -61,19 +61,41 @@
     />
 
     <script type="module">
-      const scheduleAfterPaint = (callback) => {
-        window.setTimeout(() => {
+      const scheduleTrackingLoad = (callback) => {
+        let didRun = false;
+        const events = ["pointerdown", "keydown", "touchstart", "scroll"];
+
+        const cleanup = () => {
+          window.clearTimeout(fallbackId);
+          events.forEach((eventName) => {
+            window.removeEventListener(eventName, runOnce);
+          });
+        };
+
+        const runOnce = () => {
+          if (didRun) return;
+          didRun = true;
+          cleanup();
+
           if ("requestIdleCallback" in window) {
             window.requestIdleCallback(callback, { timeout: 2000 });
             return;
           }
 
           callback();
-        }, 2500);
+        };
+
+        const fallbackId = window.setTimeout(runOnce, 10000);
+        events.forEach((eventName) => {
+          window.addEventListener(eventName, runOnce, {
+            passive: true,
+            once: true,
+          });
+        });
       };
 
       if (import.meta.env.VITE_ENABLE_TRACKING === "true") {
-        scheduleAfterPaint(() => {
+        scheduleTrackingLoad(() => {
           // Google Tag Manager
           (function (w, d, s, l, i) {
             w[l] = w[l] || [];
@@ -137,26 +159,6 @@
           fbq("init", "2088242422033311");
           fbq("track", "PageView");
 
-          const injectGtmNoscript = () => {
-            if (!document.body) return;
-
-            const gtmNoscript = document.createElement("noscript");
-            const gtmIframe = document.createElement("iframe");
-            gtmIframe.src =
-              "https://www.googletagmanager.com/ns.html?id=GTM-PKKFHGQS";
-            gtmIframe.height = "0";
-            gtmIframe.width = "0";
-            gtmIframe.style.display = "none";
-            gtmIframe.style.visibility = "hidden";
-            gtmNoscript.appendChild(gtmIframe);
-            document.body.insertBefore(gtmNoscript, document.body.firstChild);
-          };
-
-          if (document.body) injectGtmNoscript();
-          else
-            document.addEventListener("DOMContentLoaded", injectGtmNoscript, {
-              once: true,
-            });
         });
       }
     </script>

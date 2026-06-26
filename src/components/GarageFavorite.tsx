@@ -51,6 +51,7 @@ const GarageFavorite = () => {
                   height={col.length === 1 ? 380 : 186}
                   count={getQuantity(productList[idx]?._id)}
                   loading={isLoading}
+                  priority={idx === 0}
                 />
               ))}
             </div>
@@ -78,6 +79,7 @@ const GarageFavorite = () => {
                   height={isTall ? 328 : 160}
                   count={getQuantity(product._id)}
                   loading={isLoading}
+                  priority={idx === 0}
                   onClick={() => handleAddToCart(product._id)}
                 />
               </div>

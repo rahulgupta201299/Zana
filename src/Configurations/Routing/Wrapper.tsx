@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router'
-import { Box } from '@mui/material'
 
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -44,11 +43,11 @@ function Wrapper() {
 	}, [location.pathname])
 
 	return (
-		<Box sx={{ minHeight: "100vh" }}>
+		<div className="min-h-screen">
 			{Object.keys(routeSeo).length > 0 && <SeoMeta {...routeSeo} />}
 			{isLoadig && <Loading />}
 			<Navbar />
-			{location.pathname !== ROUTES.BASE_URL && <Box sx={{ mt: { md: 20.5, xs: 10.5 } }} />}
+			{location.pathname !== ROUTES.BASE_URL && <div className="mt-[5.25rem] md:mt-[10.25rem]" />}
 			{isOpenSignupPopup && <SignupPopup />}
 			{isOpenCart && <CartSidebar />}
 			{isOpenCouponDialog && <CouponDialog />}
@@ -57,7 +56,7 @@ function Wrapper() {
 			{!location.pathname.includes(ROUTES.ADMIN) && <FloatingButtons />}
 			{outOfStock.length > 0 && <CartAttentionDialog />}
 			{/* {isOpenOrderPopup && <OrderConfirmDialog />} */}
-		</Box>
+		</div>
 	)
 }
 
