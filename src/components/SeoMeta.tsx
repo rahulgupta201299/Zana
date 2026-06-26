@@ -11,9 +11,9 @@ const DEFAULT_OG_IMAGE_ALT =
   "Zana motorcycle accessories mounted on an adventure motorcycle";
 const CUSTOM_OG_IMAGE_ALT = "Zana motorcycle product preview";
 const DEFAULT_TITLE =
-  "Zana Motorcycles | Premium Motorcycle Accessories Online in India";
+  "Zana Motorcycles | Premium Bike Accessories & Riding Gear India";
 const DEFAULT_DESCRIPTION =
-  "Shop crash guards, saddlestays, top racks, bash plates, fog light mounts, and premium motorcycle accessories from Zana Motorcycles.";
+  "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
 
 type SeoMetaProps = {
   title?: string;
