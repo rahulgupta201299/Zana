@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 const OUTPUT_FILE = resolve("public/sitemap.xml");
 const ROBOTS_FILE = resolve("public/robots.txt");
 const PAGE_SIZE = 1000;
-const SITE_ORIGIN_ENV_KEY = "APP_DOMAIN_URL";
+const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
 
 function loadEnvFile(filePath) {
@@ -27,7 +27,7 @@ const env = {
   ...process.env,
 };
 
-const siteOrigin = getRequiredOrigin(SITE_ORIGIN_ENV_KEY, "site origin");
+const siteOrigin = getRequiredOrigin(SITE_ORIGIN_ENV_KEYS, "site origin");
 const apiOrigin = getOptionalOrigin(API_ORIGIN_ENV_KEYS);
 
 const staticSections = [
@@ -66,6 +66,11 @@ function normalizeOrigin(value) {
 
 function getEnvValue(keys) {
   const envKeys = Array.isArray(keys) ? keys : [keys];
+  const processValue = envKeys
+    .map((key) => process.env[key])
+    .find((value) => String(value || "").trim());
+  if (processValue) return processValue;
+
   return envKeys
     .map((key) => env[key])
     .find((value) => String(value || "").trim());

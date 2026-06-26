@@ -13,7 +13,7 @@ export const VITE_ENABLE_TRACKING = import.meta.env.VITE_ENABLE_TRACKING === "tr
 export const VITE_VIDEO_URL = import.meta.env.VITE_VIDEO_URL;
 
 function parseAppDomainUrl(): string | null {
-  const raw = viteEnv("APP_DOMAIN_URL");
+  const raw = viteEnv("VITE_APP_DOMAIN_URL") || viteEnv("APP_DOMAIN_URL");
 	if (raw === "") return null;
 	if (typeof raw === "string") {
 		const trimmed = raw.trim();
@@ -25,5 +25,7 @@ function parseAppDomainUrl(): string | null {
 /**
  * Absolute app origin only (no path). Set `APP_DOMAIN_URL` per environment so
  * canonical URLs and generated SEO files use the same frontend domain.
+ * `VITE_APP_DOMAIN_URL` is also accepted for hosting providers that only
+ * expose Vite-prefixed variables.
  */
 export const APP_DOMAIN_URL = parseAppDomainUrl();

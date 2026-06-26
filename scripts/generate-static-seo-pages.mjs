@@ -5,12 +5,16 @@ const DIST_DIR = resolve("dist");
 const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
 const DIST_SITEMAP_FILE = join(DIST_DIR, "sitemap.xml");
 const PUBLIC_SITEMAP_FILE = resolve("public/sitemap.xml");
-const SITE_ORIGIN_ENV_KEY = "APP_DOMAIN_URL";
+const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const DEFAULT_OG_IMAGE_PATH = "/og-image.jpg";
 const DEFAULT_OG_IMAGE_WIDTH = "1200";
 const DEFAULT_OG_IMAGE_HEIGHT = "630";
 const DEFAULT_OG_IMAGE_ALT =
   "Zana motorcycle accessories mounted on an adventure motorcycle";
+const HOME_TITLE =
+  "Zana Motorcycles | Premium Bike Accessories & Riding Gear India";
+const HOME_DESCRIPTION =
+  "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -38,7 +42,19 @@ function normalizeOrigin(value) {
   return new URL(normalizedValue).origin;
 }
 
-const siteOrigin = normalizeOrigin(env[SITE_ORIGIN_ENV_KEY]);
+function getEnvValue(keys) {
+  const envKeys = Array.isArray(keys) ? keys : [keys];
+  const processValue = envKeys
+    .map((key) => process.env[key])
+    .find((value) => String(value || "").trim());
+  if (processValue) return processValue;
+
+  return envKeys
+    .map((key) => env[key])
+    .find((value) => String(value || "").trim());
+}
+
+const siteOrigin = normalizeOrigin(getEnvValue(SITE_ORIGIN_ENV_KEYS));
 
 function escapeHtml(value) {
   return String(value || "")
@@ -83,6 +99,14 @@ function readSitemapUrls() {
 
 function getSeoForPath(pathname) {
   const parts = pathname.split("/").filter(Boolean);
+
+  if (pathname === "/") {
+    return {
+      title: HOME_TITLE,
+      description: HOME_DESCRIPTION,
+      type: "website",
+    };
+  }
 
   if (pathname === "/product-catalog") {
     return {
@@ -155,8 +179,8 @@ function getSeoForPath(pathname) {
   }
 
   return {
-    title: "Zana Motorcycles",
-    description: "ZANA Motorcycles",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     type: "website",
   };
 }
@@ -258,7 +282,7 @@ function main() {
   for (const loc of urls) {
     const url = new URL(loc);
     const pathname = url.pathname.replace(/\/+$/, "") || "/";
-    if (pathname === "/" || /\.[a-z0-9]+$/i.test(pathname)) continue;
+    if (/\.[a-z0-9]+$/i.test(pathname)) continue;
     if (siteOrigin && url.origin !== siteOrigin) continue;
 
     const outputFile = outputFileForPath(pathname);
