@@ -313,12 +313,13 @@ function ProductSection({
 
         <div className="lg:col-span-3">
           <Grid container spacing={{ xs: 2, md: 3 }}>
-            {products.map((product) => (
+            {products.map((product, index) => (
               <Grid size={{ xs: 6, md: 4, sm: 4 }} key={product._id}>
                 <Products
                   product={product}
                   quantityAddedInCart={getQuantity(product._id)}
                   isWishlisted={wishlistMap[product._id] ?? product.isWishlist}
+                  priority={index === 0}
                   onProductClick={() =>
                     handleProductClick(
                       product.category,
@@ -414,6 +415,7 @@ function ProductSection({
         <DialogContent sx={{ p: 0, position: "relative" }}>
           <IconButton
             onClick={() => setModalType(null)}
+            aria-label="Close filters dialog"
             sx={{ position: "absolute", top: 10, right: 10, color: "white" }}
           >
             X

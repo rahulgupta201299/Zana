@@ -69,6 +69,7 @@ const CartSidebar = ({
         {variant === "drawer" && (
           <IconButton
             onClick={onClose}
+            aria-label="Close cart"
             sx={{ color: "white", "&:hover": { color: "yellow" } }}
           >
             <X size={26} />
@@ -221,6 +222,7 @@ const CartSidebar = ({
                           e.stopPropagation();
                           decrementToCart(productId);
                         }}
+                        aria-label={`Decrease quantity for ${name}`}
                         sx={{
                           color: "white",
                           cursor: "pointer",
@@ -250,6 +252,7 @@ const CartSidebar = ({
                             item.product.quantityAvailable,
                           );
                         }}
+                        aria-label={`Increase quantity for ${name}`}
                         sx={{
                           color: "white",
                           cursor: "pointer",

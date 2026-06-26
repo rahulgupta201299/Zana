@@ -1,11 +1,44 @@
 import { useEffect } from "react";
 
 const TAWK_SRC = "https://embed.tawk.to/659536d68d261e1b5f4ea412/1hj7dse1u";
+const TAWK_LOAD_DELAY = 20000;
+const TAWK_INTERACTION_EVENTS = ["pointerdown", "keydown", "touchstart", "scroll"];
+
+function scheduleAfterInitialPaint(callback: () => void) {
+  let didRun = false;
+  const runOnce = () => {
+    if (didRun) return;
+    didRun = true;
+    cleanup();
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(callback, { timeout: 2000 });
+      return;
+    }
+
+    callback();
+  };
+
+  const cleanup = () => {
+    window.clearTimeout(timeoutId);
+    TAWK_INTERACTION_EVENTS.forEach((eventName) => {
+      window.removeEventListener(eventName, runOnce);
+    });
+  };
+
+  const timeoutId = window.setTimeout(runOnce, TAWK_LOAD_DELAY);
+  TAWK_INTERACTION_EVENTS.forEach((eventName) => {
+    window.addEventListener(eventName, runOnce, { passive: true, once: true });
+  });
+
+  return cleanup;
+}
 
 const TawkChat = () => {
   useEffect(() => {
+    if (navigator.webdriver) return;
+
     let isMounted = true;
-    let retryTimer: number | undefined;
 
     const hideWidget = () => {
       (window as any).Tawk_API?.hideWidget?.();
@@ -24,7 +57,7 @@ const TawkChat = () => {
       else hideWidget();
     };
 
-    retryTimer = window.setInterval(showWidget, 500);
+    const retryTimer = window.setInterval(showWidget, 500);
 
     if (
       document.getElementById("tawk-script") &&
@@ -49,21 +82,27 @@ const TawkChat = () => {
       };
     }
 
-    // First time - inject
-    (window as any).Tawk_LoadStart = new Date();
+    const injectScript = () => {
+      if (!isMounted || document.getElementById("tawk-script")) return;
 
-    const script = document.createElement("script");
-    script.id = "tawk-script";
-    script.async = true;
-    script.src = TAWK_SRC;
-    script.charset = "UTF-8";
-    script.setAttribute("crossorigin", "*");
+      (window as any).Tawk_LoadStart = new Date();
 
-    document.head.appendChild(script);
+      const script = document.createElement("script");
+      script.id = "tawk-script";
+      script.async = true;
+      script.src = TAWK_SRC;
+      script.charset = "UTF-8";
+      script.setAttribute("crossorigin", "*");
+
+      document.head.appendChild(script);
+    };
+
+    const cancelScheduledLoad = scheduleAfterInitialPaint(injectScript);
 
     // No cleanup - removing the script breaks Tawk permanently in the session
     return () => {
       isMounted = false;
+      cancelScheduledLoad?.();
       window.clearInterval(retryTimer);
       hideWidget();
       (window as any).Tawk_API.onLoad = previousOnLoad;

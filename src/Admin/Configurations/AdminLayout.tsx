@@ -21,7 +21,7 @@ import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 
 import { ROUTES } from "@/Constants/Routes";
 import { clearAdminSession, getAdminEmail } from "./AdminAuth";
-import zanaLogo from "@/Assets/Icons/Zana.png";
+import zanaLogo from "@/Assets/Icons/Zana.webp";
 
 const drawerWidth = 264;
 

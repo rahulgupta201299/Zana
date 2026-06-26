@@ -280,7 +280,9 @@ const BikeDetailPage = () => {
                   src={imageUrl}
                   alt={modelName}
                   className="max-w-full max-h-96 object-contain"
-                  loading="lazy"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   onError={(e) => (e.currentTarget.src = BikePlaceholderImage)}
                 />
               ) : (

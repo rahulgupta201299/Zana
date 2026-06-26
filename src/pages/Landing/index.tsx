@@ -1,22 +1,64 @@
-import NewArrivals from "@/components/NewArrivals";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import OurPhilosophy from "@/components/OurPhilosophy";
-import GarageFavorite from "@/components/GarageFavorite";
-import YouTubeSection from "@/components/YouTubeSection";
-import InstagramFeed from "@/components/InstagramFeed";
-import BlogsSection from "@/components/BlogsSection";
-import BrandStory from "@/components/BrandStory";
-import TestimonialsSection from "@/components/TestimonialsSection";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch } from "@/Configurations/AppStore";
-import { useEffect, useMemo } from "react";
 import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
 import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import { getGarageFavorite, getNewArrivalsList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
+const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
+const NewArrivals = lazy(() => import("@/components/NewArrivals"));
+const YouTubeSection = lazy(() => import("@/components/YouTubeSection"));
+const InstagramFeed = lazy(() => import("@/components/InstagramFeed"));
+const BrandStory = lazy(() => import("@/components/BrandStory"));
+const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
+
+function LazyOnVisible({
+  children,
+  minHeight = 360,
+}: {
+  children: ReactNode;
+  minHeight?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) return;
+
+    const element = ref.current;
+    if (!element) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  return (
+    <div ref={ref} style={{ minHeight: isVisible ? undefined : minHeight }}>
+      {isVisible && <Suspense fallback={null}>{children}</Suspense>}
+    </div>
+  );
+}
 
 
-function index() {
+function Landing() {
   const garageFavoriteList = useSelector(getGarageFavorite)
   const newArrivalsList = useSelector(getNewArrivalsList)
   const currency = useSelector(getSelectedCurrency)
@@ -44,22 +86,47 @@ function index() {
   };
 
   useEffect(() => {
-    fetchData();
+    const loadLandingProducts = () => {
+      void fetchData();
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadLandingProducts, { timeout: 5000 });
+        return;
+      }
+
+      loadLandingProducts();
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
   }, [currency]);
 
   return (
     <div className="min-h-screen">
       <OurPhilosophy />
-      <GarageFavorite />
-      <NewArrivals />
-      <YouTubeSection />
-      <InstagramFeed />
+      <LazyOnVisible minHeight={520}>
+        <GarageFavorite />
+      </LazyOnVisible>
+      <LazyOnVisible minHeight={520}>
+        <NewArrivals />
+      </LazyOnVisible>
+      <LazyOnVisible minHeight={320}>
+        <YouTubeSection />
+      </LazyOnVisible>
+      <LazyOnVisible minHeight={480}>
+        <InstagramFeed />
+      </LazyOnVisible>
       {/* <BlogsSection /> */}
-      <BrandStory />
-      <TestimonialsSection />
+      <LazyOnVisible minHeight={420}>
+        <BrandStory />
+      </LazyOnVisible>
+      <LazyOnVisible minHeight={360}>
+        <TestimonialsSection />
+      </LazyOnVisible>
         
     </div>
   );
 }
 
-export default index;
+export default Landing;

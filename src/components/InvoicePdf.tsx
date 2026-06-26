@@ -16,7 +16,7 @@ import PreviewIcon from "@mui/icons-material/Visibility";
 // ─── Asset import ─────────────────────────────────────────────────────────────
 // @react-pdf/renderer cannot use <img> HTML tags — must use its own <Image>.
 // Import the asset as a URL string (works with Vite and CRA).
-import ZanaLogo from "@/Assets/Icons/Zana.png";
+import ZanaLogo from "@/Assets/Icons/Zana.webp";
 import { OrderDetailResponse } from "@/pages/OrderDetails/Types";
 import NotoSansRegular from "@/Assets/fonts/NotoSans-Regular.ttf";
 import NotoSansBold from "@/Assets/fonts/NotoSans-Bold.ttf";

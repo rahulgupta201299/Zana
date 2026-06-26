@@ -12,12 +12,14 @@ const ProductCard = ({
   height = 186,
   count = 0,
   loading = false,
+  priority = false,
 }: {
   product: ShopByProductDetailsType;
   onClick: () => void;
   count: number;
   height?: number;
   loading?: boolean;
+  priority?: boolean;
 }) => {
   const {
     imageUrl = "",
@@ -67,6 +69,9 @@ const ProductCard = ({
             onClick={() => handleProductClick(category, name, _id)}
             src={imageUrl}
             alt={name}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
             className="w-full h-full object-fit rounded-lg shadow-lg cursor-pointer"
           />
           <div className="absolute bottom-2 left-2 group">

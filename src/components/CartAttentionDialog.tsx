@@ -106,7 +106,7 @@ export default function CartAttentionDialog() {
   }, [outOfStock.length])
 
   function handleClose() {
-    // @ts-ignore
+    // @ts-expect-error clearOutofStockItems is a locally typed Redux action.
     dispatch(clearOutofStockItems())
   }
 
@@ -155,7 +155,7 @@ export default function CartAttentionDialog() {
               Only {availableStockCount} out of {availableStockCount + unavailableStockCount} requested items were added
             </Typography>
           </Box>
-          <IconButton onClick={handleClose}>
+          <IconButton onClick={handleClose} aria-label="Close stock adjustment dialog">
             <CloseIcon sx={{ color: "#aaa" }} />
           </IconButton>
         </Stack>

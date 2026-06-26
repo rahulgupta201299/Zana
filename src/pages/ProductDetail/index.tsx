@@ -381,6 +381,9 @@ const ProductDetailPage = () => {
                   src={newImages[selectedImageIndex]}
                   alt={name}
                   className="max-w-full max-h-full object-contain"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               ) : (
                 <Skeleton width={500} height={700} />

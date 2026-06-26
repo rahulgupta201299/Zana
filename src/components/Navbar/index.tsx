@@ -14,7 +14,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
-import Zana from "@/Assets/Icons/Zana.png";
+import Zana from "@/Assets/Icons/Zana.webp";
 import ZPro from "@/Assets/Icons/ZPro.webp";
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
 import { MenuItemsType } from "./Types";
@@ -85,7 +85,11 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
     if (route) {
       setSelectedMenuItem(null);
-      name === MenuItemsName.MOTODEVIL ? window.open(route, "_blank") : navigate(route);
+      if (name === MenuItemsName.MOTODEVIL) {
+        window.open(route, "_blank");
+      } else {
+        navigate(route);
+      }
       return;
     }
 
@@ -136,7 +140,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   }, [location.pathname]);
 
   async function handleChange(value: string) {
-    // @ts-ignore
+    // @ts-expect-error selectedCurrencyActions accepts known currency codes from the API.
     dispatch(selectedCurrencyActions(value));
 
     const newCartDetail = createProductConverter(value);
@@ -198,6 +202,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
               <img
                 src={isZProPath ? ZPro : Zana}
                 alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
+                width={isZProPath ? 120 : 404}
+                height={isZProPath ? 120 : 316}
+                fetchPriority="high"
+                decoding="async"
                 style={{
                   height: isMobile ? "3.5rem" : "5rem",
                   width: "auto",

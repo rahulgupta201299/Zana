@@ -12,6 +12,7 @@ type Props = {
   onProductClick: () => void;
   onAddToCart: (e: React.MouseEvent) => void;
   onWishList: (e: React.MouseEvent) => void;
+  priority?: boolean;
 };
 
 export default function Products({
@@ -21,6 +22,7 @@ export default function Products({
   onProductClick,
   onAddToCart,
   onWishList,
+  priority = false,
 }: Props) {
   const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, currencySymbol, quantityAvailable, isComingSoon } = product;
   const isDisabled = quantityAddedInCart >= quantityAvailable;
@@ -46,6 +48,9 @@ export default function Products({
           component="img"
           src={imageUrl}
           alt={name}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
           onError={(e: any) => (e.currentTarget.src = BikePlaceholderImage)}
           sx={{
             width: "100%",
