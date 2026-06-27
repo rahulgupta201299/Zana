@@ -48,17 +48,23 @@ function viteImageOptimizer(videoDomain: string) {
       }
 
       if (!ctx.bundle) return processedHtml;
-      let lcpFilename = '';
+      let mobileHeroFilename = '';
+      let desktopHeroFilename = '';
       for (const fileName in ctx.bundle) {
-        if (fileName.includes('PhilosophyOptimized')) {
-          lcpFilename = fileName;
-          break;
-        }
+        if (fileName.includes('HeroMobile')) mobileHeroFilename = fileName;
+        if (fileName.includes('HeroDesktop')) desktopHeroFilename = fileName;
       }
-      if (lcpFilename) {
-        const preloadTag = `\n    <link rel="preload" href="/${lcpFilename}" as="image" fetchpriority="high" />`;
+      if (mobileHeroFilename || desktopHeroFilename) {
+        const preloadTag = [
+          mobileHeroFilename
+            ? `<link rel="preload" href="/${mobileHeroFilename}" as="image" fetchpriority="high" media="(max-width: 767px)" />`
+            : '',
+          desktopHeroFilename
+            ? `<link rel="preload" href="/${desktopHeroFilename}" as="image" fetchpriority="high" media="(min-width: 768px)" />`
+            : '',
+        ].filter(Boolean).join('\n    ');
         console.log(`[vite-image-optimizer] Injected LCP preload link: ${preloadTag.trim()}`);
-        return processedHtml.replace('</head>', `${preloadTag}\n  </head>`);
+        return processedHtml.replace('</head>', `\n    ${preloadTag}\n  </head>`);
       }
       return processedHtml;
     }

@@ -1,19 +1,33 @@
-import { TAppStore } from "@/Configurations/AppStore";
+import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import useCart from "@/hooks/useCart";
-import { getNewArrivalsList } from "@/Redux/Landing/Selectors";
-import { PlusIcon } from "lucide-react";
-import { useSelector } from "react-redux";
+import { getNewArrivalsList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "./ProductCard";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { newArrivalsName } from "@/Redux/Landing/Actions";
+import { useEffect } from "react";
+import { autoRetry } from "@/Utils/AutoRetryMechanism";
+import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
 
 const NewArrivals = () => {
   const isLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [newArrivalsName]),
   );
   const products = useSelector((state: TAppStore) => getNewArrivalsList(state));
+  const currency = useSelector(getSelectedCurrency);
+  const dispatch = useDispatch<TAppDispatch>();
 
   const { incrementToCart, getQuantity } = useCart();
+
+  useEffect(() => {
+    const hasStaleCurrency =
+      products.length > 0 && products[0].currency !== currency;
+
+    if (products.length && !hasStaleCurrency) return;
+
+    const retry = autoRetry();
+    void retry(() => dispatch(newArrivalsServiceAction()));
+  }, [currency, dispatch, products]);
 
   function handleAddToCart(productId: string) {
     const product = products.find((item) => item._id === productId);
@@ -27,6 +41,7 @@ const NewArrivals = () => {
     });
   }
   const desktopColumns = [[0], [1, 2], [3], [4, 5], [6, 7]];
+  const isInitialLoading = isLoading && !products.length;
 
   return (
     <div
@@ -47,17 +62,20 @@ const NewArrivals = () => {
         <div className="hidden md:grid grid-cols-5 gap-2">
           {desktopColumns.map((col, colIdx) => (
             <div key={colIdx} className="flex flex-col gap-2">
-              {col.map((idx) => (
-                <ProductCard
-                  key={idx}
-                  product={products[idx]}
-                  onClick={() => handleAddToCart(products[idx]._id)}
-                   height={col.length === 1 ? 380 : 186}
-                  count={getQuantity(products[idx]?._id)}
-                  loading={isLoading}
-                  priority={idx === 0}
-                />
-              ))}
+              {col.map((idx) => {
+                const product = products[idx];
+
+                return (
+                  <ProductCard
+                    key={product?._id ?? idx}
+                    product={product}
+                    onClick={() => product && handleAddToCart(product._id)}
+                    height={col.length === 1 ? 380 : 186}
+                    count={getQuantity(product?._id ?? "")}
+                    loading={isInitialLoading}
+                  />
+                );
+              })}
             </div>
           ))}
         </div>
@@ -84,7 +102,6 @@ const NewArrivals = () => {
                   height={isTall ? 328 : 160}
                   count={getQuantity(product._id)}
                   loading={isLoading}
-                  priority={idx === 0}
                   onClick={() => handleAddToCart(product._id)}
                 />
               </div>

@@ -1,27 +1,65 @@
 import { Link as RouterLink } from "react-router-dom";
-import { Box, Typography, Button, Link } from "@mui/material";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.webp";
+import HeroDesktop from "@/Assets/Images/HeroDesktop.webp";
+import HeroMobile from "@/Assets/Images/HeroMobile.webp";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import { VITE_VIDEO_URL } from "@/Configurations/env";
+import { useEffect, useState } from "react";
 
 const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+
+  useEffect(() => {
+    if (!VITE_VIDEO_URL) {
+      setShouldLoadVideo(false);
+      return;
+    }
+
+    const loadVideo = () => setShouldLoadVideo(true);
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(loadVideo, { timeout: 4000 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = setTimeout(loadVideo, 2500);
+    return () => clearTimeout(timeoutId);
+  }, [isMobile]);
 
   return (
     <section className="relative flex h-[280px] items-center overflow-hidden md:h-screen">
       <div className="absolute inset-0 overflow-hidden bg-black">
-        <video
-          src={VITE_VIDEO_URL}
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls={false}
-          preload="metadata"
-          className="h-full w-full object-cover"
-        />
+        <picture className="block h-full w-full">
+          <source media="(max-width: 767px)" srcSet={HeroMobile} />
+          <img
+            src={HeroDesktop}
+            alt=""
+            aria-hidden="true"
+            width={1200}
+            height={1200}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </picture>
+
+        {shouldLoadVideo && (
+          <video
+            src={VITE_VIDEO_URL}
+            poster={isMobile ? HeroMobile : HeroDesktop}
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls={false}
+            preload="none"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
 
         <div className="absolute inset-0 bg-black/40" />
       </div>
@@ -34,8 +72,9 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           <img
             src={Zana}
             alt={`Zana Logo`}
-            fetchPriority="high"
+            loading="eager"
             decoding="async"
+            fetchPriority="low"
             style={{
               height: isMobile ? "3.5rem" : "5rem",
               width: "auto",
