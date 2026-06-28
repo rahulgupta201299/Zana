@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import PhilosophyImage from "@/Assets/Images/PhilosophyOptimized.jpg";
+import HeroDesktop from "@/Assets/Images/HeroDesktop.webp";
+import HeroMobile from "@/Assets/Images/HeroMobile.webp";
+
+import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
 
-const OurPhilosophy = () => {
+const OurPhilosophy = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
   
   return (
@@ -12,13 +15,13 @@ const OurPhilosophy = () => {
           {/* Left side - Image */}
          <div className="relative flex justify-center">
           <img 
-           src={PhilosophyImage} 
+          src={isMobile ? HeroMobile : HeroDesktop}
            alt="Motorcycle rider on autumn road" 
            width={600}
            height={500}
            className="w-full aspect-square md:w-[600px] md:h-[500px] object-cover rounded-lg shadow-lg"
-           fetchPriority="high"
-           loading="eager"
+           fetchPriority="low"
+           loading="lazy"
            decoding="async"
        
            />
@@ -79,4 +82,4 @@ const OurPhilosophy = () => {
   );
 };
 
-export default OurPhilosophy;
+export default withDeviceDetails(OurPhilosophy);
