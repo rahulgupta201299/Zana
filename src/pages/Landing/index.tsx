@@ -1,12 +1,6 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import OurPhilosophy from "@/components/OurPhilosophy";
-import { useDispatch, useSelector } from "react-redux";
-import { TAppDispatch } from "@/Configurations/AppStore";
-import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
-import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
-import { autoRetry } from "@/Utils/AutoRetryMechanism";
-import { getGarageFavorite, getNewArrivalsList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
 
 const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
 const NewArrivals = lazy(() => import("@/components/NewArrivals"));
@@ -43,7 +37,7 @@ function LazyOnVisible({
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" },
+      { rootMargin: "150px 0px" },
     );
 
     observer.observe(element);
@@ -59,49 +53,6 @@ function LazyOnVisible({
 
 
 function Landing() {
-  const garageFavoriteList = useSelector(getGarageFavorite)
-  const newArrivalsList = useSelector(getNewArrivalsList)
-  const currency = useSelector(getSelectedCurrency)
-
-  const dispatch = useDispatch<TAppDispatch>();
-  const actions = useMemo(
-    () => ({
-      newArrivalList: () => dispatch(newArrivalsServiceAction()),
-      garageFavorite: () => dispatch(garageFavoriteServiceAction()),
-
-    }),
-    [dispatch]
-  );
-
-  const retry = autoRetry()
-
-  const fetchData = async () => {
-    const requests: Promise<any>[] = []
-
-    const checkNewCurrency = garageFavoriteList.length > 0 && garageFavoriteList[0].currency !== currency
-
-    if (!garageFavoriteList.length || checkNewCurrency) requests.push(retry(() => actions.newArrivalList()))
-    if (!newArrivalsList.length || checkNewCurrency) requests.push(retry(() => actions.garageFavorite()))
-    await Promise.allSettled(requests)
-  };
-
-  useEffect(() => {
-    const loadLandingProducts = () => {
-      void fetchData();
-    };
-
-    const timeoutId = window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadLandingProducts, { timeout: 5000 });
-        return;
-      }
-
-      loadLandingProducts();
-    }, 3000);
-
-    return () => clearTimeout(timeoutId);
-  }, [currency]);
-
   return (
     <div className="min-h-screen">
       <OurPhilosophy />

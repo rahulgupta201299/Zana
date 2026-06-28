@@ -4,6 +4,8 @@ import { RouterProvider } from 'react-router-dom'
 import { getAppRouter, prefetchCommerceRoutePages } from './GetAppRouter'
 
 let router: ReturnType<typeof getAppRouter>
+const ROUTE_PREFETCH_DELAY = 15000
+const PREFETCH_EVENTS = ['pointerdown', 'keydown', 'touchstart'] as const
 
 export function getHistory() {
   return router
@@ -14,8 +16,12 @@ function AppRouter() {
 
   useEffect(() => {
     let cleanupPrefetchScheduler: VoidFunction | undefined;
+    let didSchedule = false;
 
     const schedulePrefetch = () => {
+      if (didSchedule || navigator.webdriver) return;
+      didSchedule = true;
+
       const prefetchPages = () => {
         void prefetchCommerceRoutePages();
       };
@@ -32,14 +38,19 @@ function AppRouter() {
       cleanupPrefetchScheduler = () => window.clearTimeout(timeoutId);
     };
 
-    if (document.readyState === "complete") {
-      schedulePrefetch();
-    } else {
-      window.addEventListener("load", schedulePrefetch, { once: true });
-    }
+    const delayedPrefetchId = window.setTimeout(schedulePrefetch, ROUTE_PREFETCH_DELAY);
+    PREFETCH_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, schedulePrefetch, {
+        passive: true,
+        once: true,
+      });
+    });
 
     return () => {
-      window.removeEventListener("load", schedulePrefetch);
+      window.clearTimeout(delayedPrefetchId);
+      PREFETCH_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, schedulePrefetch);
+      });
       cleanupPrefetchScheduler?.();
     };
   }, []);

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PhilosophyImage from "@/Assets/Images/PhilosophyOptimized.jpg";
 
+
 const OurPhilosophy = () => {
   const navigate = useNavigate();
   
@@ -19,6 +20,7 @@ const OurPhilosophy = () => {
            fetchPriority="high"
            loading="eager"
            decoding="async"
+       
            />
         </div>
           
