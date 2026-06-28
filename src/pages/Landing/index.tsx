@@ -72,9 +72,9 @@ function Landing() {
       <LazyOnVisible minHeight={420}>
         <BrandStory />
       </LazyOnVisible>
-      <LazyOnVisible minHeight={360}>
+      {/* <LazyOnVisible minHeight={360}>
         <TestimonialsSection />
-      </LazyOnVisible>
+      </LazyOnVisible> */}
         
     </div>
   );
