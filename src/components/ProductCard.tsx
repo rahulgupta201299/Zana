@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { PlusIcon } from "lucide-react";
@@ -6,6 +6,8 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { ROUTES } from "@/Constants/Routes";
 import { encodedGeneratedPath } from "@/Utils/global";
+import { getProductImageProps } from "@/Utils/ImageUtils";
+import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 
 const ProductCard = ({
   product,
@@ -31,12 +33,30 @@ const ProductCard = ({
   } = product || {};
   const isDisabled = Boolean(product && count >= quantityAvailable);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const showSkeleton = loading || !product || !imageUrl || !isImageLoaded;
+  const imageProps = getProductImageProps(imageUrl);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsImageLoaded(false);
+
+    const syncLoadedImage = () => {
+      const image = imageRef.current;
+
+      if (image?.complete && image.naturalWidth > 0) {
+        setIsImageLoaded(true);
+      }
+    };
+
+    const animationFrameId = window.requestAnimationFrame(syncLoadedImage);
+    window.addEventListener("pageshow", syncLoadedImage);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("pageshow", syncLoadedImage);
+    };
   }, [imageUrl]);
 
   function handleProductClick(
@@ -83,14 +103,34 @@ const ProductCard = ({
       {product && imageUrl && (
         <>
           <img
+            ref={imageRef}
             onClick={() => handleProductClick(category, name, _id)}
-            src={imageUrl}
+            {...imageProps}
             alt={name}
+            data-original-src={imageUrl}
+            sizes="(min-width: 768px) 298px, 50vw"
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             onLoad={() => setIsImageLoaded(true)}
-            onError={() => setIsImageLoaded(false)}
+            onError={(event) => {
+              const originalSrc = event.currentTarget.dataset.originalSrc;
+
+              if (
+                originalSrc &&
+                event.currentTarget.src !== originalSrc &&
+                event.currentTarget.dataset.fallbackApplied !== "true"
+              ) {
+                event.currentTarget.removeAttribute("srcset");
+                event.currentTarget.dataset.fallbackApplied = "true";
+                event.currentTarget.src = originalSrc;
+                return;
+              }
+
+              event.currentTarget.removeAttribute("srcset");
+              event.currentTarget.src = BikePlaceholderImage;
+              setIsImageLoaded(true);
+            }}
             className="w-full h-full object-cover rounded-lg shadow-lg cursor-pointer transition-opacity duration-200"
             style={{ opacity: isImageLoaded ? 1 : 0 }}
           />

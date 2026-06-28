@@ -3,7 +3,7 @@ import { Box, Card, CardContent, Chip, IconButton, Tooltip, Typography } from "@
 import { Heart, ShoppingCart } from "lucide-react";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { ROUTES } from "@/Constants/Routes";
+import { getProductImageProps } from "@/Utils/ImageUtils";
 
 type Props = {
   product: ShopByProductDetailsType;
@@ -26,6 +26,7 @@ export default function Products({
 }: Props) {
   const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, currencySymbol, quantityAvailable, isComingSoon } = product;
   const isDisabled = quantityAddedInCart >= quantityAvailable;
+  const imageProps = getProductImageProps(imageUrl);
 
   return (
     <Card
@@ -46,12 +47,28 @@ export default function Products({
       <Box sx={{ position: "relative", flexShrink: 0, p: "8px" }}>
         <Box
           component="img"
-          src={imageUrl}
+          {...imageProps}
           alt={name}
+          data-original-src={imageUrl}
+          sizes="(min-width: 1024px) 298px, (min-width: 640px) 33vw, 50vw"
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
-          onError={(e: any) => (e.currentTarget.src = BikePlaceholderImage)}
+          onError={(event: any) => {
+            const originalSrc = event.currentTarget.dataset.originalSrc;
+
+            if (
+              originalSrc &&
+              event.currentTarget.dataset.fallbackApplied !== "true"
+            ) {
+              event.currentTarget.removeAttribute("srcset");
+              event.currentTarget.dataset.fallbackApplied = "true";
+              event.currentTarget.src = originalSrc;
+              return;
+            }
+
+            event.currentTarget.src = BikePlaceholderImage;
+          }}
           sx={{
             width: "100%",
             aspectRatio: "1 / 1",
