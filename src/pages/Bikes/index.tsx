@@ -47,20 +47,22 @@ function Bikes() {
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
 
-  const [selectedBrand, setSelectedBrand] = useState<string>(
-    initialBikeBrand || ALL_CATEGORY,
-  );
+ 
+  const resolvedInitialBrand = (initialBikeBrand || ALL_CATEGORY).toLowerCase();
+
+  const [selectedBrand, setSelectedBrand] = useState<string>(resolvedInitialBrand);
   const [filteredBrandDetails, setFilteredBrandDetails] = useState<
     ShopByBikeModelsType[]
   >([]);
 
   const navigate = useNavigate();
 
+ 
   const allBrandDetails = useMemo(() => {
-    return bikeSelector.reduce((acc, curr) => {
+    return bikeSelector.reduce<ShopByBikeModelsType[]>((acc, curr) => {
       return [...acc, ...curr.models];
     }, []);
-  }, [bikeSelector.length]);
+  }, [bikeSelector]);
 
   const categoriesWithCount: { name: string; count: number }[] = useMemo(() => {
     if (!bikeSelector.length) return [];
@@ -72,7 +74,12 @@ function Bikes() {
     });
 
     return result;
-  }, [bikeSelector.length]);
+  }, [bikeSelector]);
+
+  function getFilteredModels(brand: string): ShopByBikeModelsType[] {
+    if (brand === ALL_CATEGORY) return allBrandDetails;
+    return bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
+  }
 
   function handleBikeClick(
     bikeBrand: string,
@@ -90,23 +97,21 @@ function Bikes() {
   }
 
   function handleBrandCategoryClick(brand: string) {
-    setSelectedBrand(brand);
+    const normalisedBrand = brand.toLowerCase();
+    setSelectedBrand(normalisedBrand);
+    setFilteredBrandDetails(getFilteredModels(normalisedBrand));
 
-    if (brand === ALL_CATEGORY) {
-      setFilteredBrandDetails(allBrandDetails);
-      return;
-    }
-
-    const data = bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
-    setFilteredBrandDetails(data);
-
-    navigate(location.pathname, { state: { brand }, replace: true });
+  
+    navigate(location.pathname, { state: { brand: normalisedBrand }, replace: true });
   }
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    handleBrandCategoryClick(initialBikeBrand);
-  }, [allBrandDetails.length, initialBikeBrand]);
+
+    const brand = resolvedInitialBrand;
+    setSelectedBrand(brand);
+    setFilteredBrandDetails(getFilteredModels(brand));
+  }, [bikeSelector, resolvedInitialBrand]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -139,12 +144,13 @@ function Bikes() {
                 <button
                   key={name}
                   onClick={() => handleBrandCategoryClick(brandName)}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedBrand === brandName
-                    ? "bg-yellow-400 text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                    selectedBrand === brandName
+                      ? "bg-yellow-400 text-black"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
                 >
-                  {brandName.toUpperCase()} ({count})
+                  {brandName === ALL_CATEGORY ? ALL_CATEGORY.toUpperCase() : brandName.toUpperCase()} ({count})
                 </button>
               );
             })}
@@ -189,8 +195,8 @@ function Bikes() {
                           src={imageUrl}
                           alt={name}
                           onError={(e) =>
-                          ((e.currentTarget as HTMLImageElement).src =
-                            BikePlaceholderImage)
+                            ((e.currentTarget as HTMLImageElement).src =
+                              BikePlaceholderImage)
                           }
                           sx={{
                             width: "100%",
@@ -214,7 +220,6 @@ function Bikes() {
                           variant="caption"
                           sx={{
                             display: "block",
-
                             opacity: 0.8,
                             fontWeight: 600,
                             letterSpacing: 1.5,

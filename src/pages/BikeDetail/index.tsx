@@ -27,6 +27,9 @@ import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategor
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 import { capitalise } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
+import { getProductImageProps } from "@/Utils/ImageUtils";
+
+const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
 type BikeDetailLocationState = {
   category?: string;
@@ -76,6 +79,7 @@ const BikeDetailPage = () => {
   );
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
   const bikeProductsRequestRef = useRef(0);
   const bikeDetailsRequestRef = useRef(0);
   const isBikeProductsPending =
@@ -85,6 +89,7 @@ const BikeDetailPage = () => {
   async function getBikeProducts(
     category = ALL_CATEGORY,
     subCategory?: string,
+    limit = INITIAL_BIKE_PRODUCTS_LIMIT,
   ) {
     const requestId = bikeProductsRequestRef.current + 1;
     bikeProductsRequestRef.current = requestId;
@@ -97,6 +102,7 @@ const BikeDetailPage = () => {
           modelId: bikeId,
           ...(category &&
             category !== ALL_CATEGORY && { category, subCategory }),
+          ...(limit && { queryParams: { page: 1, limit } }),
         }),
       )) as ShopByProductDetailsType[];
       if (bikeProductsRequestRef.current !== requestId) return;
@@ -158,12 +164,19 @@ const BikeDetailPage = () => {
     const newFilters = { category: val, subCategory: "" };
     setFilters(newFilters);
     setSelectedCategory(val);
+    setShowAllBikeProducts(false);
     getBikeProducts(val);
   }
 
   function handleClearFilter() {
     setFilters({ category: selectedCategory, subCategory: "" });
+    setShowAllBikeProducts(false);
     getBikeProducts(selectedCategory);
+  }
+
+  function handleShowAllBikeProducts() {
+    setShowAllBikeProducts(true);
+    getBikeProducts(selectedCategory, subCategory, 0);
   }
 
   function handleBackToBikes() {
@@ -243,6 +256,10 @@ const BikeDetailPage = () => {
     ? BikeCategoryEnum.ZPRO
     : "Shop By Bike";
   const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
+  const selectedCategoryCount =
+    categoriesWithCount.find(({ name }) => name.toLowerCase() === selectedCategory)
+      ?.count || bikeProducts.length;
+  const bikeImageProps = getProductImageProps(imageUrl, [320, 480, 640, 800]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -277,13 +294,30 @@ const BikeDetailPage = () => {
             <div className="rounded-2xl flex items-center justify-center">
               {!isBikeDetailsPending ? (
                 <img
-                  src={imageUrl}
+                  {...bikeImageProps}
                   alt={modelName}
+                  sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
+                  data-original-src={imageUrl}
                   className="max-w-full max-h-96 object-contain"
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  onError={(e) => (e.currentTarget.src = BikePlaceholderImage)}
+                  onError={(e) => {
+                    const originalSrc = e.currentTarget.dataset.originalSrc;
+
+                    if (
+                      originalSrc &&
+                      e.currentTarget.dataset.fallbackApplied !== "true"
+                    ) {
+                      e.currentTarget.removeAttribute("srcset");
+                      e.currentTarget.dataset.fallbackApplied = "true";
+                      e.currentTarget.src = originalSrc;
+                      return;
+                    }
+
+                    e.currentTarget.removeAttribute("srcset");
+                    e.currentTarget.src = BikePlaceholderImage;
+                  }}
                 />
               ) : (
                 <Skeleton width={500} height={380} />
@@ -341,7 +375,7 @@ const BikeDetailPage = () => {
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
                   {!isBikeProductsPending ? (
-                    `${bikeProducts.length} Products Available`
+                    `${selectedCategoryCount} Products Available`
                   ) : (
                     <Skeleton
                       sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
@@ -398,6 +432,18 @@ const BikeDetailPage = () => {
               isLoading={isBikeProductsPending}
             />
           )}
+          {!showAllBikeProducts &&
+            !isBikeProductsPending &&
+            selectedCategoryCount > filteredBikeProducts.length && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={handleShowAllBikeProducts}
+                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
+                >
+                  View all {selectedCategoryCount} products
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>
