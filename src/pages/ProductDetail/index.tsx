@@ -53,6 +53,15 @@ import {
   getSuggestedProductImageProps,
   getThumbnailImageProps,
 } from "@/Utils/ImageUtils";
+import {
+  STAGING_PRODUCT_IMAGE_MAP,
+  PRODUCTION_PRODUCT_IMAGE_MAP,
+} from "./PRODUCT_IMAGE_MAPS";
+
+const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
+const PRODUCT_IMAGE_MAP = IS_PRODUCTION
+  ? PRODUCTION_PRODUCT_IMAGE_MAP
+  : STAGING_PRODUCT_IMAGE_MAP;
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -63,7 +72,7 @@ type ProductDetailLocationState = {
   productCategory?: string;
 };
 
-const STATIC_PLACEHOLDER_IMAGE =
+const FALLBACK_PLACEHOLDER_IMAGE =
   "https://d3s3r7gevtfrvd.cloudfront.net/Zana+website/proMImg_07_1721457228.webp?width=960&quality=75&format=webp";
 
 const ProductDetailPage = () => {
@@ -78,6 +87,13 @@ const ProductDetailPage = () => {
   // no API call needed. Used for FCP/LCP before the API resolves.
   const staticName = replaceHiphenWithSpaces(productItem)
     .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  // Resolve the static product image from the pre-built map keyed by productId.
+  // The correct map (staging vs. production) is selected at module load time
+  // via VITE_NODE_ENV so no runtime env checks are needed here.
+  const staticPlaceholderImage =
+    (PRODUCT_IMAGE_MAP as Record<string, string>)[productId] ??
+    FALLBACK_PLACEHOLDER_IMAGE;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -412,7 +428,7 @@ const ProductDetailPage = () => {
                 src={
                   !isProductDetailPending && isHeroImageLoaded
                     ? heroImageProps.src
-                    : STATIC_PLACEHOLDER_IMAGE
+                    : staticPlaceholderImage
                 }
                 srcSet={
                   !isProductDetailPending && isHeroImageLoaded
