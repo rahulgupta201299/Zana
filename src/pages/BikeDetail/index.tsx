@@ -27,7 +27,7 @@ import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategor
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 import { capitalise } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
-import { getProductImageProps } from "@/Utils/ImageUtils";
+import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
 
 const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
@@ -259,7 +259,11 @@ const BikeDetailPage = () => {
   const selectedCategoryCount =
     categoriesWithCount.find(({ name }) => name.toLowerCase() === selectedCategory)
       ?.count || bikeProducts.length;
-  const bikeImageProps = getProductImageProps(imageUrl, [320, 480, 640, 800]);
+  const bikeImageProps = getProductImageProps(
+    imageUrl,
+    [...IMAGE_WIDTH_PRESETS.bikeHero],
+    480,
+  );
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -296,9 +300,12 @@ const BikeDetailPage = () => {
                 <img
                   {...bikeImageProps}
                   alt={modelName}
+                  width={560}
+                  height={384}
                   sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
                   data-original-src={imageUrl}
                   className="max-w-full max-h-96 object-contain"
+                  style={{ aspectRatio: "560 / 384" }}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
@@ -320,7 +327,7 @@ const BikeDetailPage = () => {
                   }}
                 />
               ) : (
-                <Skeleton width={500} height={380} />
+                <Skeleton sx={{ width: "100%", height: { xs: 240, lg: 384 }, backgroundColor: "rgba(255,255,255,0.1)" }} variant="rectangular" />
               )}
             </div>
 

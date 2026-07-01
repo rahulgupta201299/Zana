@@ -2,6 +2,7 @@ import { useLayoutEffect } from "react";
 import { useLocation } from "react-router";
 
 import { APP_DOMAIN_URL } from "@/Configurations/env";
+import { getHeroImageProps } from "@/Utils/ImageUtils";
 
 const SITE_NAME = "Zana Motorcycles";
 const DEFAULT_OG_IMAGE = "/og-image.jpg";
@@ -77,6 +78,32 @@ function removeMetaByProperty(property: string) {
   document.querySelector(`meta[property="${property}"]`)?.remove();
 }
 
+function removeLcpPreload() {
+  document.querySelector('link[data-lcp-preload="true"]')?.remove();
+}
+
+function setLcpPreload(image?: string) {
+  removeLcpPreload();
+  if (!image) return;
+
+  const { src, srcSet } = getHeroImageProps(image);
+  if (!src) return;
+
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = src;
+  link.setAttribute("fetchpriority", "high");
+  link.setAttribute("data-lcp-preload", "true");
+
+  if (srcSet) {
+    link.setAttribute("imagesrcset", srcSet);
+    link.setAttribute("imagesizes", "(min-width: 1024px) 560px, calc(100vw - 48px)");
+  }
+
+  document.head.appendChild(link);
+}
+
 function setLink(rel: string, href: string) {
   let link = document.querySelector(
     `link[rel="${rel}"]`,
@@ -147,6 +174,9 @@ export function SeoMeta({
     }
 
     setLink("canonical", canonicalUrl);
+    setLcpPreload(image);
+
+    return removeLcpPreload;
   }, [canonicalPath, description, image, noIndex, pathname, title, type]);
 
   return null;

@@ -72,7 +72,9 @@ function Wrapper() {
 				{isOpenCart && <CartSidebar />}
 				{isOpenCouponDialog && <CouponDialog />}
 			</Suspense>
-			<Outlet />
+			<main id="main-content">
+				<Outlet />
+			</main>
 			{showDeferredChrome && (
 				<Suspense fallback={null}>
 					<Footer />

@@ -48,6 +48,11 @@ import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { SeoMeta } from "@/components/SeoMeta";
+import {
+  getHeroImageProps,
+  getSuggestedProductImageProps,
+  getThumbnailImageProps,
+} from "@/Utils/ImageUtils";
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -268,6 +273,7 @@ const ProductDetailPage = () => {
   const isMinusDisabled = quantity === 1;
 
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
+  const heroImageProps = getHeroImageProps(newImages[selectedImageIndex] || "");
   const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
   const breadcrumbCategory =
     breadcrumbState.productCategory || category;
@@ -343,10 +349,15 @@ const ProductDetailPage = () => {
           <div className="lg:col-span-2">
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
               {newImages.map((image, index) => {
+                const thumbnailProps = getThumbnailImageProps(image);
+
                 return (
                   <Fragment key={index}>
                     {!isProductDetailPending ? (
-                      <div
+                      <button
+                        type="button"
+                        aria-label={`View ${name} image ${index + 1}`}
+                        aria-current={selectedImageIndex === index ? "true" : undefined}
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all overflow-hidden ${
                           selectedImageIndex === index
                             ? "border-white"
@@ -355,16 +366,20 @@ const ProductDetailPage = () => {
                         onClick={() => setSelectedImageIndex(index)}
                       >
                         <img
-                          src={image}
+                          {...thumbnailProps}
                           alt={`${name} ${index + 1}`}
+                          width={96}
+                          height={96}
+                          sizes="96px"
+                          loading={index === 0 ? "eager" : "lazy"}
+                          decoding="async"
                           className="w-full h-full object-cover p-2"
                         />
-                      </div>
+                      </button>
                     ) : (
                       <Skeleton
-                        sx={{ backgroundColor: "grey" }}
-                        width={180}
-                        height={160}
+                        sx={{ width: { xs: 80, lg: 96 }, height: { xs: 80, lg: 96 }, backgroundColor: "grey" }}
+                        variant="rectangular"
                       />
                     )}
                   </Fragment>
@@ -378,15 +393,18 @@ const ProductDetailPage = () => {
             <div className=" rounded-lg  h-96 lg:h-[600px] flex items-center justify-center">
               {!isProductDetailPending ? (
                 <img
-                  src={newImages[selectedImageIndex]}
+                  {...heroImageProps}
                   alt={name}
+                  width={480}
+                  height={480}
+                  sizes="(min-width: 1024px) 480px, calc(100vw - 48px)"
                   className="max-w-full max-h-full object-contain"
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
                 />
               ) : (
-                <Skeleton width={500} height={700} />
+                <Skeleton sx={{ width: "100%", height: { xs: 384, lg: 600 }, backgroundColor: "rgba(255,255,255,0.1)" }} variant="rectangular" />
               )}
             </div>
           </div>
@@ -459,6 +477,7 @@ const ProductDetailPage = () => {
                     variant="ghost"
                     size="sm"
                     disabled={isMinusDisabled}
+                    aria-label="Decrease quantity"
                     onClick={() => setQuantity((p) => p - 1)}
                     style={{ cursor: "pointer" }}
                     className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
@@ -472,6 +491,7 @@ const ProductDetailPage = () => {
                     variant="ghost"
                     size="sm"
                     disabled={isPlusDisabled}
+                    aria-label="Increase quantity"
                     onClick={() => setQuantity((p) => p + 1)}
                     style={{ cursor: "pointer" }}
                     className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
@@ -531,6 +551,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on Instagram"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.INSTAGRAM,
@@ -545,6 +566,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on Facebook"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.FACEBOOK,
@@ -558,6 +580,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on WhatsApp"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.WHATSAPP,
@@ -579,6 +602,12 @@ const ProductDetailPage = () => {
               <div className="flex gap-1 md:gap-2">
                 <Tooltip title="Add to Wishlist">
                   <button
+                    type="button"
+                    aria-label={
+                      isWishlisted ?? product.isWishlist
+                        ? "Remove from wishlist"
+                        : "Add to wishlist"
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       handleWishList(product._id);
@@ -716,6 +745,8 @@ const ProductDetailPage = () => {
               const productQuantity = getQuantity(_id);
               const isDisabled = productQuantity >= quantityAvailable;
 
+              const suggestedImageProps = getSuggestedProductImageProps(imageUrl);
+
               return (
                 <div
                   key={index}
@@ -727,12 +758,19 @@ const ProductDetailPage = () => {
                   <div className="relative p-2">
                     <div className="aspect-square bg-white/10 overflow-hidden rounded-lg relative flex items-center justify-center">
                       <img
-                        src={imageUrl}
+                        {...suggestedImageProps}
                         alt={name}
+                        width={256}
+                        height={256}
+                        sizes="256px"
+                        loading="lazy"
+                        decoding="async"
                         className="max-w-full max-h-full object-contain"
                       />
                       <div className="absolute bottom-2 left-2 group">
                         <button
+                          type="button"
+                          aria-label={`Add ${name} to cart`}
                           style={{
                             cursor: isDisabled ? "not-allowed" : "pointer",
                             opacity: isDisabled ? 0.7 : 1,
