@@ -239,7 +239,7 @@ const ProductDetailPage = () => {
           };
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
       productCategory,
-      name,
+      productItem: name,
       productId,
     });
 
