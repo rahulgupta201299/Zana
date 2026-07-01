@@ -3,7 +3,7 @@ import { Box, Card, CardContent, Chip, IconButton, Tooltip, Typography } from "@
 import { Heart, ShoppingCart } from "lucide-react";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { getProductImageProps } from "@/Utils/ImageUtils";
+import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
 
 type Props = {
   product: ShopByProductDetailsType;
@@ -26,7 +26,11 @@ export default function Products({
 }: Props) {
   const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, currencySymbol, quantityAvailable, isComingSoon } = product;
   const isDisabled = quantityAddedInCart >= quantityAvailable;
-  const imageProps = getProductImageProps(imageUrl);
+  const imageProps = getProductImageProps(
+    imageUrl,
+    [...IMAGE_WIDTH_PRESETS.productCard],
+    480,
+  );
 
   return (
     <Card
@@ -49,6 +53,8 @@ export default function Products({
           component="img"
           {...imageProps}
           alt={name}
+          width={300}
+          height={300}
           data-original-src={imageUrl}
           sizes="(min-width: 1024px) 298px, (min-width: 640px) 33vw, 50vw"
           loading={priority ? "eager" : "lazy"}
@@ -116,7 +122,7 @@ export default function Products({
           {category}
         </Typography>
 
-        <Typography variant="h6" sx={{
+        <Typography variant="h6" component="h3" sx={{
           color: "white",
           fontWeight: "bold",
           mb: 0.5,
@@ -147,6 +153,7 @@ export default function Products({
         <Box display="flex" justifyContent="space-between" alignItems="center" mt="auto" gap={1}>
           <Typography
             variant="h6"
+            component="p"
             sx={{
               color: "#facc15",
               fontWeight: "bold",
@@ -166,6 +173,7 @@ export default function Products({
           <Box sx={{ display: "flex", gap: "8px", flexShrink: 0 }}>
             <IconButton
               onClick={onWishList}
+              aria-label={`Add ${name} to wishlist`}
               sx={{
                 width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,
                 color: isWishlisted ? "black" : "white",
@@ -182,6 +190,7 @@ export default function Products({
                 <span>
                   <IconButton
                     onClick={onAddToCart}
+                    aria-label={`Add ${name} to cart`}
                     sx={{
                       width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,
                       bgcolor: "#facc15", color: "black",

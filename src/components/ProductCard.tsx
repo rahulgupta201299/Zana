@@ -107,6 +107,8 @@ const ProductCard = ({
             onClick={() => handleProductClick(category, name, _id)}
             {...imageProps}
             alt={name}
+            width={300}
+            height={300}
             data-original-src={imageUrl}
             sizes="(min-width: 768px) 298px, 50vw"
             loading={priority ? "eager" : "lazy"}
@@ -137,6 +139,8 @@ const ProductCard = ({
           {isImageLoaded && (
             <div className="absolute bottom-2 left-2 group">
               <button
+                type="button"
+                aria-label={`Add ${name} to cart`}
                 style={{
                   cursor: isDisabled ? "not-allowed" : "pointer",
                   opacity: isDisabled ? 0.7 : 1,

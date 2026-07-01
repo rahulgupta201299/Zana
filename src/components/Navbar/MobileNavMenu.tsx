@@ -119,7 +119,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 						cursor: "pointer"
 					}}
 				>
-					<IconButton onClick={onClose}>
+					<IconButton onClick={onClose} aria-label="Close navigation menu">
 						<CloseIcon sx={{ color: "white", fontSize: 30 }} />
 					</IconButton>
 				</Box>
@@ -141,11 +141,13 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 							size="small"
 							sx={{ color: "#bdbdbd", marginRight: 1 }}
 							onClick={handleBack}
+							aria-label="Go back in navigation menu"
 						>
 							<ArrowBackIosNewIcon fontSize="small" />
 						</IconButton>
 
 						<Typography
+							component="p"
 							variant="h6"
 							sx={{
 								fontWeight: 700,

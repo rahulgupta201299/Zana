@@ -27,6 +27,18 @@ import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategor
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 import { capitalise } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
+import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
+import {
+  STAGING_BIKE_IMAGE_MAP,
+  PRODUCTION_BIKE_IMAGE_MAP,
+} from "./BIKE_IMAGE_MAPS";
+
+const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
+const BIKE_IMAGE_MAP = IS_PRODUCTION
+  ? PRODUCTION_BIKE_IMAGE_MAP
+  : STAGING_BIKE_IMAGE_MAP;
+
+const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
 type BikeDetailLocationState = {
   category?: string;
@@ -76,6 +88,9 @@ const BikeDetailPage = () => {
   );
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  // true while the real hero image is still downloading after bike data arrives
+  const [isBikeHeroImageLoaded, setIsBikeHeroImageLoaded] = useState(false);
+  const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
   const bikeProductsRequestRef = useRef(0);
   const bikeDetailsRequestRef = useRef(0);
   const isBikeProductsPending =
@@ -85,6 +100,7 @@ const BikeDetailPage = () => {
   async function getBikeProducts(
     category = ALL_CATEGORY,
     subCategory?: string,
+    limit = INITIAL_BIKE_PRODUCTS_LIMIT,
   ) {
     const requestId = bikeProductsRequestRef.current + 1;
     bikeProductsRequestRef.current = requestId;
@@ -97,6 +113,7 @@ const BikeDetailPage = () => {
           modelId: bikeId,
           ...(category &&
             category !== ALL_CATEGORY && { category, subCategory }),
+          ...(limit && { queryParams: { page: 1, limit } }),
         }),
       )) as ShopByProductDetailsType[];
       if (bikeProductsRequestRef.current !== requestId) return;
@@ -158,12 +175,19 @@ const BikeDetailPage = () => {
     const newFilters = { category: val, subCategory: "" };
     setFilters(newFilters);
     setSelectedCategory(val);
+    setShowAllBikeProducts(false);
     getBikeProducts(val);
   }
 
   function handleClearFilter() {
     setFilters({ category: selectedCategory, subCategory: "" });
+    setShowAllBikeProducts(false);
     getBikeProducts(selectedCategory);
+  }
+
+  function handleShowAllBikeProducts() {
+    setShowAllBikeProducts(true);
+    getBikeProducts(selectedCategory, subCategory, 0);
   }
 
   function handleBackToBikes() {
@@ -174,6 +198,9 @@ const BikeDetailPage = () => {
   }
 
   useEffect(() => {
+    // Reset hero-image-loaded flag so the static placeholder is shown again
+    // until the new real image finishes downloading.
+    setIsBikeHeroImageLoaded(false);
     pageOps();
   }, [location.pathname, currency, initialCategory]);
 
@@ -243,6 +270,14 @@ const BikeDetailPage = () => {
     ? BikeCategoryEnum.ZPRO
     : "Shop By Bike";
   const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
+  const selectedCategoryCount =
+    categoriesWithCount.find(({ name }) => name.toLowerCase() === selectedCategory)
+      ?.count || bikeProducts.length;
+  const bikeImageProps = getProductImageProps(
+    imageUrl,
+    [...IMAGE_WIDTH_PRESETS.bikeHero],
+    480,
+  );
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -275,18 +310,49 @@ const BikeDetailPage = () => {
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {!isBikeDetailsPending ? (
+              {/* Show static map image immediately; swap to real API image once
+                  bike data has loaded AND the real image has finished downloading.
+                  Both images are always in the DOM so the browser can preload
+                  the real one in the background. */}
+              <img
+                src={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.src
+                    : (BIKE_IMAGE_MAP as Record<string, string>)[bikeId] ||
+                      BikePlaceholderImage
+                }
+                srcSet={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.srcSet
+                    : undefined
+                }
+                alt={modelName || bikeId}
+                width={560}
+                height={384}
+                sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
+                className="max-w-full max-h-96 object-contain"
+                style={{ aspectRatio: "560 / 384" }}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {/* Hidden preloader: once the real bike image finishes downloading
+                  we flip isBikeHeroImageLoaded → true, which causes the visible
+                  img above to switch src to the real image. */}
+              {!isBikeDetailsPending && (
                 <img
-                  src={imageUrl}
-                  alt={modelName}
-                  className="max-w-full max-h-96 object-contain"
+                  {...bikeImageProps}
+                  alt=""
+                  aria-hidden="true"
+                  width={560}
+                  height={384}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  onError={(e) => (e.currentTarget.src = BikePlaceholderImage)}
+                  className="sr-only"
+                  onLoad={() => setIsBikeHeroImageLoaded(true)}
+                  onError={() => setIsBikeHeroImageLoaded(true)}
                 />
-              ) : (
-                <Skeleton width={500} height={380} />
               )}
             </div>
 
@@ -341,7 +407,7 @@ const BikeDetailPage = () => {
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
                   {!isBikeProductsPending ? (
-                    `${bikeProducts.length} Products Available`
+                    `${selectedCategoryCount} Products Available`
                   ) : (
                     <Skeleton
                       sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
@@ -398,6 +464,18 @@ const BikeDetailPage = () => {
               isLoading={isBikeProductsPending}
             />
           )}
+          {!showAllBikeProducts &&
+            !isBikeProductsPending &&
+            selectedCategoryCount > filteredBikeProducts.length && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={handleShowAllBikeProducts}
+                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
+                >
+                  View all {selectedCategoryCount} products
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>

@@ -180,6 +180,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
             {isMobile && (
               <Button
                 onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open navigation menu"
                 sx={{
                   textDecoration: "none",
                   color: "white",
@@ -237,6 +238,8 @@ function Navbar({ isMobile }: NavbarPropsType) {
               <Select
                 value={selectedCurrency}
                 onChange={(e) => handleChange(e.target.value)}
+                inputProps={{ "aria-label": "Select currency" }}
+                aria-label="Select currency"
                 sx={{
                   color: "white",
                   fontSize: isMobile ? "0.8rem" : "0.9rem",

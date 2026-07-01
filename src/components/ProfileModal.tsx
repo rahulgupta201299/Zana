@@ -223,6 +223,7 @@ const ProfileModal = ({ onClose, isMobile }: PROFILE_PROPS_TYPE) => {
       >
         <IconButton
           onClick={onClose}
+          aria-label="Close profile dialog"
           sx={{
             position: "absolute",
             top: 8,

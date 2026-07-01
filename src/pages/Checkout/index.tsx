@@ -1678,6 +1678,7 @@ export default function CheckoutPage() {
                       >
                         <IconButton
                           onClick={() => decrementToCart(productId)}
+                          aria-label="Decrease quantity"
                           sx={{
                             color: "white",
                             p: { xs: 0.75, md: 1 },
@@ -1705,6 +1706,7 @@ export default function CheckoutPage() {
                               quantityAvailable,
                             )
                           }
+                          aria-label="Increase quantity"
                           sx={{
                             color: "white",
                             p: { xs: 0.75, md: 1 },
