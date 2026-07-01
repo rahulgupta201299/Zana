@@ -9,7 +9,7 @@ const network = new Network();
 const ADMIN_ORDER_LIST_PATH = "/api/v1/order/admin/all";
 const ADMIN_ORDER_LIST_DOWNLOAD_PATH = "/api/v1/order/admin/all/download";
 
-export type AdminOrderListSortBy = "updatedAt" | "totalAmount";
+export type AdminOrderListSortBy = "updatedAt" | "totalAmount" | "orderDate";
 export type AdminOrderListSortOrder = "asc" | "desc";
 
 export type AdminOrderListFilters = {

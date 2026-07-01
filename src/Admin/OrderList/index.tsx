@@ -49,7 +49,7 @@ import {
 } from "../Configurations/AdminIsdCodeApi";
 import IsdCodeAutocomplete from "../Components/IsdCodeAutocomplete";
 
-const DEFAULT_SORT_BY: AdminOrderListSortBy = "updatedAt";
+const DEFAULT_SORT_BY: AdminOrderListSortBy = "orderDate";
 const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
 
 const NULL_PLACEHOLDER = "—";
@@ -738,6 +738,7 @@ export default function AdminOrderList() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as AdminOrderListSortBy)}
               >
+                 <MenuItem value="orderDate">Order Date</MenuItem>
                 <MenuItem value="updatedAt">Last modified</MenuItem>
                 <MenuItem value="totalAmount">Total amount</MenuItem>
               </Select>
