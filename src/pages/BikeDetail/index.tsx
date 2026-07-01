@@ -28,6 +28,15 @@ import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
 import { capitalise } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
 import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
+import {
+  STAGING_BIKE_IMAGE_MAP,
+  PRODUCTION_BIKE_IMAGE_MAP,
+} from "./BIKE_IMAGE_MAPS";
+
+const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
+const BIKE_IMAGE_MAP = IS_PRODUCTION
+  ? PRODUCTION_BIKE_IMAGE_MAP
+  : STAGING_BIKE_IMAGE_MAP;
 
 const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
@@ -79,6 +88,8 @@ const BikeDetailPage = () => {
   );
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  // true while the real hero image is still downloading after bike data arrives
+  const [isBikeHeroImageLoaded, setIsBikeHeroImageLoaded] = useState(false);
   const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
   const bikeProductsRequestRef = useRef(0);
   const bikeDetailsRequestRef = useRef(0);
@@ -187,6 +198,9 @@ const BikeDetailPage = () => {
   }
 
   useEffect(() => {
+    // Reset hero-image-loaded flag so the static placeholder is shown again
+    // until the new real image finishes downloading.
+    setIsBikeHeroImageLoaded(false);
     pageOps();
   }, [location.pathname, currency, initialCategory]);
 
@@ -296,38 +310,49 @@ const BikeDetailPage = () => {
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {!isBikeDetailsPending ? (
+              {/* Show static map image immediately; swap to real API image once
+                  bike data has loaded AND the real image has finished downloading.
+                  Both images are always in the DOM so the browser can preload
+                  the real one in the background. */}
+              <img
+                src={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.src
+                    : (BIKE_IMAGE_MAP as Record<string, string>)[bikeId] ||
+                      BikePlaceholderImage
+                }
+                srcSet={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.srcSet
+                    : undefined
+                }
+                alt={modelName || bikeId}
+                width={560}
+                height={384}
+                sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
+                className="max-w-full max-h-96 object-contain"
+                style={{ aspectRatio: "560 / 384" }}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {/* Hidden preloader: once the real bike image finishes downloading
+                  we flip isBikeHeroImageLoaded → true, which causes the visible
+                  img above to switch src to the real image. */}
+              {!isBikeDetailsPending && (
                 <img
                   {...bikeImageProps}
-                  alt={modelName}
+                  alt=""
+                  aria-hidden="true"
                   width={560}
                   height={384}
-                  sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
-                  data-original-src={imageUrl}
-                  className="max-w-full max-h-96 object-contain"
-                  style={{ aspectRatio: "560 / 384" }}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  onError={(e) => {
-                    const originalSrc = e.currentTarget.dataset.originalSrc;
-
-                    if (
-                      originalSrc &&
-                      e.currentTarget.dataset.fallbackApplied !== "true"
-                    ) {
-                      e.currentTarget.removeAttribute("srcset");
-                      e.currentTarget.dataset.fallbackApplied = "true";
-                      e.currentTarget.src = originalSrc;
-                      return;
-                    }
-
-                    e.currentTarget.removeAttribute("srcset");
-                    e.currentTarget.src = BikePlaceholderImage;
-                  }}
+                  className="sr-only"
+                  onLoad={() => setIsBikeHeroImageLoaded(true)}
+                  onError={() => setIsBikeHeroImageLoaded(true)}
                 />
-              ) : (
-                <Skeleton sx={{ width: "100%", height: { xs: 240, lg: 384 }, backgroundColor: "rgba(255,255,255,0.1)" }} variant="rectangular" />
               )}
             </div>
 
