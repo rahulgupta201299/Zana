@@ -54,7 +54,12 @@ function getEnvValue(keys) {
     .find((value) => String(value || "").trim());
 }
 
-const siteOrigin = normalizeOrigin(getEnvValue(SITE_ORIGIN_ENV_KEYS));
+const envNodeEnv = getEnvValue(["VITE_NODE_ENV", "NODE_ENV"]) || "development";
+const isProduction = envNodeEnv === "production";
+
+const siteOrigin = normalizeOrigin(getEnvValue(SITE_ORIGIN_ENV_KEYS)) || (isProduction
+  ? "https://www.zanamotorcycles.com"
+  : "https://staging.dc5j4f0as6jwq.amplifyapp.com");
 
 function escapeHtml(value) {
   return String(value || "")

@@ -29,14 +29,14 @@ import { capitalise } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
 import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
 import {
-  STAGING_BIKE_IMAGE_MAP,
-  PRODUCTION_BIKE_IMAGE_MAP,
-} from "./BIKE_IMAGE_MAPS";
+  STAGING_BIKE_SEO_MAP,
+  PRODUCTION_BIKE_SEO_MAP,
+} from "./BIKE_SEO_MAPS";
 
 const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
-const BIKE_IMAGE_MAP = IS_PRODUCTION
-  ? PRODUCTION_BIKE_IMAGE_MAP
-  : STAGING_BIKE_IMAGE_MAP;
+const BIKE_SEO_MAP = IS_PRODUCTION
+  ? PRODUCTION_BIKE_SEO_MAP
+  : STAGING_BIKE_SEO_MAP;
 
 const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
@@ -47,6 +47,7 @@ type BikeDetailLocationState = {
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
   const { bikeType: bikeTypeParams = "", bikeId = "" } = params;
+  const seoData = (BIKE_SEO_MAP as Record<string, any>)[bikeId];
   const productCategory = useSelector(bikeProductCategorySelector);
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA;
@@ -260,10 +261,10 @@ const BikeDetailPage = () => {
   }
 
   const {
-    name: modelName = "",
-    description = "",
+    name: modelName = seoData?.title || "",
+    description = seoData?.description || "",
     type = "",
-    imageUrl = "",
+    imageUrl = seoData?.image || "",
     brand: { name: brandName = "" } = {},
   } = bikeDetails || {};
   const bikeBreadcrumbLabel = isZProPath
@@ -282,12 +283,13 @@ const BikeDetailPage = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <SeoMeta
-        title={`${brandName} ${modelName} Accessories | Zana Motorcycles`}
+        title={modelName ? `${brandName ? brandName + ' ' : ''}${modelName} Accessories | Zana Motorcycles` : `${seoData?.title || 'Bike'} Accessories | Zana Motorcycles`}
         description={
           description ||
           `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
         }
-        image={imageUrl}
+        image={imageUrl || seoData?.image}
+        keywords={seoData?.keywords}
       />
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
@@ -310,15 +312,11 @@ const BikeDetailPage = () => {
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {/* Show static map image immediately; swap to real API image once
-                  bike data has loaded AND the real image has finished downloading.
-                  Both images are always in the DOM so the browser can preload
-                  the real one in the background. */}
               <img
                 src={
                   !isBikeDetailsPending && isBikeHeroImageLoaded
                     ? bikeImageProps.src
-                    : (BIKE_IMAGE_MAP as Record<string, string>)[bikeId] ||
+                    : seoData?.image ||
                       BikePlaceholderImage
                 }
                 srcSet={
@@ -336,9 +334,6 @@ const BikeDetailPage = () => {
                 fetchPriority="high"
                 decoding="async"
               />
-              {/* Hidden preloader: once the real bike image finishes downloading
-                  we flip isBikeHeroImageLoaded → true, which causes the visible
-                  img above to switch src to the real image. */}
               {!isBikeDetailsPending && (
                 <img
                   {...bikeImageProps}
@@ -374,7 +369,7 @@ const BikeDetailPage = () => {
                 )}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                {!isBikeDetailsPending ? (
+                {modelName ? (
                   modelName
                 ) : (
                   <Skeleton
@@ -384,7 +379,7 @@ const BikeDetailPage = () => {
                 )}
               </h1>
               <p className="text-xl md:text-2xl text-white/70 mb-6">
-                {!isBikeDetailsPending ? (
+                {description ? (
                   description
                 ) : (
                   <Skeleton

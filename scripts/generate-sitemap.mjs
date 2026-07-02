@@ -27,8 +27,16 @@ const env = {
   ...process.env,
 };
 
-const siteOrigin = getRequiredOrigin(SITE_ORIGIN_ENV_KEYS, "site origin");
-const apiOrigin = getOptionalOrigin(API_ORIGIN_ENV_KEYS);
+const envNodeEnv = getEnvValue(["VITE_NODE_ENV", "NODE_ENV"]) || "development";
+const isProduction = envNodeEnv === "production";
+
+const siteOrigin = normalizeOrigin(getEnvValue(SITE_ORIGIN_ENV_KEYS)) || (isProduction
+  ? "https://www.zanamotorcycles.com"
+  : "https://staging.dc5j4f0as6jwq.amplifyapp.com");
+
+const apiOrigin = normalizeOrigin(getEnvValue(API_ORIGIN_ENV_KEYS)) || (isProduction
+  ? "https://zana-motor-0d2fc2df02c6.herokuapp.com"
+  : "https://zana-motor-staging-d0a0c868c063.herokuapp.com");
 
 const staticSections = [
   {
@@ -76,22 +84,7 @@ function getEnvValue(keys) {
     .find((value) => String(value || "").trim());
 }
 
-function getRequiredOrigin(keys, label) {
-  const rawValue = getEnvValue(keys);
-  if (!rawValue) {
-    const envKeys = Array.isArray(keys) ? keys : [keys];
-    throw new Error(`Missing ${label}. Set one of: ${envKeys.join(", ")}.`);
-  }
 
-  return normalizeOrigin(rawValue);
-}
-
-function getOptionalOrigin(keys) {
-  const rawValue = getEnvValue(keys);
-  if (!rawValue) return "";
-
-  return normalizeOrigin(rawValue);
-}
 
 function slugify(value) {
   return String(value || "")

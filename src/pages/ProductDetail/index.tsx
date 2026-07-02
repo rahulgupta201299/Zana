@@ -54,14 +54,14 @@ import {
   getThumbnailImageProps,
 } from "@/Utils/ImageUtils";
 import {
-  STAGING_PRODUCT_IMAGE_MAP,
-  PRODUCTION_PRODUCT_IMAGE_MAP,
-} from "./PRODUCT_IMAGE_MAPS";
+  STAGING_PRODUCT_SEO_MAP,
+  PRODUCTION_PRODUCT_SEO_MAP,
+} from "./PRODUCT_SEO_MAPS";
 
 const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
-const PRODUCT_IMAGE_MAP = IS_PRODUCTION
-  ? PRODUCTION_PRODUCT_IMAGE_MAP
-  : STAGING_PRODUCT_IMAGE_MAP;
+const PRODUCT_SEO_MAP = IS_PRODUCTION
+  ? PRODUCTION_PRODUCT_SEO_MAP
+  : STAGING_PRODUCT_SEO_MAP;
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -88,11 +88,12 @@ const ProductDetailPage = () => {
   const staticName = replaceHiphenWithSpaces(productItem)
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
-  // Resolve the static product image from the pre-built map keyed by productId.
+  // Resolve the static product seoData from the pre-built map keyed by productId.
   // The correct map (staging vs. production) is selected at module load time
   // via VITE_NODE_ENV so no runtime env checks are needed here.
+  const seoData = (PRODUCT_SEO_MAP as Record<string, any>)[productId];
   const staticPlaceholderImage =
-    (PRODUCT_IMAGE_MAP as Record<string, string>)[productId] ??
+    seoData?.image ??
     FALLBACK_PLACEHOLDER_IMAGE;
 
   const [quantity, setQuantity] = useState<number>(1);
@@ -282,14 +283,14 @@ const ProductDetailPage = () => {
 
   const {
     _id = "",
-    name = "",
+    name = seoData?.title || staticName || "",
     shippingAndReturn = "",
-    shortDescription = "",
+    shortDescription = seoData?.description || "",
     longDescription = "",
     category = "",
     price = 0,
     currencySymbol = "",
-    imageUrl = "",
+    imageUrl = seoData?.image || "",
     images = [],
     quantityAvailable = 0,
     specifications = "",
@@ -358,14 +359,31 @@ const ProductDetailPage = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
-        title={`${name || staticName} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles`}
+        title={name ? `${name} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles` : seoData?.title}
         description={
           shortDescription ||
           longDescription ||
+          seoData?.description ||
           `Shop ${name || staticName} motorcycle accessories from Zana Motorcycles.`
         }
-        image={newImages[0]}
+        image={newImages[0] || seoData?.image}
         type="product"
+        keywords={seoData?.keywords}
+        productSchema={product ? {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": name,
+          "image": newImages[0],
+          "description": shortDescription || longDescription,
+          "sku": productCode,
+          "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "INR",
+            "price": price,
+            "availability": quantityAvailable > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+          }
+        } : undefined}
       />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -485,11 +503,11 @@ const ProductDetailPage = () => {
                   replaces it once the API responds. Both render the same <h1> node
                   so the browser never removes and re-adds the LCP element. */}
               <h1 className="text-4xl font-bold text-white mb-4">
-                {name || staticName}
+                {name}
               </h1>
             </div>
 
-            {!isProductDetailPending ? (
+            {shortDescription ? (
               <p className="text-white text-lg mb-6 leading-relaxed">
                 {shortDescription}
               </p>

@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Provider } from 'react-redux'
+import { HelmetProvider } from 'react-helmet-async'
 
 import './index.css'
 import App from './App'
@@ -16,7 +17,9 @@ const root = createRoot(container)
 root.render(
 	<QueryClientProvider client={queryClient}>
 		<Provider store={store}>
-			<App />
+			<HelmetProvider>
+				<App />
+			</HelmetProvider>
 		</Provider>
 	</QueryClientProvider>
 )
