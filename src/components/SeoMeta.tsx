@@ -2,12 +2,14 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
 import { APP_DOMAIN_URL } from "@/Configurations/env";
-import { getHeroImageProps } from "@/Utils/ImageUtils";
+import {
+  isStaticSeoPage,
+  normalizePath,
+  truncateSeoText,
+} from "@/Utils/seoUtils";
 
 const SITE_NAME = "Zana Motorcycles";
 const DEFAULT_OG_IMAGE = "/og-image.jpg";
-const DEFAULT_OG_IMAGE_WIDTH = "1200";
-const DEFAULT_OG_IMAGE_HEIGHT = "630";
 const DEFAULT_OG_IMAGE_ALT =
   "Zana motorcycle accessories mounted on an adventure motorcycle";
 const CUSTOM_OG_IMAGE_ALT = "Zana motorcycle product preview";
@@ -24,28 +26,7 @@ export type SeoMetaProps = {
   type?: "website" | "product";
   noIndex?: boolean;
   keywords?: string;
-  productSchema?: string | object;
 };
-
-function normalizePath(pathname: string): string {
-  if (pathname === "/" || pathname === "") return "/";
-  const trimmed = pathname.replace(/\/+$/, "");
-  return trimmed === "" ? "/" : trimmed;
-}
-
-function stripHtml(value: string): string {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function truncate(value: string, maxLength: number): string {
-  const normalized = stripHtml(value);
-  if (normalized.length <= maxLength) return normalized;
-  // Cut at the nearest word boundary to avoid mid‑word truncation
-  const tentative = normalized.slice(0, maxLength).trim();
-  const lastSpace = tentative.lastIndexOf(' ');
-  const final = lastSpace > 0 ? tentative.slice(0, lastSpace) : tentative;
-  return `${final}...`;
-}
 
 function absoluteUrl(value?: string): string | undefined {
   if (!value) return undefined;
@@ -64,29 +45,33 @@ export function SeoMeta({
   type = "website",
   noIndex = false,
   keywords,
-  productSchema,
 }: SeoMetaProps) {
-  // Prevent rendering during server-side rendering to avoid duplicate static meta tags
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
   const { pathname } = useLocation();
-  // Skip Helmet injection on static pre-rendered pages where meta tags already exist
-  if (typeof document !== 'undefined' && document.documentElement.dataset.staticRoute === pathname) {
+
+  if (typeof window === "undefined") {
     return null;
   }
 
-  // const pageTitle = truncate(title, 70);
-  // const pageDescription = truncate(description, 160);
-  const pageTitle = title;
-  const pageDescription = description;
+  // Prerendered/static routes already ship correct SEO tags baked into the
+  // HTML shell at build time. If Helmet ALSO renders tags on hydration for
+  // that same route, react-helmet-async appends them instead of replacing
+  // the static ones — which is exactly the duplicate-tag bug seen in
+  // Search Console. This used to compare the raw pathname against
+  // document.documentElement.dataset.staticRoute directly, which silently
+  // failed to match (e.g. on trailing-slash differences) and let Helmet
+  // render anyway. isStaticSeoPage() does that comparison correctly
+  // (normalized, trailing-slash-safe) — use it instead.
+  if (isStaticSeoPage(pathname)) {
+    return null;
+  }
+
+  const pageTitle = truncateSeoText(title, 70);
+  const pageDescription = truncateSeoText(description, 160);
   const origin = APP_DOMAIN_URL || window.location.origin;
   const path = normalizePath(canonicalPath || pathname);
   const canonicalUrl = `${origin}${path}`;
   const usesDefaultImage = !image;
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
-  const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
 
   return (
     <Helmet>
@@ -116,31 +101,15 @@ export function SeoMeta({
           content={usesDefaultImage ? DEFAULT_OG_IMAGE_ALT : CUSTOM_OG_IMAGE_ALT}
         />
       )}
+      {!usesDefaultImage && (
+        <>
+          <meta property="og:image:type" content="image/webp" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="1200" />
+        </>
+      )}
 
       <link rel="canonical" href={canonicalUrl} />
-
-      {/* {lcpSrc && (
-        <link
-          rel="preload"
-          as="image"
-          href={lcpSrc}
-          fetchPriority="high"
-          data-lcp-preload="true"
-          {...(lcpSrcSet
-            ? {
-                imageSrcSet: lcpSrcSet,
-                imageSizes: "(min-width: 1024px) 560px, calc(100vw - 48px)",
-              }
-            : {})}
-        />
-      )} */}
-      {productSchema && (
-        <script type="application/ld+json">
-          {typeof productSchema === "string"
-            ? productSchema
-            : JSON.stringify(productSchema)}
-        </script>
-      )}
     </Helmet>
   );
 }
