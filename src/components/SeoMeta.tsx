@@ -40,7 +40,11 @@ function stripHtml(value: string): string {
 function truncate(value: string, maxLength: number): string {
   const normalized = stripHtml(value);
   if (normalized.length <= maxLength) return normalized;
-  return `${normalized.slice(0, maxLength - 1).trim()}...`;
+  // Cut at the nearest word boundary to avoid mid‑word truncation
+  const tentative = normalized.slice(0, maxLength).trim();
+  const lastSpace = tentative.lastIndexOf(' ');
+  const final = lastSpace > 0 ? tentative.slice(0, lastSpace) : tentative;
+  return `${final}...`;
 }
 
 function absoluteUrl(value?: string): string | undefined {
@@ -62,14 +66,21 @@ export function SeoMeta({
   keywords,
   productSchema,
 }: SeoMetaProps) {
-  const { pathname } = useLocation();
-  // Skip Helmet injection on initial static-rendered pages to avoid duplicate meta tags
-  // if (typeof document !== "undefined" && document.documentElement.dataset.staticRoute === pathname) {
-  //   return null;
-  // }
+  // Prevent rendering during server-side rendering to avoid duplicate static meta tags
+  if (typeof window === 'undefined') {
+    return null;
+  }
 
-  const pageTitle = truncate(title, 70);
-  const pageDescription = truncate(description, 160);
+  const { pathname } = useLocation();
+  // Skip Helmet injection on static pre-rendered pages where meta tags already exist
+  if (typeof document !== 'undefined' && document.documentElement.dataset.staticRoute === pathname) {
+    return null;
+  }
+
+  // const pageTitle = truncate(title, 70);
+  // const pageDescription = truncate(description, 160);
+  const pageTitle = title;
+  const pageDescription = description;
   const origin = APP_DOMAIN_URL || window.location.origin;
   const path = normalizePath(canonicalPath || pathname);
   const canonicalUrl = `${origin}${path}`;
@@ -123,13 +134,13 @@ export function SeoMeta({
             : {})}
         />
       )} */}
-      {/* {productSchema && (
+      {productSchema && (
         <script type="application/ld+json">
           {typeof productSchema === "string"
             ? productSchema
             : JSON.stringify(productSchema)}
         </script>
-      )} */}
+      )}
     </Helmet>
   );
 }
