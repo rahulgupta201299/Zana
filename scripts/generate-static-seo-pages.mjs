@@ -293,48 +293,48 @@ function createStaticRouteHtml(baseHtml, pathname) {
   return addStaticRouteMarker(baseHtml, pathname);
 }
 
-// function createRouteHtml(baseHtml, absoluteUrl, pathname) {
-//   const seo = getSeoForPath(pathname);
-//   const title = truncate(seo.title, 70);
-//   const description = truncate(seo.description, 160);
-//   const hasCustomImage = Boolean(seo.image);
-//   const ogImageUrl = absoluteUrl
-//     ? new URL(seo.image || DEFAULT_OG_IMAGE_PATH, absoluteUrl).href
-//     : "";
-//   const imageAlt = hasCustomImage
-//     ? "Zana motorcycle product preview"
-//     : DEFAULT_OG_IMAGE_ALT;
-//   let html = baseHtml;
+function createRouteHtml(baseHtml, absoluteUrl, pathname) {
+  const seo = getSeoForPath(pathname);
+  const title = truncate(seo.title, 70);
+  const description = truncate(seo.description, 160);
+  const hasCustomImage = Boolean(seo.image);
+  const ogImageUrl = absoluteUrl
+    ? new URL(seo.image || DEFAULT_OG_IMAGE_PATH, absoluteUrl).href
+    : "";
+  const imageAlt = hasCustomImage
+    ? "Zana motorcycle product preview"
+    : DEFAULT_OG_IMAGE_ALT;
+  let html = baseHtml;
 
-//   html = addStaticRouteMarker(html, pathname);
-//   html = upsertTitle(html, title);
-//   html = upsertMetaName(html, "description", description);
-//   if (seo.keywords) {
-//     html = upsertMetaName(html, "keywords", seo.keywords);
-//   }
-//   html = upsertMetaName(html, "robots", "index, follow, max-image-preview:large");
-//   html = upsertMetaProperty(html, "og:site_name", "Zana Motorcycles");
-//   html = upsertMetaProperty(html, "og:title", title);
-//   html = upsertMetaProperty(html, "og:description", description);
-//   html = upsertMetaProperty(html, "og:type", seo.type);
-//   html = upsertMetaProperty(html, "og:url", absoluteUrl);
-//   html = upsertMetaProperty(html, "og:image", ogImageUrl);
-//   html = upsertMetaProperty(html, "og:image:secure_url", ogImageUrl);
-//   if (!hasCustomImage) {
-//     html = upsertMetaProperty(html, "og:image:type", "image/jpeg");
-//     html = upsertMetaProperty(html, "og:image:width", DEFAULT_OG_IMAGE_WIDTH);
-//     html = upsertMetaProperty(html, "og:image:height", DEFAULT_OG_IMAGE_HEIGHT);
-//   }
-//   html = upsertMetaProperty(html, "og:image:alt", imageAlt);
-//   html = upsertMetaName(html, "twitter:card", "summary_large_image");
-//   html = upsertMetaName(html, "twitter:title", title);
-//   html = upsertMetaName(html, "twitter:description", description);
-//   html = upsertMetaName(html, "twitter:image", ogImageUrl);
-//   html = upsertMetaName(html, "twitter:image:alt", imageAlt);
-//   html = upsertCanonical(html, absoluteUrl);
+  html = addStaticRouteMarker(html, pathname);
+  html = upsertTitle(html, title);
+  html = upsertMetaName(html, "description", description);
+  if (seo.keywords) {
+    html = upsertMetaName(html, "keywords", seo.keywords);
+  }
+  html = upsertMetaName(html, "robots", "index, follow, max-image-preview:large");
+  html = upsertMetaProperty(html, "og:site_name", "Zana Motorcycles");
+  html = upsertMetaProperty(html, "og:title", title);
+  html = upsertMetaProperty(html, "og:description", description);
+  html = upsertMetaProperty(html, "og:type", seo.type);
+  html = upsertMetaProperty(html, "og:url", absoluteUrl);
+  html = upsertMetaProperty(html, "og:image", ogImageUrl);
+  html = upsertMetaProperty(html, "og:image:secure_url", ogImageUrl);
+  if (!hasCustomImage) {
+    html = upsertMetaProperty(html, "og:image:type", "image/jpeg");
+    html = upsertMetaProperty(html, "og:image:width", DEFAULT_OG_IMAGE_WIDTH);
+    html = upsertMetaProperty(html, "og:image:height", DEFAULT_OG_IMAGE_HEIGHT);
+  }
+  html = upsertMetaProperty(html, "og:image:alt", imageAlt);
+  html = upsertMetaName(html, "twitter:card", "summary_large_image");
+  html = upsertMetaName(html, "twitter:title", title);
+  html = upsertMetaName(html, "twitter:description", description);
+  html = upsertMetaName(html, "twitter:image", ogImageUrl);
+  html = upsertMetaName(html, "twitter:image:alt", imageAlt);
+  html = upsertCanonical(html, absoluteUrl);
 
-//   return html;
-// }
+  return html;
+}
 
 function outputFileForPath(pathname) {
   const normalizedPath = pathname.replace(/^\/+|\/+$/g, "");
@@ -361,7 +361,7 @@ function main() {
     const outputFile = outputFileForPath(pathname);
     mkdirSync(dirname(outputFile), { recursive: true });
     // Write minimal static page with only route marker to avoid duplicate SEO tags.
-    writeFileSync(outputFile, createStaticRouteHtml(baseHtml, pathname));
+    writeFileSync(outputFile, createRouteHtml(baseHtml, pathname));
     generatedCount += 1;
   }
 

@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 
 import { APP_DOMAIN_URL } from "@/Configurations/env";
 import {
-  isStaticSeoPage,
   normalizePath,
   truncateSeoText,
 } from "@/Utils/seoUtils";
@@ -49,19 +48,6 @@ export function SeoMeta({
   const { pathname } = useLocation();
 
   if (typeof window === "undefined") {
-    return null;
-  }
-
-  // Prerendered/static routes already ship correct SEO tags baked into the
-  // HTML shell at build time. If Helmet ALSO renders tags on hydration for
-  // that same route, react-helmet-async appends them instead of replacing
-  // the static ones — which is exactly the duplicate-tag bug seen in
-  // Search Console. This used to compare the raw pathname against
-  // document.documentElement.dataset.staticRoute directly, which silently
-  // failed to match (e.g. on trailing-slash differences) and let Helmet
-  // render anyway. isStaticSeoPage() does that comparison correctly
-  // (normalized, trailing-slash-safe) — use it instead.
-  if (isStaticSeoPage(pathname)) {
     return null;
   }
 

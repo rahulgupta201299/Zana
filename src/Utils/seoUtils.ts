@@ -19,15 +19,15 @@ export function truncateSeoText(value: string, maxLength: number): string {
   return `${final}...`;
 }
 
-export function isStaticSeoPage(pathname?: string): boolean {
-  if (typeof document === "undefined") return false;
+// export function isStaticSeoPage(pathname?: string): boolean {
+//   if (typeof document === "undefined") return false;
 
-  const staticRoute = document.documentElement.getAttribute("data-static-route");
-  if (!staticRoute) return false;
+//   const staticRoute = document.documentElement.getAttribute("data-static-route");
+//   if (!staticRoute) return false;
 
-  const currentPath = normalizePath(pathname ?? window.location.pathname);
-  return normalizePath(staticRoute) === currentPath;
-}
+//   const currentPath = normalizePath(pathname ?? window.location.pathname);
+//   return normalizePath(staticRoute) === currentPath;
+// }
 
 export function buildCanonicalUrl(pathname: string): string {
   const origin = APP_DOMAIN_URL || window.location.origin;
