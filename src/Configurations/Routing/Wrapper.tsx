@@ -14,8 +14,8 @@ import { onMountChecks } from '../Service/Service'
 import { usePageTracking } from '@/hooks/usePageTracking'
 import { useClarityPageTracking } from '@/hooks/useClarityPageTracking'
 import { SeoMeta, getRouteSeo } from '@/components/SeoMeta'
+import Footer from '@/components/Footer'
 
-const Footer = lazy(() => import('@/components/Footer'))
 const SignupPopup = lazy(() => import('@/components/SignupPopup'))
 const CartSidebar = lazy(() => import('@/components/CartSidebar'))
 const CouponDialog = lazy(() => import('@/components/CoupounDialog'))
@@ -75,9 +75,9 @@ function Wrapper() {
 			<main id="main-content">
 				<Outlet />
 			</main>
+			<Footer />
 			{showDeferredChrome && (
 				<Suspense fallback={null}>
-					<Footer />
 					{!location.pathname.includes(ROUTES.ADMIN) && <FloatingButtons />}
 					{outOfStock.length > 0 && <CartAttentionDialog />}
 				</Suspense>

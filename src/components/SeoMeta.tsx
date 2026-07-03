@@ -73,6 +73,8 @@ export function SeoMeta({
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
   const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
 
+  console.log(1111, keywords)
+
   return (
     <Helmet>
       <title>{pageTitle}</title>
@@ -85,7 +87,7 @@ export function SeoMeta({
             : "index, follow, max-image-preview:large"
         }
       />
-      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="keywords" content={keywords} />
 
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:title" content={pageTitle} />

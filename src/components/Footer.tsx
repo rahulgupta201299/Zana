@@ -12,7 +12,7 @@ import { useNavigate } from "react-router";
 const Footer = () => {
   const navigate = useNavigate();
   const [openSections, setOpenSections] = useState({
-    quickLinks: false,
+    quickLinks: true,
     zanaAccessories: false,
     zproAccessories: false,
     contactUs: false,
@@ -89,6 +89,11 @@ const Footer = () => {
                 <li>
                   <a href="/return-and-exchange" className="hover:underline">
                     Returns and Exchange
+                  </a>
+                </li>
+                <li>
+                  <a href="/sitemap.html" className="hover:underline">
+                    Sitemap
                   </a>
                 </li>
                 {/* <li>

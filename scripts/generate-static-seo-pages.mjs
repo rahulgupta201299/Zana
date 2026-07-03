@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import vm from "node:vm";
 
 const DIST_DIR = resolve("dist");
 const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
@@ -15,6 +16,7 @@ const HOME_TITLE =
   "Zana Motorcycles | Premium Bike Accessories & Riding Gear India";
 const HOME_DESCRIPTION =
   "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
+const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -90,6 +92,38 @@ function titleCaseSlug(value) {
     .join(" ");
 }
 
+function loadProductSeoMaps() {
+  if (!existsSync(PRODUCT_SEO_MAPS_FILE)) {
+    return {
+      staging: {},
+      production: {},
+    };
+  }
+
+  const source = readFileSync(PRODUCT_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+STAGING_PRODUCT_SEO_MAP\s*=/, "const STAGING_PRODUCT_SEO_MAP =")
+    .replace(/export\s+const\s+PRODUCTION_PRODUCT_SEO_MAP\s*=/, "const PRODUCTION_PRODUCT_SEO_MAP =")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const script = new vm.Script(`${source}
+    ;({
+      staging: typeof STAGING_PRODUCT_SEO_MAP === "undefined" ? {} : STAGING_PRODUCT_SEO_MAP,
+      production: typeof PRODUCTION_PRODUCT_SEO_MAP === "undefined" ? {} : PRODUCTION_PRODUCT_SEO_MAP,
+    });
+  `);
+
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const productSeoMaps = loadProductSeoMaps();
+
+function getProductSeo(productId) {
+  const productMap = isProduction
+    ? productSeoMaps.production
+    : productSeoMaps.staging;
+
+  return productMap?.[productId];
+}
+
 function readSitemapUrls() {
   const sitemapFile = existsSync(DIST_SITEMAP_FILE)
     ? DIST_SITEMAP_FILE
@@ -149,6 +183,20 @@ function getSeoForPath(pathname) {
   if (parts[0] === "product" && parts.length >= 4) {
     const category = titleCaseSlug(parts[1]);
     const productName = titleCaseSlug(parts[2]);
+    const productSeo = getProductSeo(parts[3]);
+
+    if (productSeo) {
+      return {
+        title: productSeo.title || `${productName} | ${category} | Zana Motorcycles`,
+        description:
+          productSeo.description ||
+          `Shop ${productName} motorcycle accessories from Zana Motorcycles.`,
+        keywords: productSeo.keywords,
+        image: productSeo.image,
+        type: "product",
+      };
+    }
+
     return {
       title: `${productName} | ${category} | Zana Motorcycles`,
       description: `Shop ${productName} motorcycle accessories from Zana Motorcycles.`,
@@ -240,12 +288,21 @@ function createRouteHtml(baseHtml, absoluteUrl, pathname) {
   const seo = getSeoForPath(pathname);
   const title = truncate(seo.title, 70);
   const description = truncate(seo.description, 160);
-  const ogImageUrl = new URL(DEFAULT_OG_IMAGE_PATH, absoluteUrl).href;
+  const hasCustomImage = Boolean(seo.image);
+  const ogImageUrl = absoluteUrl
+    ? new URL(seo.image || DEFAULT_OG_IMAGE_PATH, absoluteUrl).href
+    : "";
+  const imageAlt = hasCustomImage
+    ? "Zana motorcycle product preview"
+    : DEFAULT_OG_IMAGE_ALT;
   let html = baseHtml;
 
   html = addStaticRouteMarker(html, pathname);
   html = upsertTitle(html, title);
   html = upsertMetaName(html, "description", description);
+  if (seo.keywords) {
+    html = upsertMetaName(html, "keywords", seo.keywords);
+  }
   html = upsertMetaName(html, "robots", "index, follow, max-image-preview:large");
   html = upsertMetaProperty(html, "og:site_name", "Zana Motorcycles");
   html = upsertMetaProperty(html, "og:title", title);
@@ -254,15 +311,17 @@ function createRouteHtml(baseHtml, absoluteUrl, pathname) {
   html = upsertMetaProperty(html, "og:url", absoluteUrl);
   html = upsertMetaProperty(html, "og:image", ogImageUrl);
   html = upsertMetaProperty(html, "og:image:secure_url", ogImageUrl);
-  html = upsertMetaProperty(html, "og:image:type", "image/jpeg");
-  html = upsertMetaProperty(html, "og:image:width", DEFAULT_OG_IMAGE_WIDTH);
-  html = upsertMetaProperty(html, "og:image:height", DEFAULT_OG_IMAGE_HEIGHT);
-  html = upsertMetaProperty(html, "og:image:alt", DEFAULT_OG_IMAGE_ALT);
+  if (!hasCustomImage) {
+    html = upsertMetaProperty(html, "og:image:type", "image/jpeg");
+    html = upsertMetaProperty(html, "og:image:width", DEFAULT_OG_IMAGE_WIDTH);
+    html = upsertMetaProperty(html, "og:image:height", DEFAULT_OG_IMAGE_HEIGHT);
+  }
+  html = upsertMetaProperty(html, "og:image:alt", imageAlt);
   html = upsertMetaName(html, "twitter:card", "summary_large_image");
   html = upsertMetaName(html, "twitter:title", title);
   html = upsertMetaName(html, "twitter:description", description);
   html = upsertMetaName(html, "twitter:image", ogImageUrl);
-  html = upsertMetaName(html, "twitter:image:alt", DEFAULT_OG_IMAGE_ALT);
+  html = upsertMetaName(html, "twitter:image:alt", imageAlt);
   html = upsertCanonical(html, absoluteUrl);
 
   return html;

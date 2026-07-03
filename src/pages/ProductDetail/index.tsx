@@ -91,7 +91,7 @@ const ProductDetailPage = () => {
   // Resolve the static product seoData from the pre-built map keyed by productId.
   // The correct map (staging vs. production) is selected at module load time
   // via VITE_NODE_ENV so no runtime env checks are needed here.
-  const seoData = (PRODUCT_SEO_MAP as Record<string, any>)[productId];
+  const seoData = PRODUCT_SEO_MAP[productId];
   const staticPlaceholderImage =
     seoData?.image ??
     FALLBACK_PLACEHOLDER_IMAGE;
