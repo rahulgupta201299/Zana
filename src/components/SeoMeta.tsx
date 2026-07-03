@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
 import { APP_DOMAIN_URL } from "@/Configurations/env";
-import { getHeroImageProps } from "@/Utils/ImageUtils";
+// import { getHeroImageProps } from "@/Utils/ImageUtils";
 
 const SITE_NAME = "Zana Motorcycles";
 const DEFAULT_OG_IMAGE = "/og-image.jpg";
@@ -40,7 +40,11 @@ function stripHtml(value: string): string {
 function truncate(value: string, maxLength: number): string {
   const normalized = stripHtml(value);
   if (normalized.length <= maxLength) return normalized;
-  return `${normalized.slice(0, maxLength - 1).trim()}...`;
+  // Cut at the nearest word boundary to avoid mid‑word truncation
+  const tentative = normalized.slice(0, maxLength).trim();
+  const lastSpace = tentative.lastIndexOf(' ');
+  const final = lastSpace > 0 ? tentative.slice(0, lastSpace) : tentative;
+  return `${final}...`;
 }
 
 function absoluteUrl(value?: string): string | undefined {
@@ -75,7 +79,7 @@ export function SeoMeta({
   const canonicalUrl = `${origin}${path}`;
   const usesDefaultImage = !image;
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
-  const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
+  // const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
 
   return (
     <Helmet>
