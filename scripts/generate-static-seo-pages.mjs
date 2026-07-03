@@ -140,7 +140,9 @@ function readSitemapUrls() {
 }
 
 function getSeoForPath(pathname) {
-  const parts = pathname.split("/").filter(Boolean);
+  const safePath = pathname || "/";
+  const parts = safePath.split("/").filter(Boolean);
+  // Removed duplicate parts definition; using safePath for parts
 
   if (pathname === "/") {
     return {
@@ -361,7 +363,7 @@ function main() {
     const outputFile = outputFileForPath(pathname);
     mkdirSync(dirname(outputFile), { recursive: true });
     // Write minimal static page with only route marker to avoid duplicate SEO tags.
-    writeFileSync(outputFile, createRouteHtml(baseHtml, pathname));
+    writeFileSync(outputFile, createStaticRouteHtml(baseHtml, pathname));
     generatedCount += 1;
   }
 

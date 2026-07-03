@@ -15,14 +15,15 @@ const container = document.getElementById('root') as HTMLElement
 const root = createRoot(container)
 
 root.render(
-	<QueryClientProvider client={queryClient}>
-		<Provider store={store}>
-			<HelmetProvider>
-				<App />
-			</HelmetProvider>
-		</Provider>
-	</QueryClientProvider>
-)
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </QueryClientProvider>
+  </HelmetProvider>
+);
+
 
 if ('serviceWorker' in navigator && !navigator.webdriver) {
   window.addEventListener('load', () => {
