@@ -63,6 +63,10 @@ export function SeoMeta({
   productSchema,
 }: SeoMetaProps) {
   const { pathname } = useLocation();
+  // Skip Helmet injection on initial static-rendered pages to avoid duplicate meta tags
+  // if (typeof document !== "undefined" && document.documentElement.dataset.staticRoute === pathname) {
+  //   return null;
+  // }
 
   const pageTitle = truncate(title, 70);
   const pageDescription = truncate(description, 160);
@@ -72,8 +76,6 @@ export function SeoMeta({
   const usesDefaultImage = !image;
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
   const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
-
-  console.log(1111, keywords)
 
   return (
     <Helmet>
@@ -95,10 +97,6 @@ export function SeoMeta({
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
 
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={pageTitle} />
-      <meta name="twitter:description" content={pageDescription} />
-
       {imageUrl && <meta property="og:image" content={imageUrl} />}
       {imageUrl && <meta property="og:image:secure_url" content={imageUrl} />}
       {imageUrl && (
@@ -107,21 +105,10 @@ export function SeoMeta({
           content={usesDefaultImage ? DEFAULT_OG_IMAGE_ALT : CUSTOM_OG_IMAGE_ALT}
         />
       )}
-      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
-      {imageUrl && (
-        <meta
-          name="twitter:image:alt"
-          content={usesDefaultImage ? DEFAULT_OG_IMAGE_ALT : CUSTOM_OG_IMAGE_ALT}
-        />
-      )}
-
-      {usesDefaultImage && imageUrl && <meta property="og:image:type" content="image/jpeg" />}
-      {usesDefaultImage && imageUrl && <meta property="og:image:width" content={DEFAULT_OG_IMAGE_WIDTH} />}
-      {usesDefaultImage && imageUrl && <meta property="og:image:height" content={DEFAULT_OG_IMAGE_HEIGHT} />}
 
       <link rel="canonical" href={canonicalUrl} />
 
-      {lcpSrc && (
+      {/* {lcpSrc && (
         <link
           rel="preload"
           as="image"
@@ -135,14 +122,14 @@ export function SeoMeta({
               }
             : {})}
         />
-      )}
-      {productSchema && (
+      )} */}
+      {/* {productSchema && (
         <script type="application/ld+json">
           {typeof productSchema === "string"
             ? productSchema
             : JSON.stringify(productSchema)}
         </script>
-      )}
+      )} */}
     </Helmet>
   );
 }

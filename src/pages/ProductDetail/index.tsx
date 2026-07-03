@@ -285,8 +285,8 @@ const ProductDetailPage = () => {
     _id = "",
     name = seoData?.title || staticName || "",
     shippingAndReturn = "",
-    shortDescription = seoData?.description || "",
-    longDescription = "",
+    shortDescription = "",
+    longDescription = seoData?.description || "",
     category = "",
     price = 0,
     currencySymbol = "",
@@ -361,7 +361,6 @@ const ProductDetailPage = () => {
       <SeoMeta
         title={name ? `${name} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles` : seoData?.title}
         description={
-          shortDescription ||
           longDescription ||
           seoData?.description ||
           `Shop ${name || staticName} motorcycle accessories from Zana Motorcycles.`
@@ -369,21 +368,6 @@ const ProductDetailPage = () => {
         image={newImages[0] || seoData?.image}
         type="product"
         keywords={seoData?.keywords}
-        productSchema={product ? {
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          "name": name,
-          "image": newImages[0],
-          "description": shortDescription || longDescription,
-          "sku": productCode,
-          "offers": {
-            "@type": "Offer",
-            "url": window.location.href,
-            "priceCurrency": "INR",
-            "price": price,
-            "availability": quantityAvailable > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-          }
-        } : undefined}
       />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
