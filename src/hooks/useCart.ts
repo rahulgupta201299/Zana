@@ -11,6 +11,7 @@ import { setOpenCart, setProcessedCart } from "@/Redux/Cart/Reducer";
 import { createDebounce } from "@/Utils/Debounce";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 export default function useCart() {
   const cartDetail = useSelector(cartDetailSelector);
@@ -118,7 +119,10 @@ export default function useCart() {
     if (quantity > maxQuantityAvailable) return;
 
     let productAdded = false;
-
+    if (!phoneNumber) {
+      dispatch(setOpenSignupPopup(true));
+      return;
+    }
     const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) {
         productAdded = true;
@@ -167,6 +171,10 @@ export default function useCart() {
       navigateTo = "",
     }: { easyCheckout?: boolean; navigateTo?: string } = {},
   ) {
+     if (!phoneNumber) {
+      dispatch(setOpenSignupPopup(true));
+      return;
+    } 
     const productQuantity = getQuantity(productId);
 
     if (productQuantity >= maxQuantityAvailable) return;

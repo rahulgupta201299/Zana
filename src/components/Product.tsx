@@ -53,8 +53,6 @@ export default function Products({
           component="img"
           {...imageProps}
           alt={name}
-          width={300}
-          height={300}
           data-original-src={imageUrl}
           sizes="(min-width: 1024px) 298px, (min-width: 640px) 33vw, 50vw"
           loading={priority ? "eager" : "lazy"}
@@ -78,7 +76,7 @@ export default function Products({
           sx={{
             width: "100%",
             aspectRatio: "1 / 1",
-            objectFit: "cover",
+            objectFit: "contain",
             borderRadius: "8px",
             display: "block",
             transition: "transform 0.3s",
@@ -189,7 +187,7 @@ export default function Products({
               <Tooltip title="Out of stock" arrow disableHoverListener={!isDisabled}>
                 <span>
                   <IconButton
-                    onClick={onAddToCart}
+                    onClick={(e) => onAddToCart(e)}
                     aria-label={`Add ${name} to cart`}
                     sx={{
                       width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,

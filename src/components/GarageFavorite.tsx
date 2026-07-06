@@ -8,6 +8,8 @@ import { garageFavoriteName } from "@/Redux/Landing/Actions";
 import { useEffect } from "react";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import garageFavoriteServiceAction from "@/Redux/Landing/Services/GarageFavourite";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 const GarageFavorite = () => {
   const productList = useSelector((state: TAppStore) =>
@@ -19,6 +21,7 @@ const GarageFavorite = () => {
   );
   const dispatch = useDispatch<TAppDispatch>();
   const { incrementToCart, getQuantity } = useCart();
+  const { phoneNumber = "" } = useSelector(getLoginDetails);
 
   useEffect(() => {
     const hasStaleCurrency =
@@ -36,6 +39,8 @@ const GarageFavorite = () => {
     if (!product) return;
 
     const { quantityAvailable = 0 } = product;
+
+    
 
     incrementToCart(product, productId, quantityAvailable, {
       easyCheckout: true,

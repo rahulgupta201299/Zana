@@ -105,7 +105,7 @@ function ProductSection({
   const [isProductsHydrating, setIsProductsHydrating] = useState(true);
   const isProductListLoading = Boolean(isLoading) || isProductLoading;
   const isProductListPending = isProductListLoading || isProductsHydrating;
-
+   const { phoneNumber = "" } = loginDetails;
   const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
 
   const [modalType, setModalType] = useState<string | null>(null);
@@ -146,7 +146,7 @@ function ProductSection({
   ) {
     e.stopPropagation();
     const { _id: productId, isWishlist } = product;
-    const { phoneNumber = "" } = loginDetails;
+ 
     const currentValue = wishlistMap[productId] ?? isWishlist;
 
     if (!phoneNumber) {
@@ -181,11 +181,9 @@ function ProductSection({
     e: React.MouseEvent,
     product: ShopByProductDetailsType,
   ) {
-    e.stopPropagation();
+    e.stopPropagation(); 
     const { _id, quantityAvailable } = product;
-    incrementToCart(product, _id, quantityAvailable, {
-      navigateTo: ROUTES.CART,
-    });
+    incrementToCart(product, _id, quantityAvailable,);
   }
 
   const showPagination = type === "catalog" && totalPages > 1;
