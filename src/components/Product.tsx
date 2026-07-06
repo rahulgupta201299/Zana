@@ -187,7 +187,7 @@ export default function Products({
               <Tooltip title="Out of stock" arrow disableHoverListener={!isDisabled}>
                 <span>
                   <IconButton
-                    onClick={onAddToCart}
+                    onClick={(e) => onAddToCart(e)}
                     aria-label={`Add ${name} to cart`}
                     sx={{
                       width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,

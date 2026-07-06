@@ -64,18 +64,18 @@ export function onMountChecks(pathname = window.location.pathname) {
     dispatch(initialLoadingActions(true))
   }
 
-  if (
-    pathname !== ROUTES.BASE_URL &&
-    openPopup &&
-    !phoneNumber &&
-    !isSignupPopupOpen &&
-    !navigator.webdriver
-  ) {
-    scheduleSignupPrompt(() => {
-      if (window.location.pathname !== ROUTES.BASE_URL) {
-        dispatch(setOpenSignupPopup(true))
-      }
-    })
-  }
+  // if (
+  //   pathname !== ROUTES.BASE_URL &&
+  //   openPopup &&
+  //   !phoneNumber &&
+  //   !isSignupPopupOpen &&
+  //   !navigator.webdriver
+  // ) {
+  //   scheduleSignupPrompt(() => {
+  //     if (window.location.pathname !== ROUTES.BASE_URL) {
+  //       dispatch(setOpenSignupPopup(true))
+  //     }
+  //   })
+  // }
 
 }
