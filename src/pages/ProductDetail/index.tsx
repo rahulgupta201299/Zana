@@ -129,12 +129,7 @@ const ProductDetailPage = () => {
   );
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, product: ShopByProductDetailsType, _id: string, quantity: number, quantityAvailable: number) => {
-     e.stopPropagation();
-    const { phoneNumber = "" } = loginDetails;
-    if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }                  
+     e.stopPropagation();                 
     addToCart(product, _id, quantity, quantityAvailable);
   };
 

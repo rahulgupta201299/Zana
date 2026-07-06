@@ -181,15 +181,9 @@ function ProductSection({
     e: React.MouseEvent,
     product: ShopByProductDetailsType,
   ) {
-    e.stopPropagation();
-    if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
+    e.stopPropagation(); 
     const { _id, quantityAvailable } = product;
-    incrementToCart(product, _id, quantityAvailable, {
-      navigateTo: ROUTES.CART,
-    });
+    incrementToCart(product, _id, quantityAvailable,);
   }
 
   const showPagination = type === "catalog" && totalPages > 1;

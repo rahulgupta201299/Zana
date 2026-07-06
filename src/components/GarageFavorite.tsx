@@ -40,10 +40,7 @@ const GarageFavorite = () => {
 
     const { quantityAvailable = 0 } = product;
 
-    if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
+    
 
     incrementToCart(product, productId, quantityAvailable, {
       easyCheckout: true,
