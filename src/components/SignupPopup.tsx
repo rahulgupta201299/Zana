@@ -240,7 +240,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
       }}
       disableEscapeKeyDown
     >
-      {showClose && (
+      {/* {showClose && (
         <IconButton
           onClick={handleClose}
           aria-label="Close login dialog"
@@ -254,7 +254,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
         >
           <CloseIcon />
         </IconButton>
-      )}
+      )} */}
 
       <DialogTitle sx={{ p: { md: "32px 32px 0px", xs: "16px" } }}>
         Login With OTP

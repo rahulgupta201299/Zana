@@ -40,7 +40,7 @@ function Wrapper() {
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
-		onMountChecks()
+		onMountChecks(location.pathname)
 	}, [location.pathname])
 
 	useEffect(() => {

@@ -2,6 +2,7 @@ import AppStore from "../AppStore";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { SESSION_STORAGE } from "@/Constants/AppConstant";
 import { initialLoadingActions } from "@/Redux/Landing/Actions";
+import { ROUTES } from "@/Constants/Routes";
 
 const SIGNUP_PROMPT_DELAY = 60000;
 const SIGNUP_PROMPT_EVENTS = ["pointerdown", "keydown", "touchstart"] as const;
@@ -49,7 +50,7 @@ function scheduleSignupPrompt(callback: () => void) {
   });
 }
 
-export function onMountChecks() {
+export function onMountChecks(pathname = window.location.pathname) {
   const dispatch = AppStore.dispatch;
   const state = AppStore.getState();
 
@@ -63,9 +64,17 @@ export function onMountChecks() {
     dispatch(initialLoadingActions(true))
   }
 
-  if (openPopup && !phoneNumber && !isSignupPopupOpen && !navigator.webdriver) {
+  if (
+    pathname !== ROUTES.BASE_URL &&
+    openPopup &&
+    !phoneNumber &&
+    !isSignupPopupOpen &&
+    !navigator.webdriver
+  ) {
     scheduleSignupPrompt(() => {
-      dispatch(setOpenSignupPopup(true))
+      if (window.location.pathname !== ROUTES.BASE_URL) {
+        dispatch(setOpenSignupPopup(true))
+      }
     })
   }
 

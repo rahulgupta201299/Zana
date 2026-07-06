@@ -433,7 +433,7 @@ const BikeDetailPage = () => {
               Products for {modelName.toUpperCase()}
             </h2>
             <p className="text-white/60">
-              Browse {bikeProducts.length} accessories designed for your{" "}
+              Browse {selectedCategoryCount} accessories designed for your{" "}
               {modelName}
             </p>
           </div>

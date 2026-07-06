@@ -24,7 +24,10 @@ import {
 } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
-import { handleSocialMedia, replaceHiphenWithSpaces } from "@/Utils/StringUtils";
+import {
+  handleSocialMedia,
+  replaceHiphenWithSpaces,
+} from "@/Utils/StringUtils";
 import {
   BikeCategoryEnum,
   SocialMediaPlatformEnum,
@@ -85,16 +88,16 @@ const ProductDetailPage = () => {
 
   // Derive a human-readable title from the URL slug immediately —
   // no API call needed. Used for FCP/LCP before the API resolves.
-  const staticName = replaceHiphenWithSpaces(productItem)
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const staticName = replaceHiphenWithSpaces(productItem).replace(
+    /\b\w/g,
+    (c) => c.toUpperCase(),
+  );
 
   // Resolve the static product seoData from the pre-built map keyed by productId.
   // The correct map (staging vs. production) is selected at module load time
   // via VITE_NODE_ENV so no runtime env checks are needed here.
   const seoData = PRODUCT_SEO_MAP[productId];
-  const staticPlaceholderImage =
-    seoData?.image ??
-    FALLBACK_PLACEHOLDER_IMAGE;
+  const staticPlaceholderImage = seoData?.image ?? FALLBACK_PLACEHOLDER_IMAGE;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -119,8 +122,22 @@ const ProductDetailPage = () => {
   const currency = useSelector(getSelectedCurrency);
 
   const isCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [categoryProductServiceName, bikeProductServiceName]),
+    isServiceLoading(state, [
+      categoryProductServiceName,
+      bikeProductServiceName,
+    ]),
   );
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, product: ShopByProductDetailsType, _id: string, quantity: number, quantityAvailable: number) => {
+     e.stopPropagation();
+    const { phoneNumber = "" } = loginDetails;
+    if (!phoneNumber) {
+      dispatch(setOpenSignupPopup(true));
+      return;
+    }                  
+    addToCart(product, _id, quantity, quantityAvailable);
+  };
+
 
   const isProductLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [productDetailServiceName]),
@@ -196,7 +213,11 @@ const ProductDetailPage = () => {
 
       if (isBikeSpecific) {
         relatedProductsData = (await dispatch(
-          BikeProductService({ modelId: model, category, queryParams: { page: 1, limit: 10 } })
+          BikeProductService({
+            modelId: model,
+            category,
+            queryParams: { page: 1, limit: 10 },
+          }),
         )) as ShopByProductDetailsType[];
       } else {
         const { data } = (await dispatch(
@@ -226,8 +247,8 @@ const ProductDetailPage = () => {
     name: string,
     productId: string,
   ) {
-    const currentBreadcrumbState =
-      (location.state || {}) as ProductDetailLocationState;
+    const currentBreadcrumbState = (location.state ||
+      {}) as ProductDetailLocationState;
     const productDetailState =
       currentBreadcrumbState.source === "bike"
         ? {
@@ -296,7 +317,7 @@ const ProductDetailPage = () => {
     specifications = "",
     isBikeSpecific = false,
     productCode = "",
-    isComingSoon = false
+    isComingSoon = false,
   } = product || {};
 
   const isPlusDisabled = quantity >= quantityAvailable;
@@ -305,8 +326,7 @@ const ProductDetailPage = () => {
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
   const heroImageProps = getHeroImageProps(newImages[selectedImageIndex] || "");
   const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
-  const breadcrumbCategory =
-    breadcrumbState.productCategory || category;
+  const breadcrumbCategory = breadcrumbState.productCategory || category;
   const isBikeBreadcrumb =
     breadcrumbState.source === "bike" &&
     breadcrumbState.bikeType &&
@@ -329,15 +349,15 @@ const ProductDetailPage = () => {
       ? BikeCategoryEnum.ZPRO
       : "Shop By Bike";
   const productBreadcrumbItems = isBikeBreadcrumb
-      ? [
-          { label: "Home", to: ROUTES.BASE_URL },
-          { label: bikeBreadcrumbLabel, to: bikeListPath },
-          {
-            label: breadcrumbState.bikeBrand || "",
-            to: bikeListPath,
-            state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
-          },
-          { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
+    ? [
+        { label: "Home", to: ROUTES.BASE_URL },
+        { label: bikeBreadcrumbLabel, to: bikeListPath },
+        {
+          label: breadcrumbState.bikeBrand || "",
+          to: bikeListPath,
+          state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
+        },
+        { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
         {
           label: breadcrumbCategory,
           to: bikeDetailPath,
@@ -359,7 +379,11 @@ const ProductDetailPage = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
-        title={name ? `${name} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles` : seoData?.title}
+        title={
+          name
+            ? `${name} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles`
+            : seoData?.title
+        }
         description={
           longDescription ||
           seoData?.description ||
@@ -371,10 +395,7 @@ const ProductDetailPage = () => {
       />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <AppBreadcrumb
-          className="mb-8"
-          items={productBreadcrumbItems}
-        />
+        <AppBreadcrumb className="mb-8" items={productBreadcrumbItems} />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left - Product Images List */}
           <div className="lg:col-span-2">
@@ -388,7 +409,9 @@ const ProductDetailPage = () => {
                       <button
                         type="button"
                         aria-label={`View ${name} image ${index + 1}`}
-                        aria-current={selectedImageIndex === index ? "true" : undefined}
+                        aria-current={
+                          selectedImageIndex === index ? "true" : undefined
+                        }
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all overflow-hidden ${
                           selectedImageIndex === index
                             ? "border-white"
@@ -409,7 +432,11 @@ const ProductDetailPage = () => {
                       </button>
                     ) : (
                       <Skeleton
-                        sx={{ width: { xs: 80, lg: 96 }, height: { xs: 80, lg: 96 }, backgroundColor: "grey" }}
+                        sx={{
+                          width: { xs: 80, lg: 96 },
+                          height: { xs: 80, lg: 96 },
+                          backgroundColor: "grey",
+                        }}
                         variant="rectangular"
                       />
                     )}
@@ -486,9 +513,7 @@ const ProductDetailPage = () => {
               {/* Show static title from URL slug immediately (FCP/LCP) — real name
                   replaces it once the API responds. Both render the same <h1> node
                   so the browser never removes and re-adds the LCP element. */}
-              <h1 className="text-4xl font-bold text-white mb-4">
-                {name}
-              </h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-4">{name}</h1>
             </div>
 
             {shortDescription ? (
@@ -566,19 +591,22 @@ const ProductDetailPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  <ShoppingBag /> {isComingSoon ? "Coming Soon" : "Out of Stock"}
+                  <ShoppingBag />{" "}
+                  {isComingSoon ? "Coming Soon" : "Out of Stock"}
                 </Button>
               )}
             </div>
 
             {!isProductDetailPending && quantityAvailable > 0 && (
-              <div className="flex gap-4 mb-6">
+              <div
+                className="fixed bottom-0 left-0 right-0 z-30 flex gap-3 bg-[#181818]/95 px-4 py-3
+               shadow-[0_-12px_30px_rgba(0,0,0,0.35)] backdrop-blur
+               sm:gap-4
+               lg:static lg:mb-6 lg:rounded-lg lg:px-0 lg:py-0 lg:shadow-none lg:bg-transparent lg:backdrop-blur-none"
+              >
                 <Button
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    addToCart(product, _id, quantity, quantityAvailable, {
-                      navigateTo: ROUTES.CART,
-                    });
+                    handleAddToCart(e, product, _id, quantity, quantityAvailable);
                   }}
                   disabled={!price}
                   className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -659,7 +687,7 @@ const ProductDetailPage = () => {
                   <button
                     type="button"
                     aria-label={
-                      isWishlisted ?? product.isWishlist
+                      (isWishlisted ?? product.isWishlist)
                         ? "Remove from wishlist"
                         : "Add to wishlist"
                     }
@@ -800,7 +828,8 @@ const ProductDetailPage = () => {
               const productQuantity = getQuantity(_id);
               const isDisabled = productQuantity >= quantityAvailable;
 
-              const suggestedImageProps = getSuggestedProductImageProps(imageUrl);
+              const suggestedImageProps =
+                getSuggestedProductImageProps(imageUrl);
 
               return (
                 <div
@@ -837,7 +866,6 @@ const ProductDetailPage = () => {
                               relatedProduct,
                               _id,
                               quantityAvailable,
-                              { navigateTo: ROUTES.CART },
                             );
                           }}
                           className="h-9 bg-white rounded-full flex items-center justify-center
