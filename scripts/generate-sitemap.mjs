@@ -5,7 +5,6 @@ import vm from "node:vm";
 const OUTPUT_FILE = resolve("public/sitemap.xml");
 const HTML_OUTPUT_FILE = resolve("public/sitemap.html");
 const ROBOTS_FILE = resolve("public/robots.txt");
-const PRODUCT_REDIRECT_MAPPINGS_FILE = resolve("src/Constants/ProductRedirectMappings.ts");
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
 const PAGE_SIZE = 1000;
@@ -265,30 +264,6 @@ async function fetchPaginated(
   return items;
 }
 
-function readProductRedirectMappingUrls() {
-  if (!existsSync(PRODUCT_REDIRECT_MAPPINGS_FILE)) return [];
-
-  const source = readFileSync(PRODUCT_REDIRECT_MAPPINGS_FILE, "utf8");
-  const seen = new Set();
-  const urls = [];
-
-  for (const match of source.matchAll(/"targetPath":\s*"([^"]+)"/g)) {
-    const path = match[1];
-    const productId = path.split("/").filter(Boolean).at(-1);
-    if (!path.startsWith("/product/") || seen.has(path)) continue;
-    if (productSeoIds.size > 0 && !productSeoIds.has(productId)) continue;
-    seen.add(path);
-    urls.push(
-      createUrl(path, {
-        priority: "0.8",
-        changefreq: "weekly",
-      }),
-    );
-  }
-
-  return urls;
-}
-
 function readProductSeoMapUrls() {
   return Object.entries(productSeoMap).map(([productId, seoData]) =>
     createUrl(
@@ -342,7 +317,6 @@ async function getProductUrls() {
 
   return mergeUrls(
     apiProductUrls,
-    readProductRedirectMappingUrls(),
     readProductSeoMapUrls(),
   );
 }
@@ -778,10 +752,7 @@ async function main() {
     } catch (error) {
       console.warn(`Could not add ${label} to sitemap: ${error.message}`);
       if (label === "products") {
-        const fallbackUrls = mergeUrls(
-          readProductRedirectMappingUrls(),
-          readProductSeoMapUrls(),
-        );
+        const fallbackUrls = readProductSeoMapUrls();
         if (fallbackUrls.length) {
           sections.push({ name: "Product Pages", urls: fallbackUrls });
           console.log(

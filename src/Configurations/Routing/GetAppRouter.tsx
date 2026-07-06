@@ -55,16 +55,16 @@ export function prefetchCommerceRoutePages() {
 
 function DynamicRedirect() {
   const location = useLocation();
-  const [productRedirectTarget, setProductRedirectTarget] = useState<string | null>()
+  const [redirectTarget, setredirectTarget] = useState<string | null>()
   const isAdminPath = location.pathname === ROUTES.ADMIN || location.pathname.startsWith(`${ROUTES.ADMIN}/`)
 
   useEffect(() => {
     let isActive = true
-    setProductRedirectTarget(undefined)
+    setredirectTarget(undefined)
 
-    import('@/Constants/ProductRedirectMappings').then(({ getProductRedirectTarget }) => {
+    import('@/Constants/ProductRedirectMappings').then(({ getRedirectTarget }) => {
       if (!isActive) return
-      setProductRedirectTarget(getProductRedirectTarget(location.pathname) || null)
+      setredirectTarget(getRedirectTarget(location.pathname) || null)
     })
 
     return () => {
@@ -72,9 +72,9 @@ function DynamicRedirect() {
     }
   }, [location.pathname])
 
-  if (productRedirectTarget === undefined) return <Loading />
+  if (redirectTarget === undefined) return <Loading />
 
-  if (productRedirectTarget) return <Navigate replace to={productRedirectTarget} />
+  if (redirectTarget) return <Navigate replace to={redirectTarget} />
 
   if (isAdminPath) return <Navigate replace to={ROUTES.ADMIN} />
 
