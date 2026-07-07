@@ -281,17 +281,21 @@ function readProductSeoMapUrls() {
 function readBikeSeoMapUrls(excludeIds = new Set()) {
   return Object.entries(bikeSeoMap)
     .filter(([bikeId]) => !excludeIds.has(bikeId))
-    .map(([bikeId, seoData]) =>
-      createUrl(
-        `/bike-accessories/zana/bike/zana/${slugify(seoData?.title || bikeId)}/${bikeId}`,
+    .map(([bikeId, seoData]) => {
+      const type = slugify(seoData?.type || "zana");
+      const brand = slugify(seoData?.brand || "brand");
+      const model = slugify(seoData?.model || "model");
+
+      return createUrl(
+        `/bike-accessories/${type}/bike/${brand}/${model}/${bikeId}`,
         {
           id: bikeId,
           title: seoData?.title,
           priority: "0.7",
           changefreq: "weekly",
         },
-      ),
-    );
+      );
+    });
 }
 
 async function getProductUrls() {
