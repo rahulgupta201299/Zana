@@ -13,6 +13,8 @@ import { ROUTES } from "@/Constants/Routes";
 import WebNavMenuSkeleton from "@/components/Skeleton/WebNavMenuSkeleton";
 import { productCategorySelector, shopByBikeSelector, zProBikeSelector } from "@/Redux/Product/Selectors";
 import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { BikeCategoryEnum } from "@/Constants/AppConstant";
+import { MenuItemsName } from "./Constant";
 
 type WebNavMenuPropsType = {
 	menuName: string
@@ -44,6 +46,14 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 		navigate(`${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(category)}`)
 		onClose()
 	}
+
+	function handleBikeBrandClick(category: string) {
+		const bikeType = menuName === MenuItemsName.Z_PRO ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
+		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(category)}`)
+		onClose()
+	}
+
+	const isBikeMenu = menuName === MenuItemsName.SHOP_BY_BIKE || menuName === MenuItemsName.Z_PRO
 
 	return (
 		<Popover
@@ -83,10 +93,14 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 								fontWeight: 700,
 								fontSize: "1rem",
 								mb: "6px",
-								cursor: item.models?.length ? "none" : "pointer",
-								"&:hover": { color: item.models?.length ? "#FFF" : "#ff3f6c" },
+								cursor: isBikeMenu || !item.models?.length ? "pointer" : "default",
+								"&:hover": { color: isBikeMenu || !item.models?.length ? "#ff3f6c" : "#FFF" },
 							}}
-							onClick={() => !item.models?.length && handleCategoryClick(item.name)}
+							onClick={() =>
+								isBikeMenu
+									? handleBikeBrandClick(item.name)
+									: !item.models?.length && handleCategoryClick(item.name)
+							}
 						>
 							{item.name}
 						</Typography>

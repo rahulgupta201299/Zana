@@ -15,6 +15,7 @@ import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName 
 import { MenuItemsName } from './Constant';
 import { replaceSpecialCharactersWithHyphen } from '@/Utils/StringUtils';
 import { ROUTES } from '@/Constants/Routes';
+import { BikeCategoryEnum } from '@/Constants/AppConstant';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -34,6 +35,30 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 	const routeRef = useRef<string>('')
 
 	const navigate = useNavigate()
+
+	const isBikeBrandLevel = (item: MenuOptionsType) => {
+		const route = routeRef.current
+		const hasBikeModels = Boolean(item.models?.length)
+
+		return (
+			hasBikeModels &&
+			(route === `/bike-accessories/${BikeCategoryEnum.ZANA}/bike/` ||
+				route === `/bike-accessories/${BikeCategoryEnum.ZPRO}/bike/`)
+		)
+	}
+
+	const getBikeTypeFromRoute = () => {
+		return routeRef.current.includes(`/${BikeCategoryEnum.ZPRO}/`)
+			? BikeCategoryEnum.ZPRO
+			: BikeCategoryEnum.ZANA
+	}
+
+	function handleBikeBrandClick(item: MenuOptionsType) {
+		const bikeType = getBikeTypeFromRoute()
+
+		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(item.name)}`)
+		onClose()
+	}
 
 	function handleMenuItemClick(item: MenuOptionsType) {
 		const { name, _id, models = [], route } = item
@@ -175,6 +200,8 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 				{
 					!isDataPending && menuOptions.map((item, ind) => {
 						const { name } = item
+						const shouldLinkBikeBrand = isBikeBrandLevel(item)
+
 						return (
 							<Box
 								key={ind}
@@ -185,7 +212,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 									width: "100%",
 									cursor: "pointer"
 								}}
-								onClick={() => handleMenuItemClick(item)}
+								onClick={() => shouldLinkBikeBrand ? undefined : handleMenuItemClick(item)}
 							>
 								<Typography
 									sx={{
@@ -195,6 +222,12 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 										fontWeight: 700,
 										color: 'white',
 									}}
+									onClick={(event) => {
+										if (!shouldLinkBikeBrand) return
+
+										event.stopPropagation()
+										handleBikeBrandClick(item)
+									}}
 								>
 									{name}
 								</Typography>
@@ -203,6 +236,12 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 										color: "white",
 										fontSize: 30,
 										my: 'auto',
+									}}
+									onClick={(event) => {
+										if (!shouldLinkBikeBrand) return
+
+										event.stopPropagation()
+										handleMenuItemClick(item)
 									}}
 								/>
 							</Box>
