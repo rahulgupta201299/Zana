@@ -19,7 +19,8 @@ import {
 } from "@/Redux/Product/Actions";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
-import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { replaceHiphenWithSpaces, replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { SeoMeta } from "@/components/SeoMeta";
 import {
   Box,
   Card,
@@ -30,6 +31,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { BRAND_SEO_MAPS } from "./BRAND_SEO_MAPS";
 
 function Bikes() {
   const params = useParams();
@@ -48,6 +50,12 @@ function Bikes() {
 
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
+
+  const seoData = BRAND_SEO_MAPS?.[replaceHiphenWithSpaces(bikeBrandParams).toUpperCase()] || {
+    title: "Bikes | Zana Motorcycles",
+    description:
+      "Explore our range of premium bikes from various brands. Find crash guards, luggage carriers, engine guards, touring accessories, and more for your motorcycle.",
+  };
 
   const resolvedInitialBrand = useMemo(() => {
     if (bikeBrandParams) {
@@ -136,6 +144,10 @@ function Bikes() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
+      <SeoMeta
+        title={seoData.title}
+        description={seoData.description}
+      />
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           <AppBreadcrumb

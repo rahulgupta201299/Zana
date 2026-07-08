@@ -1,10 +1,11 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useLocation, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
-import { ROUTES } from '@/Constants/Routes'
+import { ROUTES, SUB_ROUTES } from '@/Constants/Routes'
+import { ALL_CATEGORY } from '@/Constants/AppConstant'
 import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
@@ -82,6 +83,12 @@ function DynamicRedirect() {
   return <Navigate replace to={ROUTES.BASE_URL} />
 }
 
+function BikesRedirect() {
+  const { bikeType } = useParams();
+  const location = useLocation();
+  return <Navigate replace to={`/${bikeType}${SUB_ROUTES.BIKES}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
+}
+
 export const routeObj: RouteObject[] = [
   {
     path: ROUTES.ADMIN,
@@ -107,7 +114,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, element: ProductCatalogPage },
       { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
       { path: ROUTES.BIKES_WITH_BRAND, element: BikesPage },
-      { path: ROUTES.BIKES, element: BikesPage },
+      { path: ROUTES.BIKES, element: <BikesRedirect /> },
       { path: ROUTES.BIKE_DETAIL_WITH_CATEGORY, element: BikeDetailPage },
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
       { path: ROUTES.BLOGS, element: BlogsPage },
