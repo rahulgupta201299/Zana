@@ -63,7 +63,7 @@ export function SeoMeta({
   canonicalPath,
   type = "website",
   noIndex = false,
-  keywords,
+  keywords = "",
   productSchema,
 }: SeoMetaProps) {
   const { pathname } = useLocation();
