@@ -43,6 +43,7 @@ const AdminLogin = lazyLoadPage(() => import("@/Admin/Login"), Loading);
 const AdminDashboard = lazyLoadPage(() => import("@/Admin/Dashboard"), Loading);
 const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
 const AdminActiveCarts = lazyLoadPage(() => import("@/Admin/ActiveCarts"), Loading);
+const AdminCreateOrder = lazyLoadPage(() => import("@/Admin/CreateOrder"), Loading);
 const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
 
 export function prefetchCommerceRoutePages() {
@@ -92,6 +93,7 @@ export const routeObj: RouteObject[] = [
       { path: "dashboard", element: AdminDashboard },
       { path: "products", element: AdminProducts },
       { path: "active-carts", element: AdminActiveCarts },
+      { path: "create-order", element: AdminCreateOrder },
       { path: "orders", element: AdminOrderList },
       { path: "*", element: <Navigate replace to={ROUTES.ADMIN_DASHBOARD} /> },
     ]

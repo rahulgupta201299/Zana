@@ -1241,6 +1241,7 @@ export default function ActiveCarts() {
       <CartOrderDialog
         open={cartOrderDialogCart != null}
         cart={cartOrderDialogCart}
+        countryOptions={isdCodes}
         saving={cartOrderSaveLoading}
         onClose={() => setCartOrderDialogCart(null)}
         onSave={handleSaveCartOrderDetails}
