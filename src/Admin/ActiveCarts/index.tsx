@@ -18,11 +18,14 @@ import {
   Divider,
   Stack,
   FormControl,
+  FormControlLabel,
   InputLabel,
   Select,
   MenuItem,
   Alert,
   Tooltip,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -34,10 +37,17 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useSnackbar } from "notistack";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { TAppDispatch } from "@/Configurations/AppStore";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
+import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
+import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
+import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
+import { getCurrencyList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { COUNTRY_INDIA, CURRENCY_LIST } from "@/Constants/AppConstant";
+import { PaymentTypeEnum } from "@/pages/Checkout/Constant";
+import type { UpdatePaymentResType } from "@/Redux/Cart/Types";
 import { formatUtcToIstDateTime } from "../Utils/DateUtils";
 import {
   createAdminActiveCartPaymentLink,
@@ -69,6 +79,7 @@ const NULL_EMAIL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 const TABLE_COL_SPAN = 7;
 const DEFAULT_ISD_CODE = "+91";
+const INR_OUTSIDE_INDIA_ERROR = "INR currency is only supported for India carts.";
 function normalizeIsdCode(isd: string): string {
   const trimmed = isd.trim();
   if (!trimmed) return DEFAULT_ISD_CODE;
@@ -163,6 +174,17 @@ function productImageUrl(
   return null;
 }
 
+function isIndiaCountry(country = ""): boolean {
+  return country.trim().toLowerCase() === COUNTRY_INDIA.toLowerCase();
+}
+
+function formatMoney(symbol: string, value: number): string {
+  return `${symbol}${Number(value || 0).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
 /** Local calendar date as YYYY-MM-DD for `<input type="date">` min/max. */
 function formatLocalIsoDate(d: Date): string {
   const y = d.getFullYear();
@@ -218,6 +240,8 @@ function Row(props: {
   expanded: boolean;
   paymentLinkLoading: boolean;
   cartItemLoadingKey: string | null;
+  paymentMethodLoading: boolean;
+  selectedCurrency: string;
   onToggleExpand: () => void;
   onEditContactDetails: (cart: AdminActiveCartRecord) => void;
   onOpenAddProduct: (cart: AdminActiveCartRecord) => void;
@@ -228,6 +252,11 @@ function Row(props: {
     itemKey: string,
   ) => void;
   onGeneratePaymentLink: (cart: AdminActiveCartRecord, rowId: string) => void;
+  onPaymentMethodChange: (
+    cart: AdminActiveCartRecord,
+    method: PaymentTypeEnum,
+    rowId: string,
+  ) => void;
 }) {
   const {
     cart,
@@ -235,11 +264,14 @@ function Row(props: {
     expanded,
     paymentLinkLoading,
     cartItemLoadingKey,
+    paymentMethodLoading,
+    selectedCurrency,
     onToggleExpand,
     onEditContactDetails,
     onOpenAddProduct,
     onUpdateCartItemQuantity,
     onGeneratePaymentLink,
+    onPaymentMethodChange,
   } = props;
 
   const items = cart.items ?? [];
@@ -266,6 +298,10 @@ function Row(props: {
   const shippingCost = cart.shippingCost ?? 0;
   const discountAmount = cart.discountAmount ?? 0;
   const codCharges = cart.codCharges ?? 0;
+  const paymentMethod =
+    cart.paymentMethod === PaymentTypeEnum.COD
+      ? PaymentTypeEnum.COD
+      : PaymentTypeEnum.RAZORPAY;
   const REQUIRED_ADDRESS_FIELDS = [
     "fullName",
     "addressLine1",
@@ -283,6 +319,9 @@ function Row(props: {
   const hasValidAddresses =
     isValidAddress(cart.shippingAddress ?? {}) &&
     isValidAddress(cart.billingAddress ?? {});
+  const canUseCod =
+    selectedCurrency === CURRENCY_LIST.INR &&
+    isIndiaCountry(cart.shippingAddress?.country ?? "");
 
   return (
     <React.Fragment>
@@ -447,25 +486,7 @@ function Row(props: {
                               spacing={0.75}
                               sx={{ minWidth: 132 }}
                             >
-                              <Tooltip title="Decrease" enterDelay={300}>
-                                <span>
-                                  <IconButton
-                                    size="small"
-                                    aria-label="Decrease item quantity"
-                                    disabled={isMinusDisabled}
-                                    onClick={() =>
-                                      onUpdateCartItemQuantity(
-                                        cart,
-                                        item,
-                                        quantity - 1,
-                                        itemKey,
-                                      )
-                                    }
-                                  >
-                                    <RemoveIcon fontSize="small" />
-                                  </IconButton>
-                                </span>
-                              </Tooltip>
+                            
                               <Typography
                                 variant="body2"
                                 sx={{ width: 24, textAlign: "center" }}
@@ -476,35 +497,7 @@ function Row(props: {
                                   quantity
                                 )}
                               </Typography>
-                              <Tooltip
-                                title={
-                                  !productId
-                                    ? "Product unavailable"
-                                    : quantityAvailable != null &&
-                                        quantity >= quantityAvailable
-                                      ? "No more stock available"
-                                      : "Increase"
-                                }
-                                enterDelay={300}
-                              >
-                                <span>
-                                  <IconButton
-                                    size="small"
-                                    aria-label="Increase item quantity"
-                                    disabled={isPlusDisabled}
-                                    onClick={() =>
-                                      onUpdateCartItemQuantity(
-                                        cart,
-                                        item,
-                                        quantity + 1,
-                                        itemKey,
-                                      )
-                                    }
-                                  >
-                                    <AddIcon fontSize="small" />
-                                  </IconButton>
-                                </span>
-                              </Tooltip>
+                            
                             
                             </Stack>
                           </TableCell>
@@ -517,19 +510,12 @@ function Row(props: {
                                 <span>
                                   <IconButton
                                     size="small"
-                                    color="error"
+                                    
                                     aria-label="Remove item from cart"
                                     disabled={isRemoveDisabled}
-                                    onClick={() =>
-                                      onUpdateCartItemQuantity(
-                                        cart,
-                                        item,
-                                        0,
-                                        itemKey,
-                                      )
-                                    }
+                                    onClick={() => onOpenAddProduct(cart)}
                                   >
-                                    <DeleteOutlineIcon fontSize="small" />
+                                    <EditIcon fontSize="small" />
                                   </IconButton>
                                 </span>
                               </Tooltip>
@@ -621,49 +607,86 @@ function Row(props: {
                   </Box>
                 ))}
               </Box>
-              <Box sx={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                <Box>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", md: "minmax(220px, 0.7fr) 1fr" },
+                  gap: 2,
+                }}
+              >
+                <Box sx={{ minWidth: 220 }}>
                   <Typography variant="caption" color="text.secondary">
-                    Tax Amount:
+                    Payment method:
                   </Typography>
-                  <Typography variant="body2">
-                    {symbol}
-                    {taxAmount}
-                  </Typography>
+                  <FormControl size="small" fullWidth sx={{ mt: 0.5 }}>
+                    <RadioGroup
+                      row
+                      value={paymentMethod}
+                      onChange={(event) =>
+                        onPaymentMethodChange(
+                          cart,
+                          event.target.value as PaymentTypeEnum,
+                          rowId,
+                        )
+                      }
+                    >
+                      <FormControlLabel
+                        value={PaymentTypeEnum.RAZORPAY}
+                        control={<Radio size="small" disabled={paymentMethodLoading} />}
+                        label="Online"
+                      />
+                      {canUseCod && (
+                        <FormControlLabel
+                          value={PaymentTypeEnum.COD}
+                          control={<Radio size="small" disabled={paymentMethodLoading} />}
+                          label="COD"
+                        />
+                      )}
+                    </RadioGroup>
+                  </FormControl>
+                  {paymentMethodLoading && (
+                    <Typography variant="caption" color="text.secondary">
+                      Updating payment calculation...
+                    </Typography>
+                  )}
                 </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Shipping Cost:
+                <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, bgcolor: "#fff" }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+                    Payment summary
                   </Typography>
-                  <Typography variant="body2">
-                    {symbol}
-                    {shippingCost}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Discount Amount:
-                  </Typography>
-                  <Typography variant="body2" color="error">
-                    -{symbol}
-                    {discountAmount}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    COD charges:
-                  </Typography>
-                  <Typography variant="body2">
-                    {symbol}
-                    {codCharges}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Applied coupon:
-                  </Typography>
-                  <Typography variant="body2">{appliedCouponText}</Typography>
-                </Box>
+                  <Stack spacing={0.75}>
+                    {[
+                      ["Subtotal", subtotal],
+                      ["Shipping charges", shippingCost],
+                      ["Tax", taxAmount],
+                      ["Discount", -discountAmount],
+                      ["COD charges", codCharges],
+                    ].map(([label, value]) => (
+                      <Stack key={label} direction="row" justifyContent="space-between">
+                        <Typography variant="body2">{label}</Typography>
+                        <Typography variant="body2">
+                          {formatMoney(symbol, Number(value))}
+                        </Typography>
+                      </Stack>
+                    ))}
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography variant="body2">Applied coupon</Typography>
+                      <Typography variant="body2">{appliedCouponText}</Typography>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      sx={{ borderTop: "1px solid #e2e8f0", pt: 1, mt: 0.5 }}
+                    >
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        Total payable
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        {formatMoney(symbol, totalAmount)}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Paper>
               </Box>
             </Box>
           </Collapse>
@@ -675,6 +698,8 @@ function Row(props: {
 
 export default function ActiveCarts() {
   const dispatch = useDispatch<TAppDispatch>();
+  const currencies = useSelector(getCurrencyList);
+  const selectedCurrency = useSelector(getSelectedCurrency);
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
   const [totalCarts, setTotalCarts] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -685,6 +710,9 @@ export default function ActiveCarts() {
   const [cartItemLoadingKey, setCartItemLoadingKey] = useState<string | null>(
     null,
   );
+  const [paymentMethodLoadingCartId, setPaymentMethodLoadingCartId] = useState<
+    string | null
+  >(null);
   const [cartOrderDialogCart, setCartOrderDialogCart] =
     useState<AdminActiveCartRecord | null>(null);
   const [cartOrderSaveLoading, setCartOrderSaveLoading] = useState(false);
@@ -729,6 +757,7 @@ export default function ActiveCarts() {
         phoneNumber:
           buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
         emailId: appliedEmailId.trim() || undefined,
+        currency: selectedCurrency,
       };
       setLoading(true);
       setError(null);
@@ -758,6 +787,7 @@ export default function ActiveCarts() {
       appliedIsdCode,
       appliedPhoneNumber,
       appliedEmailId,
+      selectedCurrency,
     ],
   );
 
@@ -773,6 +803,7 @@ export default function ActiveCarts() {
     phoneNumber:
       buildPhoneFilter(appliedIsdCode, appliedPhoneNumber) || undefined,
     emailId: appliedEmailId.trim() || undefined,
+    currency: selectedCurrency,
   });
 
   const handleDownloadCsv = async () => {
@@ -804,6 +835,13 @@ export default function ActiveCarts() {
 
     setPaymentLinkLoadingCartId(rowId);
     try {
+      await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber,
+          method: PaymentTypeEnum.RAZORPAY,
+          currency: selectedCurrency,
+        }),
+      );
       const response = await createAdminActiveCartPaymentLink(phoneNumber);
       enqueueSnackbar(response.message, { variant: "success" });
     } catch (error: any) {
@@ -823,6 +861,17 @@ export default function ActiveCarts() {
       if (payload.hasCartChanges) {
         await dispatch(cartModifyServiceAction(payload.cart));
       }
+      const method =
+        cartOrderDialogCart?.paymentMethod === PaymentTypeEnum.COD
+          ? PaymentTypeEnum.COD
+          : PaymentTypeEnum.RAZORPAY;
+      await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber: payload.cart.phoneNumber,
+          method,
+          currency: selectedCurrency,
+        }),
+      );
       enqueueSnackbar("Cart order details updated.", {
         variant: "success",
       });
@@ -833,6 +882,49 @@ export default function ActiveCarts() {
       enqueueSnackbar(message, { variant: "error" });
     } finally {
       setCartOrderSaveLoading(false);
+    }
+  };
+
+  const handlePaymentMethodChange = async (
+    cart: AdminActiveCartRecord,
+    method: PaymentTypeEnum,
+    rowId: string,
+  ) => {
+    const phoneNumber = (cart.phoneNumber ?? "").trim();
+    if (!phoneNumber) {
+      enqueueSnackbar("Phone number is required to update payment method.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    if (
+      method === PaymentTypeEnum.COD &&
+      (selectedCurrency !== CURRENCY_LIST.INR ||
+        !isIndiaCountry(cart.shippingAddress?.country ?? ""))
+    ) {
+      enqueueSnackbar("COD is only available for India carts in INR.", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    setPaymentMethodLoadingCartId(rowId);
+    try {
+      await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber,
+          method,
+          currency: selectedCurrency,
+        }),
+      ) as UpdatePaymentResType;
+      enqueueSnackbar("Payment calculation updated.", { variant: "success" });
+      await load(page + 1, rowsPerPage);
+    } catch (error: any) {
+      const { message = "Failed to update payment method." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setPaymentMethodLoadingCartId(null);
     }
   };
 
@@ -885,6 +977,17 @@ export default function ActiveCarts() {
           items,
         }),
       );
+      const method =
+        cart.paymentMethod === PaymentTypeEnum.COD
+          ? PaymentTypeEnum.COD
+          : PaymentTypeEnum.RAZORPAY;
+      await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber,
+          method,
+          currency: selectedCurrency,
+        }),
+      );
       enqueueSnackbar(
         nextQuantity > 0 ? "Cart item quantity updated." : "Item removed from cart.",
         { variant: "success" },
@@ -919,6 +1022,17 @@ export default function ActiveCarts() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!currencies.length) {
+      void dispatch(currencyListServiceAction());
+    }
+  }, [currencies.length, dispatch]);
+
+  const handleCurrencyChange = (currency: any) => {
+    dispatch(selectedCurrencyActions(currency));
+    setExpandedCartId(null);
+  };
 
   const handleApplyFilters = () => {
     setAppliedStartDate(startDate);
@@ -975,6 +1089,9 @@ export default function ActiveCarts() {
   const todayIso = formatLocalIsoDate(new Date());
   const startDateInputMax = endDate ? minIsoDate(todayIso, endDate) : todayIso;
   const endDateInputMin = startDate || undefined;
+  const currencyOptions = currencies.length
+    ? currencies
+    : [{ code: selectedCurrency, name: selectedCurrency, symbol: selectedCurrency, exchangeRate: 1 }];
 
   const toggleExpandedRow = useCallback((rowId: string) => {
     setExpandedCartId((prev) => (prev === rowId ? null : rowId));
@@ -1026,6 +1143,21 @@ export default function ActiveCarts() {
               onChange={(e) => setEmailId(e.target.value)}
               sx={{ minWidth: 240 }}
             />
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel id="active-cart-currency">Currency</InputLabel>
+              <Select
+                labelId="active-cart-currency"
+                label="Currency"
+                value={selectedCurrency}
+                onChange={(event) => handleCurrencyChange(event.target.value)}
+              >
+                {currencyOptions.map((currency) => (
+                  <MenuItem key={currency.code} value={currency.code}>
+                    {currency.code} ({currency.symbol})
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="Start date"
               type="date"
@@ -1209,6 +1341,8 @@ export default function ActiveCarts() {
                       expanded={expandedCartId === rowId}
                       paymentLinkLoading={paymentLinkLoadingCartId === rowId}
                       cartItemLoadingKey={cartItemLoadingKey}
+                      paymentMethodLoading={paymentMethodLoadingCartId === rowId}
+                      selectedCurrency={selectedCurrency}
                       onToggleExpand={() => {
                         toggleExpandedRow(rowId);
                       }}
@@ -1216,6 +1350,7 @@ export default function ActiveCarts() {
                       onOpenAddProduct={setCartOrderDialogCart}
                       onUpdateCartItemQuantity={handleUpdateCartItemQuantity}
                       onGeneratePaymentLink={handleGeneratePaymentLink}
+                      onPaymentMethodChange={handlePaymentMethodChange}
                     />
                   );
                 })

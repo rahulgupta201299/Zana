@@ -22,6 +22,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Form, Formik } from "formik";
+import type { ReactNode } from "react";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import type { TAppDispatch } from "@/Configurations/AppStore";
@@ -51,6 +52,7 @@ export type CartOrderEditorCart = Pick<
   | "phoneNumber"
   | "emailId"
   | "items"
+  | "currency"
   | "currencySymbol"
   | "shippingAddress"
   | "billingAddress"
@@ -431,6 +433,10 @@ export default function CartOrderEditor(props: {
   submitLabel?: string;
   onCancel?: () => void;
   onShippingCountryChange?: (country: string) => void;
+  footer?: ReactNode;
+  onCalculatePaymentSummary?: (payload: CartOrderEditorSavePayload) => Promise<void>;
+  calculatingPaymentSummary?: boolean;
+  calculatePaymentSummaryLabel?: string;
 }) {
   const {
     cart,
@@ -440,6 +446,10 @@ export default function CartOrderEditor(props: {
     submitLabel = "Save",
     onCancel,
     onShippingCountryChange,
+    footer,
+    onCalculatePaymentSummary,
+    calculatingPaymentSummary = false,
+    calculatePaymentSummaryLabel = "Update payment summary",
   } = props;
   const dispatch = useDispatch<TAppDispatch>();
   const [draftItems, setDraftItems] = useState<CartOrderDraftItem[]>([]);
@@ -539,6 +549,49 @@ export default function CartOrderEditor(props: {
     [cart, normalizedCountries],
   );
 
+  function buildSavePayload(values: CartOrderFormValues): CartOrderEditorSavePayload {
+    const shippingIsd = getCountryIsd(values.shippingCountry, normalizedCountries);
+    const billingIsd = getCountryIsd(values.billingCountry, normalizedCountries);
+    const shippingAddress: CartAddressType = {
+      fullName: `${values.shippingFirstName} ${values.shippingLastName}`.trim(),
+      phone: `${shippingIsd}-${values.shippingPhone}`,
+      addressLine1: values.shippingAddress,
+      addressLine2: values.shippingApartment,
+      city: values.shippingCity,
+      state: values.shippingState,
+      postalCode: values.shippingPincode,
+      country: values.shippingCountry,
+    };
+    const billingAddress: CartAddressType = values.shippingAddressSameAsBillingAddress
+      ? shippingAddress
+      : {
+          fullName: `${values.billingFirstName} ${values.billingLastName}`.trim(),
+          phone: `${billingIsd}-${values.billingPhone}`,
+          addressLine1: values.billingAddress,
+          addressLine2: values.billingApartment,
+          city: values.billingCity,
+          state: values.billingState,
+          postalCode: values.billingPincode,
+          country: values.billingCountry,
+        };
+
+    return {
+      address: {
+        phoneNumber,
+        emailId: values.emailId.trim(),
+        shippingAddress,
+        billingAddress,
+        shippingAddressSameAsBillingAddress:
+          values.shippingAddressSameAsBillingAddress,
+      },
+      cart: {
+        phoneNumber,
+        items: cartItems,
+      },
+      hasCartChanges,
+    };
+  }
+
   return (
     <Formik
       enableReinitialize
@@ -547,46 +600,7 @@ export default function CartOrderEditor(props: {
       validateOnBlur
       validateOnChange
       onSubmit={async (values) => {
-        const shippingIsd = getCountryIsd(values.shippingCountry, normalizedCountries);
-        const billingIsd = getCountryIsd(values.billingCountry, normalizedCountries);
-        const shippingAddress: CartAddressType = {
-          fullName: `${values.shippingFirstName} ${values.shippingLastName}`.trim(),
-          phone: `${shippingIsd}-${values.shippingPhone}`,
-          addressLine1: values.shippingAddress,
-          addressLine2: values.shippingApartment,
-          city: values.shippingCity,
-          state: values.shippingState,
-          postalCode: values.shippingPincode,
-          country: values.shippingCountry,
-        };
-        const billingAddress: CartAddressType = values.shippingAddressSameAsBillingAddress
-          ? shippingAddress
-          : {
-              fullName: `${values.billingFirstName} ${values.billingLastName}`.trim(),
-              phone: `${billingIsd}-${values.billingPhone}`,
-              addressLine1: values.billingAddress,
-              addressLine2: values.billingApartment,
-              city: values.billingCity,
-              state: values.billingState,
-              postalCode: values.billingPincode,
-              country: values.billingCountry,
-            };
-
-        await onSave({
-          address: {
-            phoneNumber,
-            emailId: values.emailId.trim(),
-            shippingAddress,
-            billingAddress,
-            shippingAddressSameAsBillingAddress:
-              values.shippingAddressSameAsBillingAddress,
-          },
-          cart: {
-            phoneNumber,
-            items: cartItems,
-          },
-          hasCartChanges,
-        });
+        await onSave(buildSavePayload(values));
       }}
     >
       {({
@@ -942,10 +956,29 @@ export default function CartOrderEditor(props: {
                 </Stack>
               )}
 
-              <Stack direction="row" spacing={1.5} justifyContent="flex-end">
+              {footer}
+
+              <Stack direction="row" spacing={1.5} justifyContent="flex-end" flexWrap="wrap" useFlexGap>
                 {onCancel && (
                   <Button onClick={onCancel} disabled={saving} color="inherit">
                     Cancel
+                  </Button>
+                )}
+                {onCalculatePaymentSummary && (
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    disabled={submitDisabled || calculatingPaymentSummary}
+                    startIcon={
+                      calculatingPaymentSummary ? (
+                        <CircularProgress size={16} />
+                      ) : undefined
+                    }
+                    onClick={() =>
+                      void onCalculatePaymentSummary(buildSavePayload(values))
+                    }
+                  >
+                    {calculatePaymentSummaryLabel}
                   </Button>
                 )}
                 <Button
