@@ -17,7 +17,7 @@ import {
   shopByBikeServiceName,
   zProBikeServiceName,
 } from "@/Redux/Product/Actions";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
 import { replaceHiphenWithSpaces, replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
 import { SeoMeta } from "@/components/SeoMeta";
@@ -44,9 +44,13 @@ function Bikes() {
   const bikeSelector = useSelector(
     isZProPath ? zProBikeSelector : shopByBikeSelector,
   );
-  const isBikeProductLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName]),
+
+  const activeServiceName = isZProPath ? zProBikeServiceName : shopByBikeServiceName;
+  const bikeServiceStatus = useSelector<TAppStore, string | undefined>((state) =>
+    getServiceSelector(state, activeServiceName),
   );
+  const isBikeProductLoading = bikeServiceStatus === "LOADING" || bikeServiceStatus === undefined;
+  const isApiCompleted = bikeServiceStatus === "SUCCESS" || bikeServiceStatus === "ERROR";
 
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
@@ -141,6 +145,8 @@ function Bikes() {
     setSelectedBrand(brand);
     setFilteredBrandDetails(getFilteredModels(brand));
   }, [bikeSelector, resolvedInitialBrand]);
+
+  const showNoBikes = isApiCompleted && filteredBrandDetails.length === 0;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
@@ -331,12 +337,12 @@ function Bikes() {
           </Grid>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBrandDetails.length === 0 && isBikeProductLoading && (
+            {isBikeProductLoading && filteredBrandDetails.length === 0 && (
               <ProductSkeleton />
             )}
           </div>
 
-          {filteredBrandDetails.length === 0 && !isBikeProductLoading && (
+          {showNoBikes && (
             <div className="text-center py-16">
               <p className="text-white/50 text-lg">
                 No bikes found for {selectedBrand.toUpperCase()}
