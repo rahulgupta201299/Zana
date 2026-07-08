@@ -102,8 +102,11 @@ export const routeObj: RouteObject[] = [
     children: [
       { path: ROUTES.BASE_URL, element: Landing },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
+      { path: ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, element: ProductCatalogPage },
       { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
+      { path: ROUTES.BIKES_WITH_BRAND, element: BikesPage },
       { path: ROUTES.BIKES, element: BikesPage },
+      { path: ROUTES.BIKE_DETAIL_WITH_CATEGORY, element: BikeDetailPage },
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
       { path: ROUTES.BLOGS, element: BlogsPage },
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },

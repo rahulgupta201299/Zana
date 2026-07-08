@@ -27,6 +27,7 @@ import BikeProductService from "@/Redux/Product/Services/BikeProductService";
 import {
   handleSocialMedia,
   replaceHiphenWithSpaces,
+  replaceSpecialCharactersWithHyphen,
 } from "@/Utils/StringUtils";
 import {
   BikeCategoryEnum,
@@ -77,6 +78,12 @@ type ProductDetailLocationState = {
 
 const FALLBACK_PLACEHOLDER_IMAGE =
   "https://d3s3r7gevtfrvd.cloudfront.net/Zana+website/proMImg_07_1721457228.webp?width=960&quality=75&format=webp";
+
+function getProductCatalogCategoryPath(category: string) {
+  return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
+    category,
+  )}`;
+}
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -140,9 +147,7 @@ const ProductDetailPage = () => {
   const isProductDetailPending = isProductLoading || isProductHydrating;
 
   function handleBackToProducts() {
-    navigate(ROUTES.PRODUCT_CATALOG, {
-      state: { category: productCategory.toLowerCase() },
-    });
+    navigate(getProductCatalogCategoryPath(productCategory));
   }
 
   async function handleWishList(productId: string) {
@@ -339,33 +344,50 @@ const ProductDetailPage = () => {
         bikeId: breadcrumbState.bikeId,
       })
     : "";
+  const bikeCategoryPath =
+    isBikeBreadcrumb && breadcrumbCategory
+      ? encodedGeneratedPath(ROUTES.BIKE_DETAIL_WITH_CATEGORY, {
+          bikeType: breadcrumbState.bikeType,
+          bikeBrand: breadcrumbState.bikeBrand,
+          bikeModel: breadcrumbState.bikeModel,
+          bikeId: breadcrumbState.bikeId,
+          productCategory: replaceSpecialCharactersWithHyphen(
+            breadcrumbCategory,
+          ),
+        })
+      : bikeDetailPath;
   const bikeBreadcrumbLabel =
     breadcrumbState.bikeType?.toLowerCase() === BikeCategoryEnum.ZPRO
       ? BikeCategoryEnum.ZPRO
       : "Shop By Bike";
+      const bikeBrandPath = isBikeBreadcrumb
+  ? `/${breadcrumbState.bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+      (breadcrumbState.bikeBrand || "").toLowerCase(),
+    )}`
+  : "";
   const productBreadcrumbItems = isBikeBreadcrumb
-    ? [
-        { label: "Home", to: ROUTES.BASE_URL },
-        { label: bikeBreadcrumbLabel, to: bikeListPath },
-        {
-          label: breadcrumbState.bikeBrand || "",
-          to: bikeListPath,
-          state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
-        },
-        { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
-        {
-          label: breadcrumbCategory,
-          to: bikeDetailPath,
-          state: { category: breadcrumbCategory.toLowerCase() },
-        },
-        { label: name || staticName },
-      ]
+    ?   [
+      { label: "Home", to: ROUTES.BASE_URL },
+      { label: bikeBreadcrumbLabel, to: bikeListPath },
+      {
+        label: breadcrumbState.bikeBrand || "",
+        to: bikeBrandPath,
+        state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
+      },
+      { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
+      {
+        label: breadcrumbCategory,
+        to: bikeCategoryPath,
+        state: { category: breadcrumbCategory.toLowerCase() },
+      },
+      { label: name || staticName },
+    ]
     : [
         { label: "Home", to: ROUTES.BASE_URL },
         { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
         {
           label: breadcrumbCategory,
-          to: ROUTES.PRODUCT_CATALOG,
+          to: getProductCatalogCategoryPath(breadcrumbCategory),
           state: { category: breadcrumbCategory.toLowerCase() },
         },
         { label: name || staticName },

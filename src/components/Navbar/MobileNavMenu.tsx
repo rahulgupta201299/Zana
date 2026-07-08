@@ -14,6 +14,7 @@ import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors';
 import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName } from '@/Redux/Product/Actions';
 import { MenuItemsName } from './Constant';
 import { replaceSpecialCharactersWithHyphen } from '@/Utils/StringUtils';
+import { ROUTES } from '@/Constants/Routes';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -44,7 +45,11 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		}
 
 		if (route && models.length === 0) {
-			navigate(route, { state: { category: name.toLowerCase() } })
+			const nextRoute =
+				route === ROUTES.PRODUCT_CATALOG
+					? `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(name)}`
+					: route
+			navigate(nextRoute, { state: { category: name.toLowerCase() } })
 			onClose()
 			return
 		}

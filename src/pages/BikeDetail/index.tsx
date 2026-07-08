@@ -25,13 +25,11 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
-import { capitalise } from "@/Utils/global";
+import { capitalise, encodedGeneratedPath } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
 import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
-import {
-  STAGING_BIKE_SEO_MAP,
-  PRODUCTION_BIKE_SEO_MAP,
-} from "./BIKE_SEO_MAPS";
+import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { STAGING_BIKE_SEO_MAP, PRODUCTION_BIKE_SEO_MAP } from "./BIKE_SEO_MAPS";
 
 const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
 const BIKE_SEO_MAP = IS_PRODUCTION
@@ -40,13 +38,40 @@ const BIKE_SEO_MAP = IS_PRODUCTION
 
 const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
 
+function getCategoryUrlPath(
+  bikeType: string,
+  bikeBrand: string,
+  bikeModel: string,
+  bikeId: string,
+  category: string,
+) {
+  const basePath = [
+    SUB_ROUTES.BIKE_ACCESSORIES,
+    bikeType,
+    SUB_ROUTES.BIKE.replace("/", ""),
+    bikeBrand,
+    bikeModel,
+    bikeId,
+  ]
+    .map((item) => replaceSpecialCharactersWithHyphen(item))
+    .join("/");
+
+  return `/${basePath}/${replaceSpecialCharactersWithHyphen(category)}`;
+}
+
 type BikeDetailLocationState = {
   category?: string;
 };
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
-  const { bikeType: bikeTypeParams = "", bikeId = "" } = params;
+  const {
+    bikeType: bikeTypeParams = "",
+    bikeId = "",
+    bikeBrand: bikeBrandParams = "",
+    bikeModel: bikeModelParams = "",
+    productCategory: productCategoryParams = "",
+  } = params;
   const seoData = (BIKE_SEO_MAP as Record<string, any>)[bikeId];
   const productCategory = useSelector(bikeProductCategorySelector);
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
@@ -65,7 +90,21 @@ const BikeDetailPage = () => {
   const location = useLocation();
   const { category: categoryFromState = ALL_CATEGORY } = (location.state ||
     {}) as BikeDetailLocationState;
-  const initialCategory = (categoryFromState || ALL_CATEGORY).toLowerCase();
+  const initialCategory = useMemo(() => {
+    if (productCategoryParams) {
+      const matchedCategory = productCategory.find(
+        ({ name }) =>
+          replaceSpecialCharactersWithHyphen(name) === productCategoryParams,
+      );
+
+      return (
+        matchedCategory?.name.toLowerCase() ||
+        productCategoryParams.split("-").join(" ")
+      );
+    }
+
+    return (categoryFromState || ALL_CATEGORY).toLowerCase();
+  }, [categoryFromState, productCategory, productCategoryParams]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     initialCategory || ALL_CATEGORY,
@@ -87,6 +126,7 @@ const BikeDetailPage = () => {
   const [bikeDetails, setBikeDetails] = useState<BikeDetailResType | null>(
     null,
   );
+  
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
   // true while the real hero image is still downloading after bike data arrives
@@ -94,8 +134,7 @@ const BikeDetailPage = () => {
   const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
   const bikeProductsRequestRef = useRef(0);
   const bikeDetailsRequestRef = useRef(0);
-  const isBikeProductsPending =
-    isBikeProductLoading || isBikeProductsHydrating;
+  const isBikeProductsPending = isBikeProductLoading || isBikeProductsHydrating;
   const isBikeDetailsPending = isBikeDetailLoading || isBikeDetailsHydrating;
 
   async function getBikeProducts(
@@ -178,6 +217,16 @@ const BikeDetailPage = () => {
     setSelectedCategory(val);
     setShowAllBikeProducts(false);
     getBikeProducts(val);
+    navigate(
+      getCategoryUrlPath(
+        bikeType,
+        brandName || bikeBrandParams,
+        modelName || bikeModelParams,
+        bikeId,
+        val,
+      ),
+      { replace: true },
+    );
   }
 
   function handleClearFilter() {
@@ -193,9 +242,14 @@ const BikeDetailPage = () => {
 
   function handleBackToBikes() {
     const { brand: { name: brandName = "" } = {} } = bikeDetails || {};
-    navigate(`/${bikeType}${SUB_ROUTES.BIKES}`, {
-      state: { brand: brandName.toLowerCase() },
-    });
+    navigate(
+      `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+        brandName.toLowerCase(),
+      )}`,
+      {
+        state: { brand: brandName.toLowerCase() },
+      },
+    );
   }
 
   useEffect(() => {
@@ -260,6 +314,7 @@ const BikeDetailPage = () => {
     );
   }
 
+  
   const {
     name: modelName = seoData?.title || "",
     description = seoData?.description || "",
@@ -272,18 +327,27 @@ const BikeDetailPage = () => {
     : "Shop By Bike";
   const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
   const selectedCategoryCount =
-    categoriesWithCount.find(({ name }) => name.toLowerCase() === selectedCategory)
-      ?.count || bikeProducts.length;
+    categoriesWithCount.find(
+      ({ name }) => name.toLowerCase() === selectedCategory,
+    )?.count || bikeProducts.length;
   const bikeImageProps = getProductImageProps(
     imageUrl,
     [...IMAGE_WIDTH_PRESETS.bikeHero],
     480,
   );
 
+  const brandUrlPath = `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+  brandName.toLowerCase(),
+)}`;
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <SeoMeta
-        title={modelName ? `${brandName ? brandName + ' ' : ''}${modelName} Accessories | Zana Motorcycles` : `${seoData?.title || 'Bike'} Accessories | Zana Motorcycles`}
+        title={
+          modelName
+            ? `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`
+            : `${seoData?.title || "Bike"} Accessories | Zana Motorcycles`
+        }
         description={
           description ||
           `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
@@ -301,10 +365,18 @@ const BikeDetailPage = () => {
               { label: bikeBreadcrumbLabel, to: bikeListPath },
               {
                 label: brandName,
-                to: bikeListPath,
+                to: brandUrlPath,
                 state: { brand: brandName.toLowerCase() },
               },
-              { label: modelName },
+              {
+                label: modelName,
+                to: encodedGeneratedPath(ROUTES.BIKE_DETAIL, {
+                  bikeType,
+                  bikeBrand: brandName,
+                  bikeModel: modelName,
+                  bikeId,
+                }),
+              },
               ...(selectedCategory && selectedCategory !== ALL_CATEGORY
                 ? [{ label: capitalise(selectedCategory) }]
                 : []),
@@ -316,8 +388,7 @@ const BikeDetailPage = () => {
                 src={
                   !isBikeDetailsPending && isBikeHeroImageLoaded
                     ? bikeImageProps.src
-                    : seoData?.image ||
-                      BikePlaceholderImage
+                    : seoData?.image || BikePlaceholderImage
                 }
                 srcSet={
                   !isBikeDetailsPending && isBikeHeroImageLoaded

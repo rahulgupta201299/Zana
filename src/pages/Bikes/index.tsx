@@ -8,7 +8,7 @@ import {
   zProBikeSelector,
 } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
-import { ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
@@ -19,6 +19,7 @@ import {
 } from "@/Redux/Product/Actions";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
+import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
 import {
   Box,
   Card,
@@ -32,7 +33,8 @@ import {
 
 function Bikes() {
   const params = useParams();
-  const { bikeType: bikeTypeParams = "" } = params;
+  const { bikeType: bikeTypeParams = "", bikeBrand: bikeBrandParams = "" } =
+    params;
 
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA;
@@ -47,10 +49,25 @@ function Bikes() {
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
 
- 
-  const resolvedInitialBrand = (initialBikeBrand || ALL_CATEGORY).toLowerCase();
+  const resolvedInitialBrand = useMemo(() => {
+    if (bikeBrandParams) {
+      const matchedBrand = bikeSelector.find(
+        ({ name }) =>
+          replaceSpecialCharactersWithHyphen(name) ===
+          bikeBrandParams.toLowerCase(),
+      );
 
-  const [selectedBrand, setSelectedBrand] = useState<string>(resolvedInitialBrand);
+      return (
+        matchedBrand?.name.toLowerCase() ||
+        bikeBrandParams.toLowerCase().split("-").join(" ")
+      );
+    }
+
+    return (initialBikeBrand || ALL_CATEGORY).toLowerCase();
+  }, [bikeBrandParams, bikeSelector, initialBikeBrand]);
+
+  const [selectedBrand, setSelectedBrand] =
+    useState<string>(resolvedInitialBrand);
   const [filteredBrandDetails, setFilteredBrandDetails] = useState<
     ShopByBikeModelsType[]
   >([]);
@@ -101,8 +118,12 @@ function Bikes() {
     setSelectedBrand(normalisedBrand);
     setFilteredBrandDetails(getFilteredModels(normalisedBrand));
 
-  
-    navigate(location.pathname, { state: { brand: normalisedBrand }, replace: true });
+    navigate(
+      `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+        normalisedBrand,
+      )}`,
+      { replace: true },
+    );
   }
 
   useEffect(() => {

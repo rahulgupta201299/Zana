@@ -41,7 +41,7 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 	}
 
 	function handleCategoryClick(category: string) {
-		navigate(ROUTES.PRODUCT_CATALOG, { state: { category: category.toLowerCase() } })
+		navigate(`${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(category)}`)
 		onClose()
 	}
 

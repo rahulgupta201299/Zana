@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
-import { replace, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { ALL_CATEGORY } from "@/Constants/AppConstant";
@@ -24,15 +24,41 @@ import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import ProductSection from "@/components/ProductSection";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { capitalise } from "@/Utils/global";
+import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+
+function getProductCatalogCategoryPath(category: string) {
+  return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
+    category,
+  )}`;
+}
 
 const ProductCatalogPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { category: initialCategory = "" } = location.state || {};
+  const { productCategory: productCategoryParams = "" } = useParams<{
+    productCategory?: string;
+  }>();
+  const { category: categoryFromState = "" } = location.state || {};
 
   const { incrementToCart } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
+  const initialCategory = useMemo(() => {
+    if (productCategoryParams) {
+      const matchedCategory = productCategory.find(
+        ({ name }) =>
+          replaceSpecialCharactersWithHyphen(name) === productCategoryParams,
+      );
+
+      return (
+        matchedCategory?.name.toLowerCase() ||
+        productCategoryParams.split("-").join(" ")
+      );
+    }
+
+    return categoryFromState.toLowerCase();
+  }, [categoryFromState, productCategory, productCategoryParams]);
+
   const currency = useSelector(getSelectedCurrency);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [
@@ -123,7 +149,7 @@ const ProductCatalogPage = () => {
       { name: ALL_CATEGORY, count: totalCategoryCount, icon: "" },
       ...productCategory,
     ];
-  }, [productCategory.length]);
+  }, [productCategory]);
 
   async function pageOps() {
     window.scrollTo(0, 0);
@@ -186,8 +212,7 @@ const ProductCatalogPage = () => {
             selectedCategory={selectedCategory}
             onSelectCategory={(category: string) => {
               handleCategoryService(category);
-              navigate(location.pathname, {
-                state: { category },
+              navigate(getProductCatalogCategoryPath(category), {
                 replace: true,
               });
             }}
