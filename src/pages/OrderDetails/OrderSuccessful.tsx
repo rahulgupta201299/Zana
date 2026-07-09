@@ -19,7 +19,6 @@ import { getAddressLabel } from "@/Utils/StringUtils";
 import { ROUTES } from "@/Constants/Routes";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderDetailByIdName } from "@/Redux/Order/Action";
-import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 const OrderConfirmation = () => {
   const location = useLocation();
@@ -74,7 +73,7 @@ const OrderConfirmation = () => {
   const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', paymentMethod = '', advancePaid = 0, totalAmount = 0, orderStatus = '', items = [], shippingAddress, currencySymbol, currency } = orderData || {};
 
   useEffect(() => {
-    if (currency && VITE_ENABLE_TRACKING && orderNumber && totalAmount && !hasTracked.current) {
+    if (currency && orderNumber && totalAmount && !hasTracked.current) {
       const purchasePayload = {
         order_number: orderNumber,
         order_value: totalAmount,
