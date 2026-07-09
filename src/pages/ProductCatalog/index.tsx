@@ -181,7 +181,7 @@ const ProductCatalogPage = () => {
     pageOps();
   }, [currency, initialCategory, productCategory.length]);
 
-  const seoData = (UNIVERSAL_PRODUCT_SEO_MAP as any)[selectedCategory?.toUpperCase()];
+  const seoData = (UNIVERSAL_PRODUCT_SEO_MAP as any)[selectedCategory.trim().toUpperCase()];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
