@@ -54,8 +54,34 @@ export default function useCart() {
       quantity: item.quantity,
     }));
 
+    const addToCartEventPayload = {
+      currency: details[0]?.currency,
+      value: details.reduce((acc, curr) => acc + curr.totalPrice, 0),
+      items: details.map((item) => ({
+        product_id: item.product._id,
+        product_name: item.product.name,
+        product_category: item.product.category,
+        product_brand: item.product.brand,
+        price: item.price,
+        quantity: item.quantity,
+      }))
+    };
+
     const state = AppStore.getState();
     const _phoneNumber = state.auth.login.phoneNumber || optional?.phoneNumber;
+
+    // GTM — dataLayer push
+    if ((window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: "add_to_cart",
+        ...addToCartEventPayload
+      });
+    }
+
+    // GA4 — gtag direct
+    if ((window as any).gtag) {
+      (window as any).gtag("event", "add_to_cart", addToCartEventPayload);
+    }
 
     try {
       const response = (await dispatch(
