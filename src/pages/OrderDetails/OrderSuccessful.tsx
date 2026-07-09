@@ -75,15 +75,34 @@ const OrderConfirmation = () => {
 
   useEffect(() => {
     if (currency && VITE_ENABLE_TRACKING && orderNumber && totalAmount && !hasTracked.current) {
-      if ((window as any).gtag) {
-        (window as any).gtag("event", "conversion", {
-          send_to: "AW-17772463315/-KwFCMSPgLEcENOJyZpC",
-          value: totalAmount,
-          currency,
-          transaction_id: orderNumber,
+      const purchasePayload = {
+        order_number: orderNumber,
+        order_value: totalAmount,
+        currency,
+        items: items.map((item) => ({
+          product_id: item.product._id,
+          product_name: item.product.name,
+          product_category: item.product.category,
+          product_brand: item.product.brand,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      };
+
+      // GTM — dataLayer push
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "purchase",
+          ...purchasePayload,
         });
-        hasTracked.current = true;
       }
+
+      // GA4 — gtag direct
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "purchase", purchasePayload);
+      }
+
+      hasTracked.current = true;
     }
   }, [currency, orderNumber, totalAmount]);
 
