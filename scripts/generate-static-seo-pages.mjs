@@ -17,6 +17,7 @@ const HOME_TITLE =
 const HOME_DESCRIPTION =
   "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
+const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -116,6 +117,20 @@ function loadProductSeoMaps() {
 
 const productSeoMaps = loadProductSeoMaps();
 
+function loadBrandSeoMaps() {
+  if (!existsSync(BRAND_SEO_MAPS_FILE)) {
+    return {};
+  }
+  const source = readFileSync(BRAND_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+BRAND_SEO_MAPS\s*=/, "const BRAND_SEO_MAPS =");
+  const script = new vm.Script(`${source}
+    ;(typeof BRAND_SEO_MAPS === "undefined" ? {} : BRAND_SEO_MAPS);
+  `);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const brandSeoMaps = loadBrandSeoMaps();
+
 function getProductSeo(productId) {
   const productMap = isProduction
     ? productSeoMaps.production
@@ -156,7 +171,24 @@ function getSeoForPath(pathname) {
     };
   }
 
-  if (parts.length === 2 && parts[1] === "bikes") {
+  if (parts[1] === "bikes") {
+    if (parts.length === 3 && parts[2] !== "all") {
+      const brandSlug = parts[2];
+      const brandKey = brandSlug.replace(/-/g, " ").toUpperCase();
+      const seo = brandSeoMaps[brandKey];
+      if (seo) {
+        return {
+          title: seo.title,
+          description: seo.description,
+          type: "website",
+        };
+      }
+      return {
+        title: `${titleCaseSlug(brandSlug)} Bike Accessories | Zana Motorcycles`,
+        description: `Shop premium Zana motorcycle accessories for ${titleCaseSlug(brandSlug)} bikes. Find crash guards, luggage carriers, engine guards, touring accessories, and more for your ${titleCaseSlug(brandSlug)} motorcycle.`,
+        type: "website",
+      };
+    }
     const label = parts[0].toLowerCase() === "zpro" ? "ZPro" : "Zana";
     return {
       title: `${label} Bike Accessories | Zana Motorcycles`,

@@ -63,7 +63,7 @@ export function SeoMeta({
   canonicalPath,
   type = "website",
   noIndex = false,
-  keywords,
+  keywords = "",
   productSchema,
 }: SeoMetaProps) {
   const { pathname } = useLocation();
@@ -77,7 +77,6 @@ export function SeoMeta({
   const origin = APP_DOMAIN_URL || window.location.origin;
   const path = normalizePath(canonicalPath || pathname);
   const canonicalUrl = `${origin}${path}`;
-  const usesDefaultImage = !image;
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
   // const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
 
@@ -101,14 +100,27 @@ export function SeoMeta({
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
 
-      {imageUrl && <meta property="og:image" content={imageUrl} />}
+      {imageUrl && <meta property="og:image" content={imageUrl || DEFAULT_OG_IMAGE} />}
       {imageUrl && <meta property="og:image:secure_url" content={imageUrl} />}
       {imageUrl && (
         <meta
           property="og:image:alt"
-          content={usesDefaultImage ? DEFAULT_OG_IMAGE_ALT : CUSTOM_OG_IMAGE_ALT}
+          content={pageTitle ? pageTitle : DEFAULT_OG_IMAGE_ALT}
         />
       )}
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+      {imageUrl && (
+        <meta
+          name="twitter:image:alt"
+          content={pageTitle ? pageTitle : DEFAULT_OG_IMAGE_ALT}
+        />
+      )}
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
 
       <link rel="canonical" href={canonicalUrl} />
 

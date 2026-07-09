@@ -24,6 +24,7 @@ export type AdminActiveCartFilters = {
   sortOrder: AdminActiveCartSortOrder;
   phoneNumber?: string;
   emailId?: string;
+  currency?: string;
 };
 
 export type AdminActiveCartDownloadFilters = Omit<AdminActiveCartFilters, "page" | "limit">;
@@ -165,6 +166,7 @@ function buildQueryParams(filters: AdminActiveCartFilters): Record<string, strin
     maxAmount: filters.maxAmount,
     phoneNumber: filters.phoneNumber,
     emailId: filters.emailId,
+    currency: filters.currency,
   });
 }
 
@@ -192,6 +194,7 @@ export async function downloadAdminActiveCartsCsv(filters: AdminActiveCartDownlo
       maxAmount: filters.maxAmount,
       phoneNumber: filters.phoneNumber,
       emailId: filters.emailId,
+      currency: filters.currency,
     }),
     "admin-active-carts.csv",
   );

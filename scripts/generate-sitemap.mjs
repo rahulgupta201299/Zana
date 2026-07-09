@@ -7,6 +7,7 @@ const HTML_OUTPUT_FILE = resolve("public/sitemap.html");
 const ROBOTS_FILE = resolve("public/robots.txt");
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
+const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const PAGE_SIZE = 1000;
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
@@ -127,6 +128,14 @@ function loadSelectedStaticMap(filePath, stagingExportName, productionExportName
     ;(typeof ${exportName} === "undefined" ? {} : ${exportName});
   `);
 
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+function loadBrandSeoMap() {
+  if (!existsSync(BRAND_SEO_MAPS_FILE)) return {};
+  const source = readFileSync(BRAND_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+BRAND_SEO_MAPS\s*=/, "const BRAND_SEO_MAPS =");
+  const script = new vm.Script(`${source}\n;(typeof BRAND_SEO_MAPS === "undefined" ? {} : BRAND_SEO_MAPS);`);
   return script.runInNewContext(Object.create(null), { timeout: 1000 });
 }
 
@@ -340,6 +349,32 @@ async function getBlogUrls() {
     );
 }
 
+function getBrandListingUrls() {
+  const brandMap = loadBrandSeoMap();
+  const urls = [];
+
+  for (const [brandKey, seo] of Object.entries(brandMap)) {
+    const brandSlug = slugify(brandKey);
+    const bikeTypes = seo.type === "both"
+      ? ["zana", "zpro"]
+      : seo.type === "zpro"
+        ? ["zpro"]
+        : ["zana"]; // default to zana if type is missing
+
+    for (const bikeType of bikeTypes) {
+      urls.push(
+        createUrl(`/${bikeType}/bikes/${brandSlug}`, {
+          title: seo.title || `${brandKey} Bike Accessories | Zana Motorcycles`,
+          priority: "0.8",
+          changefreq: "weekly",
+        }),
+      );
+    }
+  }
+
+  return urls;
+}
+
 async function getBikeUrls() {
   const bikeTypes = ["zana", "zpro"];
   const urls = [];
@@ -522,6 +557,13 @@ function renderHtmlSitemap(sections) {
   });
   const zanaBikeUrls = bikeUrls.filter((url) => getUrlParts(url)[1] === "zana");
   const zproBikeUrls = bikeUrls.filter((url) => getUrlParts(url)[1] === "zpro");
+  // Brand listing pages: /:bikeType/bikes/:brand
+  const brandListingUrls = urls.filter((url) => {
+    const parts = getUrlParts(url);
+    return parts.length === 3 && parts[1] === "bikes";
+  });
+  const zanaBrandListingUrls = brandListingUrls.filter((url) => getUrlParts(url)[0] === "zana");
+  const zproBrandListingUrls = brandListingUrls.filter((url) => getUrlParts(url)[0] === "zpro");
   const productUrls = urls.filter((url) => getUrlParts(url)[0] === "product");
   const updatedDate = new Date().toISOString().slice(0, 10);
   const zanaBikeGroups = groupUrls(zanaBikeUrls, (url) =>
@@ -549,6 +591,26 @@ ${renderLinks(mainUrls)}
           `(${blogUrls.length})`,
           `        <ul class="link-grid main-grid">
 ${renderLinks(blogUrls)}
+        </ul>`,
+        )
+      : "",
+    zanaBrandListingUrls.length
+      ? renderSection(
+          "zana-brand-pages",
+          "ZANA Brand Listing Pages",
+          `(${zanaBrandListingUrls.length} brands)`,
+          `        <ul class="link-grid main-grid">
+${renderLinks(zanaBrandListingUrls)}
+        </ul>`,
+        )
+      : "",
+    zproBrandListingUrls.length
+      ? renderSection(
+          "zpro-brand-pages",
+          "Z-PRO Brand Listing Pages",
+          `(${zproBrandListingUrls.length} brands)`,
+          `        <ul class="link-grid main-grid">
+${renderLinks(zproBrandListingUrls)}
         </ul>`,
         )
       : "",
@@ -710,6 +772,8 @@ ${renderLinks(blogUrls)}
       <nav aria-label="Sitemap sections">
         <a href="#main-pages">Main Pages</a>
         ${blogUrls.length ? '<a href="#blog-pages">Blog Pages</a>' : ""}
+        ${zanaBrandListingUrls.length ? '<a href="#zana-brand-pages">ZANA Brand Pages</a>' : ""}
+        ${zproBrandListingUrls.length ? '<a href="#zpro-brand-pages">Z-PRO Brand Pages</a>' : ""}
         <a href="#zana-bike-accessories">ZANA Bike Accessories</a>
         <a href="#zpro-bike-accessories">Z-PRO Bike Accessories</a>
         <a href="#products">Products</a>
@@ -744,6 +808,7 @@ async function main() {
   );
   const dynamicSources = [
     ["Blog Detail Pages", "blogs", getBlogUrls],
+    ["Brand Listing Pages", "brand listing pages", () => Promise.resolve(getBrandListingUrls())],
     ["Bike Model Pages", "bike models", getBikeUrls],
     ["Product Pages", "products", getProductUrls],
   ];

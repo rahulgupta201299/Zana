@@ -1,10 +1,11 @@
 import type { RouteObject } from 'react-router-dom'
-import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useLocation, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 import ProtectedRoutes from '@/Configurations/Routing/ProtectedRoutes'
 
-import { ROUTES } from '@/Constants/Routes'
+import { ROUTES, SUB_ROUTES } from '@/Constants/Routes'
+import { ALL_CATEGORY } from '@/Constants/AppConstant'
 import PublicRoutes from '@/Configurations/Routing/PublicRoutes'
 
 import { lazyLoadPage } from '@/Helpers/Route'
@@ -43,6 +44,7 @@ const AdminLogin = lazyLoadPage(() => import("@/Admin/Login"), Loading);
 const AdminDashboard = lazyLoadPage(() => import("@/Admin/Dashboard"), Loading);
 const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
 const AdminActiveCarts = lazyLoadPage(() => import("@/Admin/ActiveCarts"), Loading);
+const AdminCreateOrder = lazyLoadPage(() => import("@/Admin/CreateOrder"), Loading);
 const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
 
 export function prefetchCommerceRoutePages() {
@@ -81,6 +83,12 @@ function DynamicRedirect() {
   return <Navigate replace to={ROUTES.BASE_URL} />
 }
 
+function BikesRedirect() {
+  const { bikeType } = useParams();
+  const location = useLocation();
+  return <Navigate replace to={`/${bikeType}${SUB_ROUTES.BIKES}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
+}
+
 export const routeObj: RouteObject[] = [
   {
     path: ROUTES.ADMIN,
@@ -92,6 +100,7 @@ export const routeObj: RouteObject[] = [
       { path: "dashboard", element: AdminDashboard },
       { path: "products", element: AdminProducts },
       { path: "active-carts", element: AdminActiveCarts },
+      { path: "create-order", element: AdminCreateOrder },
       { path: "orders", element: AdminOrderList },
       { path: "*", element: <Navigate replace to={ROUTES.ADMIN_DASHBOARD} /> },
     ]
@@ -102,8 +111,11 @@ export const routeObj: RouteObject[] = [
     children: [
       { path: ROUTES.BASE_URL, element: Landing },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
+      { path: ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, element: ProductCatalogPage },
       { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
-      { path: ROUTES.BIKES, element: BikesPage },
+      { path: ROUTES.BIKES_WITH_BRAND, element: BikesPage },
+      { path: ROUTES.BIKES, element: <BikesRedirect /> },
+      { path: ROUTES.BIKE_DETAIL_WITH_CATEGORY, element: BikeDetailPage },
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
       { path: ROUTES.BLOGS, element: BlogsPage },
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },
