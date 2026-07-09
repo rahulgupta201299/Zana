@@ -89,6 +89,11 @@ function BikesRedirect() {
   return <Navigate replace to={`/${bikeType}${SUB_ROUTES.BIKES}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
 }
 
+function ProductsRedirect() {
+  const location = useLocation();
+  return <Navigate replace to={`${ROUTES.PRODUCT_CATALOG}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
+}
+
 export const routeObj: RouteObject[] = [
   {
     path: ROUTES.ADMIN,
@@ -112,7 +117,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BASE_URL, element: Landing },
       { path: ROUTES.PRODUCT_DETAIL, element: ProductDetailPage },
       { path: ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, element: ProductCatalogPage },
-      { path: ROUTES.PRODUCT_CATALOG, element: ProductCatalogPage },
+      { path: ROUTES.PRODUCT_CATALOG, element: <ProductsRedirect /> },
       { path: ROUTES.BIKES_WITH_BRAND, element: BikesPage },
       { path: ROUTES.BIKES, element: <BikesRedirect /> },
       { path: ROUTES.BIKE_DETAIL_WITH_CATEGORY, element: BikeDetailPage },

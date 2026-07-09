@@ -24,7 +24,9 @@ import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import ProductSection from "@/components/ProductSection";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { capitalise } from "@/Utils/global";
-import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { replaceHiphenWithSpaces, replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { SeoMeta } from "@/components/SeoMeta";
+import UNIVERSAL_PRODUCT_SEO_MAP from "./UNIVERSAL_PRODUCT_SEO_MAP";
 
 function getProductCatalogCategoryPath(category: string) {
   return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
@@ -43,21 +45,7 @@ const ProductCatalogPage = () => {
   const { incrementToCart } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
-  const initialCategory = useMemo(() => {
-    if (productCategoryParams) {
-      const matchedCategory = productCategory.find(
-        ({ name }) =>
-          replaceSpecialCharactersWithHyphen(name) === productCategoryParams,
-      );
-
-      return (
-        matchedCategory?.name.toLowerCase() ||
-        productCategoryParams.split("-").join(" ")
-      );
-    }
-
-    return categoryFromState.toLowerCase();
-  }, [categoryFromState, productCategory, productCategoryParams]);
+  const initialCategory = replaceHiphenWithSpaces(productCategoryParams).toLowerCase() || categoryFromState.toLowerCase();
 
   const currency = useSelector(getSelectedCurrency);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
@@ -154,9 +142,24 @@ const ProductCatalogPage = () => {
   async function pageOps() {
     window.scrollTo(0, 0);
 
-    if (filteredProducts.length && initialCategory === selectedCategory) return;
+    let validCategory = initialCategory || ALL_CATEGORY;
+    
+    // Validate against loaded categories
+    if (productCategory.length > 0 && validCategory !== ALL_CATEGORY) {
+      const isValid = productCategory.some(
+        (cat) => cat.name.toLowerCase() === validCategory.toLowerCase()
+      );
+      if (!isValid) {
+        validCategory = ALL_CATEGORY;
+        // Optionally redirect to base catalog if URL was invalid
+        navigate(ROUTES.PRODUCT_CATALOG, { replace: true });
+      }
+    }
+
+    if (filteredProducts.length && validCategory === selectedCategory) return;
+    
     try {
-      await handleCategoryService(initialCategory || ALL_CATEGORY, 1, true);
+      await handleCategoryService(validCategory, 1, true);
     } catch (error: any) {
       console.error(error);
     }
@@ -176,10 +179,17 @@ const ProductCatalogPage = () => {
 
   useEffect(() => {
     pageOps();
-  }, [currency, initialCategory]);
+  }, [currency, initialCategory, productCategory.length]);
+
+  const seoData = (UNIVERSAL_PRODUCT_SEO_MAP as any)[selectedCategory?.toUpperCase()];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
+      <SeoMeta
+        title={seoData?.title || "Universal Products | Zana Motorcycles"}
+        description={seoData?.description || "Explore our premium range of universal motorcycle accessories."}
+        keywords={seoData?.keywords || "motorcycle accessories, universal bike accessories, Zana accessories"}
+      />
       {/* Hero Section */}
       <div className="py-12 md:py-16 px-4 md:px-6 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
