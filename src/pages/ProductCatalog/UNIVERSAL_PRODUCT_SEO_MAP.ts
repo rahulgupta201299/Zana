@@ -8,7 +8,7 @@ export const UNIVERSAL_PRODUCT_SEO_MAP = {
   },
 
   'BAGS': {
-    title: "Motorcycle Riding Bags & Touring Luggage | Zana Motorcycles",
+    title: "Motorcycle Bags & Touring Luggage | Zana Motorcycles",
     description:
       "Discover premium motorcycle riding bags including saddle bags, tail bags, tank bags and touring luggage designed for everyday commuting and long-distance adventures.",
     keywords:
@@ -16,7 +16,7 @@ export const UNIVERSAL_PRODUCT_SEO_MAP = {
   },
 
   'MOBILE HOLDER': {
-    title: "Motorcycle Mobile Holders & Phone Mounts | Zana Motorcycles",
+    title: "Motorcycle Mobile Holder & Phone Mounts | Zana Motorcycles",
     description:
       "Secure your smartphone with premium motorcycle mobile holders and phone mounts. Ideal for GPS navigation, touring and daily rides with vibration-resistant mounting.",
     keywords:
@@ -32,11 +32,11 @@ export const UNIVERSAL_PRODUCT_SEO_MAP = {
   },
 
   'HEAD WEAR': {
-    title: "Motorcycle Helmets & Riding Headwear | Zana Motorcycles",
+    title: " Headwear | Zana Motorcycles",
     description:
-      "Shop premium motorcycle helmets and riding headwear offering superior comfort, ventilation and safety for touring, adventure and everyday riding.",
+      "Shop premium riding headwear offering superior comfort, ventilation and safety for touring, adventure and everyday riding.",
     keywords:
-      "motorcycle helmet, riding helmet, bike helmet, riding headwear, adventure helmet, full face helmet, riding gear, motorcycle safety gear, ISI helmet, DOT helmet",
+      "riding headwear, motorcycle safety gear,",
   },
 
   'FOG LIGHT': {

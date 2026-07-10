@@ -1,5 +1,6 @@
 import { generatePath } from "react-router-dom";
 import { replaceSpecialCharactersWithHyphen } from "./StringUtils";
+import { UtmType } from "@/Redux/Cart/Types";
 
 export const InrFormatter = {
   format(amount: number): string {
@@ -71,3 +72,23 @@ export const capitalise = (str: string) =>
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+
+export function getUtmParamsFromUrl(): UtmType | null {
+  const searchParams = new URLSearchParams(window.location.search);
+  const entries = Object.fromEntries(searchParams.entries());
+  
+  const validKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as const;
+  
+  const result: UtmType = {};
+  let hasUtm = false;
+
+  validKeys.forEach(key => {
+    if (entries[key]) {
+      result[key] = entries[key];
+      hasUtm = true;
+    }
+  });
+
+  return hasUtm ? result : null;
+}
+

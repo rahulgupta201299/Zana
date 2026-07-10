@@ -30,3 +30,6 @@ export const removeCouponActions = traceActionsCreator(removeCouponServiceName)
 
 export const pinCodeServiceName = `${SLICE_NAME}/pin`
 export const pinCodeActions = traceActionsCreator(pinCodeServiceName)
+
+export const cartUtmServiceName = `${SLICE_NAME}/cartUtm`
+export const cartUtmActions = traceActionsCreator(cartUtmServiceName)
