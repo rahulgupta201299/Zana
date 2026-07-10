@@ -18,6 +18,7 @@ const HOME_DESCRIPTION =
   "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
+const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -131,6 +132,18 @@ function loadBrandSeoMaps() {
 
 const brandSeoMaps = loadBrandSeoMaps();
 
+function loadUniversalProductSeoMaps() {
+  if (!existsSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE)) return {};
+  const source = readFileSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+UNIVERSAL_PRODUCT_SEO_MAP\s*=/, "const UNIVERSAL_PRODUCT_SEO_MAP =")
+    .replace(/export\s+default\s+UNIVERSAL_PRODUCT_SEO_MAP\s*;/g, "")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const script = new vm.Script(`${source}\n;(typeof UNIVERSAL_PRODUCT_SEO_MAP === "undefined" ? {} : UNIVERSAL_PRODUCT_SEO_MAP);`);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const universalProductSeoMaps = loadUniversalProductSeoMaps();
+
 function getProductSeo(productId) {
   const productMap = isProduction
     ? productSeoMaps.production
@@ -162,7 +175,25 @@ function getSeoForPath(pathname) {
     };
   }
 
-  if (pathname === "/product-catalog") {
+  if (parts[0] === "product-catalog") {
+    if (parts.length === 2) {
+      const categorySlug = parts[1];
+      const categoryKey = categorySlug.replace(/-/g, " ").toUpperCase();
+      const seo = universalProductSeoMaps[categoryKey];
+      if (seo) {
+        return {
+          title: seo.title,
+          description: seo.description,
+          keywords: seo.keywords,
+          type: "website",
+        };
+      }
+      return {
+        title: `${titleCaseSlug(categorySlug)} | Universal Products | Zana Motorcycles`,
+        description: `Explore our premium range of universal ${titleCaseSlug(categorySlug)} accessories.`,
+        type: "website",
+      };
+    }
     return {
       title: "Motorcycle Accessories Catalog | Zana Motorcycles",
       description:

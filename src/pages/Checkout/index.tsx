@@ -180,30 +180,35 @@ export default function CheckoutPage() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true));
     if (!processedItems.length) return;
 
-    const beginCheckoutPayload = {
+    const value = cartTotalAmount;
+
+    const eventPayload = {
       currency,
-      value: cartTotalAmount,
-      items: processedItems.map((item) => ({
-        product_id: item.product._id,
-        product_name: item.product.name,
-        product_category: item.product.category,
-        product_brand: item.product.brand,
-        price: item.price,
-        quantity: item.quantity,
-      })),
+      value,
+      ecommerce: {
+        items: processedItems.map((item) => ({
+          item_id: item.product._id,
+          item_name: item.product.name,
+          item_category: item.product.category,
+          item_brand: item.product.brand,
+          price: item.price,
+          quantity: item.quantity,
+          currency,
+        })),
+      }
     };
 
     // GTM — dataLayer push
     if ((window as any).dataLayer) {
       (window as any).dataLayer.push({
         event: "begin_checkout",
-        ...beginCheckoutPayload,
+        ...eventPayload,
       });
     }
 
     // GA4 — gtag direct
     if ((window as any).gtag) {
-      (window as any).gtag("event", "begin_checkout", beginCheckoutPayload);
+      (window as any).gtag("event", "begin_checkout", eventPayload);
     }
   }
 

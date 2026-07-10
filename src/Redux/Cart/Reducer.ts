@@ -17,6 +17,8 @@ import {
   RemoveCouponResType,
   T_CART_REDUCER,
   UpdateCartAddressResType,
+  UtmType,
+  UtmCartResType,
 } from "./Types";
 import { SLICE_NAME } from "./Selectors";
 import {
@@ -26,6 +28,7 @@ import {
   getCartDetailActions,
   removeCouponActions,
   updateCartAddressActions,
+  cartUtmActions,
 } from "./Action";
 import { selectedCurrencyActions } from "../Landing/Actions";
 import { getPhoneNumber } from "@/Utils/global";
@@ -70,12 +73,13 @@ export const INITIAL_STATE: T_CART_REDUCER = {
   initialCartLoaded: false,
   isOpenCart: false,
   isOpenCouponDialog: false,
+  utm: null,
 };
 
 const cartPersistConfig = {
   key: CartSliceName,
   storage,
-  whitelist: ["cartDetail", "cartAddress"],
+  whitelist: ["cartDetail", "cartAddress", "utm"],
 };
 
 const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
@@ -111,9 +115,16 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
       return {
         ...INITIAL_STATE,
         cartAddress: state.cartAddress,
+        utm: state.utm,
       };
     },
     resetCart: () => INITIAL_STATE,
+    setUtmParams(state, action: PayloadAction<UtmType>) {
+      state.utm = action.payload;
+    },
+    clearUtmParams(state) {
+      state.utm = null;
+    },
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_CART_REDUCER>): void => {
     builder.addCase(
@@ -126,6 +137,14 @@ const sliceOptions: CreateSliceOptions<T_CART_REDUCER> = {
         const { unProcessedItems = [] } = data;
         state.cartDetail = data;
         state.outOfStocks = unProcessedItems;
+      },
+    );
+    builder.addCase(
+      cartUtmActions.success,
+      (state, action: PayloadAction<UtmCartResType>) => {
+        if (action.payload?.utmParams) {
+          state.utm = action.payload.utmParams;
+        }
       },
     );
     builder.addCase(
@@ -279,6 +298,8 @@ export const {
   setOpenCouponDialog,
   setProcessedCart,
   clearOutofStockItems,
+  setUtmParams,
+  clearUtmParams,
 } = slice.actions;
 
 export default persistReducer(cartPersistConfig, slice.reducer);

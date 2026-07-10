@@ -8,6 +8,7 @@ const ROBOTS_FILE = resolve("public/robots.txt");
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
+const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
 const PAGE_SIZE = 1000;
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
@@ -136,6 +137,16 @@ function loadBrandSeoMap() {
   const source = readFileSync(BRAND_SEO_MAPS_FILE, "utf8")
     .replace(/export\s+const\s+BRAND_SEO_MAPS\s*=/, "const BRAND_SEO_MAPS =");
   const script = new vm.Script(`${source}\n;(typeof BRAND_SEO_MAPS === "undefined" ? {} : BRAND_SEO_MAPS);`);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+function loadUniversalProductSeoMap() {
+  if (!existsSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE)) return {};
+  const source = readFileSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+UNIVERSAL_PRODUCT_SEO_MAP\s*=/, "const UNIVERSAL_PRODUCT_SEO_MAP =")
+    .replace(/export\s+default\s+UNIVERSAL_PRODUCT_SEO_MAP\s*;/g, "")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const script = new vm.Script(`${source}\n;(typeof UNIVERSAL_PRODUCT_SEO_MAP === "undefined" ? {} : UNIVERSAL_PRODUCT_SEO_MAP);`);
   return script.runInNewContext(Object.create(null), { timeout: 1000 });
 }
 
@@ -375,6 +386,23 @@ function getBrandListingUrls() {
   return urls;
 }
 
+function getUniversalProductListingUrls() {
+  const map = loadUniversalProductSeoMap();
+  const urls = [];
+
+  for (const [categoryName, seo] of Object.entries(map)) {
+    urls.push(
+      createUrl(`/product-catalog/${slugify(categoryName)}`, {
+        title: seo.title || `${categoryName} | Zana Motorcycles`,
+        priority: "0.8",
+        changefreq: "weekly",
+      }),
+    );
+  }
+
+  return urls;
+}
+
 async function getBikeUrls() {
   const bikeTypes = ["zana", "zpro"];
   const urls = [];
@@ -564,6 +592,11 @@ function renderHtmlSitemap(sections) {
   });
   const zanaBrandListingUrls = brandListingUrls.filter((url) => getUrlParts(url)[0] === "zana");
   const zproBrandListingUrls = brandListingUrls.filter((url) => getUrlParts(url)[0] === "zpro");
+  // Universal Product listing pages: /product-catalog/:category
+  const universalListingUrls = urls.filter((url) => {
+    const parts = getUrlParts(url);
+    return parts.length === 2 && parts[0] === "product-catalog";
+  });
   const productUrls = urls.filter((url) => getUrlParts(url)[0] === "product");
   const updatedDate = new Date().toISOString().slice(0, 10);
   const zanaBikeGroups = groupUrls(zanaBikeUrls, (url) =>
@@ -611,6 +644,16 @@ ${renderLinks(zanaBrandListingUrls)}
           `(${zproBrandListingUrls.length} brands)`,
           `        <ul class="link-grid main-grid">
 ${renderLinks(zproBrandListingUrls)}
+        </ul>`,
+        )
+      : "",
+    universalListingUrls.length
+      ? renderSection(
+          "universal-listing-pages",
+          "Universal Product Listing Pages",
+          `(${universalListingUrls.length} categories)`,
+          `        <ul class="link-grid main-grid">
+${renderLinks(universalListingUrls)}
         </ul>`,
         )
       : "",
@@ -774,6 +817,7 @@ ${renderLinks(zproBrandListingUrls)}
         ${blogUrls.length ? '<a href="#blog-pages">Blog Pages</a>' : ""}
         ${zanaBrandListingUrls.length ? '<a href="#zana-brand-pages">ZANA Brand Pages</a>' : ""}
         ${zproBrandListingUrls.length ? '<a href="#zpro-brand-pages">Z-PRO Brand Pages</a>' : ""}
+        ${universalListingUrls.length ? '<a href="#universal-listing-pages">Universal Product Listing</a>' : ""}
         <a href="#zana-bike-accessories">ZANA Bike Accessories</a>
         <a href="#zpro-bike-accessories">Z-PRO Bike Accessories</a>
         <a href="#products">Products</a>
@@ -809,6 +853,7 @@ async function main() {
   const dynamicSources = [
     ["Blog Detail Pages", "blogs", getBlogUrls],
     ["Brand Listing Pages", "brand listing pages", () => Promise.resolve(getBrandListingUrls())],
+    ["Universal Product Listing Pages", "universal product listing pages", () => Promise.resolve(getUniversalProductListingUrls())],
     ["Bike Model Pages", "bike models", getBikeUrls],
     ["Product Pages", "products", getProductUrls],
   ];

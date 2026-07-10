@@ -13,7 +13,24 @@ export type T_CART_REDUCER = {
   initialCartLoaded: boolean;
   isOpenCart: boolean;
   isOpenCouponDialog: boolean;
+  utm: UtmType | null;
 };
+
+export type UtmType = {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+};
+
+export interface UtmCartReqType extends UtmType {
+  phoneNumber: string;
+}
+
+export interface UtmCartResType {
+  utmParams: UtmType;
+}
 
 export interface CartItemDetail {
   product: ShopByProductDetailsType;

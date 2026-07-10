@@ -15,6 +15,9 @@ import ipLocationCurrencyServiceAction from "@/Redux/Landing/Services/IpLocation
 import { IpLocationCurrencyType } from "@/Redux/Landing/Types";
 import { createProductConverter } from "@/components/Navbar/Utils";
 import { cartModifyActions } from "@/Redux/Cart/Action";
+import cartUtmServiceAction from "@/Redux/Cart/Services/UtmCartService";
+import { setUtmParams, clearUtmParams } from "@/Redux/Cart/Reducer";
+import { getUtmParamsFromUrl } from "@/Utils/global";
 
 // import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
 // import { GeolocationType } from "@/Redux/Landing/Types";
@@ -93,6 +96,19 @@ export function useNetwork() {
       if (!initialCartLoaded && phoneNumber) requests.push(retry(() => getCartFromDB({ newCurrency })))
       if (!isdCode.length) requests.push(retry(() => dispatch(getIsdListServiceAction())))
       if (currencyListRequest) requests.push(currencyListRequest)
+
+      const utmParams = getUtmParamsFromUrl();
+      if (utmParams) {
+        dispatch(setUtmParams(utmParams));
+        if (phoneNumber) {
+          requests.push(
+            retry(() => dispatch(cartUtmServiceAction({ phoneNumber, ...utmParams }))).then(() => {
+              // @ts-ignore
+              dispatch(clearUtmParams());
+            })
+          );
+        }
+      }
 
       await Promise.allSettled(requests)
     } catch (error: any) {
