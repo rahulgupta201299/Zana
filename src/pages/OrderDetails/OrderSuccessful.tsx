@@ -74,31 +74,34 @@ const OrderConfirmation = () => {
 
   useEffect(() => {
     if (currency && orderNumber && totalAmount && !hasTracked.current) {
-      const purchasePayload = {
-        order_number: orderNumber,
-        order_value: totalAmount,
+      const eventPayload = {
+        transaction_id: orderNumber,
         currency,
-        items: items.map((item) => ({
-          product_id: item.product._id,
-          product_name: item.product.name,
-          product_category: item.product.category,
-          product_brand: item.product.brand,
-          price: item.price,
-          quantity: item.quantity,
-        })),
+        value: totalAmount,
+        ecommerce: {
+          items: items.map((item) => ({
+            item_id: item.product?._id,
+            item_name: item.product?.name,
+            item_category: item.product?.category,
+            item_brand: item.product?.brand,
+            price: item.price,
+            quantity: item.quantity,
+            currency,
+          })),
+        }
       };
 
       // GTM — dataLayer push
       if ((window as any).dataLayer) {
         (window as any).dataLayer.push({
           event: "purchase",
-          ...purchasePayload,
+          ...eventPayload,
         });
       }
 
       // GA4 — gtag direct
       if ((window as any).gtag) {
-        (window as any).gtag("event", "purchase", purchasePayload);
+        (window as any).gtag("event", "purchase", eventPayload);
       }
 
       hasTracked.current = true;
