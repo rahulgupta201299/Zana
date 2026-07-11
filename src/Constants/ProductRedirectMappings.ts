@@ -8860,6 +8860,161 @@ export const REDIRECT_MAPPINGS = Object.freeze(
     type: "bike",
     sourcePath: "/index.php/all-reviews/top-box-aluminium-45ltr-r-flat-black-with-back-rest-cushion-for-ktm-adv-390-2025",
     targetPath: "/bike-accessories/zana/bike/ktm/adventure-250-390-390x-2025/69bea3ebc222d7fdd0662a94"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/royal-enfield-accessories",
+    targetPath: "/zana/bikes/royal-enfield/"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/honda-accessories",
+    targetPath: "/zana/bikes/honda"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/tvs-motorcycle-accessories",
+    targetPath: "/zana/bikes/tvs"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/ktm-accessories",
+    targetPath: "/zana/bikes/ktm"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/triumph-accessories",
+    targetPath: "/zana/bikes/triumph"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/bajaj-accessories",
+    targetPath: "/zana/bikes/bajaj"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/universal-accessories",
+    targetPath: "/product-catalog/all"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/yezdi-accessories",
+    targetPath: "/zana/bikes/yezdi"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/suzuki-accessories",
+    targetPath: "/zpro/bikes/suzuki"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/hero-accessories",
+    targetPath: "/zana/bikes/hero"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/universal-accessories",
+    targetPath: "/product-catalog/all"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/yamaha-accessories",
+    targetPath: "/zana/bikes/yamaha"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/royal-enfield-accessories",
+    targetPath: "/zana/bikes/royal-enfield"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/yamaha-accessories",
+    targetPath: "/zana/bikes/yamaha"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/triumph-accessories",
+    targetPath: "/zpro/bikes/triumph"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/jawa-accessories",
+    targetPath: "www.zanamotorcycle.com"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/bmw-accessories",
+    targetPath: "/zana/bikes/bmw"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/aprilia-tuono-accessories",
+    targetPath: "/zana/bikes/aprilia"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/bmw-accessories",
+    targetPath: "/zpro/bikes/bmw"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/yezdi-accessories",
+    targetPath: "/zana/bikes/yezdi"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/honda-accessories",
+    targetPath: "/zana/bikes/honda"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/ducati-accessories",
+    targetPath: "/zpro/bikes/ducati"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/suzuki-accessories",
+    targetPath: "/zana/bikes/suzuki"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/harley-davidson-accessories",
+    targetPath: "/zana/bikes/harley-davidson"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/kawasaki-accessories",
+    targetPath: "/zana/bikes/kawasaki"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/kawasaki-accessories",
+    targetPath: "/zpro/bikes/kawasaki"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/ducati-accessories",
+    targetPath: "/zpro/bikes/ducati"
+  },
+  {
+    type: "bike",
+    sourcePath: "/category/bsa-motorcycles-accessories",
+    targetPath: "/zana/bikes/bsa"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/hero-accessories",
+    targetPath: "/zana/bikes/hero"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/ktm-accessories",
+    targetPath: "/zana/bikes/ktm"
+  },
+  {
+    type: "bike",
+    sourcePath: "/zpro/category/bajaj-accessories",
+    targetPath: "/zana/bikes/bajaj"
   }
 ]
 ) as readonly RedirectMapping[];
