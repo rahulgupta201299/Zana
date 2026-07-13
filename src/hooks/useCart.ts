@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import { ROUTES } from "@/Constants/Routes";
 import { getLoginDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
@@ -23,6 +24,7 @@ export default function useCart() {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const loginDetails = useSelector(getLoginDetails);
   const { phoneNumber = "" } = loginDetails;
@@ -49,6 +51,9 @@ export default function useCart() {
       phoneNumber?: string;
     },
   ): Promise<CartDetailResType> {
+
+    if (!phoneNumber) dispatch(setOpenSignupPopup(true));
+
     const items = details.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
@@ -97,7 +102,7 @@ export default function useCart() {
         }),
       )) as CartDetailResType;
 
-      const { unProcessedItems = [] } = response || {};
+      const { unProcessedItems = [], totalAmount = 0 } = response || {};
 
       if (unProcessedItems.length) {
         enqueueSnackbar({
@@ -105,6 +110,9 @@ export default function useCart() {
           message: `Some items couldn't be processed due to unavailability.`,
         });
       }
+
+      // Redirect away from protected routes if cart becomes empty / value is 0
+      if (!totalAmount) redirectIfEmptyCart([ROUTES.CHECKOUT], ROUTES.BASE_URL);
 
       if (optional?.easyCheckout) dispatch(setOpenCart(true));
       if (optional?.navigateTo) navigate(optional.navigateTo);
@@ -151,10 +159,7 @@ export default function useCart() {
     if (quantity > maxQuantityAvailable) return;
 
     let productAdded = false;
-    if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
+
     const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) {
         productAdded = true;
@@ -203,10 +208,6 @@ export default function useCart() {
       navigateTo = "",
     }: { easyCheckout?: boolean; navigateTo?: string } = {},
   ) {
-     if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    } 
     const productQuantity = getQuantity(productId);
 
     if (productQuantity >= maxQuantityAvailable) return;
@@ -287,21 +288,16 @@ export default function useCart() {
     );
   }
 
-  async function modifyCart(
-    phoneNumber: string,
-    items: { productId: string; quantity: number }[],
-  ): Promise<CartDetailResType> {
-    try {
-      const response = (await dispatch(
-        cartModifyServiceAction({
-          phoneNumber,
-          items,
-        }),
-      )) as CartDetailResType;
-      return response;
-    } catch (error) {
-      throw error;
-    }
+  /**
+   * Redirects to `redirectTo` (defaults to home) if the current pathname
+   * matches any route in `routesToMatch` AND the cart total is 0 / empty.
+   */
+  function redirectIfEmptyCart(
+    routesToMatch: string[],
+    redirectTo: string = ROUTES.BASE_URL,
+  ) {
+    if (!routesToMatch.includes(location.pathname)) return;
+    navigate(redirectTo, { replace: true });
   }
 
   return {
@@ -314,6 +310,6 @@ export default function useCart() {
     validateCart,
     getCartFromDB,
     saveCartToDB,
-    modifyCart,
+    redirectIfEmptyCart,
   };
 }

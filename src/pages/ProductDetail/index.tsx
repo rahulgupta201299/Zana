@@ -136,7 +136,7 @@ const ProductDetailPage = () => {
   );
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, product: ShopByProductDetailsType, _id: string, quantity: number, quantityAvailable: number) => {
-     e.stopPropagation();                 
+    e.stopPropagation();                 
     addToCart(product, _id, quantity, quantityAvailable);
   };
 
@@ -206,6 +206,36 @@ const ProductDetailPage = () => {
       if (productRequestRef.current !== requestId) return;
       setProduct(response);
       setIsProductHydrating(false);
+
+      const eventPayload = {
+        currency: response.currency,
+        value: response.price,
+        ecommerce: {
+          items: [
+            {
+              item_id: response._id,
+              item_name: response.name,
+              item_category: response.category,
+              // item_brand: response.brand,
+              price: response.price,
+              currency: response.currency,
+            }
+          ],
+        },
+      };
+
+      // GTM — dataLayer push
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "view_item",
+          ...eventPayload,
+        });
+      }
+
+      // GA4 — gtag direct
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "view_item", eventPayload);
+      }
 
       const { category, isBikeSpecific, model } = response;
 
