@@ -413,7 +413,7 @@ export default function CheckoutPage() {
 
     const { phoneNumber = '' } = loginDetails
 
-    if (!phoneNumber || !processedItems.length || !paymentType) return;
+    if (!phoneNumber || !processedItems.length || !paymentType || !cartTotalAmount) return;
 
     const shouldUpdate =
       !profileDetails.emailId ||
@@ -504,6 +504,7 @@ export default function CheckoutPage() {
     const { phoneNumber = '' } = loginDetails
 
     if (!phoneNumber) return;
+    if (!cartTotalAmount || !processedItems.length) return;
 
     setPaymentType(method)
 
