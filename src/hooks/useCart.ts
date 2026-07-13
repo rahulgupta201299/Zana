@@ -49,6 +49,9 @@ export default function useCart() {
       phoneNumber?: string;
     },
   ): Promise<CartDetailResType> {
+
+    if (!phoneNumber) dispatch(setOpenSignupPopup(true));
+
     const items = details.map((item) => ({
       productId: item.product._id,
       quantity: item.quantity,
@@ -151,10 +154,7 @@ export default function useCart() {
     if (quantity > maxQuantityAvailable) return;
 
     let productAdded = false;
-    if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
+
     const newProductDetails = cartItems.map((item) => {
       if (item.product._id === productId) {
         productAdded = true;
@@ -203,10 +203,6 @@ export default function useCart() {
       navigateTo = "",
     }: { easyCheckout?: boolean; navigateTo?: string } = {},
   ) {
-     if (!phoneNumber) {
-      dispatch(setOpenSignupPopup(true));
-      return;
-    } 
     const productQuantity = getQuantity(productId);
 
     if (productQuantity >= maxQuantityAvailable) return;

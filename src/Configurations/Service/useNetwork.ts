@@ -18,6 +18,8 @@ import { cartModifyActions } from "@/Redux/Cart/Action";
 import cartUtmServiceAction from "@/Redux/Cart/Services/UtmCartService";
 import { setUtmParams, clearUtmParams } from "@/Redux/Cart/Reducer";
 import { getUtmParamsFromUrl } from "@/Utils/global";
+import { useLocation } from "react-router";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 // import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
 // import { GeolocationType } from "@/Redux/Landing/Types";
@@ -41,6 +43,15 @@ export function useNetwork() {
   const state = AppStore.getState();
   const dispatch = AppStore.dispatch;
   const geolocationCurrencyLoaded = useRef(false);
+  const location = useLocation();
+  const initialLocation = useRef(location.pathname);
+
+  useEffect(() => {
+    if (location.pathname !== initialLocation.current) {
+      dispatch(setOpenSignupPopup(false));
+      initialLocation.current = location.pathname;
+    }
+  }, [location.pathname]);
 
   const shopByBike = state.product.menu.shopByBike;
   const zProBike = state.product.menu.zProBikes;

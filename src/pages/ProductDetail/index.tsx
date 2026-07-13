@@ -136,7 +136,7 @@ const ProductDetailPage = () => {
   );
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, product: ShopByProductDetailsType, _id: string, quantity: number, quantityAvailable: number) => {
-     e.stopPropagation();                 
+    e.stopPropagation();                 
     addToCart(product, _id, quantity, quantityAvailable);
   };
 
