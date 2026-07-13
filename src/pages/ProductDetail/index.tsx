@@ -211,14 +211,16 @@ const ProductDetailPage = () => {
         currency: response.currency,
         value: response.price,
         ecommerce: {
-          item: {
-            item_id: response._id,
-            item_name: response.name,
-            item_category: response.category,
-            // item_brand: response.brand,
-            price: response.price,
-            currency: response.currency,
-          },
+          items: [
+            {
+              item_id: response._id,
+              item_name: response.name,
+              item_category: response.category,
+              // item_brand: response.brand,
+              price: response.price,
+              currency: response.currency,
+            }
+          ],
         },
       };
 
