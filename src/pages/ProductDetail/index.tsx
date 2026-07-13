@@ -207,6 +207,34 @@ const ProductDetailPage = () => {
       setProduct(response);
       setIsProductHydrating(false);
 
+      const eventPayload = {
+        currency: response.currency,
+        value: response.price,
+        ecommerce: {
+          item: {
+            item_id: response._id,
+            item_name: response.name,
+            item_category: response.category,
+            // item_brand: response.brand,
+            price: response.price,
+            currency: response.currency,
+          },
+        },
+      };
+
+      // GTM — dataLayer push
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "view_item",
+          ...eventPayload,
+        });
+      }
+
+      // GA4 — gtag direct
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "view_item", eventPayload);
+      }
+
       const { category, isBikeSpecific, model } = response;
 
       let relatedProductsData: ShopByProductDetailsType[] = [];
