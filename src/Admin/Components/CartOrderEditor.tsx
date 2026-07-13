@@ -281,11 +281,11 @@ const schema = Yup.object({
             .required("Billing phone number is required")
             .test("billingPhone", validatePhoneForCountry("billingCountry")),
   ),
-  salesPersonName: Yup.string().required("Sales person name is required"),
+  salesPersonName: Yup.string(),
   paymentType: Yup.string().oneOf(["razorpay", "upi"], "Invalid payment type").required("Payment type is required"),
   paymentStatus: Yup.string().oneOf(["partial_paid", "paid"], "Invalid payment status").required("Payment status is required"),
   advancePaid: Yup.number().min(0, "Advance paid cannot be negative").required("Advance paid is required"),
-  adminCapturedPaymentId: Yup.string().required("Payment ID is required"),
+  adminCapturedPaymentId: Yup.string(),
   couponCode: Yup.string().nullable(),
   paymentMethod: Yup.string().oneOf(["online", "cod"], "Invalid payment method").required("Payment method is required"),
   currency: Yup.string().required("Currency is required"),
@@ -697,12 +697,12 @@ export default function CartOrderEditor(props: {
         })(),
       },
       hasCartChanges,
-      salesPersonName: values.salesPersonName.trim(),
+      salesPersonName: (values.salesPersonName || "").trim(),
       paymentType: values.paymentType,
       paymentStatus: values.paymentStatus,
       advancePaid: Number(values.advancePaid || 0),
-      adminCapturedPaymentId: values.adminCapturedPaymentId.trim(),
-      couponCode: values.couponCode.trim() || null,
+      adminCapturedPaymentId: (values.adminCapturedPaymentId || "").trim(),
+      couponCode: (values.couponCode || "").trim() || null,
       orderItems: draftItems.map((item) => {
         const price = item.price || 0;
         return {

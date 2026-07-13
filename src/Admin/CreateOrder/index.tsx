@@ -21,9 +21,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { TAppDispatch } from "@/Configurations/AppStore";
 import { ROUTES } from "@/Constants/Routes";
-import useCart from "@/hooks/useCart";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import { getCurrencyList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
@@ -94,7 +94,9 @@ export default function AdminCreateOrder() {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const { modifyCart } = useCart();
+  const modifyCart = async (phone: string, items: { productId: string; quantity: number }[]) => {
+    await dispatch(cartModifyServiceAction({ phoneNumber: phone, items }));
+  };
   const currencies = useSelector(getCurrencyList);
   const selectedCurrency = useSelector(getSelectedCurrency);
   const [isdCodes, setIsdCodes] = useState<AdminIsdCode[]>([]);

@@ -42,6 +42,7 @@ import type { TAppDispatch } from "@/Configurations/AppStore";
 import useCart from "@/hooks/useCart";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import { getCurrencyList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
@@ -664,7 +665,11 @@ function Row(props: {
 
 export default function ActiveCarts() {
   const dispatch = useDispatch<TAppDispatch>();
-  const { modifyCart } = useCart();
+
+  const modifyCart = async (phone: string, items: { productId: string; quantity: number }[]) => {
+    await dispatch(cartModifyServiceAction({ phoneNumber: phone, items }));
+  };
+ 
   const currencies = useSelector(getCurrencyList);
   const selectedCurrency = useSelector(getSelectedCurrency);
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
