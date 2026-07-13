@@ -11,6 +11,7 @@ import {
   FormHelperText,
   IconButton,
   InputAdornment,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
@@ -24,8 +25,10 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Form, Formik } from "formik";
 import type { ReactNode } from "react";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { TAppDispatch } from "@/Configurations/AppStore";
+import { getCurrencyList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
+import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import SearchService from "@/Redux/Product/Services/SearchService";
 import type {
   SearchDataProductsType,
@@ -57,12 +60,30 @@ export type CartOrderEditorCart = Pick<
   | "shippingAddress"
   | "billingAddress"
   | "shippingAddressSameAsBillingAddress"
+  | "couponCode"
+  | "appliedCoupon"
+  | "paymentMethod"
 >;
+
 
 export type CartOrderEditorSavePayload = {
   address: UpdateCartAddressReqType;
   cart: CartModifyReqType;
   hasCartChanges: boolean;
+  salesPersonName: string;
+  paymentType: "razorpay" | "upi";
+  paymentStatus: "partial_paid" | "paid";
+  advancePaid: number;
+  adminCapturedPaymentId: string;
+  couponCode: string | null;
+  orderItems: {
+    product: string;
+    quantity: number;
+    price: number;
+    totalPrice: number;
+  }[];
+  paymentMethod?: "online" | "cod";
+  currency?: string;
 };
 
 type CartOrderDraftItem = {
@@ -97,6 +118,14 @@ type CartOrderFormValues = {
   billingState: string;
   billingPincode: string;
   billingPhone: string;
+  salesPersonName: string;
+  paymentType: "razorpay" | "upi";
+  paymentStatus: "partial_paid" | "paid";
+  advancePaid: number;
+  adminCapturedPaymentId: string;
+  couponCode: string;
+  paymentMethod: "online" | "cod";
+  currency: string;
 };
 
 function isIndiaCountry(country = ""): boolean {
@@ -252,6 +281,14 @@ const schema = Yup.object({
             .required("Billing phone number is required")
             .test("billingPhone", validatePhoneForCountry("billingCountry")),
   ),
+  salesPersonName: Yup.string().required("Sales person name is required"),
+  paymentType: Yup.string().oneOf(["razorpay", "upi"], "Invalid payment type").required("Payment type is required"),
+  paymentStatus: Yup.string().oneOf(["partial_paid", "paid"], "Invalid payment status").required("Payment status is required"),
+  advancePaid: Yup.number().min(0, "Advance paid cannot be negative").required("Advance paid is required"),
+  adminCapturedPaymentId: Yup.string().required("Payment ID is required"),
+  couponCode: Yup.string().nullable(),
+  paymentMethod: Yup.string().oneOf(["online", "cod"], "Invalid payment method").required("Payment method is required"),
+  currency: Yup.string().required("Currency is required"),
 });
 
 function productDisplayName(item: AdminActiveCartLineItem): string {
@@ -371,6 +408,14 @@ function initialValuesFromCart(
     billingPincode: billing?.postalCode ?? shipping?.postalCode ?? "",
     billingPhone:
       stripIsd(billing?.phone ?? "") || stripIsd(shipping?.phone ?? "") || fallbackPhone,
+    salesPersonName: "",
+    paymentType: "razorpay",
+    paymentStatus: "paid",
+    advancePaid: 0,
+    adminCapturedPaymentId: "",
+    couponCode: cart?.couponCode || cart?.appliedCoupon || "",
+    paymentMethod: (cart?.paymentMethod as any) || "online",
+    currency: cart?.currency || "INR",
   };
 }
 
@@ -385,6 +430,7 @@ function TextInput(props: {
   type?: string;
   maxLength?: number;
   startAdornment?: string;
+  disabled?: boolean;
 }) {
   const {
     name,
@@ -397,6 +443,7 @@ function TextInput(props: {
     type,
     maxLength,
     startAdornment,
+    disabled,
   } = props;
 
   return (
@@ -408,6 +455,7 @@ function TextInput(props: {
       value={values[name]}
       onChange={handleChange}
       onBlur={handleBlur}
+      disabled={disabled}
       error={getFieldErrorState({ errors, touched }, name)}
       helperText={getHelperOrErrorText({ errors, touched }, name)}
       size="small"
@@ -437,6 +485,11 @@ export default function CartOrderEditor(props: {
   onCalculatePaymentSummary?: (payload: CartOrderEditorSavePayload) => Promise<void>;
   calculatingPaymentSummary?: boolean;
   calculatePaymentSummaryLabel?: string;
+  onCartItemsChange?: (items: CartModifyReqType["items"]) => Promise<void>;
+  disablePhoneFields?: boolean;
+  showPaymentMethodAndCurrency?: boolean;
+  onPaymentMethodChange?: (method: "online" | "cod") => void;
+  onCurrencyChange?: (currency: string) => void;
 }) {
   const {
     cart,
@@ -450,12 +503,25 @@ export default function CartOrderEditor(props: {
     onCalculatePaymentSummary,
     calculatingPaymentSummary = false,
     calculatePaymentSummaryLabel = "Update payment summary",
+    onCartItemsChange,
+    disablePhoneFields = false,
+    showPaymentMethodAndCurrency = true,
+    onPaymentMethodChange,
+    onCurrencyChange,
   } = props;
   const dispatch = useDispatch<TAppDispatch>();
+  const currencyOptions = useSelector(getCurrencyList);
+  const selectedCurrency = useSelector(getSelectedCurrency);
   const [draftItems, setDraftItems] = useState<CartOrderDraftItem[]>([]);
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<SearchDataProductsType[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
+
+  useEffect(() => {
+    if (cart?.currency) {
+      dispatch(selectedCurrencyActions(cart.currency));
+    }
+  }, [cart?.currency, dispatch]);
 
   const normalizedCountries = useMemo(() => {
     const hasIndia = countryOptions.some((option) => isIndiaCountry(option.name));
@@ -503,7 +569,7 @@ export default function CartOrderEditor(props: {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [dispatch, query]);
+  }, [dispatch, query, selectedCurrency]);
 
   const phoneNumber = (cart?.phoneNumber ?? "").trim();
   const cartItems = draftItems
@@ -515,29 +581,63 @@ export default function CartOrderEditor(props: {
   const hasCartChanges = !areCartItemsEqual(initialCartItems, cartItems);
 
   const updateDraftQuantity = (productId: string, nextQuantity: number) => {
-    setDraftItems((current) =>
-      current
+    setDraftItems((current) => {
+      const nextDraft = current
         .map((item) =>
           item.productId === productId
             ? { ...item, quantity: Math.max(0, nextQuantity) }
             : item,
         )
-        .filter((item) => item.quantity > 0),
-    );
+        .filter((item) => item.quantity > 0);
+      
+      const activeItems = nextDraft.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+
+      const removedItems = initialItems
+        .filter((initItem) => !nextDraft.some((draftItem) => draftItem.productId === initItem.productId))
+        .map((initItem) => ({
+          productId: initItem.productId,
+          quantity: 0,
+        }));
+
+      const updatedItems = [...activeItems, ...removedItems];
+      onCartItemsChange?.(updatedItems);
+      return nextDraft;
+    });
   };
 
   const addProductToDraft = (product: SearchDataProductsType) => {
     if (hasUnavailableLines) return;
     setDraftItems((current) => {
+      let nextDraft = [];
       const existing = current.find((item) => item.productId === product._id);
       if (existing) {
-        return current.map((item) =>
+        nextDraft = current.map((item) =>
           item.productId === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
+      } else {
+        nextDraft = [...current, toProductDraftItem(product)];
       }
-      return [...current, toProductDraftItem(product)];
+
+      const activeItems = nextDraft.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+
+      const removedItems = initialItems
+        .filter((initItem) => !nextDraft.some((draftItem) => draftItem.productId === initItem.productId))
+        .map((initItem) => ({
+          productId: initItem.productId,
+          quantity: 0,
+        }));
+
+      const updatedItems = [...activeItems, ...removedItems];
+      onCartItemsChange?.(updatedItems);
+      return nextDraft;
     });
     setQuery("");
     setProducts([]);
@@ -586,9 +686,34 @@ export default function CartOrderEditor(props: {
       },
       cart: {
         phoneNumber,
-        items: cartItems,
+        items: (() => {
+          const activeItems = draftItems
+            .filter((item) => item.quantity > 0)
+            .map((item) => ({ productId: item.productId, quantity: item.quantity }));
+          const removedItems = initialItems
+            .filter((initItem) => !draftItems.some((draftItem) => draftItem.productId === initItem.productId && draftItem.quantity > 0))
+            .map((initItem) => ({ productId: initItem.productId, quantity: 0 }));
+          return [...activeItems, ...removedItems];
+        })(),
       },
       hasCartChanges,
+      salesPersonName: values.salesPersonName.trim(),
+      paymentType: values.paymentType,
+      paymentStatus: values.paymentStatus,
+      advancePaid: Number(values.advancePaid || 0),
+      adminCapturedPaymentId: values.adminCapturedPaymentId.trim(),
+      couponCode: values.couponCode.trim() || null,
+      orderItems: draftItems.map((item) => {
+        const price = item.price || 0;
+        return {
+          product: item.productId,
+          quantity: item.quantity,
+          price,
+          totalPrice: price * item.quantity,
+        };
+      }),
+      paymentMethod: values.paymentMethod,
+      currency: values.currency,
     };
   }
 
@@ -623,7 +748,25 @@ export default function CartOrderEditor(props: {
           (hasCartChanges && hasUnavailableLines);
 
         return (
-          <Form>
+          <Form style={{ position: "relative" }}>
+            {(saving || calculatingPaymentSummary) && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  bgcolor: "rgba(255, 255, 255, 0.7)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                  zIndex: 10,
+                }}
+              >
+                <CircularProgress size={30} sx={{ position: "sticky", top: "45vh" }} />
+              </Box>
+            )}
             <Stack spacing={2.5}>
               {!phoneNumber && (
                 <Alert severity="warning">
@@ -883,7 +1026,7 @@ export default function CartOrderEditor(props: {
                 <TextInput name="shippingCity" label="City" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} />
                 <TextInput name="shippingState" label="State" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} />
               </Box>
-              <TextInput name="shippingPhone" label="Phone" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} maxLength={isIndiaCountry(values.shippingCountry) ? 10 : 15} startAdornment={shippingIsd} />
+              <TextInput name="shippingPhone" label="Phone" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} maxLength={isIndiaCountry(values.shippingCountry) ? 10 : 15} startAdornment={shippingIsd} disabled={disablePhoneFields} />
 
               <FormControlLabel
                 control={
@@ -952,9 +1095,136 @@ export default function CartOrderEditor(props: {
                     <TextInput name="billingCity" label="City" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} />
                     <TextInput name="billingState" label="State" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} />
                   </Box>
-                  <TextInput name="billingPhone" label="Phone" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} maxLength={isIndiaCountry(values.billingCountry) ? 10 : 15} startAdornment={billingIsd} />
+                  <TextInput name="billingPhone" label="Phone" values={values} handleChange={handleChange} handleBlur={handleBlur} errors={errors} touched={touched} maxLength={isIndiaCountry(values.billingCountry) ? 10 : 15} startAdornment={billingIsd} disabled={disablePhoneFields} />
                 </Stack>
               )}
+
+              <Divider />
+
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Admin & Payment Details
+              </Typography>
+
+              <TextInput
+                name="salesPersonName"
+                label="Sales Person Name"
+                values={values}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                errors={errors}
+                touched={touched}
+              />
+
+              {showPaymentMethodAndCurrency && (
+                <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" } }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="payment-method-label">Payment Method</InputLabel>
+                    <Select
+                      labelId="payment-method-label"
+                      name="paymentMethod"
+                      label="Payment Method"
+                      value={values.paymentMethod}
+                      onChange={(event) => {
+                        handleChange(event);
+                        onPaymentMethodChange?.(event.target.value as any);
+                      }}
+                      onBlur={handleBlur}
+                    >
+                      <MenuItem value="online">Online</MenuItem>
+                      <MenuItem value="cod">COD</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="editor-currency-label">Currency</InputLabel>
+                    <Select
+                      labelId="editor-currency-label"
+                      name="currency"
+                      label="Currency"
+                      value={values.currency}
+                      onChange={(event) => {
+                        handleChange(event);
+                        dispatch(selectedCurrencyActions(event.target.value));
+                        onCurrencyChange?.(event.target.value);
+                      }}
+                      onBlur={handleBlur}
+                    >
+                      {currencyOptions.map((currency) => (
+                        <MenuItem key={currency.code} value={currency.code}>
+                          {currency.code} ({currency.symbol})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
+
+              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" } }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="payment-type-label">Payment Type</InputLabel>
+                  <Select
+                    labelId="payment-type-label"
+                    name="paymentType"
+                    label="Payment Type"
+                    value={values.paymentType}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <MenuItem value="razorpay">Razorpay</MenuItem>
+                    <MenuItem value="upi">UPI</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth size="small">
+                  <InputLabel id="payment-status-label">Payment Status</InputLabel>
+                  <Select
+                    labelId="payment-status-label"
+                    name="paymentStatus"
+                    label="Payment Status"
+                    value={values.paymentStatus}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <MenuItem value="paid">Paid</MenuItem>
+                    <MenuItem value="partial_paid">Partial Paid</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" } }}>
+                <TextField
+                  fullWidth
+                  name="advancePaid"
+                  label="Advance Paid"
+                  type="number"
+                  value={values.advancePaid}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={getFieldErrorState({ errors, touched }, "advancePaid")}
+                  helperText={getHelperOrErrorText({ errors, touched }, "advancePaid")}
+                  size="small"
+                />
+
+                <TextInput
+                  name="adminCapturedPaymentId"
+                  label="Admin Captured Payment ID"
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  errors={errors}
+                  touched={touched}
+                />
+              </Box>
+
+              <TextInput
+                name="couponCode"
+                label="Coupon Code (Optional)"
+                values={values}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                errors={errors}
+                touched={touched}
+              />
 
               {footer}
 

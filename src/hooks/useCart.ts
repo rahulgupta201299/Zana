@@ -287,6 +287,23 @@ export default function useCart() {
     );
   }
 
+  async function modifyCart(
+    phoneNumber: string,
+    items: { productId: string; quantity: number }[],
+  ): Promise<CartDetailResType> {
+    try {
+      const response = (await dispatch(
+        cartModifyServiceAction({
+          phoneNumber,
+          items,
+        }),
+      )) as CartDetailResType;
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   return {
     addToCart,
     getQuantity,
@@ -297,5 +314,6 @@ export default function useCart() {
     validateCart,
     getCartFromDB,
     saveCartToDB,
+    modifyCart,
   };
 }

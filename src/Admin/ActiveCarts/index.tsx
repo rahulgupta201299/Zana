@@ -39,7 +39,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import type { TAppDispatch } from "@/Configurations/AppStore";
-import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
+import useCart from "@/hooks/useCart";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
 import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
@@ -53,6 +53,7 @@ import {
   createAdminActiveCartPaymentLink,
   downloadAdminActiveCartsCsv,
   getAdminActiveCarts,
+  getAdminActiveCartByPhone,
   AdminActiveCartFilters,
   AdminActiveCartRecord,
   AdminActiveCartLineItem,
@@ -610,46 +611,11 @@ function Row(props: {
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: { xs: "1fr", md: "minmax(220px, 0.7fr) 1fr" },
+               
                   gap: 2,
                 }}
               >
-                <Box sx={{ minWidth: 220 }}>
-                  <Typography variant="caption" color="text.secondary">
-                    Payment method:
-                  </Typography>
-                  <FormControl size="small" fullWidth sx={{ mt: 0.5 }}>
-                    <RadioGroup
-                      row
-                      value={paymentMethod}
-                      onChange={(event) =>
-                        onPaymentMethodChange(
-                          cart,
-                          event.target.value as PaymentTypeEnum,
-                          rowId,
-                        )
-                      }
-                    >
-                      <FormControlLabel
-                        value={PaymentTypeEnum.RAZORPAY}
-                        control={<Radio size="small" disabled={paymentMethodLoading} />}
-                        label="Online"
-                      />
-                      {canUseCod && (
-                        <FormControlLabel
-                          value={PaymentTypeEnum.COD}
-                          control={<Radio size="small" disabled={paymentMethodLoading} />}
-                          label="COD"
-                        />
-                      )}
-                    </RadioGroup>
-                  </FormControl>
-                  {paymentMethodLoading && (
-                    <Typography variant="caption" color="text.secondary">
-                      Updating payment calculation...
-                    </Typography>
-                  )}
-                </Box>
+              
                 <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, bgcolor: "#fff" }}>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                     Payment summary
@@ -698,6 +664,7 @@ function Row(props: {
 
 export default function ActiveCarts() {
   const dispatch = useDispatch<TAppDispatch>();
+  const { modifyCart } = useCart();
   const currencies = useSelector(getCurrencyList);
   const selectedCurrency = useSelector(getSelectedCurrency);
   const [carts, setCarts] = useState<AdminActiveCartRecord[]>([]);
@@ -716,6 +683,7 @@ export default function ActiveCarts() {
   const [cartOrderDialogCart, setCartOrderDialogCart] =
     useState<AdminActiveCartRecord | null>(null);
   const [cartOrderSaveLoading, setCartOrderSaveLoading] = useState(false);
+  const [dialogCartLoading, setDialogCartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -859,7 +827,7 @@ export default function ActiveCarts() {
     try {
       await dispatch(updateCartAddressServiceAction(payload.address));
       if (payload.hasCartChanges) {
-        await dispatch(cartModifyServiceAction(payload.cart));
+        await modifyCart(payload.cart.phoneNumber, payload.cart.items);
       }
       const method =
         cartOrderDialogCart?.paymentMethod === PaymentTypeEnum.COD
@@ -971,12 +939,7 @@ export default function ActiveCarts() {
 
     setCartItemLoadingKey(loadingKey);
     try {
-      await dispatch(
-        cartModifyServiceAction({
-          phoneNumber,
-          items,
-        }),
-      );
+      await modifyCart(phoneNumber, items);
       const method =
         cart.paymentMethod === PaymentTypeEnum.COD
           ? PaymentTypeEnum.COD
@@ -1028,6 +991,35 @@ export default function ActiveCarts() {
       void dispatch(currencyListServiceAction());
     }
   }, [currencies.length, dispatch]);
+
+  useEffect(() => {
+    if (!cartOrderDialogCart) return;
+    const phone = (cartOrderDialogCart.phoneNumber ?? "").trim();
+    if (!phone) return;
+    if (cartOrderDialogCart.currency === selectedCurrency) return;
+
+    let active = true;
+    setDialogCartLoading(true);
+    getAdminActiveCartByPhone(phone, selectedCurrency)
+      .then((updatedCart) => {
+        if (!active) return;
+        if (updatedCart) {
+          setCartOrderDialogCart(updatedCart);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to re-fetch active cart on currency change", err);
+      })
+      .finally(() => {
+        if (active) {
+          setDialogCartLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedCurrency, cartOrderDialogCart?.phoneNumber]);
 
   const handleCurrencyChange = (currency: any) => {
     dispatch(selectedCurrencyActions(currency));
@@ -1378,8 +1370,10 @@ export default function ActiveCarts() {
         cart={cartOrderDialogCart}
         countryOptions={isdCodes}
         saving={cartOrderSaveLoading}
+        calculatingPaymentSummary={dialogCartLoading}
         onClose={() => setCartOrderDialogCart(null)}
         onSave={handleSaveCartOrderDetails}
+        onCurrencyChange={handleCurrencyChange}
       />
     </Box>
   );
