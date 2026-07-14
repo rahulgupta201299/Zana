@@ -28,7 +28,7 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
 
       <div 
         className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.09] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-[2]" 
-        style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Playfair Display', serif" }}
+        style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Cormorant Garamond', serif" }}
       >
         ZANA
       </div>
@@ -46,16 +46,16 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
         <div className="max-w-[800px] text-left">
           {/* Subtitle */}
           <span 
-            className="block text-white/50 text-[10px] md:text-xs font-serif tracking-[0.25em] uppercase mb-4 md:mb-6 font-semibold"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="block text-white/50 text-[10px] md:text-xs font-sans tracking-[0.25em] uppercase mb-4 md:mb-6 font-semibold"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Precision-Built Motorcycle Protection & Touring Gear
+            PRECISION-BUILT MOTORCYCLE PROTECTION & TOURING ESSENTIALS
           </span>
 
           {/* Main Headline */}
           <h1 
             className="text-white text-3xl md:text-7xl lg:text-8xl font-medium leading-[1.15] md:leading-[1.08] mb-3 md:mb-8 tracking-tight font-serif"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             Forged in Fire.
             <br />
@@ -65,12 +65,9 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
           {/* Description */}
           <p 
             className="text-white/60 text-xs md:text-lg lg:text-xl font-serif max-w-[680px] leading-relaxed mb-5 md:mb-14"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
-            From your first Sunday breakfast ride to the last fuel stop before Khardung La
-            – Zana builds crash guards, racks and touring systems that let your motorcycle
-            go exactly as far as you dare to.{" "}
-            <span className="italic block mt-3 text-white/80">Made in India – Ridden Everywhere.</span>
+            Made in India - <span className="text-white font-semibold">Ridden Everywhere.</span>
           </p>
 
           {/* Buttons */}
@@ -80,14 +77,14 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
               className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Shop By Your Bike
+              SHOP BY BIKE
             </button>
             <button
               onClick={() => navigate("/product-catalog")}
               className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Explore Universal Gear
+              EXPLORE UNIVERSAL PRODUCTS
             </button>
           </div>
         </div>
