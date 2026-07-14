@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import OurPhilosophy from "@/components/OurPhilosophy";
 import BikeKitSection from "@/components/BikeKitSection";
+import BrandShowcase from "@/components/BrandShowcase";
 
 // const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
 // const NewArrivals = lazy(() => import("@/components/NewArrivals"));
@@ -55,7 +56,8 @@ function LazyOnVisible({
 function Landing() {
   return (
     <div className="min-h-screen">
-      <OurPhilosophy />
+      <BrandShowcase/>
+      {/* <OurPhilosophy /> */}
       <BikeKitSection />
       {/* <LazyOnVisible minHeight={520}>
         <GarageFavorite />

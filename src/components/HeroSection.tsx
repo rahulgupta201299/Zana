@@ -1,22 +1,45 @@
 import { useNavigate } from "react-router-dom";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 
-const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
+type HeroSectionPropsType = {
+  isMobile: boolean;
+
+};
+
+const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
   const navigate = useNavigate();
 
   return (
     <section className="relative flex h-[500px] items-center overflow-hidden bg-[#0d0d0d] text-white md:h-screen md:min-h-[600px]">
-      {/* Background Giant Outline Text "ZANA" */}
+      {/* Background Image */}
+     
+        <img
+          src={"/src/Assets/Images/HeroSection.webp"}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-center z-0"
+        />
+      
+
+   
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/85 via-black/60 to-black/25" />
+
       <div 
-        className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.09] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-0" 
+        className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.09] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-[2]" 
         style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Playfair Display', serif" }}
       >
         ZANA
       </div>
 
-      {/* Decorative subtle ambient lights */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-10 right-1/4 w-[300px] h-[300px] bg-white/[0.015] rounded-full blur-[80px] pointer-events-none z-0" />
+      {/* Decorative subtle ambient lights — only meaningful against a flat
+          background; drop these (or lower further) once a photo is in place
+          if they're not visible/needed anymore. */}
+      <>
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute bottom-10 right-1/4 w-[300px] h-[300px] bg-white/[0.015] rounded-full blur-[80px] pointer-events-none z-0" />
+      </>
 
       {/* Foreground Container */}
       <div className="relative w-full max-w-7xl mx-auto px-6 md:px-12 z-10">
@@ -72,7 +95,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
 
       {/* Scroll indicator */}
       <div 
-        className="absolute bottom-12 right-12 hidden md:flex flex-col items-center gap-4 select-none"
+        className="absolute bottom-12 right-12 hidden md:flex flex-col items-center gap-4 select-none z-10"
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
         <span className="text-[10px] tracking-[0.3em] uppercase text-white/30 rotate-90 origin-bottom translate-y-[-20px] font-semibold">
