@@ -1,135 +1,85 @@
-import { Link as RouterLink } from "react-router-dom";
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/Constants/Routes";
-import Zana from "@/Assets/Icons/Zana.webp";
-import HeroDesktop from "@/Assets/Images/HeroDesktop.webp";
-import HeroMobile from "@/Assets/Images/HeroMobile.webp";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import { VITE_VIDEO_URL } from "@/Configurations/env";
-import { useEffect, useState } from "react";
 
 const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-
-  useEffect(() => {
-    if (!VITE_VIDEO_URL) {
-      setShouldLoadVideo(false);
-      return;
-    }
-
-    const loadVideo = () => setShouldLoadVideo(true);
-
-    if ("requestIdleCallback" in window) {
-      const idleId = window.requestIdleCallback(loadVideo, { timeout: 4000 });
-      return () => window.cancelIdleCallback(idleId);
-    }
-
-    const timeoutId = setTimeout(loadVideo, 2500);
-    return () => clearTimeout(timeoutId);
-  }, [isMobile]);
 
   return (
-    <section className="relative flex h-[280px] items-center overflow-hidden md:h-screen">
-      <div className="absolute inset-0 overflow-hidden bg-black">
-        <picture className="block h-full w-full">
-          <source media="(max-width: 767px)" srcSet={HeroMobile} />
-          <img
-            src={HeroDesktop}
-            alt=""
-            aria-hidden="true"
-            width={1200}
-            height={1200}
-            fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
-        </picture>
-
-        {shouldLoadVideo && (
-          <video
-            src={VITE_VIDEO_URL}
-            poster={isMobile ? HeroMobile : HeroDesktop}
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls={false}
-            preload="none"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
-
-        <div className="absolute inset-0 bg-black/40" />
+    <section className="relative flex h-[500px] items-center overflow-hidden bg-[#0d0d0d] text-white md:h-screen md:min-h-[600px]">
+      {/* Background Giant Outline Text "ZANA" */}
+      <div 
+        className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.09] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-0" 
+        style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Playfair Display', serif" }}
+      >
+        ZANA
       </div>
 
-      <div className="absolute left-1/2 top-5 -translate-x-1/2">
-        <RouterLink
-          to={ROUTES.BASE_URL}
-          className="flex cursor-pointer"
-        >
-          <img
-            src={Zana}
-            alt={`Zana Logo`}
-            loading="eager"
-            decoding="async"
-            fetchPriority="low"
-            style={{
-              height: isMobile ? "3.5rem" : "5rem",
-              width: "auto",
-              cursor: "pointer",
-              transition: "opacity 0.2s",
-              filter:
-              "brightness(0) sepia(10%) saturate(200%) hue-rotate(10deg) invert(90%)",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
-            onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-          />
-        </RouterLink>
-      </div>
+      {/* Decorative subtle ambient lights */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-10 right-1/4 w-[300px] h-[300px] bg-white/[0.015] rounded-full blur-[80px] pointer-events-none z-0" />
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 md:px-6">
-        <div className="max-w-[650px]">
-          <h1 className="mb-1 text-2xl font-bold leading-[1.1] text-white md:mb-3 md:text-6xl lg:text-7xl">
-            FORGED IN FIRE
+      {/* Foreground Container */}
+      <div className="relative w-full max-w-7xl mx-auto px-6 md:px-12 z-10">
+        <div className="max-w-[800px] text-left">
+          {/* Subtitle */}
+          <span 
+            className="block text-white/50 text-[10px] md:text-xs font-serif tracking-[0.25em] uppercase mb-4 md:mb-6 font-semibold"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Precision-Built Motorcycle Protection & Touring Gear
+          </span>
+
+          {/* Main Headline */}
+          <h1 
+            className="text-white text-3xl md:text-7xl lg:text-8xl font-medium leading-[1.15] md:leading-[1.08] mb-3 md:mb-8 tracking-tight font-serif"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Forged in Fire.
             <br />
-            MORE THAN METAL
+            More Than Metal.
           </h1>
 
-          <p className="mb-2 text-xs text-white/90 md:mb-4 md:text-xl lg:text-3xl">
-            Made in India - Ridden Everywhere
+          {/* Description */}
+          <p 
+            className="text-white/60 text-xs md:text-lg lg:text-xl font-serif max-w-[680px] leading-relaxed mb-5 md:mb-14"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            From your first Sunday breakfast ride to the last fuel stop before Khardung La
+            – Zana builds crash guards, racks and touring systems that let your motorcycle
+            go exactly as far as you dare to.{" "}
+            <span className="italic block mt-3 text-white/80">Made in India – Ridden Everywhere.</span>
           </p>
 
-          {/* Animated Button */}
-          <Button
-            onClick={() => navigate("/product-catalog")}
-            sx={{
-              position: "relative",
-              border: "2px solid white",
-              textTransform: "none",
-              color: "white",
-              px: { xs: 2, md: 6 },
-              py: { xs: 1, md: 2 },
-              fontSize: { xs: "0.75rem", md: "1.1rem" },
-              borderRadius: "8px",
-              overflow: "hidden",
-              transition: "0.4s ease",
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center">
+            <button
+              onClick={() => navigate("/zana/bikes/all")}
+              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Shop By Your Bike
+            </button>
+            <button
+              onClick={() => navigate("/product-catalog")}
+              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Explore Universal Gear
+            </button>
+          </div>
+        </div>
+      </div>
 
-              background:
-                "linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)",
-              backgroundSize: "200% 200%",
-              backgroundPosition: "0% 0%",
-
-              "&:hover": {
-              backgroundPosition: "100% 100%",
-                color: "#000",
-                borderColor: "white",
-              },
-            }}
-          >
-            Explore the Collection
-          </Button>
+      {/* Scroll indicator */}
+      <div 
+        className="absolute bottom-12 right-12 hidden md:flex flex-col items-center gap-4 select-none"
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        <span className="text-[10px] tracking-[0.3em] uppercase text-white/30 rotate-90 origin-bottom translate-y-[-20px] font-semibold">
+          Scroll
+        </span>
+        <div className="w-[1px] h-12 bg-white/20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1/2 bg-white animate-pulse" />
         </div>
       </div>
     </section>
