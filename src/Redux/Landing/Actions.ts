@@ -13,12 +13,12 @@ export const currencyListName = `${SLICE_NAME}/currencyList`
 export const currencyListActions = traceActionsCreator(currencyListName)
 
 export const selectedCurrencyName = 'api/selectedCurrency'
-export const selectedCurrencyActions = createAction(
+export const selectedCurrencyActions = createAction<string>(
   `${selectedCurrencyName}/UPDATE`
 )
 
 export const initialLoadingName = 'app/initialLoading'
-export const initialLoadingActions = createAction(
+export const initialLoadingActions = createAction<boolean>(
   `${initialLoadingName}/setInitialLoading`
 )
 

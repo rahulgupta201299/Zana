@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Typography,
@@ -23,6 +23,9 @@ import {
   MenuItem,
   Alert,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -33,6 +36,7 @@ import { getAdminApiBody } from "../Utils/ApiUtils";
 import {
   downloadAdminOrderListCsv,
   getAdminOrderList,
+  updateAdminOrder,
   AdminOrderListFilters,
   AdminOrderListRecord,
   AdminOrderListLineItem,
@@ -48,6 +52,17 @@ import {
   getAdminIsdCodes,
 } from "../Configurations/AdminIsdCodeApi";
 import IsdCodeAutocomplete from "../Components/IsdCodeAutocomplete";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrencyList } from "@/Redux/Landing/Selectors";
+import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
+import type { TAppDispatch } from "@/Configurations/AppStore";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
+import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
+import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
+import { PaymentTypeEnum } from "@/pages/Checkout/Constant";
+import { useSnackbar } from "notistack";
+import CartOrderEditor from "../Components/CartOrderEditor";
+import type { CartModifyReqType, UpdatePaymentResType } from "@/Redux/Cart/Types";
 
 const DEFAULT_SORT_BY: AdminOrderListSortBy = "orderDate";
 const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
@@ -55,7 +70,7 @@ const DEFAULT_SORT_ORDER: AdminOrderListSortOrder = "desc";
 const NULL_PLACEHOLDER = "—";
 const UNAVAILABLE_PRODUCT_LABEL = "Product unavailable";
 
-const TABLE_COL_SPAN = 10;
+const TABLE_COL_SPAN = 11;
 
 type PaymentTypeFilter = "all" | "paid" | "cod";
 type DateFilter = "custom" | "today" | "yesterday" | "1m" | "3m" | "6m" | "1y";
@@ -198,8 +213,9 @@ function Row(props: {
   order: AdminOrderListRecord;
   expanded: boolean;
   onToggleExpand: () => void;
+  onEdit: (order: AdminOrderListRecord) => void;
 }) {
-  const { order, expanded, onToggleExpand } = props;
+  const { order, expanded, onToggleExpand, onEdit } = props;
 
   const items = order.items ?? [];
   const symbol = order.currencySymbol ?? "";
@@ -264,6 +280,17 @@ function Row(props: {
         </TableCell>
         <TableCell>
           {formatUtcToIstDateTime(order.orderDate ?? null, NULL_PLACEHOLDER)}
+        </TableCell>
+        <TableCell>
+          {order.isAdminCreated && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => onEdit(order)}
+            >
+              Edit
+            </Button>
+          )}
         </TableCell>
       </TableRow>
       <TableRow>
@@ -411,6 +438,10 @@ function parseAdminOrderListResponse(raw: unknown): {
 }
 
 export default function AdminOrderList() {
+  const dispatch = useDispatch<TAppDispatch>();
+  const { enqueueSnackbar } = useSnackbar();
+  const currencyOptions = useSelector(getCurrencyList);
+
   const [orders, setOrders] = useState<AdminOrderListRecord[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -443,6 +474,187 @@ export default function AdminOrderList() {
   const [appliedSortBy, setAppliedSortBy] = useState<AdminOrderListSortBy>(DEFAULT_SORT_BY);
   const [appliedSortOrder, setAppliedSortOrder] = useState<AdminOrderListSortOrder>(DEFAULT_SORT_ORDER);
   const [appliedPaymentType, setAppliedPaymentType] = useState<PaymentTypeFilter>("all");
+
+  const [editingOrder, setEditingOrder] = useState<AdminOrderListRecord | null>(null);
+  const [dialogSaving, setDialogSaving] = useState(false);
+  const [paymentTotals, setPaymentTotals] = useState<any>(null);
+  const [paymentUpdating, setPaymentUpdating] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState("INR");
+  const [paymentMode, setPaymentMode] = useState<PaymentTypeEnum>(PaymentTypeEnum.RAZORPAY);
+
+  // When editingOrder is set, construct the draft cart for the editor
+  const draftCart = useMemo(() => {
+    if (!editingOrder) return null;
+    return {
+      phoneNumber: editingOrder.phoneNumber,
+      emailId: editingOrder.emailId || "",
+      items: editingOrder.items || [],
+      currency: editingOrder.currency || "INR",
+      currencySymbol: editingOrder.currencySymbol || "₹",
+      shippingAddress: editingOrder.shippingAddress || null,
+      billingAddress: editingOrder.billingAddress || null,
+      shippingAddressSameAsBillingAddress: editingOrder.shippingAddressSameAsBillingAddress !== false,
+      couponCode: editingOrder.couponCode || null,
+      appliedCoupon: editingOrder.couponCode || null,
+    };
+  }, [editingOrder]);
+
+  useEffect(() => {
+    if (editingOrder) {
+      const currency = editingOrder.currency || "INR";
+      setSelectedCurrency(currency);
+      dispatch(selectedCurrencyActions(currency));
+      setPaymentMode(editingOrder.paymentMethod === "cod" ? PaymentTypeEnum.COD : PaymentTypeEnum.RAZORPAY);
+      setPaymentTotals({
+        subtotal: editingOrder.subtotal ?? 0,
+        shippingCost: editingOrder.shippingCost ?? 0,
+        taxAmount: editingOrder.taxAmount ?? 0,
+        discountAmount: editingOrder.discountAmount ?? 0,
+        codCharges: editingOrder.codCharges ?? 0,
+        totalAmount: editingOrder.totalAmount ?? 0,
+      });
+    } else {
+      setPaymentTotals(null);
+    }
+  }, [editingOrder]);
+
+  const handleCartItemsChange = async (
+    items: CartModifyReqType["items"],
+    updatedPaymentMethod?: "online" | "cod",
+    updatedCurrency?: string,
+  ) => {
+    if (!editingOrder?.phoneNumber) return;
+
+    const currentMethod = updatedPaymentMethod !== undefined
+      ? (updatedPaymentMethod === "cod" ? PaymentTypeEnum.COD : PaymentTypeEnum.RAZORPAY)
+      : paymentMode;
+    const currentCurrency = updatedCurrency !== undefined ? updatedCurrency : selectedCurrency;
+
+    setPaymentUpdating(true);
+    try {
+      await dispatch(
+        cartModifyServiceAction({
+          phoneNumber: editingOrder.phoneNumber,
+          items,
+        }),
+      );
+      const totals = (await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber: editingOrder.phoneNumber,
+          method: currentMethod,
+          currency: currentCurrency,
+        }),
+      )) as UpdatePaymentResType;
+      setPaymentTotals(totals);
+    } catch (error: any) {
+      enqueueSnackbar("Failed to update payment summary.", { variant: "error" });
+    } finally {
+      setPaymentUpdating(false);
+    }
+  };
+
+  const handleSaveOrder = async (payload: any) => {
+    if (!editingOrder?._id) return;
+    setDialogSaving(true);
+    try {
+      await dispatch(updateCartAddressServiceAction(payload.address));
+      if (payload.hasCartChanges) {
+        await dispatch(cartModifyServiceAction(payload.cart));
+      }
+      
+      const totals = (await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber: editingOrder.phoneNumber || "",
+          method: payload.paymentMethod === "cod" ? PaymentTypeEnum.COD : PaymentTypeEnum.RAZORPAY,
+          currency: payload.currency || "INR",
+        }),
+      )) as UpdatePaymentResType;
+
+      const matchedSymbol = currencyOptions.find((c: any) => c.code === payload.currency)?.symbol || "₹";
+
+      const updatePayload = {
+        emailId: payload.address.emailId,
+        items: payload.orderItems,
+        shippingAddress: {
+          fullName: payload.address.shippingAddress.fullName,
+          phone: payload.address.shippingAddress.phone,
+          addressLine1: payload.address.shippingAddress.addressLine1,
+          addressLine2: payload.address.shippingAddress.addressLine2,
+          city: payload.address.shippingAddress.city,
+          state: payload.address.shippingAddress.state,
+          postalCode: payload.address.shippingAddress.postalCode,
+          country: payload.address.shippingAddress.country,
+        },
+        billingAddress: {
+          fullName: payload.address.billingAddress.fullName,
+          phone: payload.address.billingAddress.phone,
+          addressLine1: payload.address.billingAddress.addressLine1,
+          addressLine2: payload.address.billingAddress.addressLine2,
+          city: payload.address.billingAddress.city,
+          state: payload.address.billingAddress.state,
+          postalCode: payload.address.billingAddress.postalCode,
+          country: payload.address.billingAddress.country,
+        },
+        shippingAddressSameAsBillingAddress: payload.address.shippingAddressSameAsBillingAddress,
+        subtotal: totals.subtotal ?? 0,
+        discountAmount: totals.discountAmount ?? 0,
+        codCharges: totals.codCharges ?? 0,
+        advancePaid: payload.advancePaid,
+        couponCode: payload.couponCode,
+        totalAmount: totals.totalAmount ?? 0,
+        currency: payload.currency || "INR",
+        currencySymbol: matchedSymbol,
+        paymentMethod: payload.paymentMethod || "online",
+        paymentStatus: payload.paymentStatus,
+        orderStatus: editingOrder.orderStatus || "placed",
+        paymentType: payload.paymentType,
+        adminCapturedPaymentId: payload.adminCapturedPaymentId,
+      };
+
+      await updateAdminOrder(editingOrder._id, updatePayload);
+      
+      enqueueSnackbar("Order updated successfully.", { variant: "success" });
+      setEditingOrder(null);
+      void load(page + 1, rowsPerPage);
+    } catch (error: any) {
+      const { message = "Failed to update order." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setDialogSaving(false);
+    }
+  };
+
+  const paymentSummary = (
+    <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+        Payment summary
+      </Typography>
+      {paymentTotals ? (
+        <Stack spacing={0.75}>
+          {[
+            ["Subtotal", paymentTotals.subtotal],
+            ["Shipping charges", paymentTotals.shippingCost],
+            ["Tax", paymentTotals.taxAmount],
+            ["Discount", paymentTotals.discountAmount ? `-${paymentTotals.discountAmount}` : 0],
+            ["COD charges", paymentTotals.codCharges],
+            ["Total", paymentTotals.totalAmount],
+          ].map(([label, val]) => (
+            <Box key={label} sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body2" color="text.secondary">
+                {label}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {currencyOptions.find((c: any) => c.code === selectedCurrency)?.symbol || "₹"}
+                {val}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
+      ) : (
+        <Typography color="text.secondary">No items in order.</Typography>
+      )}
+    </Paper>
+  );
 
   const load = useCallback(
     async (apiPage: number, limit: number) => {
@@ -811,6 +1023,7 @@ export default function AdminOrderList() {
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Razorpay order ID</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Razorpay payment ID</TableCell>
                 <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Order date</TableCell>
+                <TableCell sx={{ fontWeight: "bold", bgcolor: "#f1f5f9" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -837,6 +1050,7 @@ export default function AdminOrderList() {
                       onToggleExpand={() => {
                         toggleExpandedRow(rowId);
                       }}
+                      onEdit={setEditingOrder}
                     />
                   );
                 })
@@ -859,6 +1073,38 @@ export default function AdminOrderList() {
           }}
         />
       </Paper>
+
+      <Dialog open={editingOrder != null} onClose={dialogSaving ? undefined : () => setEditingOrder(null)} fullWidth maxWidth="md">
+        <DialogTitle>Edit admin order</DialogTitle>
+        <DialogContent dividers>
+          <CartOrderEditor
+            cart={draftCart}
+            countryOptions={isdCodes}
+            saving={dialogSaving}
+            onCancel={() => setEditingOrder(null)}
+            onSave={handleSaveOrder}
+            submitLabel="Update order"
+            disablePhoneFields={true}
+            footer={paymentSummary}
+            onCartItemsChange={handleCartItemsChange}
+            calculatingPaymentSummary={paymentUpdating}
+            onPaymentMethodChange={(method) => {
+              const newMode = method === "cod" ? PaymentTypeEnum.COD : PaymentTypeEnum.RAZORPAY;
+              setPaymentMode(newMode);
+              if (draftCart?.items) {
+                void handleCartItemsChange(draftCart.items, method, selectedCurrency);
+              }
+            }}
+            onCurrencyChange={(curr) => {
+              setSelectedCurrency(curr);
+              dispatch(selectedCurrencyActions(curr));
+              if (draftCart?.items) {
+                void handleCartItemsChange(draftCart.items, paymentMode === PaymentTypeEnum.COD ? "cod" : "online", curr);
+              }
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
