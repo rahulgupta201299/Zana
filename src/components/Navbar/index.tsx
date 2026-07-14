@@ -1,18 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Box, Button, FormControl, MenuItem, Select } from "@mui/material";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/Constants/Routes";
 import Zana from "@/Assets/Icons/Zana.webp";
 import ZPro from "@/Assets/Icons/ZPro.webp";
@@ -48,7 +37,7 @@ type NavbarPropsType = {
 // both derive from this so they can never drift apart.
 const LOGO_HEIGHT = {
   mobile: "3.5rem", // 56px
-  desktop: "5rem",  // 80px
+  desktop: "5rem", // 80px
 };
 const NAVBAR_VERTICAL_PADDING = {
   mobile: "12px", // 12px top + 12px bottom
@@ -81,7 +70,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   const location = useLocation();
   const params = useParams();
 
-  const { bikeType = '' } = params
+  const { bikeType = "" } = params;
 
   // const cartDetail = useSelector(cartDetailSelector);
 
@@ -172,14 +161,13 @@ function Navbar({ isMobile }: NavbarPropsType) {
   }, [location.pathname]);
 
   async function handleChange(value: string) {
-
     dispatch(selectedCurrencyActions(value));
 
     const newCartDetail = createProductConverter(value);
     dispatch(cartModifyActions.success(newCartDetail));
 
     try {
-      await dispatch(getCartDetailServiceAction(value))
+      await dispatch(getCartDetailServiceAction(value));
     } catch (error) {
       console.error(error);
     }
@@ -221,7 +209,13 @@ function Navbar({ isMobile }: NavbarPropsType) {
             /* MOBILE NAVBAR VIEW */
             <>
               {/* Mobile Menu Icon Left */}
-              <Box sx={{ width: "30%", display: "flex", justifyContent: "flex-start" }}>
+              <Box
+                sx={{
+                  width: "30%",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                }}
+              >
                 <Button
                   onClick={() => setIsMobileMenuOpen(true)}
                   aria-label="Open navigation menu"
@@ -238,58 +232,106 @@ function Navbar({ isMobile }: NavbarPropsType) {
               </Box>
 
               {/* Mobile Logo Center */}
-              <Box sx={{ width: "40%", display: "flex", justifyContent: "center" }}>
+              <Box
+                sx={{ width: "40%", display: "flex", justifyContent: "center" }}
+              >
                 <Link
                   to={ROUTES.BASE_URL}
                   className="text-white tracking-[0.2em] text-sm md:text-base font-bold flex items-center hover:opacity-80 transition-opacity font-serif"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                      <img
-                src={isZProPath ? ZPro : Zana}
-                alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
-                width={isZProPath ? 120 : 404}
-                height={isZProPath ? 120 : 316}
-                fetchPriority="high"
-                decoding="async"
-                style={{
-                  height: LOGO_HEIGHT.mobile,
-                  width: "auto",
-                  cursor: "pointer",
-                  transition: "opacity 0.2s",
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
-                onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-              />
+                  <img
+                    src={isZProPath ? ZPro : Zana}
+                    alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
+                    width={isZProPath ? 120 : 404}
+                    height={isZProPath ? 120 : 316}
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{
+                      height: LOGO_HEIGHT.mobile,
+                      width: "auto",
+                      cursor: "pointer",
+                      transition: "opacity 0.2s",
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
+                    onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                  />
                 </Link>
               </Box>
 
               {/* Mobile Icons Right */}
-              <Box sx={{ width: "30%", display: "flex", justifyContent: "flex-end", gap: 1.5, alignItems: "center" }}>
-                <FormControl size="small">
+              <Box
+                sx={{
+                  width: "40%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 1.5,
+                  alignItems: "center",
+                }}
+              >
+                <FormControl
+                  size="small"
+                  sx={{
+                    borderRadius: 1,
+                    minWidth:  20,
+                  }}
+                >
                   <Select
                     value={selectedCurrency}
                     onChange={(e) => handleChange(e.target.value)}
                     inputProps={{ "aria-label": "Select currency" }}
                     aria-label="Select currency"
-                    MenuProps={currencyMenuProps}
                     sx={{
-                      color: "rgba(255, 255, 255, 0.8)",
-                      fontSize: "0.75rem",
-                      fontWeight: 500,
-                      height: 28,
-                      transition: "color 0.2s",
-                      "&:hover": { color: "white" },
-                      ".MuiOutlinedInput-notchedOutline": { border: 0 },
-                      ".MuiSelect-select": { p: 0, pr: "16px !important" },
-                      ".MuiSvgIcon-root": { color: "rgba(255, 255, 255, 0.5)", fontSize: "0.9rem" },
+                      color: "white",
+                      fontSize:  "0.8rem" ,
+                      height: "32px",
+                      ".MuiSelect-select": {
+                        py: 0.5,
+                        paddingRight: "24px !important"
+                      },           
+                      ".MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                      ".MuiSvgIcon-root": {
+                        color: "white",
+                        fontSize: ".75rem",
+                      },
                     }}
-                    renderValue={(selected) => selected}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          backgroundColor: "#1e1e1e",
+                          color: "white",
+                        },
+                      },
+                    }}
+                    renderValue={(selected) => {
+                      const selectedCurrency = currencies.find(
+                        (item) => item.code === selected,
+                      );
+
+                      if (!selectedCurrency) return "";
+                      if (isMobile) return selectedCurrency.symbol;
+
+                      return `${selectedCurrency.symbol} ${selectedCurrency.code}`;
+                    }}
                   >
-                    {currencies.map((item) => (
-                      <MenuItem key={item.code} value={item.code} sx={{ fontSize: "0.85rem" }}>
-                        {item.symbol} - {item.code}
-                      </MenuItem>
-                    ))}
+                    {currencies.map((item) => {
+                      const value = isMobile
+                        ? item.symbol
+                        : `${item.symbol} - ${item.code}`;
+                      return (
+                        <MenuItem key={item.code} value={item.code}>
+                          {value}
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                 </FormControl>
 
@@ -330,27 +372,33 @@ function Navbar({ isMobile }: NavbarPropsType) {
                   className="text-white tracking-[0.25em] text-xl font-bold flex items-center hover:opacity-80 transition-opacity font-serif"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                     <img
-                src={isZProPath ? ZPro : Zana}
-                alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
-                width={isZProPath ? 120 : 404}
-                height={isZProPath ? 120 : 316}
-                fetchPriority="high"
-                decoding="async"
-                style={{
-                  height: LOGO_HEIGHT.desktop,
-                  width: "auto",
-                  cursor: "pointer",
-                  transition: "opacity 0.2s",
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
-                onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-              />
+                  <img
+                    src={isZProPath ? ZPro : Zana}
+                    alt={`${isZProPath ? "ZPro" : "Zana"} Logo`}
+                    width={isZProPath ? 120 : 404}
+                    height={isZProPath ? 120 : 316}
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{
+                      height: LOGO_HEIGHT.desktop,
+                      width: "auto",
+                      cursor: "pointer",
+                      transition: "opacity 0.2s",
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
+                    onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                  />
                 </Link>
               </Box>
 
               {/* Desktop Menu Items Center */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: { md: 4, lg: 6 } }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: { md: 4, lg: 6 },
+                }}
+              >
                 {MenuItems.map((navItem, index) => (
                   <button
                     key={index}
@@ -366,6 +414,46 @@ function Navbar({ isMobile }: NavbarPropsType) {
 
               {/* Desktop Right Links */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <FormControl size="small">
+                  <Select
+                    value={selectedCurrency}
+                    onChange={(e) => handleChange(e.target.value)}
+                    inputProps={{ "aria-label": "Select currency" }}
+                    aria-label="Select currency"
+                    MenuProps={currencyMenuProps}
+                    sx={{
+                      color: "rgba(255, 255, 255, 0.8)",
+                      fontSize: "0.85rem",
+                      fontWeight: 500,
+                      fontFamily: "'Inter', sans-serif",
+                      letterSpacing: "0.05em",
+                      transition: "color 0.2s",
+                      "&:hover": { color: "white" },
+                      ".MuiOutlinedInput-notchedOutline": { border: 1},
+                      "&:hover .MuiOutlinedInput-notchedOutline": { border: 1 },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        border: 0,
+                      },
+                      ".MuiSelect-select": { p: 1, pr: "18px !important" },
+                      ".MuiSvgIcon-root": {
+                        color: "rgba(255, 255, 255, 0.4)",
+                        right: 0,
+                        fontSize: "1.1rem",
+                      },
+                    }}
+                  >
+                    {currencies.map((item) => (
+                      <MenuItem
+                        key={item.code}
+                        value={item.code}
+                        sx={{ fontSize: "0.85rem" }}
+                      >
+                        {item.symbol} {item.code}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
                 {TopLevelItems.map((item, ind) => {
                   const { name, Component } = item;
                   return (
@@ -391,36 +479,6 @@ function Navbar({ isMobile }: NavbarPropsType) {
                     </Button>
                   );
                 })}
-
-                <FormControl size="small">
-                  <Select
-                    value={selectedCurrency}
-                    onChange={(e) => handleChange(e.target.value)}
-                    inputProps={{ "aria-label": "Select currency" }}
-                    aria-label="Select currency"
-                    MenuProps={currencyMenuProps}
-                    sx={{
-                      color: "rgba(255, 255, 255, 0.8)",
-                      fontSize: "0.85rem",
-                      fontWeight: 500,
-                      fontFamily: "'Inter', sans-serif",
-                      letterSpacing: "0.05em",
-                      transition: "color 0.2s",
-                      "&:hover": { color: "white" },
-                      ".MuiOutlinedInput-notchedOutline": { border: 0 },
-                      "&:hover .MuiOutlinedInput-notchedOutline": { border: 0 },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: 0 },
-                      ".MuiSelect-select": { p: 0, pr: "18px !important" },
-                      ".MuiSvgIcon-root": { color: "rgba(255, 255, 255, 0.4)", right: 0, fontSize: "1.1rem" },
-                    }}
-                  >
-                    {currencies.map((item) => (
-                      <MenuItem key={item.code} value={item.code} sx={{ fontSize: "0.85rem" }}>
-                        {item.symbol} {item.code}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Box>
             </>
           )}
