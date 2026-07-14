@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
+import HeroImage from "@/Assets/Images/ZANA_MOTORCYCLE_HERO_IMAGE.webp";
 
 const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
@@ -12,6 +13,17 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
         style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Playfair Display', serif" }}
       >
         ZANA
+      </div>
+
+      {/* Hero Image */}
+      <div className="absolute inset-0 z-0 pointer-events-none flex justify-end">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d] via-[#0d0d0d]/90 to-transparent z-10 md:w-2/3" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent z-10" />
+        <img 
+          src={HeroImage} 
+          alt="Zana Motorcycle" 
+          className="w-full md:w-[65%] h-full object-cover object-center md:object-right opacity-50 md:opacity-100"
+        />
       </div>
 
       {/* Decorative subtle ambient lights */}

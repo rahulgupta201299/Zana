@@ -1,19 +1,10 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "notistack";
-import { TAppDispatch } from "@/Configurations/AppStore";
 import { ShopByProductDetailsType } from "@/Redux/Product/Types";
-import { getLoginDetails } from "@/Redux/Auth/Selectors";
-import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
-import addWishListServiceAction from "@/Redux/Auth/Services/AddWishlist";
-import removeWishlistServiceAction from "@/Redux/Auth/Services/RemoveWishlist";
 import { encodedGeneratedPath } from "@/Utils/global";
 import { ROUTES } from "@/Constants/Routes";
-import useCart from "@/hooks/useCart";
-import Products from "@/components/Product";
+import BikeKitProductCard from "./BikeKitProductCard";
 import withDeviceDetails, { IWithDeviceDetails } from "@/Hocs/withDeviceDetails";
-import { useState } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -32,8 +23,6 @@ type OwnProps = {
   source?: string;
   /** Image position for desktop layout */
   imagePosition?: "left" | "right";
-  /** Optional prop to show/hide wishlist icon (defaults to false meaning wishlist is hidden) */
-  hideWishlistIcon?: boolean;
 };
 
 type Props = OwnProps & IWithDeviceDetails;
@@ -54,17 +43,18 @@ function CatalogueTile({
         minHeight,
         height: "100%",
         cursor: "pointer",
-        bgcolor: "rgba(255,255,255,0.04)",
+        bgcolor: "#17191e",
         border: "1px dashed rgba(255,255,255,0.18)",
-        borderRadius: 3,
+        borderRadius: 2,
         p: { xs: 2.5, sm: 3 },
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+        textAlign: "center",
         transition: "border-color 0.25s, background 0.25s",
         "&:hover": {
           borderColor: "rgba(255,255,255,0.45)",
-          bgcolor: "rgba(255,255,255,0.07)",
+          bgcolor: "#1a1d24",
         },
       }}
     >
@@ -92,17 +82,17 @@ function CatalogueTile({
           fontFamily: "'Georgia', serif",
         }}
       >
-        Sell all {modelName} products
+        See all {modelName} parts →
       </Typography>
-      {/* <Typography
+      <Typography
         sx={{
           fontSize: "0.8rem",
           color: "rgba(255,255,255,0.45)",
           lineHeight: 1.6,
         }}
       >
-        {item.subtitle}
-      </Typography> */}
+        Racks, guards, footpegs, screens & more.
+      </Typography>
     </Box>
   );
 }
@@ -132,7 +122,7 @@ function HeroCard({
         bgcolor: "#1c1c1e",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-end",
+        justifyContent: "center",
         width: "100%",
       }}
     >
@@ -142,7 +132,9 @@ function HeroCard({
         sx={{
           position: "absolute",
           top: { xs: 12, md: 20 },
-          left: { xs: 14, md: 24 },
+          left: 0,
+          right: 0,
+          textAlign: "center",
           fontFamily: "'Georgia', 'Times New Roman', serif",
           fontSize: { xs: "clamp(2.5rem, 10vw, 5.5rem)", md: "clamp(3rem, 7vw, 5.5rem)" },
           fontWeight: 700,
@@ -167,7 +159,7 @@ function HeroCard({
             inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "contain",
+            objectFit: "cover",
             objectPosition: "center",
           }}
         />
@@ -185,7 +177,7 @@ function HeroCard({
       />
 
       {/* Brand + Model text */}
-      <Box sx={{ position: "relative", p: { xs: 2.5, sm: 3.5 }, zIndex: 2 }}>
+      <Box sx={{ position: "relative", p: { xs: 2.5, sm: 3.5 }, zIndex: 2, textAlign: "center" }}>
         <Typography
           sx={{
             fontSize: "0.65rem",
@@ -226,16 +218,9 @@ function BikeKitItem({
   products,
   source = "bike-kit",
   imagePosition = "left",
-  hideWishlistIcon = true,
   isMobile,
 }: Props) {
-  const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const { phoneNumber = "" } = useSelector(getLoginDetails);
-  const { incrementToCart, getQuantity } = useCart();
-
-  const [wishlistMap, setWishlistMap] = useState<Record<string, boolean>>({});
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -248,50 +233,6 @@ function BikeKitItem({
       }),
       { state: { source } },
     );
-  }
-
-  async function handleWishList(
-    e: React.MouseEvent,
-    product: ShopByProductDetailsType,
-  ) {
-    e.stopPropagation();
-    const { _id: productId, isWishlist } = product;
-    const currentValue = wishlistMap[productId] ?? isWishlist;
-
-    if (!phoneNumber) {
-      enqueueSnackbar({
-        message: "Login required to save products to your wishlist.",
-        variant: "info",
-      });
-      dispatch(setOpenSignupPopup(true));
-      return;
-    }
-
-    setWishlistMap((prev) => ({ ...prev, [productId]: !currentValue }));
-
-    try {
-      const action = currentValue
-        ? removeWishlistServiceAction({ phoneNumber, productIds: [productId] })
-        : addWishListServiceAction({ phoneNumber, productIds: [productId] });
-
-      const result = await dispatch(action);
-      if (result) {
-        enqueueSnackbar({
-          message: currentValue ? "Removed from wishlist" : "Added to wishlist",
-          variant: currentValue ? "info" : "success",
-        });
-      }
-    } catch {
-      setWishlistMap((prev) => ({ ...prev, [productId]: currentValue }));
-    }
-  }
-
-  function handleAddToCart(
-    e: React.MouseEvent,
-    product: ShopByProductDetailsType,
-  ) {
-    e.stopPropagation();
-    incrementToCart(product, product._id, product.quantityAvailable);
   }
 
   // ── Layout constants ──────────────────────────────────────────────────────
@@ -325,24 +266,18 @@ function BikeKitItem({
               {visibleProducts.map((product, index) => (
                 <Grid
                   key={product._id}
-                  size={{ xs: 12, sm: 6 }}
-                  sx={{ display: "flex" }}
+                  size={{ xs: 6 }}
+                  sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}
                 >
-                  <Products
+                  <BikeKitProductCard
                     product={product}
-                    quantityAddedInCart={getQuantity(product._id)}
-                    isWishlisted={wishlistMap[product._id] ?? product.isWishlist}
-                    priority={index === 0}
-                    hideWishlistIcon={hideWishlistIcon}
                     onProductClick={() => handleProductClick(product)}
-                    onAddToCart={(e) => handleAddToCart(e, product)}
-                    onWishList={(e) => handleWishList(e, product)}
                   />
                 </Grid>
               ))}
 
               {/* Catalogue tile */}
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+              <Grid size={{ xs: 6 }} sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}>
                 <Box sx={{ width: "100%" }}>
                   <CatalogueTile
                     modelName={modelName}
@@ -365,28 +300,22 @@ function BikeKitItem({
           minHeight={heroMinHeight}
         />
 
-        {/* Products — 2-col grid on tablet portrait, 1-col on mobile */}
+        {/* Products — 2-col grid on tablet portrait and mobile */}
         <Grid container spacing={1.5}>
           {visibleProducts.map((product, index) => (
             <Grid
               key={product._id}
-              size={{ xs: 12, sm: 6 }}
-              sx={{ display: "flex" }}
+              size={{ xs: 6 }}
+              sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}
             >
-              <Products
+              <BikeKitProductCard
                 product={product}
-                quantityAddedInCart={getQuantity(product._id)}
-                isWishlisted={wishlistMap[product._id] ?? product.isWishlist}
-                priority={index === 0}
-                hideWishlistIcon={hideWishlistIcon}
                 onProductClick={() => handleProductClick(product)}
-                onAddToCart={(e) => handleAddToCart(e, product)}
-                onWishList={(e) => handleWishList(e, product)}
               />
             </Grid>
           ))}
 
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 6 }} sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}>
             <Box sx={{ width: "100%" }}>
               <CatalogueTile
                 modelName={modelName}
