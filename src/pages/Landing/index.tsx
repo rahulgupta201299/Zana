@@ -1,13 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import OurPhilosophy from "@/components/OurPhilosophy";
+import BikeKitSection from "@/components/BikeKitSection";
 
-const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
-const NewArrivals = lazy(() => import("@/components/NewArrivals"));
+// const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
+// const NewArrivals = lazy(() => import("@/components/NewArrivals"));
 const YouTubeSection = lazy(() => import("@/components/YouTubeSection"));
 const InstagramFeed = lazy(() => import("@/components/InstagramFeed"));
 const BrandStory = lazy(() => import("@/components/BrandStory"));
-const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
+// const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 
 function LazyOnVisible({
   children,
@@ -51,17 +52,17 @@ function LazyOnVisible({
   );
 }
 
-
 function Landing() {
   return (
     <div className="min-h-screen">
       <OurPhilosophy />
-      <LazyOnVisible minHeight={520}>
+      <BikeKitSection />
+      {/* <LazyOnVisible minHeight={520}>
         <GarageFavorite />
       </LazyOnVisible>
       <LazyOnVisible minHeight={520}>
         <NewArrivals />
-      </LazyOnVisible>
+      </LazyOnVisible> */}
       <LazyOnVisible minHeight={320}>
         <YouTubeSection />
       </LazyOnVisible>
