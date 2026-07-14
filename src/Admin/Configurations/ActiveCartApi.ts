@@ -210,3 +210,17 @@ export async function createAdminActiveCartPaymentLink(
     cache: false,
   }) as Promise<AdminCreatePaymentLinkResponse>;
 }
+
+export async function getAdminActiveCartByPhone(
+  phoneNumber: string,
+  currency?: string,
+): Promise<AdminActiveCartRecord | null> {
+  const response = await network.request({
+    url: `/api/v1/cart/active/${phoneNumber}`,
+    method: API_METHOD_ENUM.GET,
+    params: currency ? { currency } : undefined,
+    cache: false,
+  });
+  return response?.data || response || null;
+}
+

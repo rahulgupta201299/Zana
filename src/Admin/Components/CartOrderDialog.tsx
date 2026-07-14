@@ -21,6 +21,13 @@ export default function CartOrderDialog(props: {
   onSave: (payload: CartOrderDialogSavePayload) => Promise<void>;
   submitLabel?: string;
   title?: string;
+  disablePhoneFields?: boolean;
+  showPaymentMethodAndCurrency?: boolean;
+  onPaymentMethodChange?: (method: "online" | "cod") => void;
+  onCurrencyChange?: (currency: string) => void;
+  footer?: ReactNode;
+  onCartItemsChange?: (items: CartModifyReqType["items"], paymentMethod: "online" | "cod", currency: string) => Promise<void>;
+  calculatingPaymentSummary?: boolean;
 }) {
   const {
     open,
@@ -31,6 +38,13 @@ export default function CartOrderDialog(props: {
     onSave,
     submitLabel = "Save",
     title = "Cart order details",
+    disablePhoneFields = false,
+    showPaymentMethodAndCurrency = true,
+    onPaymentMethodChange,
+    onCurrencyChange,
+    footer,
+    onCartItemsChange,
+    calculatingPaymentSummary = false,
   } = props;
 
   return (
@@ -44,6 +58,13 @@ export default function CartOrderDialog(props: {
           onCancel={onClose}
           onSave={onSave}
           submitLabel={submitLabel}
+          disablePhoneFields={disablePhoneFields}
+          showPaymentMethodAndCurrency={showPaymentMethodAndCurrency}
+          onPaymentMethodChange={onPaymentMethodChange}
+          onCurrencyChange={onCurrencyChange}
+          footer={footer}
+          onCartItemsChange={onCartItemsChange}
+          calculatingPaymentSummary={calculatingPaymentSummary}
         />
       </DialogContent>
     </Dialog>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Box,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -20,18 +21,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { TAppDispatch } from "@/Configurations/AppStore";
 import { ROUTES } from "@/Constants/Routes";
-import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import updateCartAddressServiceAction from "@/Redux/Cart/Services/UpdateCartAddressService";
 import updatePaymentServiceAction from "@/Redux/Cart/Services/UpdatePaymentService";
-import createPaymentOrderServiceAction from "@/Redux/Order/Services/CreatePaymentOrder";
-import createCodOrderServiceAction from "@/Redux/Order/Services/CreateCodOrder";
+import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import currencyListServiceAction from "@/Redux/Landing/Services/CurrencyList";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
 import { getCurrencyList, getSelectedCurrency } from "@/Redux/Landing/Selectors";
-import type {
-  CreateCodOrderResType,
-  CreatePaymentOrderResType,
-} from "@/Redux/Order/Types";
 import { PaymentTypeEnum } from "@/pages/Checkout/Constant";
 import { COUNTRY_INDIA, CURRENCY_LIST } from "@/Constants/AppConstant";
 import CartOrderEditor, {
@@ -43,7 +38,13 @@ import {
   AdminIsdCode,
   getAdminIsdCodes,
 } from "../Configurations/AdminIsdCodeApi";
-import type { UpdatePaymentResType } from "@/Redux/Cart/Types";
+import {
+  getAdminActiveCartByPhone,
+  type AdminActiveCartRecord,
+} from "../Configurations/ActiveCartApi";
+
+import type { CartModifyReqType, UpdatePaymentResType } from "@/Redux/Cart/Types";
+import { createAdminOrder, AdminCreateOrderRes, AdminCreateOrderReq } from "../Configurations/AdminOrderListApi";
 
 const DEFAULT_ISD_CODE = "+91";
 const INR_OUTSIDE_INDIA_ERROR = "INR currency is only supported for India orders.";
@@ -72,7 +73,7 @@ function buildPhoneNumber(isdCode: string, phoneNumber: string): string {
   return `${normalizeIsdCode(isdCode)}-${phone}`;
 }
 
-function orderDisplay(response: CreatePaymentOrderResType | CreateCodOrderResType): string {
+function orderDisplay(response: AdminCreateOrderRes): string {
   const orderNumber = response.orderNumber?.trim();
   const orderId = response.orderId?.trim();
   return orderNumber || orderId || "Order created";
@@ -93,9 +94,13 @@ export default function AdminCreateOrder() {
   const dispatch = useDispatch<TAppDispatch>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const modifyCart = async (phone: string, items: { productId: string; quantity: number }[]) => {
+    await dispatch(cartModifyServiceAction({ phoneNumber: phone, items }));
+  };
   const currencies = useSelector(getCurrencyList);
   const selectedCurrency = useSelector(getSelectedCurrency);
   const [isdCodes, setIsdCodes] = useState<AdminIsdCode[]>([]);
+  const [isdCodesLoading, setIsdCodesLoading] = useState(false);
   const [isdCode, setIsdCode] = useState(DEFAULT_ISD_CODE);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [paymentMode, setPaymentMode] = useState<PaymentTypeEnum>(
@@ -105,12 +110,29 @@ export default function AdminCreateOrder() {
   const [shippingCountry, setShippingCountry] = useState(COUNTRY_INDIA);
   const [paymentTotals, setPaymentTotals] = useState<PaymentTotals | null>(null);
   const [paymentUpdating, setPaymentUpdating] = useState(false);
-  const [createdOrder, setCreatedOrder] = useState<
-    CreatePaymentOrderResType | CreateCodOrderResType | null
-  >(null);
+  const [createdOrder, setCreatedOrder] = useState<AdminCreateOrderRes | null>(null);
+  const [fetchedCart, setFetchedCart] = useState<AdminActiveCartRecord | null>(null);
+
+  const isIndian = useMemo(() => normalizeIsdCode(isdCode) === "+91", [isdCode]);
+  const cleanPhone = useMemo(() => phoneNumber.trim().replace(/[\s-]/g, ""), [phoneNumber]);
+  const isValidPhone = useMemo(() => {
+    if (!cleanPhone) return false;
+    if (isIndian) {
+      return cleanPhone.length === 10 && /^[6-9]\d{9}$/.test(cleanPhone);
+    }
+    const digitsOnly = cleanPhone.replace(/^\+/, "");
+    return (
+      digitsOnly.length >= 8 &&
+      digitsOnly.length <= 15 &&
+      /^\+?[1-9]\d{7,14}$/.test(cleanPhone)
+    );
+  }, [isIndian, cleanPhone]);
+
+  const isLoading = isdCodesLoading || paymentUpdating || saving;
 
   useEffect(() => {
     let active = true;
+    setIsdCodesLoading(true);
     getAdminIsdCodes()
       .then((codes) => {
         if (!active) return;
@@ -124,6 +146,9 @@ export default function AdminCreateOrder() {
       })
       .catch(() => {
         if (active) setIsdCodes([]);
+      })
+      .finally(() => {
+        if (active) setIsdCodesLoading(false);
       });
     return () => {
       active = false;
@@ -151,8 +176,62 @@ export default function AdminCreateOrder() {
     : [{ code: selectedCurrency, name: selectedCurrency, symbol: selectedCurrency, exchangeRate: 1 }];
   const selectedCurrencySymbol =
     currencyOptions.find((currency) => currency.code === selectedCurrency)?.symbol || "";
+
+  useEffect(() => {
+    if (!isValidPhone) {
+      setFetchedCart(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setPaymentUpdating(true);
+      try {
+        const response = await getAdminActiveCartByPhone(fullPhoneNumber, selectedCurrency);
+        if (response) {
+          setFetchedCart(response);
+          if (response.currency && response.currency !== selectedCurrency) {
+            dispatch(selectedCurrencyActions(response.currency));
+          }
+          setPaymentTotals({
+            subtotal: response.subtotal ?? 0,
+            totalAmount: response.totalAmount ?? 0,
+            discountAmount: response.discountAmount ?? 0,
+            shippingCost: response.shippingCost ?? 0,
+            taxAmount: response.taxAmount ?? 0,
+            codCharges: response.codCharges ?? 0,
+            currency: response.currency ?? selectedCurrency,
+            currencySymbol: response.currencySymbol ?? selectedCurrencySymbol,
+          });
+          enqueueSnackbar("Fetched active cart for this phone number.", { variant: "info" });
+        } else {
+          setFetchedCart(null);
+        }
+      } catch (err) {
+        setFetchedCart(null);
+      } finally {
+        setPaymentUpdating(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [fullPhoneNumber, selectedCurrency, dispatch, isValidPhone, selectedCurrencySymbol]);
+
   const draftCart = useMemo<CartOrderEditorCart | null>(() => {
-    if (!fullPhoneNumber) return null;
+    if (!fullPhoneNumber || !isValidPhone) return null;
+    if (fetchedCart) {
+      return {
+        phoneNumber: fullPhoneNumber,
+        emailId: fetchedCart.emailId || "",
+        items: fetchedCart.items || [],
+        currency: fetchedCart.currency || selectedCurrency,
+        currencySymbol: fetchedCart.currencySymbol || selectedCurrencySymbol,
+        shippingAddress: fetchedCart.shippingAddress || null,
+        billingAddress: fetchedCart.billingAddress || null,
+        shippingAddressSameAsBillingAddress: fetchedCart.shippingAddressSameAsBillingAddress !== false,
+        couponCode: fetchedCart.couponCode || null,
+        appliedCoupon: fetchedCart.appliedCoupon || null,
+      };
+    }
     return {
       phoneNumber: fullPhoneNumber,
       emailId: "",
@@ -162,8 +241,10 @@ export default function AdminCreateOrder() {
       shippingAddress: null,
       billingAddress: null,
       shippingAddressSameAsBillingAddress: true,
+      couponCode: null,
+      appliedCoupon: null,
     };
-  }, [fullPhoneNumber, selectedCurrency, selectedCurrencySymbol]);
+  }, [fullPhoneNumber, fetchedCart, selectedCurrency, selectedCurrencySymbol, isValidPhone]);
 
   function handleCurrencyChange(currency: any) {
     dispatch(selectedCurrencyActions(currency));
@@ -199,11 +280,33 @@ export default function AdminCreateOrder() {
     void recalculatePayment(method);
   }
 
-  async function handleCalculatePaymentSummary(
-    payload: CartOrderEditorSavePayload,
-  ) {
+
+
+  async function handleCartItemsChange(items: CartModifyReqType["items"]) {
+    if (!fullPhoneNumber) return;
+
+    setPaymentUpdating(true);
+    try {
+      await modifyCart(fullPhoneNumber, items);
+      const totals = (await dispatch(
+        updatePaymentServiceAction({
+          phoneNumber: fullPhoneNumber,
+          method: paymentMode,
+          currency: selectedCurrency,
+        }),
+      )) as UpdatePaymentResType;
+      setPaymentTotals(totals);
+    } catch (error: any) {
+      const { message = "Failed to update payment summary." } = error;
+      enqueueSnackbar(message, { variant: "error" });
+    } finally {
+      setPaymentUpdating(false);
+    }
+  }
+
+  const handleCreateOrder = async (payload: CartOrderEditorSavePayload) => {
     if (payload.cart.items.length === 0) {
-      enqueueSnackbar("Add at least one product before calculating summary.", {
+      enqueueSnackbar("Add at least one product before creating an order.", {
         variant: "warning",
       });
       return;
@@ -214,9 +317,9 @@ export default function AdminCreateOrder() {
       return;
     }
 
-    setPaymentUpdating(true);
+    setSaving(true);
     try {
-      await dispatch(cartModifyServiceAction(payload.cart));
+      await modifyCart(payload.cart.phoneNumber, payload.cart.items);
       await dispatch(updateCartAddressServiceAction(payload.address));
       const totals = (await dispatch(
         updatePaymentServiceAction({
@@ -226,14 +329,63 @@ export default function AdminCreateOrder() {
         }),
       )) as UpdatePaymentResType;
       setPaymentTotals(totals);
-      enqueueSnackbar("Payment summary updated.", { variant: "success" });
+
+      const orderPayload = {
+        phoneNumber: fullPhoneNumber,
+        emailId: payload.address.emailId,
+        items: payload.orderItems,
+        shippingAddress: {
+          fullName: payload.address.shippingAddress.fullName,
+          phone: payload.address.shippingAddress.phone,
+          addressLine1: payload.address.shippingAddress.addressLine1,
+          addressLine2: payload.address.shippingAddress.addressLine2,
+          city: payload.address.shippingAddress.city,
+          state: payload.address.shippingAddress.state,
+          postalCode: payload.address.shippingAddress.postalCode,
+          country: payload.address.shippingAddress.country,
+        },
+        billingAddress: {
+          fullName: payload.address.billingAddress.fullName,
+          phone: payload.address.billingAddress.phone,
+          addressLine1: payload.address.billingAddress.addressLine1,
+          addressLine2: payload.address.billingAddress.addressLine2,
+          city: payload.address.billingAddress.city,
+          state: payload.address.billingAddress.state,
+          postalCode: payload.address.billingAddress.postalCode,
+          country: payload.address.billingAddress.country,
+        },
+        shippingAddressSameAsBillingAddress: payload.address.shippingAddressSameAsBillingAddress,
+        subtotal: totals.subtotal ?? 0,
+        discountAmount: totals.discountAmount ?? 0,
+        codCharges: totals.codCharges ?? 0,
+        advancePaid: payload.advancePaid,
+        couponCode: payload.couponCode,
+        totalAmount: totals.totalAmount ?? 0,
+        currency: selectedCurrency,
+        currencySymbol: selectedCurrencySymbol,
+        paymentMethod: paymentMode === PaymentTypeEnum.COD ? "cod" : "online",
+        paymentStatus: payload.paymentStatus,
+        orderStatus: "placed",
+        paymentType: payload.paymentType,
+        adminCapturedPaymentId: payload.adminCapturedPaymentId,
+        salesPersonName: payload.salesPersonName,
+      } as AdminCreateOrderReq;
+
+      const response = await createAdminOrder(orderPayload);
+
+      setCreatedOrder(response);
+      enqueueSnackbar(`${orderDisplay(response)} created.`, {
+        variant: "success",
+      });
+      resetForm();
+      navigate(ROUTES.ADMIN_ORDER_LIST);
     } catch (error: any) {
-      const { message = "Failed to update payment summary." } = error;
+      const { message = "Failed to create order." } = error;
       enqueueSnackbar(message, { variant: "error" });
     } finally {
-      setPaymentUpdating(false);
+      setSaving(false);
     }
-  }
+  };
 
   function resetForm() {
     setPhoneNumber("");
@@ -241,6 +393,7 @@ export default function AdminCreateOrder() {
     setShippingCountry(COUNTRY_INDIA);
     setPaymentTotals(null);
     setCreatedOrder(null);
+    setFetchedCart(null);
   }
 
   const paymentSummary = (
@@ -289,54 +442,6 @@ export default function AdminCreateOrder() {
     </Paper>
   );
 
-  const handleCreateOrder = async (payload: CartOrderEditorSavePayload) => {
-    if (payload.cart.items.length === 0) {
-      enqueueSnackbar("Add at least one product before creating an order.", {
-        variant: "warning",
-      });
-      return;
-    }
-
-    if (selectedCurrency === CURRENCY_LIST.INR && !isIndiaCountry(shippingCountry)) {
-      enqueueSnackbar(INR_OUTSIDE_INDIA_ERROR, { variant: "warning" });
-      return;
-    }
-
-    setSaving(true);
-    try {
-      await dispatch(cartModifyServiceAction(payload.cart));
-      await dispatch(updateCartAddressServiceAction(payload.address));
-      const totals = (await dispatch(
-        updatePaymentServiceAction({
-          phoneNumber: fullPhoneNumber,
-          method: paymentMode,
-          currency: selectedCurrency,
-        }),
-      )) as UpdatePaymentResType;
-      setPaymentTotals(totals);
-      const response =
-        paymentMode === PaymentTypeEnum.COD
-          ? ((await dispatch(
-              createCodOrderServiceAction({ phoneNumber: fullPhoneNumber }),
-            )) as CreateCodOrderResType)
-          : ((await dispatch(
-              createPaymentOrderServiceAction({ phoneNumber: fullPhoneNumber }),
-            )) as CreatePaymentOrderResType);
-
-      setCreatedOrder(response);
-      enqueueSnackbar(`${orderDisplay(response)} created.`, {
-        variant: "success",
-      });
-      resetForm();
-      navigate(ROUTES.ADMIN_ORDER_LIST);
-    } catch (error: any) {
-      const { message = "Failed to create order." } = error;
-      enqueueSnackbar(message, { variant: "error" });
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, minHeight: "100vh", bgcolor: "#f8fafc" }}>
       <Typography
@@ -345,8 +450,26 @@ export default function AdminCreateOrder() {
       >
         Create Order
       </Typography>
-
-      <Paper sx={{ p: 2.5, borderRadius: 2, maxWidth: 760 }}>
+      <Paper sx={{ p: 2.5, borderRadius: 2, maxWidth: 760, position: "relative", overflow: "hidden" }}>
+        {isLoading && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: "rgba(255, 255, 255, 0.7)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              zIndex: 10,
+            }}
+          >
+            <CircularProgress size={30} sx={{ position: "sticky", top: "45vh" }} />
+          </Box>
+        )}
+       
         <Stack spacing={2.5}>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -366,72 +489,89 @@ export default function AdminCreateOrder() {
                 setPhoneNumber(event.target.value);
                 setPaymentTotals(null);
               }}
+              error={phoneNumber.trim().length > 0 && !isValidPhone}
+              helperText={
+                phoneNumber.trim().length > 0 && !isValidPhone
+                  ? isIndian
+                    ? "Indian phone number must be exactly 10 digits and start with 6-9"
+                    : "Phone number must be between 8 and 15 digits"
+                  : ""
+              }
               size="small"
               fullWidth
             />
           </Stack>
 
-          <FormControl>
-            <FormLabel>Payment mode</FormLabel>
-            <RadioGroup
-              row
-              value={paymentMode}
-              onChange={(event) =>
-                handlePaymentModeChange(event.target.value as PaymentTypeEnum)
-              }
-            >
-              <FormControlLabel
-                value={PaymentTypeEnum.RAZORPAY}
-                control={<Radio disabled={paymentUpdating || saving} />}
-                label="Online"
-              />
-              {isIndiaCountry(shippingCountry) && selectedCurrency === CURRENCY_LIST.INR && (
-                <FormControlLabel
-                  value={PaymentTypeEnum.COD}
-                  control={<Radio disabled={paymentUpdating || saving} />}
-                  label="COD"
-                />
-              )}
-            </RadioGroup>
-          </FormControl>
-
-          <FormControl size="small" sx={{ maxWidth: 260 }}>
-            <InputLabel id="create-order-currency">Currency</InputLabel>
-            <Select
-              labelId="create-order-currency"
-              label="Currency"
-              value={selectedCurrency}
-              onChange={(event) => handleCurrencyChange(event.target.value)}
-            >
-              {currencyOptions.map((currency) => (
-                <MenuItem key={currency.code} value={currency.code}>
-                  {currency.code} ({currency.symbol})
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {selectedCurrency === CURRENCY_LIST.INR && !isIndiaCountry(shippingCountry) && (
-            <Alert severity="warning">{INR_OUTSIDE_INDIA_ERROR}</Alert>
-          )}
-
-          {createdOrder && (
-            <Alert severity="success">
-              Created {orderDisplay(createdOrder)}
+          {!isValidPhone ? (
+            <Alert severity="info">
+              Mobile number is needed for adding other details.
             </Alert>
+          ) : (
+            <>
+              <FormControl>
+                <FormLabel>Payment mode</FormLabel>
+                <RadioGroup
+                  row
+                  value={paymentMode}
+                  onChange={(event) =>
+                    handlePaymentModeChange(event.target.value as PaymentTypeEnum)
+                  }
+                >
+                  <FormControlLabel
+                    value={PaymentTypeEnum.RAZORPAY}
+                    control={<Radio disabled={paymentUpdating || saving} />}
+                    label="Online"
+                  />
+                  {isIndiaCountry(shippingCountry) && selectedCurrency === CURRENCY_LIST.INR && (
+                    <FormControlLabel
+                      value={PaymentTypeEnum.COD}
+                      control={<Radio disabled={paymentUpdating || saving} />}
+                      label="COD"
+                    />
+                  )}
+                </RadioGroup>
+              </FormControl>
+
+              <FormControl size="small" sx={{ maxWidth: 260 }}>
+                <InputLabel id="create-order-currency">Currency</InputLabel>
+                <Select
+                  labelId="create-order-currency"
+                  label="Currency"
+                  value={selectedCurrency}
+                  onChange={(event) => handleCurrencyChange(event.target.value)}
+                >
+                  {currencyOptions.map((currency) => (
+                    <MenuItem key={currency.code} value={currency.code}>
+                      {currency.code} ({currency.symbol})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {selectedCurrency === CURRENCY_LIST.INR && !isIndiaCountry(shippingCountry) && (
+                <Alert severity="warning">{INR_OUTSIDE_INDIA_ERROR}</Alert>
+              )}
+
+              {createdOrder && (
+                <Alert severity="success">
+                  Created {orderDisplay(createdOrder)}
+                </Alert>
+              )}
+
+              <CartOrderEditor
+                cart={draftCart}
+                countryOptions={isdCodes}
+                saving={saving}
+                onSave={handleCreateOrder}
+                submitLabel="Create order"
+                onShippingCountryChange={setShippingCountry}
+                footer={paymentSummary}
+                calculatingPaymentSummary={paymentUpdating}
+                onCartItemsChange={handleCartItemsChange}
+                showPaymentMethodAndCurrency={false}
+              />
+            </>
           )}
-   
-            <CartOrderEditor
-              cart={draftCart}
-              countryOptions={isdCodes}
-              saving={saving}
-              onSave={handleCreateOrder}
-              submitLabel="Create order"
-              onShippingCountryChange={setShippingCountry}
-              footer={paymentSummary}
-              onCalculatePaymentSummary={handleCalculatePaymentSummary}
-              calculatingPaymentSummary={paymentUpdating}
-            />
           
         </Stack>
       </Paper>
