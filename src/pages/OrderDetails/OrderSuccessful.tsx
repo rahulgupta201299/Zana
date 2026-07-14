@@ -19,7 +19,6 @@ import { getAddressLabel } from "@/Utils/StringUtils";
 import { ROUTES } from "@/Constants/Routes";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderDetailByIdName } from "@/Redux/Order/Action";
-import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 const OrderConfirmation = () => {
   const location = useLocation();
@@ -74,16 +73,38 @@ const OrderConfirmation = () => {
   const { orderDate = '', orderNumber = '', razorpayPaymentId = '', paymentStatus = '', paymentMethod = '', advancePaid = 0, totalAmount = 0, orderStatus = '', items = [], shippingAddress, currencySymbol, currency } = orderData || {};
 
   useEffect(() => {
-    if (currency && VITE_ENABLE_TRACKING && orderNumber && totalAmount && !hasTracked.current) {
-      if ((window as any).gtag) {
-        (window as any).gtag("event", "conversion", {
-          send_to: "AW-17772463315/-KwFCMSPgLEcENOJyZpC",
-          value: totalAmount,
-          currency,
-          transaction_id: orderNumber,
+    if (currency && orderNumber && totalAmount && !hasTracked.current) {
+      const eventPayload = {
+        transaction_id: orderNumber,
+        currency,
+        value: totalAmount,
+        ecommerce: {
+          items: items.map((item) => ({
+            item_id: item.product?._id,
+            item_name: item.product?.name,
+            item_category: item.product?.category,
+            item_brand: item.product?.brand,
+            price: item.price,
+            quantity: item.quantity,
+            currency,
+          })),
+        }
+      };
+
+      // GTM — dataLayer push
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "purchase",
+          ...eventPayload,
         });
-        hasTracked.current = true;
       }
+
+      // GA4 — gtag direct
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "purchase", eventPayload);
+      }
+
+      hasTracked.current = true;
     }
   }, [currency, orderNumber, totalAmount]);
 

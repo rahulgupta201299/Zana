@@ -11,8 +11,11 @@ export const ROUTES = Object.freeze({
   BASE_URL: '/',
   PRODUCT_DETAIL: `${SUB_ROUTES.PRODUCT}/:productCategory/:productItem/:productId`,
   PRODUCT_CATALOG: '/product-catalog',
+  PRODUCT_CATALOG_WITH_CATEGORY: '/product-catalog/:productCategory',
   BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
+  BIKES_WITH_BRAND: `/:bikeType${SUB_ROUTES.BIKES}/:bikeBrand`,
   BIKE_DETAIL: `${SUB_ROUTES.BIKE_ACCESSORIES}/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,
+  BIKE_DETAIL_WITH_CATEGORY: `${SUB_ROUTES.BIKE_ACCESSORIES}/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId/:productCategory`,
   BLOGS: '/blogs',
   BLOG_DETAIL: `${SUB_ROUTES.BLOG}/:id`,
   OUR_STORIES: '/our-stories',
@@ -35,6 +38,7 @@ export const ROUTES = Object.freeze({
   ADMIN_DASHBOARD: `${SUB_ROUTES.ADMIN}/dashboard`,
   ADMIN_PRODUCTS: `${SUB_ROUTES.ADMIN}/products`,
   ADMIN_ACTIVE_CARTS: `${SUB_ROUTES.ADMIN}/active-carts`,
+  ADMIN_CREATE_ORDER: `${SUB_ROUTES.ADMIN}/create-order`,
   ADMIN_ORDER_LIST: `${SUB_ROUTES.ADMIN}/orders`,
   ANY: '*'
 })

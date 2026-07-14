@@ -105,7 +105,7 @@ export default function Search({ onClose }: SearchPropsType) {
           Search
         </Typography>
 
-        <IconButton onClick={onClose}>
+        <IconButton onClick={onClose} aria-label="Close search">
           <CloseIcon sx={{ color: "white", fontSize: 30 }} />
         </IconButton>
       </Box>

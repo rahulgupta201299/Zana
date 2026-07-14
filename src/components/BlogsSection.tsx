@@ -65,6 +65,8 @@ const BlogsSection = () => {
                 <img
                   src={blog?.imageUrl}
                   alt={blog?.title}
+                  width={360}
+                  height={200}
                   className="w-full h-auto object-contain"
                 />
               </div>

@@ -14,6 +14,8 @@ import { isServiceLoading } from '@/Redux/ServiceTracker/Selectors';
 import { categoryProductServiceName, shopByBikeServiceName, zProBikeServiceName } from '@/Redux/Product/Actions';
 import { MenuItemsName } from './Constant';
 import { replaceSpecialCharactersWithHyphen } from '@/Utils/StringUtils';
+import { ROUTES } from '@/Constants/Routes';
+import { BikeCategoryEnum } from '@/Constants/AppConstant';
 
 type MobileNavMenuPropsType = {
 	onClose: () => void;
@@ -34,6 +36,30 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
 	const navigate = useNavigate()
 
+	const isBikeBrandLevel = (item: MenuOptionsType) => {
+		const route = routeRef.current
+		const hasBikeModels = Boolean(item.models?.length)
+
+		return (
+			hasBikeModels &&
+			(route === `/bike-accessories/${BikeCategoryEnum.ZANA}/bike/` ||
+				route === `/bike-accessories/${BikeCategoryEnum.ZPRO}/bike/`)
+		)
+	}
+
+	const getBikeTypeFromRoute = () => {
+		return routeRef.current.includes(`/${BikeCategoryEnum.ZPRO}/`)
+			? BikeCategoryEnum.ZPRO
+			: BikeCategoryEnum.ZANA
+	}
+
+	function handleBikeBrandClick(item: MenuOptionsType) {
+		const bikeType = getBikeTypeFromRoute()
+
+		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(item.name)}`)
+		onClose()
+	}
+
 	function handleMenuItemClick(item: MenuOptionsType) {
 		const { name, _id, models = [], route } = item
 
@@ -44,7 +70,11 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		}
 
 		if (route && models.length === 0) {
-			navigate(route, { state: { category: name.toLowerCase() } })
+			const nextRoute =
+				route === ROUTES.PRODUCT_CATALOG
+					? `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(name)}`
+					: route
+			navigate(nextRoute, { state: { category: name.toLowerCase() } })
 			onClose()
 			return
 		}
@@ -119,7 +149,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 						cursor: "pointer"
 					}}
 				>
-					<IconButton onClick={onClose}>
+					<IconButton onClick={onClose} aria-label="Close navigation menu">
 						<CloseIcon sx={{ color: "white", fontSize: 30 }} />
 					</IconButton>
 				</Box>
@@ -141,11 +171,13 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 							size="small"
 							sx={{ color: "#bdbdbd", marginRight: 1 }}
 							onClick={handleBack}
+							aria-label="Go back in navigation menu"
 						>
 							<ArrowBackIosNewIcon fontSize="small" />
 						</IconButton>
 
 						<Typography
+							component="p"
 							variant="h6"
 							sx={{
 								fontWeight: 700,
@@ -168,6 +200,8 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 				{
 					!isDataPending && menuOptions.map((item, ind) => {
 						const { name } = item
+						const shouldLinkBikeBrand = isBikeBrandLevel(item)
+
 						return (
 							<Box
 								key={ind}
@@ -178,7 +212,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 									width: "100%",
 									cursor: "pointer"
 								}}
-								onClick={() => handleMenuItemClick(item)}
+								onClick={() => shouldLinkBikeBrand ? undefined : handleMenuItemClick(item)}
 							>
 								<Typography
 									sx={{
@@ -188,6 +222,12 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 										fontWeight: 700,
 										color: 'white',
 									}}
+									onClick={(event) => {
+										if (!shouldLinkBikeBrand) return
+
+										event.stopPropagation()
+										handleBikeBrandClick(item)
+									}}
 								>
 									{name}
 								</Typography>
@@ -196,6 +236,12 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 										color: "white",
 										fontSize: 30,
 										my: 'auto',
+									}}
+									onClick={(event) => {
+										if (!shouldLinkBikeBrand) return
+
+										event.stopPropagation()
+										handleMenuItemClick(item)
 									}}
 								/>
 							</Box>

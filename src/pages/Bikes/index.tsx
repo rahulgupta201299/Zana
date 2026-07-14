@@ -8,7 +8,7 @@ import {
   zProBikeSelector,
 } from "@/Redux/Product/Selectors";
 import { ShopByBikeModelsType } from "@/Redux/Product/Types";
-import { ROUTES } from "@/Constants/Routes";
+import { ROUTES, SUB_ROUTES } from "@/Constants/Routes";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ProductSkeleton from "@/components/Skeleton/ProductSkeleton";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
@@ -17,8 +17,10 @@ import {
   shopByBikeServiceName,
   zProBikeServiceName,
 } from "@/Redux/Product/Actions";
-import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
+import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
+import { replaceHiphenWithSpaces, replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { SeoMeta } from "@/components/SeoMeta";
 import {
   Box,
   Card,
@@ -29,10 +31,12 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { BRAND_SEO_MAPS } from "./BRAND_SEO_MAPS";
 
 function Bikes() {
   const params = useParams();
-  const { bikeType: bikeTypeParams = "" } = params;
+  const { bikeType: bikeTypeParams = "", bikeBrand: bikeBrandParams = "" } =
+    params;
 
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA;
@@ -40,27 +44,54 @@ function Bikes() {
   const bikeSelector = useSelector(
     isZProPath ? zProBikeSelector : shopByBikeSelector,
   );
-  const isBikeProductLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [shopByBikeServiceName, zProBikeServiceName]),
+
+  const activeServiceName = isZProPath ? zProBikeServiceName : shopByBikeServiceName;
+  const bikeServiceStatus = useSelector<TAppStore, string | undefined>((state) =>
+    getServiceSelector(state, activeServiceName),
   );
+  const isBikeProductLoading = bikeServiceStatus === "LOADING" || bikeServiceStatus === undefined;
+  const isApiCompleted = bikeServiceStatus === "SUCCESS" || bikeServiceStatus === "ERROR";
 
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
 
-  const [selectedBrand, setSelectedBrand] = useState<string>(
-    initialBikeBrand || ALL_CATEGORY,
-  );
+  const seoData = BRAND_SEO_MAPS?.[replaceHiphenWithSpaces(bikeBrandParams).toUpperCase()] || {
+    title: "Bikes | Zana Motorcycles",
+    description:
+      "Explore our range of premium bikes from various brands. Find crash guards, luggage carriers, engine guards, touring accessories, and more for your motorcycle.",
+  };
+
+  const resolvedInitialBrand = useMemo(() => {
+    if (bikeBrandParams) {
+      const matchedBrand = bikeSelector.find(
+        ({ name }) =>
+          replaceSpecialCharactersWithHyphen(name) ===
+          bikeBrandParams.toLowerCase(),
+      );
+
+      return (
+        matchedBrand?.name.toLowerCase() ||
+        bikeBrandParams.toLowerCase().split("-").join(" ")
+      );
+    }
+
+    return (initialBikeBrand || ALL_CATEGORY).toLowerCase();
+  }, [bikeBrandParams, bikeSelector, initialBikeBrand]);
+
+  const [selectedBrand, setSelectedBrand] =
+    useState<string>(resolvedInitialBrand);
   const [filteredBrandDetails, setFilteredBrandDetails] = useState<
     ShopByBikeModelsType[]
   >([]);
 
   const navigate = useNavigate();
 
+ 
   const allBrandDetails = useMemo(() => {
-    return bikeSelector.reduce((acc, curr) => {
+    return bikeSelector.reduce<ShopByBikeModelsType[]>((acc, curr) => {
       return [...acc, ...curr.models];
     }, []);
-  }, [bikeSelector.length]);
+  }, [bikeSelector]);
 
   const categoriesWithCount: { name: string; count: number }[] = useMemo(() => {
     if (!bikeSelector.length) return [];
@@ -72,7 +103,12 @@ function Bikes() {
     });
 
     return result;
-  }, [bikeSelector.length]);
+  }, [bikeSelector]);
+
+  function getFilteredModels(brand: string): ShopByBikeModelsType[] {
+    if (brand === ALL_CATEGORY) return allBrandDetails;
+    return bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
+  }
 
   function handleBikeClick(
     bikeBrand: string,
@@ -90,26 +126,34 @@ function Bikes() {
   }
 
   function handleBrandCategoryClick(brand: string) {
-    setSelectedBrand(brand);
+    const normalisedBrand = brand.toLowerCase();
+    setSelectedBrand(normalisedBrand);
+    setFilteredBrandDetails(getFilteredModels(normalisedBrand));
 
-    if (brand === ALL_CATEGORY) {
-      setFilteredBrandDetails(allBrandDetails);
-      return;
-    }
-
-    const data = bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
-    setFilteredBrandDetails(data);
-
-    navigate(location.pathname, { state: { brand }, replace: true });
+    navigate(
+      `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+        normalisedBrand,
+      )}`,
+      { replace: true },
+    );
   }
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    handleBrandCategoryClick(initialBikeBrand);
-  }, [allBrandDetails.length, initialBikeBrand]);
+
+    const brand = resolvedInitialBrand;
+    setSelectedBrand(brand);
+    setFilteredBrandDetails(getFilteredModels(brand));
+  }, [bikeSelector, resolvedInitialBrand]);
+
+  const showNoBikes = isApiCompleted && filteredBrandDetails.length === 0;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
+      <SeoMeta
+        title={seoData.title}
+        description={seoData.description}
+      />
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           <AppBreadcrumb
@@ -139,12 +183,13 @@ function Bikes() {
                 <button
                   key={name}
                   onClick={() => handleBrandCategoryClick(brandName)}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${selectedBrand === brandName
-                    ? "bg-yellow-400 text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                    selectedBrand === brandName
+                      ? "bg-yellow-400 text-black"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
                 >
-                  {brandName.toUpperCase()} ({count})
+                  {brandName === ALL_CATEGORY ? ALL_CATEGORY.toUpperCase() : brandName.toUpperCase()} ({count})
                 </button>
               );
             })}
@@ -189,8 +234,8 @@ function Bikes() {
                           src={imageUrl}
                           alt={name}
                           onError={(e) =>
-                          ((e.currentTarget as HTMLImageElement).src =
-                            BikePlaceholderImage)
+                            ((e.currentTarget as HTMLImageElement).src =
+                              BikePlaceholderImage)
                           }
                           sx={{
                             width: "100%",
@@ -214,7 +259,6 @@ function Bikes() {
                           variant="caption"
                           sx={{
                             display: "block",
-
                             opacity: 0.8,
                             fontWeight: 600,
                             letterSpacing: 1.5,
@@ -293,12 +337,12 @@ function Bikes() {
           </Grid>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBrandDetails.length === 0 && isBikeProductLoading && (
+            {isBikeProductLoading && filteredBrandDetails.length === 0 && (
               <ProductSkeleton />
             )}
           </div>
 
-          {filteredBrandDetails.length === 0 && !isBikeProductLoading && (
+          {showNoBikes && (
             <div className="text-center py-16">
               <p className="text-white/50 text-lg">
                 No bikes found for {selectedBrand.toUpperCase()}

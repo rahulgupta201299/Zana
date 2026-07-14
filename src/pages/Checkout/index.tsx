@@ -178,6 +178,38 @@ export default function CheckoutPage() {
 
   function performOps() {
     if (!loginDetails.phoneNumber) dispatch(setOpenSignupPopup(true));
+    if (!processedItems.length) return;
+
+    const value = cartTotalAmount;
+
+    const eventPayload = {
+      currency,
+      value,
+      ecommerce: {
+        items: processedItems.map((item) => ({
+          item_id: item.product._id,
+          item_name: item.product.name,
+          item_category: item.product.category,
+          item_brand: item.product.brand,
+          price: item.price,
+          quantity: item.quantity,
+          currency,
+        })),
+      }
+    };
+
+    // GTM — dataLayer push
+    if ((window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: "begin_checkout",
+        ...eventPayload,
+      });
+    }
+
+    // GA4 — gtag direct
+    if ((window as any).gtag) {
+      (window as any).gtag("event", "begin_checkout", eventPayload);
+    }
   }
 
   useEffect(() => {
@@ -381,7 +413,7 @@ export default function CheckoutPage() {
 
     const { phoneNumber = '' } = loginDetails
 
-    if (!phoneNumber || !processedItems.length || !paymentType) return;
+    if (!phoneNumber || !processedItems.length || !paymentType || !cartTotalAmount) return;
 
     const shouldUpdate =
       !profileDetails.emailId ||
@@ -472,6 +504,7 @@ export default function CheckoutPage() {
     const { phoneNumber = '' } = loginDetails
 
     if (!phoneNumber) return;
+    if (!cartTotalAmount || !processedItems.length) return;
 
     setPaymentType(method)
 
@@ -1678,6 +1711,7 @@ export default function CheckoutPage() {
                       >
                         <IconButton
                           onClick={() => decrementToCart(productId)}
+                          aria-label="Decrease quantity"
                           sx={{
                             color: "white",
                             p: { xs: 0.75, md: 1 },
@@ -1705,6 +1739,7 @@ export default function CheckoutPage() {
                               quantityAvailable,
                             )
                           }
+                          aria-label="Increase quantity"
                           sx={{
                             color: "white",
                             p: { xs: 0.75, md: 1 },

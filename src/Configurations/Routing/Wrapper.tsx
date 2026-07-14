@@ -40,7 +40,7 @@ function Wrapper() {
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
-		onMountChecks()
+		onMountChecks(location.pathname)
 	}, [location.pathname])
 
 	useEffect(() => {
@@ -72,7 +72,9 @@ function Wrapper() {
 				{isOpenCart && <CartSidebar />}
 				{isOpenCouponDialog && <CouponDialog />}
 			</Suspense>
-			<Outlet />
+			<main id="main-content">
+				<Outlet />
+			</main>
 			{showDeferredChrome && (
 				<Suspense fallback={null}>
 					<Footer />

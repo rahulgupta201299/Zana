@@ -1,7 +1,8 @@
-import { useLayoutEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 import { APP_DOMAIN_URL } from "@/Configurations/env";
+// import { getHeroImageProps } from "@/Utils/ImageUtils";
 
 const SITE_NAME = "Zana Motorcycles";
 const DEFAULT_OG_IMAGE = "/og-image.jpg";
@@ -15,13 +16,15 @@ const DEFAULT_TITLE =
 const DEFAULT_DESCRIPTION =
   "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
 
-type SeoMetaProps = {
+export type SeoMetaProps = {
   title?: string;
   description?: string;
   image?: string;
   canonicalPath?: string;
   type?: "website" | "product";
   noIndex?: boolean;
+  keywords?: string;
+  productSchema?: string | object;
 };
 
 function normalizePath(pathname: string): string {
@@ -37,7 +40,11 @@ function stripHtml(value: string): string {
 function truncate(value: string, maxLength: number): string {
   const normalized = stripHtml(value);
   if (normalized.length <= maxLength) return normalized;
-  return `${normalized.slice(0, maxLength - 1).trim()}...`;
+  // Cut at the nearest word boundary to avoid mid‑word truncation
+  const tentative = normalized.slice(0, maxLength).trim();
+  const lastSpace = tentative.lastIndexOf(' ');
+  const final = lastSpace > 0 ? tentative.slice(0, lastSpace) : tentative;
+  return `${final}...`;
 }
 
 function absoluteUrl(value?: string): string | undefined {
@@ -49,46 +56,6 @@ function absoluteUrl(value?: string): string | undefined {
   }
 }
 
-function getMetaByName(name: string): HTMLMetaElement {
-  let element = document.querySelector(
-    `meta[name="${name}"]`,
-  ) as HTMLMetaElement | null;
-  if (!element) {
-    element = document.createElement("meta");
-    element.name = name;
-    document.head.appendChild(element);
-  }
-  return element;
-}
-
-function getMetaByProperty(property: string): HTMLMetaElement {
-  let element = document.querySelector(
-    `meta[property="${property}"]`,
-  ) as HTMLMetaElement | null;
-  if (!element) {
-    element = document.createElement("meta");
-    element.setAttribute("property", property);
-    document.head.appendChild(element);
-  }
-  return element;
-}
-
-function removeMetaByProperty(property: string) {
-  document.querySelector(`meta[property="${property}"]`)?.remove();
-}
-
-function setLink(rel: string, href: string) {
-  let link = document.querySelector(
-    `link[rel="${rel}"]`,
-  ) as HTMLLinkElement | null;
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = rel;
-    document.head.appendChild(link);
-  }
-  link.href = href;
-}
-
 export function SeoMeta({
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
@@ -96,60 +63,91 @@ export function SeoMeta({
   canonicalPath,
   type = "website",
   noIndex = false,
+  keywords = "",
+  productSchema,
 }: SeoMetaProps) {
   const { pathname } = useLocation();
+  // Skip Helmet injection on initial static-rendered pages to avoid duplicate meta tags
+  // if (typeof document !== "undefined" && document.documentElement.dataset.staticRoute === pathname) {
+  //   return null;
+  // }
 
-  useLayoutEffect(() => {
-    const pageTitle = truncate(title, 70);
-    const pageDescription = truncate(description, 160);
-    const origin = APP_DOMAIN_URL || window.location.origin;
-    const path = normalizePath(canonicalPath || pathname);
-    const canonicalUrl = `${origin}${path}`;
-    const usesDefaultImage = !image;
-    const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
+  const pageTitle = truncate(title, 70);
+  const pageDescription = truncate(description, 160);
+  const origin = APP_DOMAIN_URL || window.location.origin;
+  const path = normalizePath(canonicalPath || pathname);
+  const canonicalUrl = `${origin}${path}`;
+  const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
+  // const { src: lcpSrc, srcSet: lcpSrcSet } = image ? getHeroImageProps(image) : { src: undefined, srcSet: undefined };
 
-    document.title = pageTitle;
-    getMetaByName("description").content = pageDescription;
-    getMetaByName("robots").content = noIndex
-      ? "noindex, nofollow"
-      : "index, follow, max-image-preview:large";
+  return (
+    <Helmet>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta
+        name="robots"
+        content={
+          noIndex
+            ? "noindex, nofollow"
+            : "index, follow, max-image-preview:large"
+        }
+      />
+      <meta name="keywords" content={keywords} />
 
-    getMetaByProperty("og:site_name").content = SITE_NAME;
-    getMetaByProperty("og:title").content = pageTitle;
-    getMetaByProperty("og:description").content = pageDescription;
-    getMetaByProperty("og:type").content = type;
-    getMetaByProperty("og:url").content = canonicalUrl;
+      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content={type} />
+      <meta property="og:url" content={canonicalUrl} />
 
-    getMetaByName("twitter:card").content = "summary_large_image";
-    getMetaByName("twitter:title").content = pageTitle;
-    getMetaByName("twitter:description").content = pageDescription;
+      {imageUrl && <meta property="og:image" content={imageUrl || DEFAULT_OG_IMAGE} />}
+      {imageUrl && <meta property="og:image:secure_url" content={imageUrl} />}
+      {imageUrl && (
+        <meta
+          property="og:image:alt"
+          content={pageTitle ? pageTitle : DEFAULT_OG_IMAGE_ALT}
+        />
+      )}
 
-    if (imageUrl) {
-      getMetaByProperty("og:image").content = imageUrl;
-      getMetaByProperty("og:image:secure_url").content = imageUrl;
-      getMetaByProperty("og:image:alt").content = usesDefaultImage
-        ? DEFAULT_OG_IMAGE_ALT
-        : CUSTOM_OG_IMAGE_ALT;
-      getMetaByName("twitter:image").content = imageUrl;
-      getMetaByName("twitter:image:alt").content = usesDefaultImage
-        ? DEFAULT_OG_IMAGE_ALT
-        : CUSTOM_OG_IMAGE_ALT;
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+      {imageUrl && (
+        <meta
+          name="twitter:image:alt"
+          content={pageTitle ? pageTitle : DEFAULT_OG_IMAGE_ALT}
+        />
+      )}
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
 
-      if (usesDefaultImage) {
-        getMetaByProperty("og:image:type").content = "image/jpeg";
-        getMetaByProperty("og:image:width").content = DEFAULT_OG_IMAGE_WIDTH;
-        getMetaByProperty("og:image:height").content = DEFAULT_OG_IMAGE_HEIGHT;
-      } else {
-        removeMetaByProperty("og:image:type");
-        removeMetaByProperty("og:image:width");
-        removeMetaByProperty("og:image:height");
-      }
-    }
+      <link rel="canonical" href={canonicalUrl} />
 
-    setLink("canonical", canonicalUrl);
-  }, [canonicalPath, description, image, noIndex, pathname, title, type]);
-
-  return null;
+      {/* {lcpSrc && (
+        <link
+          rel="preload"
+          as="image"
+          href={lcpSrc}
+          fetchPriority="high"
+          data-lcp-preload="true"
+          {...(lcpSrcSet
+            ? {
+                imageSrcSet: lcpSrcSet,
+                imageSizes: "(min-width: 1024px) 560px, calc(100vw - 48px)",
+              }
+            : {})}
+        />
+      )} */}
+      {/* {productSchema && (
+        <script type="application/ld+json">
+          {typeof productSchema === "string"
+            ? productSchema
+            : JSON.stringify(productSchema)}
+        </script>
+      )} */}
+    </Helmet>
+  );
 }
 
 export function getRouteSeo(pathname: string): SeoMetaProps {
@@ -168,21 +166,21 @@ export function getRouteSeo(pathname: string): SeoMetaProps {
         "Find motorcycle accessories matched to your bike model from Zana Motorcycles.",
     };
   }
-  if (pathname.startsWith("/bike-accessories/")) {
-    return {
-      title: "Bike Specific Motorcycle Accessories | Zana Motorcycles",
-      description:
-        "Browse crash guards, racks, guards, and touring accessories designed for your bike model.",
-    };
-  }
-  if (pathname.startsWith("/product/")) {
-    return {
-      title: "Motorcycle Accessory | Zana Motorcycles",
-      description:
-        "View product details, fitment, price, and availability for this Zana motorcycle accessory.",
-      type: "product",
-    };
-  }
+  // if (pathname.startsWith("/bike-accessories/")) {
+  //   return {
+  //     title: "Bike Specific Motorcycle Accessories | Zana Motorcycles",
+  //     description:
+  //       "Browse crash guards, racks, guards, and touring accessories designed for your bike model.",
+  //   };
+  // }
+  // if (pathname.startsWith("/product/")) {
+  //   return {
+  //     title: "Motorcycle Accessory | Zana Motorcycles",
+  //     description:
+  //       "View product details, fitment, price, and availability for this Zana motorcycle accessory.",
+  //     type: "product",
+  //   };
+  // }
   if (pathname.startsWith("/blog/") || pathname === "/blogs") {
     return {
       title: "Motorcycle Stories and Guides | Zana Motorcycles",

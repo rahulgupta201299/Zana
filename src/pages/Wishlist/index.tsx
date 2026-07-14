@@ -207,6 +207,7 @@ const Wishlist = () => {
                         e.stopPropagation();
                         handleRemoveFromWishlist(_id);
                       }}
+                      aria-label="Remove from wishlist"
                       sx={{
                         position: "absolute",
                         top: -10,

@@ -8,6 +8,8 @@ import { newArrivalsName } from "@/Redux/Landing/Actions";
 import { useEffect } from "react";
 import { autoRetry } from "@/Utils/AutoRetryMechanism";
 import newArrivalsServiceAction from "@/Redux/Landing/Services/NewArrivals";
+import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 const NewArrivals = () => {
   const isLoading = useSelector<TAppStore, boolean>((state) =>
@@ -15,6 +17,7 @@ const NewArrivals = () => {
   );
   const products = useSelector((state: TAppStore) => getNewArrivalsList(state));
   const currency = useSelector(getSelectedCurrency);
+  const { phoneNumber = "" } = useSelector(getLoginDetails);
   const dispatch = useDispatch<TAppDispatch>();
 
   const { incrementToCart, getQuantity } = useCart();

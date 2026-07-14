@@ -42,6 +42,9 @@ import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 import { ROUTES } from "@/Constants/Routes";
 import EditIcon from "@mui/icons-material/Edit";
 import { VerifyOtpResType } from "@/Redux/Auth/Types";
+import cartUtmServiceAction from "@/Redux/Cart/Services/UtmCartService";
+import { clearUtmParams } from "@/Redux/Cart/Reducer";
+
 
 interface SIGN_UP_TYPE {
   isMobile: boolean;
@@ -67,8 +70,10 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
   );
   const open = useSelector((state: TAppStore) => state.auth.openSignupPopup);
   const isdCode = useSelector(isdCodeDetails);
+  const utm = useSelector((state: TAppStore) => state.cart.utm);
 
   const location = useLocation();
+
 
   const timerId = useRef(null);
 
@@ -156,6 +161,14 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
       const response = await dispatch(VerifyOtpServiceAction(reqBody)) as VerifyOtpResType
       const { phoneNumber = "" } = response;
       saveCartToDB(phoneNumber);
+
+      if (utm) {
+        dispatch(cartUtmServiceAction({ phoneNumber, ...utm })).then(() => {
+          // @ts-ignore
+          dispatch(clearUtmParams());
+        });
+      }
+
       enqueueSnackbar({
         variant: "success",
         message: "You have logged in successfully.",
@@ -240,7 +253,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
       }}
       disableEscapeKeyDown
     >
-      {showClose && (
+      {/* {showClose && (
         <IconButton
           onClick={handleClose}
           aria-label="Close login dialog"
@@ -254,7 +267,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
         >
           <CloseIcon />
         </IconButton>
-      )}
+      )} */}
 
       <DialogTitle sx={{ p: { md: "32px 32px 0px", xs: "16px" } }}>
         Login With OTP

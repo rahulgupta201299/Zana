@@ -24,7 +24,11 @@ import {
 } from "@/Redux/Product/Types";
 import ProductDetailService from "@/Redux/Product/Services/ProductDetailService";
 import BikeProductService from "@/Redux/Product/Services/BikeProductService";
-import { handleSocialMedia } from "@/Utils/StringUtils";
+import {
+  handleSocialMedia,
+  replaceHiphenWithSpaces,
+  replaceSpecialCharactersWithHyphen,
+} from "@/Utils/StringUtils";
 import {
   BikeCategoryEnum,
   SocialMediaPlatformEnum,
@@ -48,6 +52,20 @@ import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { SeoMeta } from "@/components/SeoMeta";
+import {
+  getHeroImageProps,
+  getSuggestedProductImageProps,
+  getThumbnailImageProps,
+} from "@/Utils/ImageUtils";
+import {
+  STAGING_PRODUCT_SEO_MAP,
+  PRODUCTION_PRODUCT_SEO_MAP,
+} from "./PRODUCT_SEO_MAPS";
+
+const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
+const PRODUCT_SEO_MAP = IS_PRODUCTION
+  ? PRODUCTION_PRODUCT_SEO_MAP
+  : STAGING_PRODUCT_SEO_MAP;
 
 type ProductDetailLocationState = {
   source?: "bike" | "catalog";
@@ -58,13 +76,35 @@ type ProductDetailLocationState = {
   productCategory?: string;
 };
 
+const FALLBACK_PLACEHOLDER_IMAGE =
+  "https://d3s3r7gevtfrvd.cloudfront.net/Zana+website/proMImg_07_1721457228.webp?width=960&quality=75&format=webp";
+
+function getProductCatalogCategoryPath(category: string) {
+  return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
+    category,
+  )}`;
+}
+
 const ProductDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart, getQuantity, incrementToCart } = useCart();
 
   const params = useParams<ProductDetailParamsType>();
-  const { productCategory = "", productId = "" } = params;
+  const { productCategory = "", productId = "", productItem = "" } = params;
+
+  // Derive a human-readable title from the URL slug immediately —
+  // no API call needed. Used for FCP/LCP before the API resolves.
+  const staticName = replaceHiphenWithSpaces(productItem).replace(
+    /\b\w/g,
+    (c) => c.toUpperCase(),
+  );
+
+  // Resolve the static product seoData from the pre-built map keyed by productId.
+  // The correct map (staging vs. production) is selected at module load time
+  // via VITE_NODE_ENV so no runtime env checks are needed here.
+  const seoData = PRODUCT_SEO_MAP[productId];
+  const staticPlaceholderImage = seoData?.image ?? FALLBACK_PLACEHOLDER_IMAGE;
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -75,6 +115,8 @@ const ProductDetailPage = () => {
   >([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isProductHydrating, setIsProductHydrating] = useState(true);
+  // true while the real hero image is still downloading after product data arrives
+  const [isHeroImageLoaded, setIsHeroImageLoaded] = useState(false);
   const productRequestRef = useRef(0);
 
   const dispatch = useDispatch<TAppDispatch>();
@@ -87,8 +129,17 @@ const ProductDetailPage = () => {
   const currency = useSelector(getSelectedCurrency);
 
   const isCategoryLoading = useSelector<TAppStore, boolean>((state) =>
-    isServiceLoading(state, [categoryProductServiceName, bikeProductServiceName]),
+    isServiceLoading(state, [
+      categoryProductServiceName,
+      bikeProductServiceName,
+    ]),
   );
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, product: ShopByProductDetailsType, _id: string, quantity: number, quantityAvailable: number) => {
+    e.stopPropagation();                 
+    addToCart(product, _id, quantity, quantityAvailable);
+  };
+
 
   const isProductLoading = useSelector<TAppStore, boolean>((state) =>
     isServiceLoading(state, [productDetailServiceName]),
@@ -96,9 +147,7 @@ const ProductDetailPage = () => {
   const isProductDetailPending = isProductLoading || isProductHydrating;
 
   function handleBackToProducts() {
-    navigate(ROUTES.PRODUCT_CATALOG, {
-      state: { category: productCategory.toLowerCase() },
-    });
+    navigate(getProductCatalogCategoryPath(productCategory));
   }
 
   async function handleWishList(productId: string) {
@@ -158,13 +207,47 @@ const ProductDetailPage = () => {
       setProduct(response);
       setIsProductHydrating(false);
 
+      const eventPayload = {
+        currency: response.currency,
+        value: response.price,
+        ecommerce: {
+          items: [
+            {
+              item_id: response._id,
+              item_name: response.name,
+              item_category: response.category,
+              // item_brand: response.brand,
+              price: response.price,
+              currency: response.currency,
+            }
+          ],
+        },
+      };
+
+      // GTM — dataLayer push
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "view_item",
+          ...eventPayload,
+        });
+      }
+
+      // GA4 — gtag direct
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "view_item", eventPayload);
+      }
+
       const { category, isBikeSpecific, model } = response;
 
       let relatedProductsData: ShopByProductDetailsType[] = [];
 
       if (isBikeSpecific) {
         relatedProductsData = (await dispatch(
-          BikeProductService({ modelId: model, category, queryParams: { page: 1, limit: 10 } })
+          BikeProductService({
+            modelId: model,
+            category,
+            queryParams: { page: 1, limit: 10 },
+          }),
         )) as ShopByProductDetailsType[];
       } else {
         const { data } = (await dispatch(
@@ -194,8 +277,8 @@ const ProductDetailPage = () => {
     name: string,
     productId: string,
   ) {
-    const currentBreadcrumbState =
-      (location.state || {}) as ProductDetailLocationState;
+    const currentBreadcrumbState = (location.state ||
+      {}) as ProductDetailLocationState;
     const productDetailState =
       currentBreadcrumbState.source === "bike"
         ? {
@@ -208,7 +291,7 @@ const ProductDetailPage = () => {
           };
     const path = encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
       productCategory,
-      name,
+      productItem: name,
       productId,
     });
 
@@ -216,7 +299,10 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   }
 
+  // Reset hero-image-loaded flag whenever the URL or currency changes so the
+  // placeholder is shown again until the new real image finishes downloading.
   useEffect(() => {
+    setIsHeroImageLoaded(false);
     pageOps();
   }, [currency, location.pathname]);
 
@@ -248,29 +334,29 @@ const ProductDetailPage = () => {
 
   const {
     _id = "",
-    name = "",
+    name = seoData?.title || staticName || "",
     shippingAndReturn = "",
     shortDescription = "",
-    longDescription = "",
+    longDescription = seoData?.description || "",
     category = "",
     price = 0,
     currencySymbol = "",
-    imageUrl = "",
+    imageUrl = seoData?.image || "",
     images = [],
     quantityAvailable = 0,
     specifications = "",
     isBikeSpecific = false,
     productCode = "",
-    isComingSoon = false
+    isComingSoon = false,
   } = product || {};
 
   const isPlusDisabled = quantity >= quantityAvailable;
   const isMinusDisabled = quantity === 1;
 
   const newImages = [...new Set([imageUrl, ...images].filter(Boolean))];
+  const heroImageProps = getHeroImageProps(newImages[selectedImageIndex] || "");
   const breadcrumbState = (location.state || {}) as ProductDetailLocationState;
-  const breadcrumbCategory =
-    breadcrumbState.productCategory || category;
+  const breadcrumbCategory = breadcrumbState.productCategory || category;
   const isBikeBreadcrumb =
     breadcrumbState.source === "bike" &&
     breadcrumbState.bikeType &&
@@ -288,65 +374,91 @@ const ProductDetailPage = () => {
         bikeId: breadcrumbState.bikeId,
       })
     : "";
+  const bikeCategoryPath =
+    isBikeBreadcrumb && breadcrumbCategory
+      ? encodedGeneratedPath(ROUTES.BIKE_DETAIL_WITH_CATEGORY, {
+          bikeType: breadcrumbState.bikeType,
+          bikeBrand: breadcrumbState.bikeBrand,
+          bikeModel: breadcrumbState.bikeModel,
+          bikeId: breadcrumbState.bikeId,
+          productCategory: replaceSpecialCharactersWithHyphen(
+            breadcrumbCategory,
+          ),
+        })
+      : bikeDetailPath;
   const bikeBreadcrumbLabel =
     breadcrumbState.bikeType?.toLowerCase() === BikeCategoryEnum.ZPRO
       ? BikeCategoryEnum.ZPRO
       : "Shop By Bike";
+      const bikeBrandPath = isBikeBreadcrumb
+  ? `/${breadcrumbState.bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+      (breadcrumbState.bikeBrand || "").toLowerCase(),
+    )}`
+  : "";
   const productBreadcrumbItems = isBikeBreadcrumb
-      ? [
-          { label: "Home", to: ROUTES.BASE_URL },
-          { label: bikeBreadcrumbLabel, to: bikeListPath },
-          {
-            label: breadcrumbState.bikeBrand || "",
-            to: bikeListPath,
-            state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
-          },
-          { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
-        {
-          label: breadcrumbCategory,
-          to: bikeDetailPath,
-          state: { category: breadcrumbCategory.toLowerCase() },
-        },
-        { label: name },
-      ]
+    ?   [
+      { label: "Home", to: ROUTES.BASE_URL },
+      { label: bikeBreadcrumbLabel, to: bikeListPath },
+      {
+        label: breadcrumbState.bikeBrand || "",
+        to: bikeBrandPath,
+        state: { brand: breadcrumbState.bikeBrand?.toLowerCase() },
+      },
+      { label: breadcrumbState.bikeModel || "", to: bikeDetailPath },
+      {
+        label: breadcrumbCategory,
+        to: bikeCategoryPath,
+        state: { category: breadcrumbCategory.toLowerCase() },
+      },
+      { label: name || staticName },
+    ]
     : [
         { label: "Home", to: ROUTES.BASE_URL },
         { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
         {
           label: breadcrumbCategory,
-          to: ROUTES.PRODUCT_CATALOG,
+          to: getProductCatalogCategoryPath(breadcrumbCategory),
           state: { category: breadcrumbCategory.toLowerCase() },
         },
-        { label: name },
+        { label: name || staticName },
       ];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
-        title={`${name} | ${breadcrumbCategory || "Motorcycle Accessories"} | Zana Motorcycles`}
-        description={
-          shortDescription ||
-          longDescription ||
-          `Shop ${name} motorcycle accessories from Zana Motorcycles.`
+        title={
+          name
+            ? `${name} | ${breadcrumbCategory || productCategory || "Motorcycle Accessories"} | Zana Motorcycles`
+            : seoData?.title
         }
-        image={newImages[0]}
+        description={
+          longDescription ||
+          seoData?.description ||
+          `Shop ${name || staticName} motorcycle accessories from Zana Motorcycles.`
+        }
+        image={newImages[0] || seoData?.image}
         type="product"
+        keywords={seoData?.keywords}
       />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <AppBreadcrumb
-          className="mb-8"
-          items={productBreadcrumbItems}
-        />
+        <AppBreadcrumb className="mb-8" items={productBreadcrumbItems} />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left - Product Images List */}
           <div className="lg:col-span-2">
             <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] scrollbar-hide">
               {newImages.map((image, index) => {
+                const thumbnailProps = getThumbnailImageProps(image);
+
                 return (
                   <Fragment key={index}>
                     {!isProductDetailPending ? (
-                      <div
+                      <button
+                        type="button"
+                        aria-label={`View ${name} image ${index + 1}`}
+                        aria-current={
+                          selectedImageIndex === index ? "true" : undefined
+                        }
                         className={`flex-shrink-0 w-20 h-20 lg:w-full lg:h-24 border-2 rounded cursor-pointer transition-all overflow-hidden ${
                           selectedImageIndex === index
                             ? "border-white"
@@ -355,16 +467,24 @@ const ProductDetailPage = () => {
                         onClick={() => setSelectedImageIndex(index)}
                       >
                         <img
-                          src={image}
+                          {...thumbnailProps}
                           alt={`${name} ${index + 1}`}
+                          width={96}
+                          height={96}
+                          sizes="96px"
+                          loading={index === 0 ? "eager" : "lazy"}
+                          decoding="async"
                           className="w-full h-full object-cover p-2"
                         />
-                      </div>
+                      </button>
                     ) : (
                       <Skeleton
-                        sx={{ backgroundColor: "grey" }}
-                        width={180}
-                        height={160}
+                        sx={{
+                          width: { xs: 80, lg: 96 },
+                          height: { xs: 80, lg: 96 },
+                          backgroundColor: "grey",
+                        }}
+                        variant="rectangular"
                       />
                     )}
                   </Fragment>
@@ -376,17 +496,47 @@ const ProductDetailPage = () => {
           {/* Center - Main Product Image */}
           <div className="lg:col-span-5">
             <div className=" rounded-lg  h-96 lg:h-[600px] flex items-center justify-center">
-              {!isProductDetailPending ? (
+              {/* Show static placeholder immediately; swap to real image once
+                  product data has loaded AND the real image has finished
+                  downloading. Both images are always in the DOM so the browser
+                  can preload the real one in the background. */}
+              <img
+                src={
+                  !isProductDetailPending && isHeroImageLoaded
+                    ? heroImageProps.src
+                    : staticPlaceholderImage
+                }
+                srcSet={
+                  !isProductDetailPending && isHeroImageLoaded
+                    ? heroImageProps.srcSet
+                    : undefined
+                }
+                alt={name || staticName}
+                width={480}
+                height={480}
+                sizes="(min-width: 1024px) 480px, calc(100vw - 48px)"
+                className="max-w-full max-h-full object-contain"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {/* Hidden preloader: once the real product image finishes
+                  downloading we flip isHeroImageLoaded → true, which causes
+                  the visible img above to switch src to the real image. */}
+              {!isProductDetailPending && (
                 <img
-                  src={newImages[selectedImageIndex]}
-                  alt={name}
-                  className="max-w-full max-h-full object-contain"
+                  {...heroImageProps}
+                  alt=""
+                  aria-hidden="true"
+                  width={480}
+                  height={480}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
+                  className="sr-only"
+                  onLoad={() => setIsHeroImageLoaded(true)}
+                  onError={() => setIsHeroImageLoaded(true)}
                 />
-              ) : (
-                <Skeleton width={500} height={700} />
               )}
             </div>
           </div>
@@ -407,18 +557,13 @@ const ProductDetailPage = () => {
               )}
             </div>
             <div className="flex items-center justify-between">
-              {!isProductDetailPending ? (
-                <h1 className="text-4xl font-bold text-white mb-4">{name}</h1>
-              ) : (
-                <Skeleton
-                  sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
-                  width={300}
-                  height={60}
-                />
-              )}
+              {/* Show static title from URL slug immediately (FCP/LCP) — real name
+                  replaces it once the API responds. Both render the same <h1> node
+                  so the browser never removes and re-adds the LCP element. */}
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-4">{name}</h1>
             </div>
 
-            {!isProductDetailPending ? (
+            {shortDescription ? (
               <p className="text-white text-lg mb-6 leading-relaxed">
                 {shortDescription}
               </p>
@@ -459,6 +604,7 @@ const ProductDetailPage = () => {
                     variant="ghost"
                     size="sm"
                     disabled={isMinusDisabled}
+                    aria-label="Decrease quantity"
                     onClick={() => setQuantity((p) => p - 1)}
                     style={{ cursor: "pointer" }}
                     className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
@@ -472,6 +618,7 @@ const ProductDetailPage = () => {
                     variant="ghost"
                     size="sm"
                     disabled={isPlusDisabled}
+                    aria-label="Increase quantity"
                     onClick={() => setQuantity((p) => p + 1)}
                     style={{ cursor: "pointer" }}
                     className="text-white hover:bg-white/10 w-9 h-9 sm:w-10 sm:h-10 border border-white shrink-0"
@@ -491,19 +638,22 @@ const ProductDetailPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  <ShoppingBag /> {isComingSoon ? "Coming Soon" : "Out of Stock"}
+                  <ShoppingBag />{" "}
+                  {isComingSoon ? "Coming Soon" : "Out of Stock"}
                 </Button>
               )}
             </div>
 
             {!isProductDetailPending && quantityAvailable > 0 && (
-              <div className="flex gap-4 mb-6">
+              <div
+                className="fixed bottom-0 left-0 right-0 z-30 flex gap-3 bg-[#181818]/95 px-4 py-3
+               shadow-[0_-12px_30px_rgba(0,0,0,0.35)] backdrop-blur
+               sm:gap-4
+               lg:static lg:mb-6 lg:rounded-lg lg:px-0 lg:py-0 lg:shadow-none lg:bg-transparent lg:backdrop-blur-none"
+              >
                 <Button
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    addToCart(product, _id, quantity, quantityAvailable, {
-                      navigateTo: ROUTES.CART,
-                    });
+                    handleAddToCart(e, product, _id, quantity, quantityAvailable);
                   }}
                   disabled={!price}
                   className="bg-black text-white border-2 border-white hover:bg-white hover:text-black flex-1 py-3 text-lg font-bold"
@@ -531,6 +681,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on Instagram"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.INSTAGRAM,
@@ -545,6 +696,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on Facebook"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.FACEBOOK,
@@ -558,6 +710,7 @@ const ProductDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Share on WhatsApp"
                   onClick={() =>
                     handleSocialMedia(
                       SocialMediaPlatformEnum.WHATSAPP,
@@ -579,6 +732,12 @@ const ProductDetailPage = () => {
               <div className="flex gap-1 md:gap-2">
                 <Tooltip title="Add to Wishlist">
                   <button
+                    type="button"
+                    aria-label={
+                      (isWishlisted ?? product.isWishlist)
+                        ? "Remove from wishlist"
+                        : "Add to wishlist"
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       handleWishList(product._id);
@@ -716,6 +875,9 @@ const ProductDetailPage = () => {
               const productQuantity = getQuantity(_id);
               const isDisabled = productQuantity >= quantityAvailable;
 
+              const suggestedImageProps =
+                getSuggestedProductImageProps(imageUrl);
+
               return (
                 <div
                   key={index}
@@ -727,12 +889,19 @@ const ProductDetailPage = () => {
                   <div className="relative p-2">
                     <div className="aspect-square bg-white/10 overflow-hidden rounded-lg relative flex items-center justify-center">
                       <img
-                        src={imageUrl}
+                        {...suggestedImageProps}
                         alt={name}
+                        width={256}
+                        height={256}
+                        sizes="256px"
+                        loading="lazy"
+                        decoding="async"
                         className="max-w-full max-h-full object-contain"
                       />
                       <div className="absolute bottom-2 left-2 group">
                         <button
+                          type="button"
+                          aria-label={`Add ${name} to cart`}
                           style={{
                             cursor: isDisabled ? "not-allowed" : "pointer",
                             opacity: isDisabled ? 0.7 : 1,
@@ -744,7 +913,6 @@ const ProductDetailPage = () => {
                               relatedProduct,
                               _id,
                               quantityAvailable,
-                              { navigateTo: ROUTES.CART },
                             );
                           }}
                           className="h-9 bg-white rounded-full flex items-center justify-center

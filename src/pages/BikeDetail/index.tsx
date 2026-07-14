@@ -25,8 +25,39 @@ import { getSelectedCurrency } from "@/Redux/Landing/Selectors";
 import BikeDetailService from "@/Redux/Product/Services/BikeDetailService";
 import bikeCategoryCountServiceAction from "@/Redux/Product/Services/BikeCategoryCount";
 import { bikeProductCategorySelector } from "@/Redux/Product/Selectors";
-import { capitalise } from "@/Utils/global";
+import { capitalise, encodedGeneratedPath } from "@/Utils/global";
 import { SeoMeta } from "@/components/SeoMeta";
+import { getProductImageProps, IMAGE_WIDTH_PRESETS } from "@/Utils/ImageUtils";
+import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import { STAGING_BIKE_SEO_MAP, PRODUCTION_BIKE_SEO_MAP } from "./BIKE_SEO_MAPS";
+
+const IS_PRODUCTION = import.meta.env.VITE_NODE_ENV === "production";
+const BIKE_SEO_MAP = IS_PRODUCTION
+  ? PRODUCTION_BIKE_SEO_MAP
+  : STAGING_BIKE_SEO_MAP;
+
+const INITIAL_BIKE_PRODUCTS_LIMIT = 6;
+
+function getCategoryUrlPath(
+  bikeType: string,
+  bikeBrand: string,
+  bikeModel: string,
+  bikeId: string,
+  category: string,
+) {
+  const basePath = [
+    SUB_ROUTES.BIKE_ACCESSORIES,
+    bikeType,
+    SUB_ROUTES.BIKE.replace("/", ""),
+    bikeBrand,
+    bikeModel,
+    bikeId,
+  ]
+    .map((item) => replaceSpecialCharactersWithHyphen(item))
+    .join("/");
+
+  return `/${basePath}/${replaceSpecialCharactersWithHyphen(category)}`;
+}
 
 type BikeDetailLocationState = {
   category?: string;
@@ -34,7 +65,14 @@ type BikeDetailLocationState = {
 
 const BikeDetailPage = () => {
   const params = useParams<BikeDetailParamsType>();
-  const { bikeType: bikeTypeParams = "", bikeId = "" } = params;
+  const {
+    bikeType: bikeTypeParams = "",
+    bikeId = "",
+    bikeBrand: bikeBrandParams = "",
+    bikeModel: bikeModelParams = "",
+    productCategory: productCategoryParams = "",
+  } = params;
+  const seoData = (BIKE_SEO_MAP as Record<string, any>)[bikeId];
   const productCategory = useSelector(bikeProductCategorySelector);
   const isZProPath = bikeTypeParams.toLowerCase() === BikeCategoryEnum.ZPRO;
   const bikeType = isZProPath ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA;
@@ -52,7 +90,21 @@ const BikeDetailPage = () => {
   const location = useLocation();
   const { category: categoryFromState = ALL_CATEGORY } = (location.state ||
     {}) as BikeDetailLocationState;
-  const initialCategory = (categoryFromState || ALL_CATEGORY).toLowerCase();
+  const initialCategory = useMemo(() => {
+    if (productCategoryParams) {
+      const matchedCategory = productCategory.find(
+        ({ name }) =>
+          replaceSpecialCharactersWithHyphen(name) === productCategoryParams,
+      );
+
+      return (
+        matchedCategory?.name.toLowerCase() ||
+        productCategoryParams.split("-").join(" ")
+      );
+    }
+
+    return (categoryFromState || ALL_CATEGORY).toLowerCase();
+  }, [categoryFromState, productCategory, productCategoryParams]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     initialCategory || ALL_CATEGORY,
@@ -74,17 +126,21 @@ const BikeDetailPage = () => {
   const [bikeDetails, setBikeDetails] = useState<BikeDetailResType | null>(
     null,
   );
+  
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  // true while the real hero image is still downloading after bike data arrives
+  const [isBikeHeroImageLoaded, setIsBikeHeroImageLoaded] = useState(false);
+  const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
   const bikeProductsRequestRef = useRef(0);
   const bikeDetailsRequestRef = useRef(0);
-  const isBikeProductsPending =
-    isBikeProductLoading || isBikeProductsHydrating;
+  const isBikeProductsPending = isBikeProductLoading || isBikeProductsHydrating;
   const isBikeDetailsPending = isBikeDetailLoading || isBikeDetailsHydrating;
 
   async function getBikeProducts(
     category = ALL_CATEGORY,
     subCategory?: string,
+    limit = INITIAL_BIKE_PRODUCTS_LIMIT,
   ) {
     const requestId = bikeProductsRequestRef.current + 1;
     bikeProductsRequestRef.current = requestId;
@@ -97,6 +153,7 @@ const BikeDetailPage = () => {
           modelId: bikeId,
           ...(category &&
             category !== ALL_CATEGORY && { category, subCategory }),
+          ...(limit && { queryParams: { page: 1, limit } }),
         }),
       )) as ShopByProductDetailsType[];
       if (bikeProductsRequestRef.current !== requestId) return;
@@ -158,22 +215,47 @@ const BikeDetailPage = () => {
     const newFilters = { category: val, subCategory: "" };
     setFilters(newFilters);
     setSelectedCategory(val);
+    setShowAllBikeProducts(false);
     getBikeProducts(val);
+    navigate(
+      getCategoryUrlPath(
+        bikeType,
+        brandName || bikeBrandParams,
+        modelName || bikeModelParams,
+        bikeId,
+        val,
+      ),
+      { replace: true },
+    );
   }
 
   function handleClearFilter() {
     setFilters({ category: selectedCategory, subCategory: "" });
+    setShowAllBikeProducts(false);
     getBikeProducts(selectedCategory);
+  }
+
+  function handleShowAllBikeProducts() {
+    setShowAllBikeProducts(true);
+    getBikeProducts(selectedCategory, subCategory, 0);
   }
 
   function handleBackToBikes() {
     const { brand: { name: brandName = "" } = {} } = bikeDetails || {};
-    navigate(`/${bikeType}${SUB_ROUTES.BIKES}`, {
-      state: { brand: brandName.toLowerCase() },
-    });
+    navigate(
+      `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+        brandName.toLowerCase(),
+      )}`,
+      {
+        state: { brand: brandName.toLowerCase() },
+      },
+    );
   }
 
   useEffect(() => {
+    // Reset hero-image-loaded flag so the static placeholder is shown again
+    // until the new real image finishes downloading.
+    setIsBikeHeroImageLoaded(false);
     pageOps();
   }, [location.pathname, currency, initialCategory]);
 
@@ -232,27 +314,46 @@ const BikeDetailPage = () => {
     );
   }
 
+  
   const {
-    name: modelName = "",
-    description = "",
+    name: modelName = seoData?.title || "",
+    description = seoData?.description || "",
     type = "",
-    imageUrl = "",
+    imageUrl = seoData?.image || "",
     brand: { name: brandName = "" } = {},
   } = bikeDetails || {};
   const bikeBreadcrumbLabel = isZProPath
     ? BikeCategoryEnum.ZPRO
     : "Shop By Bike";
   const bikeListPath = `/${bikeType}${SUB_ROUTES.BIKES}`;
+  const selectedCategoryCount =
+    categoriesWithCount.find(
+      ({ name }) => name.toLowerCase() === selectedCategory,
+    )?.count || bikeProducts.length;
+  const bikeImageProps = getProductImageProps(
+    imageUrl,
+    [...IMAGE_WIDTH_PRESETS.bikeHero],
+    480,
+  );
+
+  const brandUrlPath = `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
+  brandName.toLowerCase(),
+)}`;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <SeoMeta
-        title={`${brandName} ${modelName} Accessories | Zana Motorcycles`}
+        title={
+          modelName
+            ? `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`
+            : `${seoData?.title || "Bike"} Accessories | Zana Motorcycles`
+        }
         description={
           description ||
           `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
         }
-        image={imageUrl}
+        image={imageUrl || seoData?.image}
+        keywords={seoData?.keywords}
       />
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
@@ -264,10 +365,18 @@ const BikeDetailPage = () => {
               { label: bikeBreadcrumbLabel, to: bikeListPath },
               {
                 label: brandName,
-                to: bikeListPath,
+                to: brandUrlPath,
                 state: { brand: brandName.toLowerCase() },
               },
-              { label: modelName },
+              {
+                label: modelName,
+                to: encodedGeneratedPath(ROUTES.BIKE_DETAIL, {
+                  bikeType,
+                  bikeBrand: brandName,
+                  bikeModel: modelName,
+                  bikeId,
+                }),
+              },
               ...(selectedCategory && selectedCategory !== ALL_CATEGORY
                 ? [{ label: capitalise(selectedCategory) }]
                 : []),
@@ -275,18 +384,41 @@ const BikeDetailPage = () => {
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl flex items-center justify-center">
-              {!isBikeDetailsPending ? (
+              <img
+                src={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.src
+                    : seoData?.image || BikePlaceholderImage
+                }
+                srcSet={
+                  !isBikeDetailsPending && isBikeHeroImageLoaded
+                    ? bikeImageProps.srcSet
+                    : undefined
+                }
+                alt={modelName || bikeId}
+                width={560}
+                height={384}
+                sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
+                className="max-w-full max-h-96 object-contain"
+                style={{ aspectRatio: "560 / 384" }}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {!isBikeDetailsPending && (
                 <img
-                  src={imageUrl}
-                  alt={modelName}
-                  className="max-w-full max-h-96 object-contain"
+                  {...bikeImageProps}
+                  alt=""
+                  aria-hidden="true"
+                  width={560}
+                  height={384}
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  onError={(e) => (e.currentTarget.src = BikePlaceholderImage)}
+                  className="sr-only"
+                  onLoad={() => setIsBikeHeroImageLoaded(true)}
+                  onError={() => setIsBikeHeroImageLoaded(true)}
                 />
-              ) : (
-                <Skeleton width={500} height={380} />
               )}
             </div>
 
@@ -308,7 +440,7 @@ const BikeDetailPage = () => {
                 )}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                {!isBikeDetailsPending ? (
+                {modelName ? (
                   modelName
                 ) : (
                   <Skeleton
@@ -318,7 +450,7 @@ const BikeDetailPage = () => {
                 )}
               </h1>
               <p className="text-xl md:text-2xl text-white/70 mb-6">
-                {!isBikeDetailsPending ? (
+                {description ? (
                   description
                 ) : (
                   <Skeleton
@@ -341,7 +473,7 @@ const BikeDetailPage = () => {
                 <span className="text-white/50">•</span>
                 <span className="text-white/70">
                   {!isBikeProductsPending ? (
-                    `${bikeProducts.length} Products Available`
+                    `${selectedCategoryCount} Products Available`
                   ) : (
                     <Skeleton
                       sx={{ backgroundColor: "rgba(255,255,255,0.20)" }}
@@ -372,7 +504,7 @@ const BikeDetailPage = () => {
               Products for {modelName.toUpperCase()}
             </h2>
             <p className="text-white/60">
-              Browse {bikeProducts.length} accessories designed for your{" "}
+              Browse {selectedCategoryCount} accessories designed for your{" "}
               {modelName}
             </p>
           </div>
@@ -398,6 +530,18 @@ const BikeDetailPage = () => {
               isLoading={isBikeProductsPending}
             />
           )}
+          {!showAllBikeProducts &&
+            !isBikeProductsPending &&
+            selectedCategoryCount > filteredBikeProducts.length && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={handleShowAllBikeProducts}
+                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
+                >
+                  View all {selectedCategoryCount} products
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>
