@@ -9,7 +9,6 @@ type BikeKitData = {
   heroImageUrl: string;
   products: BikeKitProduct[];
   imagePosition?: "left" | "right";
-  hideWishlistIcon?: boolean;
 };
 
 type Props = {
@@ -20,19 +19,18 @@ type Props = {
 
 const defaultStaticData: BikeKitData[] = [
   {
-    id: "himalayan-450",
+    id: "super-meteor-650",
     brandName: "ROYAL ENFIELD",
-    modelName: "Himalayan 450",
+    modelName: "Super Meteor 650",
     heroImageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/himalayan M_12_65900dcf356cb_500X500.webp",
     imagePosition: "left",
-    hideWishlistIcon: true,
     products: [
       {
         _id: "69e14e715685096a33ad853c",
         brand: "ROYAL ENFIELD",
-        model: "Himalayan 450",
-        name: "Crash Guard for Himalayan 450 (with Slider , Black Texture, Mild Steel) - Type-1 V-2",
-        shortDescription: "Crash Guard for Himalayan 450 (with Slider, Black Texture, Mild Steel) - Type-1 V-2",
+        model: "Super Meteor 650",
+        name: "Crash Guard",
+        shortDescription: "Heavy-gauge steel, powder-coated and drop-tested for the long cruise.",
         longDescription: "",
         category: "PROTECTION",
         categoryIcon: "",
@@ -40,7 +38,7 @@ const defaultStaticData: BikeKitData[] = [
         currencySymbol: "₹",
         currency: "INR",
         originalPrice: 5499,
-        imageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/products/Zana-ROYAL-ENFIELD-Himalayan-450-Bike-Protection-Crash-Guard-Zana-Crash-Guard-for-Himalayan-450-with-Slider-Black-Texture-Mild-Steel-Type-1-V-2.webp",
+        imageUrl: "",
         images: [],
         quantityAvailable: 10,
         specifications: "",
@@ -58,9 +56,9 @@ const defaultStaticData: BikeKitData[] = [
       {
         _id: "69e14e715685096a33ad853d",
         brand: "ROYAL ENFIELD",
-        model: "Himalayan 450",
-        name: "Bash Plate Silver Aluminium For Himalayan 450",
-        shortDescription: "Bash Plate Silver Aluminium for Himalayan 450 offers essential protection for your motorcycle’s vital components.",
+        model: "Super Meteor 650",
+        name: "Bash Plate",
+        shortDescription: "4 mm aluminium shield for the sump. Rough roads welcome.",
         longDescription: "",
         category: "UNDERBODY",
         categoryIcon: "",
@@ -68,7 +66,7 @@ const defaultStaticData: BikeKitData[] = [
         currencySymbol: "₹",
         currency: "INR",
         originalPrice: 4299,
-        imageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/products/Zana-ROYAL-ENFIELD-Himalayan-450-Bike-Protection-Bash-Plate-Zana-BASH-PLATE-SILVER-ALUMINIUM-FOR-HIMALAYAN-450.webp",
+        imageUrl: "",
         images: [],
         quantityAvailable: 10,
         specifications: "",
@@ -86,9 +84,9 @@ const defaultStaticData: BikeKitData[] = [
       {
         _id: "69e14e715685096a33ad8544",
         brand: "ROYAL ENFIELD",
-        model: "Himalayan 450",
-        name: "Top Rack Plate for Himalayan 452 (Black Mild Steel)",
-        shortDescription: "Top Rack Plate for Himalayan 452 is a practical and robust accessory, ideal for riders seeking versatile luggage solutions.",
+        model: "Super Meteor 650",
+        name: "Top Rack",
+        shortDescription: "Rated for 12 kg of top box, tail bag or tightly-strapped optimism.",
         longDescription: "",
         category: "LUGGAGE",
         categoryIcon: "",
@@ -96,7 +94,7 @@ const defaultStaticData: BikeKitData[] = [
         currencySymbol: "₹",
         currency: "INR",
         originalPrice: 3799,
-        imageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/products/Zana-ROYAL-ENFIELD-Himalayan-450-Touring-Essentials-Top-Rack-Zana-Top-Rack-Plate-for-Himalayan-452-Black-Mild-Steel.webp",
+        imageUrl: "",
         images: [],
         quantityAvailable: 10,
         specifications: "",
@@ -111,7 +109,7 @@ const defaultStaticData: BikeKitData[] = [
         isComingSoon: false,
         subCategory: ""
       }
-    ],
+    ]
   },
   {
     id: "scram-411",
@@ -119,7 +117,6 @@ const defaultStaticData: BikeKitData[] = [
     modelName: "Scram 411",
     heroImageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/scram411.webp", // Using a placeholder for second bike
     imagePosition: "right",
-    hideWishlistIcon: true,
     products: [
       {
         _id: "scram-p1",
@@ -206,7 +203,6 @@ export default function BikeKitSection({
             heroImageUrl={item.heroImageUrl}
             products={item.products}
             imagePosition={item.imagePosition}
-            hideWishlistIcon={item.hideWishlistIcon}
           />
         ))}
       </Box>

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
+import HeroImage from "@/Assets/Images/ZANA_MOTORCYCLE_HERO_IMAGE.webp";
 
 type HeroSectionPropsType = {
   isMobile: boolean;
