@@ -5,10 +5,10 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative flex h-screen min-h-[600px] items-center overflow-hidden bg-[#0d0d0d] text-white">
+    <section className="relative flex h-[500px] items-center overflow-hidden bg-[#0d0d0d] text-white md:h-screen md:min-h-[600px]">
       {/* Background Giant Outline Text "ZANA" */}
       <div 
-        className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.03] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-0" 
+        className="absolute right-[-5%] top-[45%] -translate-y-1/2 select-none pointer-events-none opacity-[0.09] text-[25vw] font-serif font-bold leading-none uppercase text-transparent tracking-widest z-0" 
         style={{ WebkitTextStroke: "2px rgba(255, 255, 255, 0.8)", fontFamily: "'Playfair Display', serif" }}
       >
         ZANA
@@ -31,7 +31,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
 
           {/* Main Headline */}
           <h1 
-            className="text-white text-5xl md:text-7xl lg:text-8xl font-medium leading-[1.08] mb-6 md:mb-8 tracking-tight font-serif"
+            className="text-white text-3xl md:text-7xl lg:text-8xl font-medium leading-[1.15] md:leading-[1.08] mb-3 md:mb-8 tracking-tight font-serif"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Forged in Fire.
@@ -41,7 +41,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
 
           {/* Description */}
           <p 
-            className="text-white/60 text-sm md:text-lg lg:text-xl font-serif max-w-[680px] leading-relaxed mb-10 md:mb-14"
+            className="text-white/60 text-xs md:text-lg lg:text-xl font-serif max-w-[680px] leading-relaxed mb-5 md:mb-14"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             From your first Sunday breakfast ride to the last fuel stop before Khardung La
@@ -51,17 +51,17 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center">
             <button
               onClick={() => navigate("/zana/bikes/all")}
-              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-8 py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase"
+              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Shop By Your Bike
             </button>
             <button
               onClick={() => navigate("/product-catalog")}
-              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-8 py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2"
+              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Explore Universal Gear
