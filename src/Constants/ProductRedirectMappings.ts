@@ -9015,7 +9015,5722 @@ export const REDIRECT_MAPPINGS = Object.freeze(
     type: "bike",
     sourcePath: "/zpro/category/bajaj-accessories",
     targetPath: "/zana/bikes/bajaj"
-  }
+  },
+  {
+    type: "product",
+    sourcePath: "/product/ergonomics/zana-rear-footrest-for-super-meteor-650-pair-ms/69e279ad5685096a33ad9457",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-dominar-400-250-2017-22/69e279ad5685096a33ad92ef"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-cb350",
+    targetPath: "/product/bike-protection/zana-crash-guard-v-2-with-slider-texture-matt-black-cb350-rs/6a43ca4f54bc92ff52b1f7b1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-honda-cb350",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb350/69e279ad5685096a33ad947b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-slider-for-all-zana-crash-guards",
+    targetPath: "/product/bike-protection/zana-universal-slider-compatible-with-zana-crash-guard-only/69e279ad5685096a33ad9678"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-with-slider-combo-red-for-tvs-apache-rtx-300-beak-version",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-combo-red-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-back-rest-for-xoom-160",
+    targetPath: "/product/touring-essentials/zana-pillion-back-rest-for-xoom-160/69e279ae5685096a33ad97aa"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-steel-for-meteor-350",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-steel-for-meteor-350/69e279ad5685096a33ad9417"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-top-box-plastic-45-ltr-lflat-black",
+    targetPath: "/product/top-box/zana-universal-top-box-nomada-45-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-led-fog-light-drl-r40",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-drl-r-40/69e279ae5685096a33ad96bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-ms-with-slider-texture-matt-black-for-classic-350",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-with-slider-texture-matt-black-for-classic-350/69e279ad5685096a33ad9418"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-yezdi-adventure-2025-black",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9710"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-black-himalayan-450",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-himalayan-450-black/69e279ae5685096a33ad96f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-puck-for-honda-cb200x-black",
+    targetPath: "/product/bike-protection/zana-upper-crash-guard-with-slider-puck-for-honda-cb200x-black/69e279ad5685096a33ad9577"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/handle-bar-for-super-meteor-650",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handlebar-riser-for-himalayan-450-texture-black-aluminium-billet",
+    targetPath: "/product/ergonomics/zana-offset-handlebar-riser-for-himalayan-450-texture-black-billet-aluminium/69e279ad5685096a33ad94e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-for-x-pulse-210",
+    targetPath: "/product/accessories/zana-gps-mount-for-x-pulse-210/69e279ae5685096a33ad96c9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-honda-cb-350-rs",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb-350-rs/69e279ad5685096a33ad9482"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handle-bar-riser-black-for-triumph-speed-400",
+    targetPath: "/product/ergonomics/zana-offset-handlebar-riser-black-for-triumph-speed-400-speed-t4/69e279ad5685096a33ad949b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-for-yezdi-adventure-2025",
+    targetPath: "/product/accessories/zana-gps-mount-for-yezdi-adventure-2025/69e279ae5685096a33ad970a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-tvs-apache-rtx-300-aluminum-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-tvs-apache-rtx-300-ms-black/69e279ae5685096a33ad97b2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/exhaust-protector-for-xoom-160",
+    targetPath: "/product/bike-protection/zana-exhaust-protector-for-xoom-160/69e279ae5685096a33ad9736"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stays-pannier-rack-for-soft-bags-honda-cb350-hness-version2",
+    targetPath: "/product/zana-accessories/zana-saddle-stays-pannier-rack-for-soft-bags-honda-cb350-h-ness-version-2-cb350-highness-zana-motorcycles/69e279ad5685096a33ad9336"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/angular-handlebar-riser-for-ktm-adv-390-2025-aluminium-black",
+    targetPath: "/product/ergonomics/zana-angular-handlebar-riser-for-ktm-adv-390-2025-aluminium-black/69e279ad5685096a33ad96ab"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-for-xoom-160",
+    targetPath: "/product/accessories/zana-gps-mount-for-xoom-160/69e279ae5685096a33ad97a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-for-yezdi-adventure-2025-black",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9710"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-slider-pulsar-ns400z",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-for-pulsar-ns400z/69e279ad5685096a33ad95fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/radiator-guard-pulsar-ns400z-honeycomb-black",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-pulsar-ns400z/69e279ad5685096a33ad960f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spools-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spools-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad94ca"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-for-tvs-apache-rtx-300",
+    targetPath: "/product/accessories/zana-gps-mount-for-tvs-apache-rtx-300/69e279ae5685096a33ad97c8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-number-plate-relocator-dominar-250400-201922",
+    targetPath: "/product/accessories/zana-front-number-plate-relocator-dominar-250-400-2019-22/69e279ad5685096a33ad9345"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/retro-saddle-bag-for-hunter-350-small",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-hunter-350/69e279ad5685096a33ad94b4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-pillion-backrest-for-harley-davidson-x440",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-and-pillion-backrest-for-harley-davidson-x440/69e279ad5685096a33ad9533"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handlebar-riser-black-for-x-pulse-210",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-black-for-x-pulse-210/69e279ae5685096a33ad96db"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handlebar-riser-texture-matt-black-for-yezdi-adventure-2025",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-texture-matt-black-for-yezdi-adventure-2025/69e279ae5685096a33ad9716"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tail-tidy-black-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad9507"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spool-black-for-tvs-apache-rtx-300",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spool-black-for-tvs-apache-rtx-300/69e279ae5685096a33ad97b6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-ktm-adventure-250-pair",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-ktm-adventure-250-390-390x-390-rally/69e279ad5685096a33ad9459"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-suzuki-v-strom-sx-250-black",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-led-fog-light-drl-45",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-drl-45/69e279ae5685096a33ad97c7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/ktm-adv-390-2025-drl-r40-fog-light-mounting-adapter-kit-exclusive-for-zana-drl-r40-auxiliary-light",
+    targetPath: "/product/fog-light/zana-ktm-adv-390-2025-drl-r-40-fog-light-mounting-adapter-kit-exclusive-for-zana-drl-r-40-auxiliary-light/69e279ae5685096a33ad96f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-top-box-aluminium-45ltr-l-flat-black-with-back-rest-cushion-for-tvs-apache-rtx-300",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-black-45ltr-l-flat-with-back-rest-cushion/69e279d95685096a33ad97cc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-moto-32-ltr-plastic-with-backrest-black",
+    targetPath: "/product/top-box/zana-universal-top-box-moto-32-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extenders-for-yezdi-adventure-2025-aluminium-stainless-steel",
+    targetPath: "/product/side-stand-support/zana-side-stand-extenders-for-yezdi-adventure-2025-aluminium-stainless-steel/69e279ae5685096a33ad9707"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-mild-steel-pair-for-hunter-350",
+    targetPath: "/product/ergonomics/zana-rear-footrest-mild-steel-pair-for-hunter-350/69e279ad5685096a33ad9458"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-for-harley-davidson-x440-black-colour",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-for-harley-davidson-x440-black/69e279ad5685096a33ad9531"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-universal",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-for-suzuki-vstrom-250",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-tvs-apache-rtx-300",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-tvs-apache-rtx-300/69e279ae5685096a33ad97a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-triumph-scrambler-400-x",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-street-scrambler/69e279ad5685096a33ad93e4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-ms-for-classic-350-reborn",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-ms-for-classic-350-reborn/69e279ad5685096a33ad94b2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/himalayan-new-angular-handle-riser-aluminum",
+    targetPath: "/product/ergonomics/zana-new-angular-handle-bar-riser-aluminum-for-scram-411/69e279ad5685096a33ad9448"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each-for-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each-for-tvs-apache-rtx-300/69e279ae5685096a33ad97a3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-mobile-holder-with-charger-blu",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-with-charger-blu/69e279ae5685096a33ad96bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tail-tidy-for-kawasaki-klx-230",
+    targetPath: "/product/bike-protection/zana-tail-tidy-for-kawasaki-klx-230/69e279ae5685096a33ad97a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/jerry-can-mount-for-suzuki-v-strom-250",
+    targetPath: "/product/touring-essentials/zana-jerry-can-mount-for-suzuki-v-strom-250/69e279ae5685096a33ad975b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-bag-re-meteor-350",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-hunter-350/69e279ad5685096a33ad94b4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-compatible-with-royal-enfield-backrest-ms-for-super-meteor-650",
+    targetPath: "/product/touring-essentials/zana-top-rack-compatible-with-royal-enfield-backrest-ms-for-super-meteor-650/69e279ad5685096a33ad9466"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/brat-mini-handle-bar-for-gtinterceptor-650",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-for-interceptor-gt-650/69e279ad5685096a33ad92d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-honda-cb-350-2025-black",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-honda-cb-350-2025-black/69e279ae5685096a33ad9753"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-led-fog-light-drk-r35-for-himalayan-450",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-drl-r-35-for-himalayan-450/69e279ae5685096a33ad9794"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/backrest-for-triumph-speed-twin-1200",
+    targetPath: "/product/touring-essentials/z-pro-backrest-for-speed-twin-1200/69e279ad5685096a33ad943c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-type1-for-royal-enfield-meteor-350",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-1-for-royal-enfield-meteor-350/69e279ad5685096a33ad94ad"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pull-back-angular-handle-bar-riser-texture-matt-black-for-gtinterceptor-650",
+    targetPath: "/product/ergonomics/zana-pull-back-angular-handlebar-riser-texture-matt-black-for-gt-interceptor-650/69e279ad5685096a33ad933d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-gt-interceptor-650",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-gt-650-interceptor-650/69e279ad5685096a33ad9670"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-honda-cb350",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb350/69e279ad5685096a33ad93ea"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-new-honda-cb300f-w1",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-new-honda-cb300f-w-1/69e279ad5685096a33ad93fd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-xoom-160",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-xoom-160/69e279ae5685096a33ad97a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-tvs-apache-rtx-300",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-tvs-apache-rtx-300-sheet-metal/69e279ae5685096a33ad97a6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-himalayan-450-35ltr-silver-aluminium",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-silver-for-himalayan-450/69e279ad5685096a33ad954a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-cb350-rs",
+    targetPath: "/product/bike-protection/zana-crash-guard-v-2-with-slider-texture-matt-black-cb350-rs/6a43ca4f54bc92ff52b1f7b1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each",
+    targetPath: "/product/bags/zana-roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each/69e279ae5685096a33ad96eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handle-riser-guerrilla-450",
+    targetPath: "/product/ergonomics/zana-offset-handle-riser-for-guerrilla-450/69e279ad5685096a33ad95dc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/handlebar-riser-for-super-meteor-650-vertical-aluminum",
+    targetPath: "/product/ergonomics/zana-handlebar-riser-for-super-meteor-650-vertical-aluminum/69e279ad5685096a33ad948b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/top-box-plastic-45-ltr-nomada-series-black",
+    targetPath: "/product/top-box/zana-universal-top-box-nomada-45-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/handle-bar-riser-for-harley-davidson-x440",
+    targetPath: "/product/ergonomics/zana-handle-bar-riser-for-harley-davidson-x440/69e279ad5685096a33ad9530"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-dominar-250-400",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-dominar-250-400/69e279ad5685096a33ad9665"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-ms-with-slider-puck-black-for-vstrom-250",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-with-slider-puck-black-for-v-strom-250/69e279ad5685096a33ad93a2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-bmw-310-gs/69e279ad5685096a33ad959d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-honda-cb350",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb350/69e279ad5685096a33ad93bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/back-rest-black-for-for-triumph-speed-400",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-guerrilla-450",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-guerrilla-450/69e279ad5685096a33ad9671"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-for-super-meteor-650-with-jerry-can-mount",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-super-meteor-650-with-jerry-can-mount-ms/69e279ad5685096a33ad9472"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-glossy-black-cb350",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-glossy-black-cb350/69e279ad5685096a33ad9329"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad94cc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-himalayan-450",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-450/69e279ad5685096a33ad96b9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-glossy-red-for-xpulse-210",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-glossy-red-for-x-pulse-210/69e279ae5685096a33ad96c0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-top-box-plastic-45-ltr-lflat-black",
+    targetPath: "/product/top-box/zana-universal-top-box-nomada-45-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-hero-xoom-160",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-hero-xoom-160/69e279ae5685096a33ad97a7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-honda-cb200x-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-honda-cb200x-black/69e279ad5685096a33ad957a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-combo-with-slider-for-tvs-apache-rtx-300",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-combo-red-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-suzuki-vstrom-250-aluminum-stainless-steel",
+    targetPath: "/product/accessories/zana-gps-mount-aluminum-stainless-steel-for-suzuki-vstrom-250/69e279ad5685096a33ad93b9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-with-jerry-can-mount-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-black-for-ktm-adv-390-2025/69e279ad5685096a33ad968e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-x-pulse-210",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-x-pulse-210/69e279ae5685096a33ad96c6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-for-super-meteor-650-with-luggage-rack",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-compatible-with-luggage-rack-for-super-meteor-650/69e279ad5685096a33ad942f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/weekender-tail-bag-32-liters-expandable-to-39-liters-for-ktm-enduro-390",
+    targetPath: "/product/bags/zana-weekender-tail-bag-32-liters-expandable-to-39-liters-for-ktm-enduro-390/69e279ae5685096a33ad9768"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-himalayan-450",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-himalayan-450/69e279ad5685096a33ad959f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/top-box-rhino-36-ltr-plastic-with-backrest-black-gray",
+    targetPath: "/product/top-box/zana-universal-top-box-rhino-36-ltr-plastic-with-backrest-black-gray/69e279d95685096a33ad97e1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-mild-steel-with-slider-glossy-black-gt-interceptor-650",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-bsa-goldstar-650-with-slider-puck-mild-steel-black/69e279ad5685096a33ad9622"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/paddock-stand-yezdi-adventure-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-yezdi-adventure-saddle-stay-black/69e279ad5685096a33ad9357"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tail-tidy-black-for-honda-cb300r",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-honda-cb300r/69e279ad5685096a33ad9502"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-himalayan-450-35ltr-aluminium-black",
+    targetPath: "/product/bike-protection/zana-radiator-guard-aluminium-black-for-himalayan-450/69e279ad5685096a33ad94e6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-himalayan-450-with-slider-red-mild-steel-type-1-v2",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-himalayan-450-with-slider-red-mild-steel-type-1-v-2/69e279ae5685096a33ad97c5"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/rear-paddock-spool-for-triumph-street-scrambler",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-scrambler/69e279ad5685096a33ad93e5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/radiator-guard-honeycomb-black-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad94d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-ktm-duke-390-250",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-ktm-duke-250-390/69e279ad5685096a33ad966d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-duke-250390",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-dominar400-20192021",
+    targetPath: "/product/accessories/zana-gps-mount-dominar400-2019-2021/69e279ad5685096a33ad9311"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-pair-for-suzuki-vstrom-250",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-suzuki-v-strom-250/69e279ad5685096a33ad9480"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-himalayan-450-white",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-himalayan-450-white/69e279ae5685096a33ad96f9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-type-w-for-apache-rtx-300",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-w-for-apache-rtx-300/69e279ae5685096a33ad9785"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-re-super-meteor-650-backrest",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-for-super-meteor-650-black/6a35368d66b713f40b19a351"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-for-honda-cb200x",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-honda-cb200x/69e279ad5685096a33ad957c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-with-parcel-shelf-ms-for-classic-350-reborn",
+    targetPath: "/product/touring-essentials/zana-backrest-with-parcel-shelf-ms-for-classic-350-reborn/69e279ad5685096a33ad9419"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-continental-gt-650-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-ms-texture-matt-black-for-gt-interceptor-650/69e279ad5685096a33ad92d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-hex-cushion-for-honda-cb-350",
+    targetPath: "/product/touring-essentials/zana-backrest-hex-cushion-for-honda-cb-350/69e279ae5685096a33ad96df"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-for-apache-rtx-300",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-apache-rtx-300/69e279ae5685096a33ad9791"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-6led-fog-light-zfl60",
+    targetPath: "/product/fog-light/zana-universal-6led-fog-light-zfl-60/69e279ad5685096a33ad96b1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-cushion-small-for-cb300f",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-cushion-small-for-cb300f/69e279ad5685096a33ad9414"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-honda-cb300f-left-right",
+    targetPath: "/product/ergonomics/zana-rear-footrest-left-right-for-cb300f/69e279ad5685096a33ad9415"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-bag-re-himalayan-450",
+    targetPath: "/product/bags/zana-overlander-saddle-bag-for-himalayan-450/69e279ad5685096a33ad94ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-top-box-aluminium-22-ltr-rflat-silver",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-silver-22ltr-l-flat/69e279d95685096a33ad97d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-for-yamaha-mt-15",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-yamaha-mt-15/69e279ad5685096a33ad94a3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-for-gt-interceptor-650",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-orange-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-engine-guard-with-slider-orange-for-ktm-adv-390-2025/69e279ad5685096a33ad968a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad94ce"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-for-ktm-duke-250-gen3",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-ktm-duke-250-390-gen-3/69e279ad5685096a33ad95bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-re-himalayan-450",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-himalayan-450/69e279ad5685096a33ad94fd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-guerrilla-450-slider-black-texture-mild-steel-type1",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-guerrilla-450-with-slider-black-texture-mild-steel-type-1/69e279ad5685096a33ad95d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-set-black-for-ktm-adv",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-set-black-for-ktm-adv-390-2025/69e279ad5685096a33ad969c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handle-bar-riser-silver-for-triumph-scrambler-400",
+    targetPath: "/product/ergonomics/zana-offset-handlebar-riser-black-for-triumph-speed-400-speed-t4/69e279ad5685096a33ad949b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tail-tidy-for-triumph-street-triple-765",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-for-triumph-street-triple-765/69e279ad5685096a33ad9583"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-dominar-250-dominar-400",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-for-dominar-250-400-2019-2022/69e279ad5685096a33ad9588"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/aigis-hand-guard-for-tvs-apache-rtx-300-white",
+    targetPath: "/product/bike-protection/zana-aigis-hand-guard-for-tvs-apache-rtx-300-white/69e279ae5685096a33ad97b7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-himalayan-450-45ltr-aluminium-black",
+    targetPath: "/product/bike-protection/zana-radiator-guard-aluminium-black-for-himalayan-450/69e279ad5685096a33ad94e6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-honda-cb350-silver-aluminium",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-honda-cb350-rs-aluminum-black/69e279ae5685096a33ad97bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handle-bar-riser-honda-cb300r-aluminum",
+    targetPath: "/product/ergonomics/zana-offset-handle-bar-riser-aluminum-for-cb300r/69e279ad5685096a33ad9497"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-cb-300r-bash-plate-aluminium",
+    targetPath: "/product/bike-protection/zana-honda-cb-300r-bash-plate-aluminium/69e279ad5685096a33ad93bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-honda-cb350-rs",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb350-rs/69e279ad5685096a33ad93eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-for-himalayan-450-36ltr-aluminium-silver-with-frame",
+    targetPath: "/product/luggage/zana-panniers-for-himalayan-450-36-ltr-aluminium-silver-with-frame/69e279ad5685096a33ad9504"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-himalayan-411/69e279ad5685096a33ad95a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-himalayan-411",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-himalayan-411/69e279ad5685096a33ad95a3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-compatible-with-pillion-backrest-cb350-hnesss-version2-plit-seatsingle-seat",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-v2-compatible-with-pillion-backrest-for-honda-cb-300-r-bs4-bs6/69e279ad5685096a33ad94a7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-for-super-meteor-650-with-frame-36ltr-black-aluminium-lflat",
+    targetPath: "/product/luggage/zana-panniers-for-super-meteor-650-with-frame-aluminium-black-36-ltr-l-flat/69e279ad5685096a33ad9559"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-mobile-holder-without-charger",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger/69e279ad5685096a33ad9541"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-rflat-black-with-frame-for-himalayan-411",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-r-flat-black-with-frame-for-himalayan-411/69e279ad5685096a33ad955d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-for-himalayan-450-with-jerry-can-mount-v2-mild-steel",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-for-himalayan-450-with-jerry-can-mount-v2-mild-steel/69e279ad5685096a33ad94ed"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/paddock-stand-dominar-400-20172018-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-texture-matt-black-dominar-250-400-2019-22/69e279ad5685096a33ad92f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spool-for-aprilia-rs-457",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spool-for-aprilia-rs-457/69e279ae5685096a33ad971b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-ms-w1-compatible-with-pillion-backrest-scram-411-bs6-2022",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-scram-411-bs6-2022-ms-w-1-compatible-with-pillion-backrest/69e279ad5685096a33ad936a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-8litre-ktm-adv-390-2025",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-ktm-adv-390-2025/69e279ad5685096a33ad9694"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-with-jerry-can-mount-dominar-250400-201922",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-with-jerry-can-mount-dominar-250-400-2019-22/69e279ad5685096a33ad939b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-stratos-tank-bag-6l-expandable-to-9l",
+    targetPath: "/product/bags/zana-universal-stratos-tank-bag-6l-expandable-to-9l/69e279ae5685096a33ad96e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-kawasaki-klx-230-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-kawasaki-klx-230-black/69e279ae5685096a33ad978d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-harley-davidson-x440",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-harley-davidson-x440/6a17e5b88bce4b00a14a76fa"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-gtx-tank-bag-16ltr-expandable-to-20ltr-for-apache-rtx-300",
+    targetPath: "/product/bags/zana-universal-gtx-tank-bag-tail-bag-16ltr-expandable-to-20ltr-for-apache-rtx-300/69e279ae5685096a33ad978c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stays-ms-with-exhaust-sheild-with-jerry-can-mounting-texture-matt-black-for-gtinterceptor650",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-ms-with-exhaust-shield-with-jerry-can-mount-for-gt-interceptor-650-texture-matt-black/69e279ad5685096a33ad9341"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-bag",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-re-bear-650/69e279ad5685096a33ad9650"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-honda-cb350",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/paddock-spools-for-triumph-street-triple-765",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-triumph-street-triple-765/69e279ad5685096a33ad9581"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/bash-plate-for-honda-cb350-rs-aluminum-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-honda-cb350-rs-aluminum-black/69e279ae5685096a33ad97bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-km-adv-390",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-ktm-adv-390-2025/69e279ad5685096a33ad969a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/saddle-stay-silver-for-triumph-tiger-900-rally-pro",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-silver-for-triumph-tiger-900-rally-pro/69e279ad5685096a33ad944d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/upper-lower-crash-guard-set-red-for-bmw-f900-gs",
+    targetPath: "/product/bike-protection/z-pro-upper-lower-crash-guard-set-for-bmw-f900-gs-black-coming-soon/69e279ae5685096a33ad9774"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-orange-for-ktm-duke-390250200390-gen-3",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-orange-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad94cd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-re-meteor-350-steel",
+    targetPath: "/product/ergonomics/zana-rear-footrest-steel-pair-for-meteor-350/69e279ad5685096a33ad94b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-adventure-saddle-stay-black",
+    targetPath: "/product/touring-essentials/zana-yezdi-adventure-saddle-stay-black/69e279ad5685096a33ad9357"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-continental-gt-interceptor-650",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-continental-gt-interceptor-650/69e279ad5685096a33ad95f9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handle-riser-dominar-400",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400/69e279ad5685096a33ad9314"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-mobile-holder-with-usb-charger",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-with-usb-charger/69e279ad5685096a33ad953f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-bsa-goldstar-650-with-pillion-backrest-steel-black-type2",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-bsa-goldstar-650-with-pillion-back-rest-mild-steel-black-type-1/69e279ad5685096a33ad962d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-w1-ms-compatible-with-pillion-backrest-for-royal-enfield-hunter-350",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-w-1-ms-compatible-with-pillion-backrest-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f2"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/frame-slider-for-triumph-street-triple-765",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-triumph-street-triple-765/69e279ad5685096a33ad957f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/back-rest-black-for-for-triumph-scrambler-400-x",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-triumph-scrambler-400/69e279ad5685096a33ad95a8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-slider-puck",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handlebar-riser-for-tvs-apache-rtx-300-silver",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-for-tvs-apache-rtx-300-silver/69e279ae5685096a33ad97b8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-led-fog-light-zfl50",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-zfl-50/69e279ad5685096a33ad9614"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/radiator-guard-for-jawa-bobber-42-honeycomb-black-aluminium",
+    targetPath: "/product/bike-protection/zana-radiator-guard-for-jawa-bobber-42-honeycomb-black-aluminium/69e279ae5685096a33ad973b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-ktm-duke-250-390",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-ktm-duke-250-390/69e279ad5685096a33ad966d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-22-litre-r-flat-silver-for-honda-rebel-500",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-22-litre-r-flat-silver/69e279d95685096a33ad97de"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-for-ktm-adventure-250390",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stays-mild-steel-with-exhaust-sheild-with-jerry-can-mounting-texture-matt-black-for-classic-350-reborn",
+    targetPath: "/product/touring-essentials/zana-saddle-stays-mild-steel-with-exhaust-sheild-with-jerry-can-mounting-texture-matt-black-for-classic-350-reborn/69e279ad5685096a33ad9476"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-30-litre-single-60-litre-pair-bag-himalayan-411",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-himalayan-411/69e279ad5685096a33ad95a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-sliders-adventure-250390-390-x",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-adventure-250-390-390-x/69e279ad5685096a33ad9320"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-for-bear-650",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-bear-650/6a168c0110cace8659fb6df6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-set-orange-for-ktm-adv-390",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-set-orange-for-ktm-adv-390-2025/69e279ad5685096a33ad969b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/side-stand-extender-rally-pro-aluminium-stainless-steel",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-for-tiger-900-rally-pro-aluminium-stainless-steel/6a131adfdacf4bb0c25c6f6a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/back-rest-with-parcel-shelf-for-triumph-street-twin",
+    targetPath: "/product/touring-essentials/z-pro-back-rest-with-parcel-shelf-for-triumph-street-twin-900cc/69e279ad5685096a33ad93f8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-honda-cb-350-2025",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb-350-2025/69e279ae5685096a33ad974d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-for-xoom-160",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-xoom-160/69e279ae5685096a33ad9735"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-ktm-adventure-250-aluminium-black",
+    targetPath: "/product/bike-protection/zana-new-bashplate-v3-aluminium-black-ktm-adventure-250-390-390-x/69e279ad5685096a33ad9481"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/drake-saddle-stay-for-honda-cb350-rs-black",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-honda-cb350-rs-black/69e279ae5685096a33ad97bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-black-ms-for-royal-enfield-hunter-350",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-black-ms-for-royal-enfield-hunter-350/69e279ad5685096a33ad93bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-ms-for-meteor-350",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-meteor-350/69e279ad5685096a33ad950f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre-super-meteor-650",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-super-meteor-650/69e279ad5685096a33ad95d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-fog-light-mount",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/new-top-rack-with-aluminium-plate-and-compatible-with-pillion-backrest-for-gt-interceptor-650",
+    targetPath: "/product/touring-essentials/zana-new-top-rack-with-aluminum-plate-and-compatible-with-pillion-backrest-for-gt-interceptor-650/69e279ad5685096a33ad934c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/ktm-adv-390-2025-fog-light-mounting-kit",
+    targetPath: "/product/fog-light/zana-ktm-adv-390-2025-fog-light-mounting-kit/69e279ae5685096a33ad96f8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-super-meteor-650",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-super-meteor-650/69e279ad5685096a33ad95e8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mudguard-riser-gtinterceptor-650",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-for-gt-interceptor-650/69e279ad5685096a33ad9307"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/engine-guard-for-triumph-speed-twin",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-speed-twin-900/69e279ad5685096a33ad947d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-weekender-tail-bag-32-liters-expandable-to-39-liters",
+    targetPath: "/product/bags/zana-universal-weekender-tail-bag-32-liters-expandable-to-39-liters/69e279ae5685096a33ad96e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-60-litres-pair-bag-30-litre-each-for-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each-for-tvs-apache-rtx-300/69e279ae5685096a33ad97a3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/ktm-duke-250390-20192022-front-fluid-reservoir-oil-cover",
+    targetPath: "/product/bike-protection/zana-ktm-duke-250-390-2019-2022-front-fluid-reservoir-oil-cover/69e279ad5685096a33ad93b6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-super-meteor-650-35ltr-aluminium-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-super-meteor-650-aluminum-black/69e279ad5685096a33ad941c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-with-jerry-can-mount-for-honda-cb-350-2025",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-for-honda-cb-350-2025/69e279ae5685096a33ad974a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-with-exhaust-sheild-with-jerry-can-mount-for-himalayan-411",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-exhaust-sheild-with-jerry-can-mount-for-himalayan-411-scram-411/69e279ad5685096a33ad9562"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-bmw-f900-gs-gsa-black",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-bmw-f900-gs-gsa-black/69e279ad5685096a33ad963b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/upper-crash-bars-silver-for-bmw-f850-gsa",
+    targetPath: "/product/bike-protection/z-pro-upper-crash-bars-silver-for-bmw-f850-gsa/69e279ad5685096a33ad9461"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-ktm-adv-390-2025-white-with-oange-logo",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-ktm-adv-390-2025-white-with-orange-logo-coming-soon/69e279ae5685096a33ad97bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-adventure-leg-guard-with-slider-black-lower",
+    targetPath: "/product/bike-protection/zana-yezdi-adventure-leg-guard-with-slider-black-lower/69e279ad5685096a33ad9352"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/royal-enfield-hunter-350-headlight-guard-stainlesssteel",
+    targetPath: "/product/bike-protection/zana-royal-enfield-hunter-350-headlight-guard-stainless-steel/69e279ad5685096a33ad93c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/paddock-stand-ms-gtinterceptor-650-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-ms-texture-matt-black-for-gt-interceptor-650/69e279ad5685096a33ad92d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/broozer-tail-bag-50-litre",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-himalayan-411/69e279ad5685096a33ad95a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-aluminum-for-super-meteor-650",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-super-meteor-650/69e279ad5685096a33ad947f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/new-angular-handle-bar-riser-aluminum-for-scram-411",
+    targetPath: "/product/ergonomics/zana-new-angular-handle-bar-riser-aluminum-for-scram-411/69e279ad5685096a33ad9448"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-pair-ms-for-x-pulse-210",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-ms-for-x-pulse-210/69e279ae5685096a33ad96c8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/leg-guard-ms-with-slider-texture-matt-black-himalayan-bs6-202123",
+    targetPath: "/product/bike-protection/zana-leg-guard-ms-with-slider-texture-matt-black-himalayan-bs6-2021-23/69e279ad5685096a33ad92f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/leg-guard-crash-guard-re-bear-650-with-slider-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-for-bear-650-ms-black/69e279ad5685096a33ad9616"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-ms-plate-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-black-for-ktm-adv-390-2025/69e279ad5685096a33ad9691"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-re-super-meteor650",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-super-meteor-650-pair-ms/69e279ad5685096a33ad9457"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-l-flat-black-with-frame-for-himalayan-450",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-black-with-frame-for-himalayan-450/69e279ad5685096a33ad96ae"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-pulsar-ns400z",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-pulsar-ns-400z/69e279ad5685096a33ad9628"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/overlander-saddle-bag-for-super-meteor-650",
+    targetPath: "/product/bags/zana-overlander-saddle-bag-for-super-meteor-650/69e279ad5685096a33ad94bc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/engine-frame-texture-matt-black-himalayan-compatible-with-scram-411-bs6-202122",
+    targetPath: "/product/bike-protection/zana-engine-frame-texture-matt-black-himalayan-compatible-with-scram-411-bs6-2021-22/69e279ad5685096a33ad92f5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/brat-with-rod-handle-bar-interceptor-650",
+    targetPath: "/product/bike-protection/zana-single-rod-crash-bar-gt-interceptor-650/69e279ad5685096a33ad932d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-with-exhaust-sheild-with-jerry-can-mount-for-honda-nx500",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-exhaust-sheild-with-jerry-can-mount-for-honda-nx500/69e279ad5685096a33ad9574"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-honda-cb350-with-parcel-shelf",
+    targetPath: "/product/touring-essentials/zana-backrest-hex-cushion-with-parcel-shelf-for-honda-cb-350/69e279ae5685096a33ad96e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/frame-slider-small-wing-for-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-frame-slider-small-wing-for-aprilia-rs-457/69e279ae5685096a33ad97c3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-v2-compatible-with-pillion-backrest-for-honda-cb-300-r-bs4bs6",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-v2-compatible-with-pillion-backrest-for-honda-cb-300-r-bs4-bs6/69e279ad5685096a33ad94a7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-plate-himalayan411-small-bs6",
+    targetPath: "/product/touring-essentials/zana-toprack-plate-small-himalayan-bs6-2021-ms/69e279ad5685096a33ad92fa"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-classic-350500-659",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-classic-350-500/69e279ad5685096a33ad9334"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/side-stand-extender-for-triumph-street-scrambler-900",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-for-triumph-street-scrambler-900/69e279ad5685096a33ad949f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-guerrilla-450-ms-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-guerrilla-450-ms-black/69e279ad5685096a33ad95d8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mudguard-riser-scram-411-bs6-2022",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-scram-411-bs6-2022/69e279ad5685096a33ad9369"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-bsa-goldstar-650-with-slider-puck-steel-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-bsa-goldstar-650-with-slider-puck-mild-steel-black/69e279ad5685096a33ad9622"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-30-litre-single-60-litre-pair-bag-for-ktm-adventure-250",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-ktm-adv-250-390/69e279ad5685096a33ad95ba"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-triumph-scrambler-400-x-white",
+    targetPath: "/product/bike-protection/zana-hand-guard-white-for-triumph-scrambler-400-x-scrambler-400-xc-tracker-400/69e279ae5685096a33ad96fc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre-harley-davidson-x440",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-harley-davidson-x440/69e279ad5685096a33ad95f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-ktm-adv-390250",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-ktm-adv-390-250-g-1/69e279ad5685096a33ad946f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-lflat-black-with-frame-for-suzuki-vstrom-250",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-r-flat-black-with-frame-for-suzuki-v-strom-250/69e279ad5685096a33ad9550"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-sheet-metal-for-super-meteor-650",
+    targetPath: "/product/touring-essentials/zana-backrest-sheet-metal-for-super-meteor-650/69e279ad5685096a33ad9470"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-for-yezdi-adventure-2025-black",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9704"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-for-honda-cb-350-2025-texture-matt-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-v-2-with-slider-for-honda-cb-350-2025-texture-matt-black/6a43ceba54bc92ff52b1f7b6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag/69e279ad5685096a33ad9568"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/frame-slider-suzuki-hayabusa-1300-black",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-scrambler-leg-guard-with-slider-black",
+    targetPath: "/product/bike-protection/zana-yezdi-adventure-leg-guard-with-slider-black-lower/69e279ad5685096a33ad9352"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/paddock-spools-for-suzuki-hayabusa-1300",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-mobile-holder-with-usb-charger-rex",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-with-usb-charger-rex/69e279ad5685096a33ad96b7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-harley-davidson-x440",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-harley-davidson-x440/69e279ad5685096a33ad95f3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bashplate-ktm-adventure-250-aluminium-black-new",
+    targetPath: "/product/bike-protection/zana-new-bashplate-v3-aluminium-black-ktm-adventure-250-390-390-x/69e279ad5685096a33ad9481"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-re-meteor-350-aluminium",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminium-for-meteor-350/69e279ad5685096a33ad94f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-new-plate-compatible-with-pillion-backrest-texture-matt-black-dominar-201718",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-new-plate-compatible-with-pillion-backrest-texture-matt-black-dominar-2017-18/69e279ad5685096a33ad93b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-nx500-number-plate-mount",
+    targetPath: "/product/accessories/zana-number-plate-mount-for-honda-nx500/69e279ad5685096a33ad960b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-plate-small-xpulse200-bs6",
+    targetPath: "/product/touring-essentials/zana-toprack-plate-small-xpulse200-bs6/69e279ad5685096a33ad9301"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/radiator-guard-ktm-adventure-250-texture-matt-black-aluminium",
+    targetPath: "/product/bike-protection/zana-radiator-guard-texture-matt-black-ktm-adv-250-390-390-x-aluminium/69e279ad5685096a33ad92e7"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/zpro/product/upper-lower-crash-guard-set-black-for-bmw-f900-gs",
+    targetPath: "/product/bike-protection/z-pro-upper-lower-crash-guard-set-for-bmw-f900-gs-black-coming-soon/69e279ae5685096a33ad9774"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/top-rack-with-new-plate-compatible-with-pillion-backrest-texture-matt-black-dominar-201718",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-new-plate-compatible-with-pillion-backrest-texture-matt-black-dominar-2017-18/69e279ad5685096a33ad93b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-black-for-yamaha-mt-15",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-black-for-yamaha-mt-15/69e279ad5685096a33ad94a2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-himalayan-bs6-2021",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-bs6-2021/69e279ad5685096a33ad9330"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-ms-plate-pulsar-ns400z",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-for-pulsar-ns400z/69e279ad5685096a33ad960c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-ktm-duke-390",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-ktm-enduro-390-black/69e279ae5685096a33ad9751"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-type-1-black-with-plate-dominar-2017-18",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-1-texture-matt-black-ktm-adv-390/69e279ad5685096a33ad92eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-re-super-meteor-650-ms-with-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-top-rack-sheet-metal-with-pillion-backrest-for-super-meteor-650/69e279ad5685096a33ad9451"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/frame-slider-for-kawasaki-z900",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-kawasaki-z-900/69e279ad5685096a33ad9401"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-ms-for-super-meteor-650",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-super-meteor-650/69e279ad5685096a33ad9491"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/retro-saddle-bag-for-honda-cb-350",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-honda-cb-350/69e279ad5685096a33ad94bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre-himalayan-411",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-himalayan-411/69e279ad5685096a33ad95a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-texture-matt-black-dominar-400250-20172018",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-dominar-400-250-2017-2018/69e279ad5685096a33ad931a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-super-meteor-650-with-slider",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-super-meteor-650-with-slider-ms-type-2/69e279ad5685096a33ad9465"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/engine-guard-for-triumph-street-scrambler-900",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/paddock-stand-duke-200-bs6-202122-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-with-jerry-can-mount-duke-200-bs6-texture-matt-black-2019-2022/69e279ad5685096a33ad934f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/single-rod-crash-bar-gt-interceptor-650",
+    targetPath: "/product/bike-protection/zana-single-rod-crash-bar-gt-interceptor-650/69e279ad5685096a33ad932d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-triumph-scrambler-400",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-triumph-scrambler-400/69e279ad5685096a33ad95aa"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-x-pulse-210",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-x-pulse-210/69e279ae5685096a33ad96c5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-harley-davidson-x440",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-harley-davidson-x440/69e279ad5685096a33ad953d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/guerrilla450-top-box-aluminium-22litre-lflat-black",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-black-22ltr-l-flat/69e279d95685096a33ad97cf"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/number-plate-mount-for-bmw-f900-gs-gsa",
+    targetPath: "/product/accessories/z-pro-number-plate-mount-for-bmw-f900-gs-gsa/69e279ad5685096a33ad96a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-harley-davidson-x440",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-harley-davidson-x440/69e279ad5685096a33ad953c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-bajaj-dominar400-texture-matt-black",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-dominar-400-texture-matt-black-2017-18/69e279ad5685096a33ad92ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-with-parcel-shelf-mild-steel-for-royal-enfield-hunter-350",
+    targetPath: "/product/touring-essentials/zana-backrest-with-parcel-shelf-mild-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vetrical-handlebar-riser-for-honda-cb200x",
+    targetPath: "/product/ergonomics/zana-vetrical-handlebar-riser-for-honda-cb200x/69e279ad5685096a33ad957d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-suzuki-v-strom-250",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-suzuki-v-strom-250/69e279ad5685096a33ad9464"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-gel-seat-cushion-medium-770grm",
+    targetPath: "/product/gel-seat/zana-universal-gel-seat-cushion-medium-770grm/69e279ad5685096a33ad95ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/engine-guard-with-slider-white-for-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-lower-engine-guard-with-slider-white-for-ktm-adv-390-2025/69e279ad5685096a33ad96b5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-for-honda-cb200x",
+    targetPath: "/product/accessories/zana-gps-mount-for-honda-cb200x/69e279ad5685096a33ad96b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mudguard-riser-himalayan-20162020",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-for-himalayan-2016-2020/69e279ad5685096a33ad9304"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-ms-w1-compatible-with-pillion-backrest-himalayan-bs6-201620",
+    targetPath: "/product/touring-essentials/zana-top-rack-ms-w-1-compatible-with-pillion-backrest-himalayan-bs6-2016-20/69e279ad5685096a33ad9349"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-re-bear-650",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-bear-650/69e279ad5685096a33ad9624"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-aluminum-for-classic-350-reborn",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-classic-350-reborn/69e279ad5685096a33ad9471"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-30-litre-single-60-litre-pair-bag-himalayan-450",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-himalayan-450/69e279ad5685096a33ad959a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-for-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-tvs-apache-rtx-300/69e279ae5685096a33ad978a"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/crash-guard-with-slider-for-xpulse-200",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-for-x-pulse-200/69e279ad5685096a33ad9467"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-fluid-reservoir-cover-for-honda-cb-350",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-honda-cb-350/69e279ad5685096a33ad9410"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/offset-handle-bar-riser-bmw-f900-gs-gsa",
+    targetPath: "/product/ergonomics/z-pro-offset-handle-bar-riser-for-bmw-f900-gs-gsa/69e279ad5685096a33ad9639"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-led-fog-light-drl-r40",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-drl-r-40/69e279ae5685096a33ad96bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-cb350-rs-new-pillion-backrest-cushion-big",
+    targetPath: "/product/touring-essentials/zana-honda-cb350-rs-new-pillion-backrest-cushion-big/69e279ad5685096a33ad939d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-plate-guerrilla-450-black",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-guerrilla-450-black/69e279ad5685096a33ad95e6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-lflat-black-with-frame-for-ktm-adv-250390",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-black-with-frame-for-ktm-adv-250-390/69e279ad5685096a33ad9555"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-jerry-can-mount-guerrilla-450-black-texture",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-for-guerrilla-450-black-texture/69e279ad5685096a33ad95e5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-jawa-bobber-42-aluminium-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-jawa-bobber-42-aluminium-black/69e279ae5685096a33ad973a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-adventure-master-cylender-silver-aluminium",
+    targetPath: "/product/bike-protection/zana-yezdi-adventure-bash-plate-silver-aluminium/69e279ad5685096a33ad9355"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-universal-fabric-saddle-bag-32-litre-single-bag",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-bag/69e279ad5685096a33ad956a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/retro-saddle-bag-for-gt-interceptor-650",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-fluid-reservoir-cover-for-honda-cb-350-rs",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-honda-cb-350-rs/69e279ad5685096a33ad94e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-harley-davidson-x440",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-harley-davidson-x440/69e279ad5685096a33ad9667"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-type2-texture-matt-black-ktm-adv-250-390-390-x",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-2-texture-matt-black-ktm-adv-250-390-390-x/69e279ad5685096a33ad92ec"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/new-bash-plate-aluminum-himalayan-bs6-202122-black",
+    targetPath: "/product/bike-protection/new-bash-plate-aluminum-himalayan-bs6-2021-22-black/69f86a7f6f8d6277f9a84e90"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-saddle-stay-glossy-red-for-x-pulse-210",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-glossy-red-for-x-pulse-210/69e279ae5685096a33ad96c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-triumph-speed-400-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/top-rack-plate-for-triumph-tiger-900-rally-pro",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-plate-v-2-for-triumph-tiger-900-rally-pro/69e279ad5685096a33ad9685"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-ms-for-super-meteor-650",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-honda-cb300f",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-honda-cb300f/69e279ad5685096a33ad93fc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre-ktm-adventure-250",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-ktm-adv-250-390/69e279ad5685096a33ad95b6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/top-rack-plate-big-for-triumph-street-scrambler-900",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-plate-big-for-triumph-street-scrambler-900/69e279ad5685096a33ad93f6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-re-bear-650-80litre",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-re-bear-650/69e279ad5685096a33ad964f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-cb350-honda",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-bag-for-meteor-350",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-meteor-350/69e279ad5685096a33ad94de"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-black-for-triumph-tiger-660",
+    targetPath: "/product/bike-protection/zana-crash-guard-black-for-triumph-tiger-660/69e279ae5685096a33ad9722"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/paddock-spool-for-triumph-speed-twin-900",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spool-for-triumph-speed-twin-900/69e279ad5685096a33ad9439"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-for-crash-guard-honda-cb350rs",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb350rs/69e279ad5685096a33ad966c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-black-for-triumph-tiger-660",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-black-for-triumph-tiger-660/69e279ae5685096a33ad9723"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/roadster-saddle-stay-with-jerry-can-mount-for-tvs-apache-rtx-300",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-black-for-tvs-apache-rtx-300/69e279ae5685096a33ad979d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-aluminum-stainless-steel-for-gt-interceptor-650",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-aluminum-stainless-steel-for-gt-interceptor-650/69e279ad5685096a33ad9428"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-fluid-reservoir-cover-for-cb-300f",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-cb-300f/69e279ad5685096a33ad940b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-for-dominar-25040020192021",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-dominar-250-400-2019-2021/69e279ad5685096a33ad9309"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-l-flat-black-with-frame-for-ktm-adv-390-2025",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-black-with-frame-for-ktm-adv-250-390/69e279ad5685096a33ad9555"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/vader-hard-shell-tail-bag-65-litre",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-bmw-310-gs/69e279ad5685096a33ad958a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-sheet-metal-type2-for-royal-enfield-meteor-350",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-1-for-royal-enfield-meteor-350/69e279ad5685096a33ad94ad"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-yamaha-mt-15",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-yamaha-mt-15/69e279ad5685096a33ad94a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-3",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-3/69e279ad5685096a33ad951e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/grab-rail-for-triumph-speed-twin",
+    targetPath: "/product/touring-essentials/z-pro-grab-rail-for-triumph-speed-twin-1200/69e279ad5685096a33ad967f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-himalayan-450",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-himalayan-450/69e279ad5685096a33ad9598"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-xpulse-200",
+    targetPath: "/product/accessories/zana-gps-mount-xpulse-200/69e279ad5685096a33ad9318"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-ktm-adv-390250",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-ktm-adv-390-250/69e279ad5685096a33ad9496"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre-himalayan-450",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-himalayan-450/69e279ad5685096a33ad9596"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handle-riser-dominar-400250",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400/69e279ad5685096a33ad9314"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/overlander-saddle-bag-suzuki-vstrom-250",
+    targetPath: "/product/bags/zana-overlander-saddle-bag-for-suzuki-v-strom-250/69e279ad5685096a33ad94b9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre-for-himalayan-450",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-himalayan-411/69e279ad5685096a33ad95a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/radiator-guard-for-triumph-street-triple-765",
+    targetPath: "/product/bike-protection/z-pro-radiator-guard-for-triumph-street-triple-765/69e279ad5685096a33ad9582"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/hand-guard-for-suzuki-v-strom-sx-250-black-silver-logo",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black-silver-logo/69e279ae5685096a33ad975a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-guerrilla-450",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-guerrilla-450/69e279ad5685096a33ad95da"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-with-slider-black-combo-for-tvs-apache-rtx-300-beak-version",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-black-combo-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97af"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-shotgun-650-with-slider-puck-black-mild-steel-type2",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-shotgun-650-with-slider-puck-black-mild-steel-type-2/69e279ad5685096a33ad9524"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-texture-matt-black-himalayan-20162020",
+    targetPath: "/product/bike-protection/zana-engine-frame-texture-matt-black-himalayan-bs-3-4-6-2016-2020/69e279ad5685096a33ad92f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-with-slider-combo-white-for-tvs-apache-rtx-300-beak-version",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-combo-white-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97ca"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-plate-himalayan-450-aluminium-silver",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-silver-for-himalayan-450/69e279ad5685096a33ad954a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tank-guard-bmw-f900-gs-gsa-silver",
+    targetPath: "/product/bike-protection/z-pro-tank-guard-for-bmw-f-900-gs-gsa-silver/69e279ad5685096a33ad9635"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-himalayan-452",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-himalayan-452/69e279ad5685096a33ad94ea"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-re-bear-650-mild-steel",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-bear-650-mild-steel/69e279ad5685096a33ad961d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/engine-guard-for-triumph-street-twin",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-cb-300r-radiator-guard-honeycomb-black",
+    targetPath: "/product/bike-protection/zana-honda-cb300f-radiator-guard-honeycomb-black/69e279ad5685096a33ad93ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-silver-aluminum-for-super-meteor-650",
+    targetPath: "/product/bike-protection/zana-bash-plate-silver-aluminum-for-super-meteor-650/69e279ad5685096a33ad942b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-with-slider-combo-red-for-tvs-apache-rtx-300-without-beak-version",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-combo-red-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-re-shotgun-650-80litre",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-re-shotgun-650/69e279ad5685096a33ad9656"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-black-ms-for-vstrom-250",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-silver-for-v-strom-250/69e279ad5685096a33ad93a6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spools-with-swing-arm-protector-silver-ktm-duke-250390",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spools-with-swing-arm-protector-silver-ktm-duke-250-390/69e279ad5685096a33ad9337"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-himalayan-20162020",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-2016-2020/69e279ad5685096a33ad933f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-gtx-tank-bag-16ltr-expandable-to-20ltr",
+    targetPath: "/product/bags/zana-universal-gtx-tank-bag-tail-bag-16ltr-expandable-to-20ltr/69e279ae5685096a33ad96e8"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/front-fork-slider-for-suzuki-hayabusa-1300",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-for-himalayan-450",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-for-himalayan-450/69e279ad5685096a33ad9599"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-sliders-ktm-duke-250390",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-suzuki-v-strom-250",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-suzuki-v-strom-250/69e279ad5685096a33ad95cd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handle-riser-for-interceptor650",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-for-interceptor-650/69e279ad5685096a33ad932e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/number-plate-mount-for-bmw-r-1300-gs",
+    targetPath: "/product/accessories/z-pro-number-plate-mount-for-bmw-r-1300-gs/69e279ae5685096a33ad96fe"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/frame-slider-for-aprilia-tuono-457",
+    targetPath: "/product/bike-protection/zana-frame-slider-black-for-aprilia-tuono-457/69e279ae5685096a33ad9715"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-tvs-apache-rtx-300-aluminum-silver",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-tvs-apache-rtx-300-aluminum-silver/69e279ae5685096a33ad97b1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-re-bear-650-50litre",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-re-bear-650/69e279ad5685096a33ad964d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-pair-guerrilla-450",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-guerrilla-450/69e279ad5685096a33ad95d9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-v2-for-hunter-350-ms-black",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-v-2-for-hunter-350-ms-black/69e279ae5685096a33ad97be"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-oil-reservoir-cover-for-harley-davidson-x440",
+    targetPath: "/product/bike-protection/zana-rear-oil-reservoir-cover-for-harley-davidson-x440/69e279ad5685096a33ad953b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-ktm-duke-390-black",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-ktm-adv-390-2025-black/69e279ae5685096a33ad97c0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-top-box-cushion",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-bsa-goldstar-650",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-bsa-goldstar-650/69e279ad5685096a33ad965b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-new-w1-cb350-hness-honda-split-seatsingle-seat-version-not-compatible-on-new-model-2024-cb350-dlx-pro",
+    targetPath: "/product/zana-accessories/zana-top-rack-with-plate-new-w-1-cb350-h-ness-honda-split-seat-single-seat-version-2-not-compatible-on-new-model-2024-cb350-dlx-pro-cb350-highness-zana-motorcycles/69e279ad5685096a33ad93fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-black-for-shotgun-650",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-for-bear-650-black/6a35485a66b713f40b19a368"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/head-light-grill-ss-type-4a-black-himalayan-bs6-202122",
+    targetPath: "/product/bike-protection/zana-head-light-grill-ss-type-4a-black-himalayan-bs6-2016-2020/69e279ad5685096a33ad9342"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bmw-g310r-aluminium-heavy-duty-sump-guard-silver",
+    targetPath: "/product/bike-protection/zana-bmw-g310r-aluminium-heavy-duty-sump-guard-silver/69e279ad5685096a33ad9398"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-slider-puck-for-suzuki-vstrom-250",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck-for-suzuki-v-strom-250/69e279ad5685096a33ad943e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-rflat-black-with-frame-for-ktm-adv-250390",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-r-flat-black-with-frame-for-ktm-adv-250-390/69e279ad5685096a33ad9553"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-v1-with-jerry-can-mount-white-for-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-jerry-can-mount-black-for-ktm-adv-390-2025/69e279ad5685096a33ad968e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-dominar400-2017-2018",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-dominar400-2017-2018/69e279ad5685096a33ad930d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-without-plate-with-backrest-jawa",
+    targetPath: "/product/touring-essentials/top-rack-with-plate-without-backrest-for-classic-350-500/69f86a7f6f8d6277f9a84e8a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/maximus-tail-bag-36-litre-single-bag",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-re-bear-650/69e279ad5685096a33ad9650"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-kawasaki-klx-230-aluminum-silver",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-kawasaki-klx-230-aluminum-silver/69e279ae5685096a33ad978f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-plastic-50-litre-rflat-black-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-black-for-ktm-adv-390-2025/69e279ad5685096a33ad9691"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-aluminum-for-gtinterceptor-650",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-gt-interceptor-650/69e279ad5685096a33ad947c"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/rear-footrest-pair-for-tvs-apache-rtx-300",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-tvs-apache-rtx-300/69e279ae5685096a33ad97c9"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/grab-rail-triumph-speed-twin-1200",
+    targetPath: "/product/touring-essentials/z-pro-grab-rail-for-triumph-speed-twin-1200/69e279ad5685096a33ad967f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tail-tidy-black-for-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-aprilia-rs-457/69e279ae5685096a33ad9719"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-22-ltr-l-flat-black-for-ktm-adv-390",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-black-with-frame-for-ktm-adv-250-390/69e279ad5685096a33ad9555"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/bash-plate-triumph-speed-twin-1200",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-speed-twin-1200/69e279ad5685096a33ad967a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-compatible-with-pillion-backrest-for-kawasaki-vulcan-650",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-bsa-goldstar-650-compatible-with-zana-top-rack/69e279ad5685096a33ad962e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-pluto-carbon-hardshell-expandable-tail-bag-16l-to-20l",
+    targetPath: "/product/bags/zana-universal-pluto-carbon-hardshell-expandable-tail-bag-16l-to-20l/69e279ae5685096a33ad96ed"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-new-plate-compatible-with-pillion-backrest-kustom-silver-dominar-2017-2018",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-new-plate-compatible-with-pillion-backrest-texture-matt-black-dominar-2017-18/69e279ad5685096a33ad93b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-aprilia-rs-457",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-aprilia-rs-457/69e279ae5685096a33ad97c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extenders-vmc-for-aprilia-tuono-457-bash-red-top-black",
+    targetPath: "/product/side-stand-support/zana-side-stand-extenders-vmc-for-aprilia-tuono-457-bash-red-top-black/69e279ae5685096a33ad9731"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-himalayan-450-45ltr-aluminium-silver",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-silver-for-himalayan-450/69e279ad5685096a33ad954a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/side-stand-extender-for-triumph-tiger-900-gt",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-for-triumph-tiger-900-gt/69e279ae5685096a33ad9764"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sticker-top-box-aluminium-45-ltr-l-flat-silver-with-back-rest-cushion",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-silver-45-ltr-r-flat-with-back-rest-cushion/69e279d95685096a33ad97cd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-ms-plate-black-for-honda-cb-350-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-black-for-honda-cb-350-2025/69e279ae5685096a33ad9750"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/top-rack-with-plate-trident-660",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-triumph-tiger-660/69e279ae5685096a33ad9724"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bmw-g310-gs-aluminium-heavy-duty-sump-guard-silver",
+    targetPath: "/product/bike-protection/zana-bmw-g310-gs-aluminium-heavy-duty-sump-guard-silver/69e279ad5685096a33ad9361"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/zpro/product/saddle-stay-for-bmw-r-1300-gs-black",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-bmw-r-1300-gs-black/69e279ae5685096a33ad9701"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-mirror-extender-aluminum-for-yamaha-mt-15",
+    targetPath: "/product/ergonomics/zana-side-mirror-extender-aluminum-for-yamaha-mt-15/69e279ad5685096a33ad94a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-harley-davidson-x440",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-harley-davidson-x440/69e279ad5685096a33ad952f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-ktm-duke-250-texture-matt-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-texture-matt-black-ktm-250-390-2017-18/69e279ad5685096a33ad9366"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/rear-paddock-spool-for-kawasaki-z900",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-kawasaki-z900/69e279ad5685096a33ad941b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-gel-seat-cushion-medium-770grm",
+    targetPath: "/product/gel-seat/zana-universal-gel-seat-cushion-medium-770grm/69e279ad5685096a33ad95ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tank-guard-bmw-f900-gs-gsa-silver",
+    targetPath: "/product/bike-protection/z-pro-tank-guard-for-bmw-f-900-gs-gsa-silver/69e279ad5685096a33ad9635"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/engine-guard-re-bear-650-with-slider-puck-black",
+    targetPath: "/product/bike-protection/zana-engine-guard-with-slider-puck-for-bear-650-ms-black/69e279ad5685096a33ad9619"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-for-bsa-goldstar-650-with-pillion-back-rest-mild-steel-black-type1",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-bsa-goldstar-650-with-pillion-back-rest-mild-steel-black-type-1/69e279ad5685096a33ad962d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tripper-tank-bag-triumph-street-triple-765-belt-8ltr",
+    targetPath: "/product/bags/zana-tripper-tank-bag-and-belt-8-0-litre-for-triumph-street-triple-765/69e279ad5685096a33ad9631"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/back-rest-mild-steel-for-royal-enfield-hunter-350",
+    targetPath: "/product/touring-essentials/zana-back-rest-mild-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-bmw-310-gs/69e279ad5685096a33ad958a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-saddle-stay-texture-black-for-x-pulse-210",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-texture-black-for-x-pulse-210/69e279ae5685096a33ad96d9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-lflat-silver-with-frame-for-himalayan-411",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-silver-with-frame-for-himalayan-411/69e279ad5685096a33ad955e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/quick-shifter-guard-bmw-f900-gs-adventure",
+    targetPath: "/product/bike-protection/z-pro-quick-shifter-guard-for-bmw-f900-gs/69e279ae5685096a33ad9776"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-for-triumph-tiger-660",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-triumph-tiger-660/69e279ae5685096a33ad9724"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/engine-frame-mild-steel-red-himalayan-bs6-compatible-with-scram-411-202122",
+    targetPath: "/product/bike-protection/zana-engine-frame-texture-matt-black-himalayan-compatible-with-scram-411-bs6-2021-22/69e279ad5685096a33ad92f5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-big-for-guerrilla-450",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-big-for-guerrilla-450/69e279ad5685096a33ad96b4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-triumph-street-triple-765",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-street-triple-765/69e279ad5685096a33ad9630"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-retro-saddle-bag",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-kustom-silver-dominar-400-2017-2018",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-dominar-400-250-2017-2018/69e279ad5685096a33ad931a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre-ktm-duke-250-gen3",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-ktm-duke-250-390-gen-3/69e279ad5685096a33ad95bc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/guerrilla-450-panniers-36ltr-aluminium-black",
+    targetPath: "/product/luggage/zana-panniers-for-guerrilla-450-l-flat-aluminium-black-36-litre/69e279ad5685096a33ad9601"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/luggage-rack-compatible-with-backrest-for-super-meteor-650",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-compatible-with-luggage-rack-for-super-meteor-650/69e279ad5685096a33ad942f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-himalayan-411-bs6",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-411-bs6-2021-2022/69e279ad5685096a33ad9673"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fluid-reservoir-cover-for-yezdi-adventure-2025",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-yezdi-adventure-2025/69e279ae5685096a33ad970e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-suzuki-vstrom-250-36ltr-aluminium-silver",
+    targetPath: "/product/luggage/zana-panniers-for-suzuki-v-strom-250-36ltr-aluminium-silver-with-frame/69e279ad5685096a33ad9508"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-himalayan-450-texture-black-aluminium",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-himalayan-450-black-texture-aluminium/69e279ad5685096a33ad94e2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-puck-slider-t-3-for-jawa-bobber-42-mild-steel-black",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-puck-slider-t-3-for-jawa-bobber-42-mild-steel-black/69e279ae5685096a33ad9737"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-mobile-holder-without-charger-blu",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger-blu/69e279ad5685096a33ad9686"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-saddle-stay-for-apache-rtx-300-black",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-apache-rtx-300-black/69e279ae5685096a33ad9784"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-rflat-black-with-frame-for-super-meteor-650",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-r-flat-black-with-frame-for-super-meteor-650/69e279ad5685096a33ad9557"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-re-classic-500-steel",
+    targetPath: "/product/touring-essentials/zana-top-rack-mild-steel-for-classic-500/69e279ad5685096a33ad94fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/master-cylinder-cover-guerrilla-450-black-type1",
+    targetPath: "/product/bike-protection/zana-master-cylinder-cover-for-guerrilla-450-without-logo-black-type-1/69e279ad5685096a33ad95e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/radiator-guard-honeycomb-black-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-ktm-adv-390-2025/69e279ad5685096a33ad968d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-mild-steel-for-royal-enfield-hunter-350",
+    targetPath: "/product/touring-essentials/zana-back-rest-mild-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-for-gtinterceptor-650",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-for-interceptor-gt-650/69e279ad5685096a33ad92d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-cb300r-new-pillion-backrest-cushion-big",
+    targetPath: "/product/touring-essentials/zana-honda-cb300r-new-pillion-backrest-cushion-big/69e279ad5685096a33ad93ac"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-bmw-310gs",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-bmw-310-gs/69e279ad5685096a33ad9495"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-scrambler-saddle-stay-black",
+    targetPath: "/product/bike-protection/zana-yezdi-scrambler-head-light-grill-ss-black/69e279ad5685096a33ad935e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/single-rod-crash-bar-for-hunter-350",
+    targetPath: "/product/bike-protection/zana-single-rod-crash-bar-for-hunter-350/69e279ad5685096a33ad952a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-ktm-adventure-250-silver",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-custom-silver-ktm-adv-250-390-390-x/69e279ad5685096a33ad9340"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-re-bear-650-compatible-with-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-w-plate-for-bear-650-compatible-with-pillion-backrest/69e279ad5685096a33ad961b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/honda-cb350-new-pillion-backrest-cushion-big",
+    targetPath: "/product/touring-essentials/zana-honda-cb350-new-pillion-backrest-cushion-big/69e279ad5685096a33ad9364"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/guerrilla-450-vader-hard-shell-tail-bag-65-litre",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-for-guerrilla-450-65-litre/69e279ad5685096a33ad9604"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-jawa-classic-and-42",
+    targetPath: "/product/accessories/zana-gps-mount-jawa-classic-and-42/69e279ad5685096a33ad92fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bmw-g310-gs-upper-fairing-guard-ms-silver",
+    targetPath: "/product/bike-protection/zana-bmw-g310-gs-upper-fairing-guard-ms-silver/69e279ad5685096a33ad9377"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/offset-handle-bar-riser-for-cb300f",
+    targetPath: "/product/ergonomics/zana-offset-handle-bar-riser-for-cb300f/69e279ad5685096a33ad9498"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-for-crash-guard-re-classic-350-reborn",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-re-classic-350-reborn/69e279ad5685096a33ad966f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/ktm-linear-headlight-grill-stainless-steel-adventure-390-390-x",
+    targetPath: "/product/bike-protection/zana-ktm-linear-headlight-grill-stainless-steel-adventure-390-390-x/69e279ad5685096a33ad92e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spools-with-swing-arm-protector-silver-ktm-adventure-390-390-x",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spools-with-swing-arm-protector-silver-ktm-adventure-390-390-x/69e279ad5685096a33ad92e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gps-mount-versys-650",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-sliders-ktm-duke-200-bs6-2021",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-200-bs6-2021/69e279ad5685096a33ad933a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-for-ninja-300",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-kawasaki-ninja-300/6a01b9127c2ba81cc5fac1d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-fairing-guard-silver-for-tvs-apache-rtx-300-beak-version",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-with-slider-combo-silver-for-tvs-apache-rtx-300-beak-version/69e279ae5685096a33ad97ae"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/roadster-saddle-stay-for-harley-davidson-x440-with-exhaust-sheild-and-jerry-can-mount",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-for-harley-davidson-x440-with-exhaust-sheild-and-jerry-can-mount/69e279ad5685096a33ad9626"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-kawasaki-versys-650",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-kawasaki-versys-650/69e279ad5685096a33ad956d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-ktm-adventure-250390390-x",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-250-390-390-x/69e279ad5685096a33ad93b1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-without-plate-compatible-with-pillion-backrest-version2-cb350-hness-split-seatsi-not-compatible-on-new-model-2024-cb350-dlx-pro-ngle-seat",
+    targetPath: "/product/touring-essentials/zana-toprack-without-plate-compatible-with-pillion-backrest-version-2-cb350-h-ness-split-seat-si-not-compatible-on-new-model-2024-cb350-dlx-pro-ngle-seat-cb350-highness-zana-motorcycles/69e279ad5685096a33ad931e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tank-guard-for-triumph-street-twin",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/toprack-t2-with-aluminium-plate-compatible-with-pillion-backrest-scram-411-bs6-2022",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-scram-411-bs6-2022-ms-w-1-compatible-with-pillion-backrest/69e279ad5685096a33ad936a"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/pluto-tail-bag-tank-bag-for-ktm-duke-250-gen3",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-ktm-duke-250-390-gen-3/69e279ad5685096a33ad95be"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-himalayan-411",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-for-himalayan-411/69e279ad5685096a33ad95a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tripper-tank-bag-80-litre-for-speed-twin-1200",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-speed-twin-1200/69e279ae5685096a33ad96e1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-shotgun-650-black-aluminum",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-shotgun-650-black-aluminum/69e279ad5685096a33ad9526"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/pluto-tail-bag-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag/69e279ad5685096a33ad9568"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-new-plate-type-1-2021-texture-matt-black-dominar-2019-2021",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-type-1-texture-matt-black-ktm-adv-390/69e279ad5685096a33ad92eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-ms-black-for-x-pulse-210",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-ms-black-for-x-pulse-210/69e279ae5685096a33ad96da"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-triumph-speed-400",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-for-triumph-speed-400/69e279ad5685096a33ad95b2"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bmw-g310-gs-upper-fairing-guard-ms-black",
+    targetPath: "/product/bike-protection/zana-bmw-g310-gs-upper-fairing-guard-ms-black/69e279ad5685096a33ad9370"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-bmw-f900-gs-gsa",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-bmw-f900-gs-gsa/69e279ad5685096a33ad9641"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tank-guard-with-slider-puck-black-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-tank-guard-crash-guard-with-slider-puck-black-for-ktm-adv-390-2025/69e279ad5685096a33ad968b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mobile-holder-without-charger-bmw-f900-gs-gsa",
+    targetPath: "/product/mobile-holder/zana-mobile-holder-without-charger-for-bmw-f900-gs-gsa/69e279ad5685096a33ad963d"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/guerrilla-450-panniers-36ltr-aluminium-black",
+    targetPath: "/product/luggage/zana-panniers-for-guerrilla-450-l-flat-aluminium-black-36-litre/69e279ad5685096a33ad9601"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-weekender-tail-bag-32-liters-expandable-to-39-liters",
+    targetPath: "/product/bags/zana-universal-weekender-tail-bag-32-liters-expandable-to-39-liters/69e279ae5685096a33ad96e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-kustom-silver-bmw-g310gs",
+    targetPath: "/product/touring-essentials/saddle-stay-kustom-silver-bmw-g310gs/69f86a7f6f8d6277f9a84e8e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-footrest-for-shotgun-650-black-mild-steel",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-shotgun-650-black-mild-steel/69e279ad5685096a33ad9527"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-scrambler-pillion-backrest-cushion-gaddi-small",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-new-pillion-backrest-cushion-big/69e279ad5685096a33ad9375"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/speed-twin-1200-tail-tidy",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-for-triumph-speed-twin-1200/69e279ae5685096a33ad96d7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-honda-cb300r",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb300r/69e279ad5685096a33ad9462"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-aprilia-rs-457/69e279ae5685096a33ad971a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handlebar-riser-for-kawasaki-versys-650",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-for-kawasaki-versys-650/69e279ad5685096a33ad956c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-black-for-triumph-scrambler-400-x",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-scrambler-400/69e279ad5685096a33ad95a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-re-himalayan-450-45ltr-aluminium-silver",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-silver-for-himalayan-450/69e279ad5685096a33ad954a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/mirror-extender-for-triumph-tiger-850",
+    targetPath: "/product/ergonomics/z-pro-mirror-extender-for-triumph-tiger-850/69e279ad5685096a33ad947a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/upper-lower-crash-guard-set-for-triumph-tiger-900-gt-black",
+    targetPath: "/product/bike-protection/z-pro-upper-lower-crash-guard-set-for-triumph-tiger-900-gt-black/69e279ae5685096a33ad975e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-hex-cushion-for-hunter-350",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-hunter-350/69e279ae5685096a33ad97c4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-re-hunter-350",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-hunter-350/69e279ad5685096a33ad9675"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-paddock-spools-aluminum-for-suzuki-vstrom-250",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spools-aluminum-for-suzuki-vstrom-250/69e279ad5685096a33ad93ae"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-50-litre-honda-cb200x",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-honda-cb200x/69e279ad5685096a33ad95c4"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/bash-plate-for-bmw-f-900-xr-20172023",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-black-for-bmw-f-900-xr-2017-2023/69e279ad5685096a33ad949d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fuild-reservior-cover-for-honda-cb200x",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-honda-cb200x/69e279ad5685096a33ad957e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-re-bear-650",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-re-bear-650/69e279ad5685096a33ad964e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/head-light-grill-guerrilla-450-black-type2",
+    targetPath: "/product/bike-protection/zana-headlight-grill-for-guerrilla-450-black-type-5/69e279ad5685096a33ad95df"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-30-litre-single-60-litre-pair-bag-triumph-scrambler-400",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-triumph-scrambler-400/69e279ad5685096a33ad95ac"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/linear-engine-cover-for-triumph-speed-twin-900",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-speed-twin-900/69e279ad5685096a33ad9437"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/backrest-ms-compatible-with-luggage-rack-for-super-meteor-650",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-compatible-with-luggage-rack-for-super-meteor-650/69e279ad5685096a33ad942f"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-ms-black-for-vstrom-250",
+    targetPath: "/product/touring-essentials/drake-saddle-stay-black-for-v-strom-sx-250/69f978f46f8d6277f9a84ea8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/gtx-tank-bag-16ltr-expandable-to-20ltr-for-ktm-enduro-390",
+    targetPath: "/product/bags/zana-gtx-tank-bag-16ltr-expandable-to-20ltr-for-ktm-enduro-390/69e279ae5685096a33ad9756"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-triumph-speed-400",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-triumph-speed-400/69e279ad5685096a33ad95b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/paddock-spool-for-ktm-adv-390-2025",
+    targetPath: "/product/side-stand-support/zana-paddock-spool-for-ktm-adv-390-2025/69e279ad5685096a33ad968c"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/upper-lower-crash-guard-black-for-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-black-for-ktm-adv-390-2025/69e279ae5685096a33ad976b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-stay-exhaust-sheild-with-jerry-can-mount-for-kawasaki-versys-650",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-with-exhaust-sheild-with-jerry-can-mount-for-kawasaki-versys-650/69e279ad5685096a33ad956b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/bash-plate-type1-for-triumph-street-twin",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-type-1-for-triumph-street-twin/69e279ad5685096a33ad93d5"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/cooling-coil-cover-black-x-pulse-210",
+    targetPath: "/product/bike-protection/zana-cooling-coil-cover-black-for-x-pulse-210/69e279ae5685096a33ad96cb"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-re-scram-411-aluminum-black",
+    targetPath: "/product/bike-protection/bash-plate-aluminum-black-for-scram-411/69f86a7f6f8d6277f9a84e91"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag/69e279ad5685096a33ad9589"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bmw-g310-r-lower-engine-guard-ms-with-puck-black",
+    targetPath: "/product/bike-protection/zana-bmw-g310-r-lower-engine-guard-ms-with-puck-black/69e279ad5685096a33ad949a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/lower-engine-guard-for-honda-nx500-black",
+    targetPath: "/product/bike-protection/zana-lower-engine-guard-for-honda-nx500-black/69e279ad5685096a33ad9539"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-honda-cb200x",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-honda-cb200x/69e279ad5685096a33ad95c8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-22-ltr-l-flat-silver-for-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-bash-plate-aluminum-silver-for-ktm-adv-390-2025/69e279ad5685096a33ad969e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-suzuki-v-strom-250",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-for-suzuki-v-strom-250/69e279ad5685096a33ad95ce"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/head-light-grill-type2-black-ss-himalayan-20162022",
+    targetPath: "/product/bike-protection/zana-head-light-grill-type-2-black-ss-himalayan-2016-2022/69e279ad5685096a33ad92f3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/headlight-grill-bsa-goldstar-650-stainless-steel-black-t2",
+    targetPath: "/product/bike-protection/zana-headlight-grill-for-bsa-goldstar-650-stainless-steel-black-t-2/69e279ad5685096a33ad9620"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-ms-without-plate-compatible-with-pillion-backrest-for-gtinterceptor-650",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-w-1-for-gt-interceptor-650-new-compatible-with-pillion-backrest/69e279ad5685096a33ad9350"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-for-himalayan-450-with-jerry-can-mount-v2-mild-steel",
+    targetPath: "/product/touring-essentials/zana-roadster-saddle-stay-for-himalayan-450-with-jerry-can-mount-v2-mild-steel/69e279ad5685096a33ad94ed"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-for-super-meteor-650-metal-sheet",
+    targetPath: "/product/touring-essentials/zana-top-rack-sheet-metal-with-pillion-backrest-for-super-meteor-650/69e279ad5685096a33ad9451"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-pluto-carbon-hardshell-expandable-tail-bag-16l-to-20l-for-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-universal-pluto-carbon-hardshell-expandable-tail-bag-16l-to-20l-for-tvs-apache-rtx-300/69e279ae5685096a33ad9792"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/backrest-triumph-speed-twin-1200",
+    targetPath: "/product/touring-essentials/z-pro-backrest-for-speed-twin-1200/69e279ad5685096a33ad943c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36litre-single-re-shotgun-650",
+    targetPath: "/product/bags/zana-maximus-tail-bag-36-litre-single-re-shotgun-650/69e279ad5685096a33ad9657"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-puck-black-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-tank-guard-crash-guard-with-slider-puck-black-for-ktm-adv-390-2025/69e279ad5685096a33ad968b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-dragon-belt",
+    targetPath: "/product/bags/zana-universal-dragon-belt/69e279ae5685096a33ad96ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/bash-plate-for-kawasaki-klx-230-aluminum-black",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-kawasaki-klx-230-aluminum-black/69e279ae5685096a33ad978e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-35ltr-rflat-black-with-back-rest-cushion-for-honda-rebel-500",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-black-35ltr-l-flat-with-back-rest-cushion/69e279d95685096a33ad97d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-45ltr-l-flat-sliver-with-back-rest-cushion-for-honda-rebel-500",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-silver-45ltr-l-flat-with-back-rest-cushion/69e279d95685096a33ad97d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-45ltr-rflat-sliver-for-honda-nx500",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-honda-nx500-aluminum-silver/69e279ad5685096a33ad954d"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/product/universal-slider-puck-for-triumph-speed-400-compatible-with-oem-crash-guard",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck-for-triumph-speed-400-compatible-with-oem-crash-guard/69e279ad5685096a33ad9514"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-kawasaki-versys-650",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/zpro/product/side-stand-extender-for-bmw-f900-gs",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-for-bmw-f900-gs/69e279ae5685096a33ad977a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/broozer-tail-bag-re-shotgun-650-50litre",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-for-re-shotgun-650/69e279ad5685096a33ad9654"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/radiator-grill-honeycomb-trident-black-texture",
+    targetPath: "/product/bike-protection/z-pro-radiator-grill-honeycomb-black-for-triumph-street-twin/69e279ad5685096a33ad93d7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-w-1-with-aluminium-plate-for-gt-interceptor-650",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-w-1-for-gt-interceptor-650-new-compatible-with-pillion-backrest/69e279ad5685096a33ad9350"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-for-harley-davidson-x440-with-mild-steel-plate",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-and-pillion-backrest-for-harley-davidson-x440/69e279ad5685096a33ad9533"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-stay-dominar-250400-2019-21",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-texture-matt-black-dominar-250-400-2019-22/69e279ad5685096a33ad92f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-himalayan-450-36ltr-aluminum-black",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-black-with-frame-for-himalayan-450/69e279ad5685096a33ad96ae"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-led-fog-light-zfl50",
+    targetPath: "/product/fog-light/zana-universal-led-fog-light-zfl-50/69e279ad5685096a33ad9614"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-2",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-3/69e279ad5685096a33ad951e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-with-plate-for-honda-cb200x-type-w-black",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-plate-for-honda-cb200x-type-w-black/69e279ad5685096a33ad957b"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fluid-reservior-cover-pulsar-ns400z",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-pulsar-ns400z/69e279ad5685096a33ad9610"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-top-box-aluminium-22-litre-rflat-black",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-22-litre-r-flat-black/69e279d95685096a33ad97df"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-top-box-aluminium-22-ltr-rflat-silver",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-silver-22ltr-l-flat/69e279d95685096a33ad97d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tripper-tank-bag-80-litre-kawasaki-versys-650",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-kawasaki-versys-650/69e279ad5685096a33ad959e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-1",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-himalayan-450-with-slider-puck-black-texture-mild-steel-type-3/69e279ad5685096a33ad951e"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/frame-slider-for-ktm-duke-390-gen3",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-pulsar-200ns",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-pulsar-200ns/69e279ad5685096a33ad9319"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-overlander-saddle-bag",
+    targetPath: "/product/bags/zana-universal-overlander-saddle-bag/69e279ad5685096a33ad9544"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-lflat-silver-with-frame-for-kawasaki-versys-650",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-l-flat-silver-with-frame-for-kawasaki-versys-650/69e279ad5685096a33ad955c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/hand-guard-for-suzuki-v-strom-sx-250-white",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-white/69e279ae5685096a33ad9759"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-pro-hard-shell-tail-bag-50-liter-with-free-2-waterproof-storage-bag-and-1-bungee-cord",
+    targetPath: "/product/bags/zana-vader-pro-hard-shell-tail-bag-50-liter-with-free-2-waterproof-storage-bag/69e279ae5685096a33ad96ef"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/panniers-36-ltr-aluminium-rflat-silver-with-frame-for-ktm-adv-250-390",
+    targetPath: "/product/luggage/zana-panniers-36-ltr-aluminium-r-flat-silver-with-frame-for-ktm-adv-250-390/69e279ad5685096a33ad9554"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-ms-for-scram-411-bs6-2022",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-scram-411-bs6-2022/69e279ad5685096a33ad936c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-honda-cb300r",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb300r/69e279ad5685096a33ad93be"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-red-bs346-2016-2020",
+    targetPath: "/product/bike-protection/crash-guard-with-slider-for-himalayan-bs3-4-2016-2019/69f86a7f6f8d6277f9a84e8c"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tripper-tank-bag-triumph-tiger-900-rally-pro-8litre",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-triumph-tiger-900-rally-pro/69e279ad5685096a33ad9646"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-triumph-speed-400",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-speed-400/69e279ad5685096a33ad95b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/yezdi-adventure-radiator-grill-honeycomb-black",
+    targetPath: "/product/bike-protection/zana-yezdi-adventure-radiator-grill-honeycomb-aluminium-black/69e279ad5685096a33ad9353"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre-triumph-scrambler-400",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-triumph-scrambler-400/69e279ad5685096a33ad95a7"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-re-hunter-350-aluminum-stainless-steel",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-aluminum-stainless-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93c0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pluto-tail-bag-tank-bag-suzuki-hayabusa-1300",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-suzuki-hayabusa-1300/69e279ad5685096a33ad9648"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-re-gt-interceptor-650",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-gt-interceptor-650/69e279ad5685096a33ad932f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/tail-tidy-black-for-suzuki-hayabusa-1300",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-black-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/tail-tidy-pulsar-ns400z",
+    targetPath: "/product/bike-protection/zana-tail-tidy-for-pulsar-ns400z/69e279ad5685096a33ad9611"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-himalayan-450-aluminium-silver",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-silver-for-himalayan-450/69e279ad5685096a33ad954a"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/sliders-pair-crash-guard-himalayan-450",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-450/69e279ad5685096a33ad9674"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/fog-light-mount-for-honda-cb-300f",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb-300f/69e279ad5685096a33ad9409"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-aluminium-silver-22ltr-for-hunter-350",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-silver-22ltr-l-flat/69e279d95685096a33ad97d0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/engine-frame-texture-matt-black-himalayan-bs346-20162020",
+    targetPath: "/product/bike-protection/zana-engine-frame-texture-matt-black-himalayan-bs-3-4-6-2016-2020/69e279ad5685096a33ad92f1"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-saddle-bag-30-litre-single-60-litre-pair-bag-honda-nx500",
+    targetPath: "/product/bags/zana-drake-universal-fabric-saddle-bag-32-litre-single-64-litre-pair-bag-for-honda-nx500/69e279ad5685096a33ad95ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/pluto-tail-bag-tank-bag-suzuki-hayabusa-1300",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-suzuki-hayabusa-1300/69e279ad5685096a33ad9648"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/crash-guard-with-slider-texture-matt-black-for-x-pulse-210",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-texture-matt-black-for-x-pulse-210/69e279ae5685096a33ad96d8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/universal-top-box-cushion",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-hero-xpulse200-with-plate",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-big-xpulse200-bs6/69e279ad5685096a33ad9300"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/headlight-guard-stainless-steel-t1-for-for-royal-enfield-meteor-350",
+    targetPath: "/product/bike-protection/zana-headlight-guard-stainless-steel-t-1-for-for-royal-enfield-meteor-350/69e279ad5685096a33ad94ae"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-aluminum-ss-for-royal-enfield-super-meteor-650",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-aluminum-ss-for-royal-enfield-super-meteor-650/69e279ad5685096a33ad9442"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/front-fork-slider-for-versys-650",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-versys-650/69e279ad5685096a33ad934a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-retro-saddle-bag",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/side-stand-extender-for-suzuki-vstrom-250-aluminums-stainless-steel",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-suzuki-v-strom-250-aluminums-stainless-steel/69e279ad5685096a33ad9549"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-t2-with-aluminium-plate-compatible-with-pillion-backrest-for-gt-interceptor-650",
+    targetPath: "/product/touring-essentials/zana-new-top-rack-with-aluminum-plate-and-compatible-with-pillion-backrest-for-gt-interceptor-650/69e279ad5685096a33ad934c"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/rear-master-cylinder-protector-re-gtinterceptor-650-aluminum",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-aluminum-for-gt-interceptor-650/69e279ad5685096a33ad93a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-fairing-guard-for-honda-nx500",
+    targetPath: "/product/bike-protection/zana-upper-fairing-guard-for-honda-nx500/69e279ad5685096a33ad9538"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-bag-for-suzuki-vstrom-250",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-suzuki-v-strom-250/69e279ad5685096a33ad94ba"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/new-uk-flag-radiator-grill-silver-with-black-gt-interceptor-650",
+    targetPath: "/product/bike-protection/zana-radiator-guard-for-gt-interceptor-650-black-new-uk-flag/69e279ad5685096a33ad932c"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/gps-mount-bmw-f-900-xr",
+    targetPath: "/product/accessories/z-pro-gps-mount-for-bmw-f-900-xr/69e279ad5685096a33ad9427"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/maximus-tail-bag-36-litre-single-continental-gt-interceptor-650",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-continental-gt-interceptor-650/69e279ad5685096a33ad95f9"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each-for-suzuki-v-strom-250",
+    targetPath: "/product/bags/zana-roadster-2-saddle-bag-50ltr-pair-bag-25ltr-each-for-suzuki-v-strom-250/69e279ae5685096a33ad975d"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/adventure-saddle-bag-for-ktm-adventure-250",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-ktm-adventure-250-390-390-x/69e279ad5685096a33ad94b8"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-for-x-pulse-210",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-x-pulse-210/69e279ae5685096a33ad96cc"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/mirror-extender-aluminum-for-bmw-310-gs",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-bmw-310-gs/69e279ad5685096a33ad9494"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/saddle-bag-super-meteor-650",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-super-meteor-650/69e279ad5685096a33ad94bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vader-hard-shell-tail-bag-65-litre-harley-davidson-x440",
+    targetPath: "/product/bags/zana-vader-hard-shell-tail-bag-65-litre-for-harley-davidson-x440/69e279ad5685096a33ad95f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-box-plastic-58-litre-lflat-black-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-with-ms-plate-black-for-ktm-adv-390-2025/69e279ad5685096a33ad9691"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/pillion-backrest-cb350",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-plate-for-yezdi-adventure-2025-black",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9705"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/vertical-handle-riser-aluminum-suzuki-vstrom-250",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-aluminum-suzuki-v-strom-250/69e279ad5685096a33ad93c3"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/top-rack-ktm-adventure-250-orange-black-new-compatible-with-grab-rail",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-ktm-adventure-250-390-390x-orange-black-new-compatible-with-grab-rail/69e279ad5685096a33ad934d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/product/universal-mobile-holder-without-charger-rex",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger-rex/69e279ad5685096a33ad9687"
+  },
+  {
+    type: "product",
+    sourcePath: "/product/upper-lower-crash-guard-orange-for-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-upper-lower-crash-guard-orange-for-ktm-adv-390-2025/69e279ae5685096a33ad973c"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-gel-seat-cushion",
+    targetPath: "/product/gel-seat/zana-universal-gel-seat-cushion-medium-770grm/69e279ad5685096a33ad95ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-top-box",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-fog-lights",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-top-box?page=1&sortBy=&price=",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-fog-lights",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-paddock-stand",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-400-accessories",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?ordername=saleprice&order=asc",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-saddle-bag",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/suzuki-v-strom-sx-250-accessories",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-mobile-holder",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger/69e279ad5685096a33ad9541"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-dragon-belt",
+    targetPath: "/product/bags/zana-universal-dragon-belt/69e279ae5685096a33ad96ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-street-twin-accessories?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-street-twin/6a1ed06527fd6e98b2a79018"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-saddle-bag",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-top-box-cushion",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/honda-cb350-accessories",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-triple-765-accessories",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-triumph-street-triple-765/69e279ad5685096a33ad957f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-top-box",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-gel-seat-cushion",
+    targetPath: "/product/gel-seat/zana-universal-gel-seat-cushion-medium-770grm/69e279ad5685096a33ad95ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-400-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-tiger-660-accessories",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-black-for-triumph-tiger-660/69e279ae5685096a33ad9723"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-sliders",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?page=3&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/royal-enfield-gt-interceptor-650-accessories",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-scrambler-900-accessories",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-speed-twin-accessories",
+    targetPath: "/product/bike-protection/z-pro-chain-cover-for-triumph-speed-twin-900/69e279ad5685096a33ad9435"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-speed-twin-1200-accessories",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-speed-twin-1200/69e279ad5685096a33ad967a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-mobile-holder",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger/69e279ad5685096a33ad9541"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-twin-accessories",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-street-twin/6a1ed06527fd6e98b2a79018"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-speed-twin-accessories?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/z-pro-chain-cover-for-triumph-speed-twin-900/69e279ad5685096a33ad9435"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?page=4&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/z-pro-universal-slider-puck",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?ordername=name&order=desc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/sc/honda-cb350-accessories",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?ordername=saleprice&order=asc",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-400-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-850-accessories",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?ordername=name&order=desc",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-fog-light-mounts",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-top-box?page=1&sortBy=&price=",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/royal-enfield-gt-interceptor-650-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-twin-1200-accessories",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-speed-twin-1200/69e279ad5685096a33ad967a"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?page=3&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-street-twin-accessories",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-street-twin/6a1ed06527fd6e98b2a79018"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/royal-enfield-gt-interceptor-650-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-scrambler-900-accessories?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-400-accessories?page=3&sortBy=&price=",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?ordername=saleprice&order=desc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?ordername=name&order=desc",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-top-box?page=2&sortBy=&price=",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?page=4&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-top-box?page=2&sortBy=&price=",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/kawasaki-versys-650-accessories",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-tiger-850-accessories",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-twin-accessories?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-street-twin/6a1ed06527fd6e98b2a79018"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?page=3&sortBy=&price=",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?page=3&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-street-scrambler-900-accessories",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?ordername=saleprice&order=desc",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/kawasaki-versys-650-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-twin-accessories?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/z-pro-linear-engine-cover-for-triumph-street-twin/6a1ed06527fd6e98b2a79018"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/suzuki-v-strom-sx-250-accessories?ordername=saleprice&order=asc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?ordername=saleprice&order=asc",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-speed-twin-accessories",
+    targetPath: "/product/bike-protection/z-pro-chain-cover-for-triumph-speed-twin-900/69e279ad5685096a33ad9435"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-street-scrambler-900-accessories?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-speed-twin-accessories?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/z-pro-chain-cover-for-triumph-speed-twin-900/69e279ad5685096a33ad9435"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/honda-cb350-accessories?page=1&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/triumph-street-triple-765-accessories",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-triumph-street-triple-765/69e279ad5685096a33ad957f"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?ordername=saleprice&order=desc",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/royal-enfield-gt-interceptor-650-accessories?ordername=name&order=asc",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-660-accessories",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-black-for-triumph-tiger-660/69e279ae5685096a33ad9723"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/universal-slider-puck-509",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/universal-slider-puck-509",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/honda-cb350-accessories?ordername=saleprice&order=desc",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/sc/kawasaki-versys-650-accessories?ordername=id&order=desc",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/honda-cb350-accessories?page=2&sortBy=&price=",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-850-accessories?ordername=id&order=desc",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/sc/triumph-tiger-900-rally-pro-accessories?ordername=saleprice&order=asc",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350rs-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb350rs/69e279ad5685096a33ad966c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-handle-riser",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-backrest",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-crash-guard",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-handle-riser",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400-250/69e279ad5685096a33ad930f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-handlebar-riser",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-for-interceptor-650/69e279ad5685096a33ad932e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-backrest",
+    targetPath: "/product/touring-essentials/zana-backrest-ms-for-interceptor-gt-650/69e279ad5685096a33ad92d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-handlebar-riser",
+    targetPath: "/product/ergonomics/z-pro-universal-pivoting-handlebar-risers-for-himalayan-450/6a2278319a7fe492f4f4efd5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-tail-tank-saddle-bags",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-crash-guard",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-black-ms-for-royal-enfield-hunter-350/69e279ad5685096a33ad93bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-cushion-big-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-450/69e279ad5685096a33ad9674"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-classic-350-500-top-rack",
+    targetPath: "/product/touring-essentials/zana-top-rack-mild-steel-for-classic-500/69e279ad5685096a33ad94fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-gt-650-interceptor-650/69e279ad5685096a33ad9670"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-bs6-2021-2022-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-411-bs6-2021-2022/69e279ad5685096a33ad9673"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-top-rack",
+    targetPath: "/product/touring-essentials/zana-top-rack-for-himalayan-450-with-ms-plate/69e279ad5685096a33ad9500"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-saddle-stay",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-390-saddle-stay",
+    targetPath: "/product/touring-essentials/zana-yezdi-adventure-saddle-stay-black/69e279ad5685096a33ad9357"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/handlebar-riser-apache -rtx-300",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-for-tvs-apache-rtx-300-silver/69e279ae5685096a33ad97b8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-390-2025-crash-guard",
+    targetPath: "/product/bike-protection/zana-coolant-oil-guard-black-for-ktm-adventure-390-2025/69e279ae5685096a33ad97c1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-ktm-adv-390-2025-white/69e279ae5685096a33ad96f5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-harley-davidson-x440/69e279ad5685096a33ad9667"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-interceptor-650-saddle-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-gps-mount",
+    targetPath: "/product/touring-essentials/zana-jerry-can-mount-for-suzuki-v-strom-250/69e279ae5685096a33ad975b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-crash-guard?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb350/69e279ad5685096a33ad966b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-crash-guard",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/top-box-adventure-250-390-390x-390-rally-pro",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-ktm-adventure-250-390-390x-390-rally/69e279ad5685096a33ad9459"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-ktm-adv-390-2025",
+    targetPath: "/product/fog-light/zana-ktm-adv-390-2025-fog-light-mounting-kit/69e279ae5685096a33ad96f8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-saddle-stay",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-handle-riser",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-aluminum-suzuki-v-strom-250/69e279ad5685096a33ad93c3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-tvs-apache-rtx-300",
+    targetPath: "/product/bike-protection/zana-aigis-hand-guard-for-tvs-apache-rtx-300-white/69e279ae5685096a33ad97b7"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/crash-guard-yezdi-adventure-2025",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9710"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-backrest",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-handle-riser",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/tank-bag-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-tripper-tank-bag-8-0-litre-for-tvs-apache-rtx-300/69e279ae5685096a33ad978a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-crash-guard?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-gt-650-interceptor-650/69e279ad5685096a33ad9670"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-duke-250-390-2019-2022-crash-guard",
+    targetPath: "/product/bike-protection/zana-crash-guard-texture-matt-black-ktm-duke-250-390-bs4-bs6-2019-2022/69e279ad5685096a33ad92e1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/pillion-back-rest",
+    targetPath: "/product/touring-essentials/zana-pillion-back-rest-for-xoom-160/69e279ae5685096a33ad97aa"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-top-rack",
+    targetPath: "/product/touring-essentials/zana-top-rack-compatible-with-royal-enfield-backrest-ms-for-super-meteor-650/69e279ad5685096a33ad9466"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-guerrilla-450-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-guerrilla-450/69e279ad5685096a33ad9671"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/tail-tidy-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-aprilia-rs-457/69e279ae5685096a33ad9719"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-guerrilla-450-handle-riser",
+    targetPath: "/product/ergonomics/zana-offset-handle-riser-for-guerrilla-450/69e279ad5685096a33ad95dc"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gel-seat-cushion-super-meteor-650",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-stay-honda-cb350-rs",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-honda-cb350-rs-black/69e279ae5685096a33ad97bb"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-crash-guard?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-black-ms-for-royal-enfield-hunter-350/69e279ad5685096a33ad93bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-crash-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-bash-plate",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-handle-riser?ordername=name&order=asc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adv-390-2025-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-tank-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9710"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-saddle-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-hunter-350/69e279ad5685096a33ad94b4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb300r-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb300r/69e279ad5685096a33ad966a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-pillion-backrest?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-new-pillion-backrest-cushion-big-gt-interceptor-650/69e279ad5685096a33ad936e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-handle-riser?ordername=name&order=asc",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400-250/69e279ad5685096a33ad930f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-bash-plate",
+    targetPath: "/product/bike-protection/zana-uk-flag-black-bash-plate-for-gt-interceptor-650/69e279ad5685096a33ad92d3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-saddle-bag",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-ktm-adventure-250-390-390-x/69e279ad5685096a33ad94b8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/handle-bar-riser cb300f",
+    targetPath: "/product/ergonomics/zana-offset-handle-bar-riser-for-cb300f/69e279ad5685096a33ad9498"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-pulsar-ns400z-radiator-guard",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-pulsar-ns400z/69e279ad5685096a33ad960f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-bash-plate",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-side-stand-extender",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-suzuki-v-strom-250/69e279ad5685096a33ad9464"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-classic-350-500-top-rack?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-top-rack-mild-steel-for-classic-500/69e279ad5685096a33ad94fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-390x-390-rally-panniers",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-ktm-adventure-250-390-390x-390-rally/69e279ad5685096a33ad9459"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-stay-tvs-apache-rtx-300",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-apache-rtx-300-black/69e279ae5685096a33ad9784"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-top-box-plastic-50ltr",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-crash-guard",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-aluminum-stainless-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93c0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-crash-guard?ordername=name&order=desc",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-adv-250-390",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-ktm-adv-390-250/69e279ad5685096a33ad9496"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-radiator-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fork-slider-tvs-apache-rtx-300",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-tvs-apache-rtx-300/69e279ae5685096a33ad979c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/super-meteor-650-top-box",
+    targetPath: "/product/bike-protection/zana-tail-tidy-for-super-meteor-650-black/69e279ad5685096a33ad9506"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-stay-honda-cb300f",
+    targetPath: "/product/touring-essentials/zana-saddle-stays-for-soft-bags-honda-cb300f/69e279ad5685096a33ad93fe"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-handlebar-riser?ordername=name&order=desc",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-for-interceptor-650/69e279ad5685096a33ad932e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/pillion-backrest-ktm-adv-390-2025",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-saddle-bag",
+    targetPath: "/product/bags/zana-overlander-saddle-bag-for-himalayan-450/69e279ad5685096a33ad94ee"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-speed-400/69e279ad5685096a33ad95b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-390-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-accessories-top-box-plastic-45ltr-l-flat-black",
+    targetPath: "/product/top-box/zana-universal-top-box-nomada-45-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-crash-guard?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb350/69e279ad5685096a33ad966b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-scrambler-400x-tail-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-scrambler-400/69e279ad5685096a33ad95a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-meteor-350",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-meteor-350/69e279ad5685096a33ad950f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-himalayan-450",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-450/69e279ad5685096a33ad96b9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davison-x440-saddle-bag",
+    targetPath: "/product/ergonomics/zana-handle-bar-riser-for-harley-davidson-x440/69e279ad5685096a33ad9530"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-x-pulse-210",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-x-pulse-210-black/69e279ae5685096a33ad9760"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-2016-2020-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-411-2016-2020/69e279ad5685096a33ad9672"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-accessories-top-box-aluminium-22ltr",
+    targetPath: "/product/top-box/zana-universal-top-box-aluminium-black-22ltr-l-flat/69e279d95685096a33ad97cf"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-xoom-160/69e279ae5685096a33ad97a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-handle-riser?ordername=name&order=asc",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-aluminum-suzuki-v-strom-250/69e279ad5685096a33ad93c3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-bash-plate",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-himalayan-450-ms-black/69e279ad5685096a33ad94f5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-radiator-guard",
+    targetPath: "/product/bike-protection/zana-radiator-guard-aluminium-black-for-himalayan-450/69e279ad5685096a33ad94e6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/top-rack-yezdi-adventure-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9705"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-scrambler-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-new-pillion-backrest-cushion-big/69e279ad5685096a33ad9375"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-footrest-tvs-apache-rtx-300",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-tvs-apache-rtx-300/69e279ae5685096a33ad97c9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-bs6-2021-2022-crash-guard?ordername=saleprice&order=asc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-411-bs6-2021-2022/69e279ad5685096a33ad9673"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gps-mount-apache-rtx-300",
+    targetPath: "/product/accessories/zana-gps-mount-for-tvs-apache-rtx-300/69e279ae5685096a33ad97c8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-crash-guard?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-saddle-stay?ordername=saleprice&order=desc",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-gt-interceptor-650/69e279ad5685096a33ad932f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-gt-650-interceptor-650",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-gt-interceptor-650/69e279ad5685096a33ad932f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-z900-paddock-stand",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-kawasaki-z900/69e279ad5685096a33ad941b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-dominar400-2017-2018/69e279ad5685096a33ad930d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/suzuki-hayabusa-1300-tail-tidy",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-black-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/tail-bag-tvs-apache-rtx-300",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-apache-rtx-300/69e279ae5685096a33ad9791"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-headlight-grill",
+    targetPath: "/product/bike-protection/zana-ktm-linear-headlight-grill-stainless-steel-adventure-390-390-x/69e279ad5685096a33ad92e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb200x-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-honda-cb200x/69e279ad5685096a33ad957c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-bag-apache-rtx-300",
+    targetPath: "/product/touring-essentials/zana-drake-saddle-stay-for-apache-rtx-300-black/69e279ae5685096a33ad9784"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/frame-slider-aprilia-457",
+    targetPath: "/product/bike-protection/zana-frame-slider-small-for-aprilia-rs-457/69e279ae5685096a33ad971f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-bash-plate",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-speed-twin-1200/69e279ad5685096a33ad967a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-paddock-stand",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-duke-250-390-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-ktm-duke-250-390/69e279ad5685096a33ad966d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-duke-390-250-200-390-gen-3",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-ktm-duke-390-250-200-390-gen-3/69e279ad5685096a33ad9507"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-new-pillion-backrest-cushion-big-gt-interceptor-650/69e279ad5685096a33ad936e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/exhaust-protector-hero-xoom-160",
+    targetPath: "/product/bike-protection/zana-exhaust-protector-for-xoom-160/69e279ae5685096a33ad9736"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-super-meteor-650",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-super-meteor-650/69e279ad5685096a33ad9491"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-hayabusa-paddock-stand",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-hero-x-pulse-210",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-x-pulse-210/69e279ae5685096a33ad96c6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bajaj-dominar-250-400-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-dominar400-2019-2021/69e279ad5685096a33ad9311"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-350",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb350/69e279ad5685096a33ad947b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adv-390-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-ktm-adv-390-2025/69e279ad5685096a33ad969f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-backrest",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-speed-twin-1200/69e279ad5685096a33ad967a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-scrambler-400x-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-scrambler-400/69e279ad5685096a33ad95a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-saddle-bag",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-headlight-grill",
+    targetPath: "/product/bike-protection/zana-headlight-grill-type-2-ss-black-gt-interceptor-650/69e279ad5685096a33ad92d9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-411-saddle-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-himalayan-bs6-411/69e279ad5685096a33ad951a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-handlebar-riser",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-for-kawasaki-versys-650/69e279ad5685096a33ad956c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-xpulse-200",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-x-pulse-200/69e279ad5685096a33ad9468"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hunter-350-mirror-extender",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-hunter-350/69e279ad5685096a33ad9493"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-ktm-adv-390-2025",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-ktm-adv-390-2025-black/69e279ae5685096a33ad9752"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-himalayan-411-bs6",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-bs6-2021/69e279ad5685096a33ad9330"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-backrest?ordername=name&order=desc",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fork-slider-ktm-adv-390",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-ktm-adv-390-2025/69e279ad5685096a33ad969a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-suzuki-v-strom-250",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-saddle-stay?ordername=name&order=desc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-crash-guard?ordername=saleprice&order=asc",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-himalayan-450",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-himalayan-450/69e279ad5685096a33ad96b9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-gps-mount?ordername=saleprice&order=asc",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-crash-guard?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror extender cb 350 rs",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb-350-rs/69e279ad5685096a33ad9482"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-pulsar-ns400z-tail-tidy",
+    targetPath: "/product/bike-protection/zana-tail-tidy-for-pulsar-ns400z/69e279ad5685096a33ad9611"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adv-390-2025-tank-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-ktm-adv-390-2025-orange/69e279ae5685096a33ad975c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-tail-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-speed-400/69e279ad5685096a33ad95b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-rear-master-cylinder-cover",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-cover-aluminium-black-t-1-for-himalayan-450/69e279ad5685096a33ad94f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-interceptor-650-tail-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-paddock-stand",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-x-pulse-210",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-x-pulse-210/69e279ae5685096a33ad96cc"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/radiator-guard-tvs-apache-rtx-300",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-tvs-apache-rtx-300/69e279ae5685096a33ad97a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-mobile-holder",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-scrambler-400x-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-street-scrambler/69e279ad5685096a33ad93e4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-guerrilla-450-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-guerrilla-450/69e279ad5685096a33ad95db"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/ssc/yezdi-adventure-top-rack-plate",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9705"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bmw-f900gsa-adventure-handle-riser",
+    targetPath: "/product/ergonomics/z-pro-offset-handle-bar-riser-for-bmw-f900-gs/69e279ae5685096a33ad976f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb300r-radiator-guard",
+    targetPath: "/product/bike-protection/zana-honda-cb300f-radiator-guard-honeycomb-black/69e279ad5685096a33ad93ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb350/69e279ad5685096a33ad93bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/frame-slider-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-frame-slider-small-for-aprilia-rs-457/69e279ae5685096a33ad971f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bash-plate-tvs-apache-rtx-300",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-tvs-apache-rtx-300-ms-black/69e279ae5685096a33ad97b2"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/tail-tidy-speed-twin-1200",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-for-triumph-speed-twin-1200/69e279ae5685096a33ad96d7"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-handle-riser?ordername=saleprice&order=desc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-duke-250-390-2019-2022-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-saddle-stay?ordername=saleprice&order=asc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-aprilia-rs457",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-aprilia-rs-457/69e279ae5685096a33ad97c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-saddle-stay?ordername=name&order=asc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-crash-guard?ordername=name&order=asc",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-headlight-guard",
+    targetPath: "/product/bike-protection/zana-royal-enfield-hunter-350-headlight-guard-stainless-steel/69e279ad5685096a33ad93c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-crash-guard",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-himalayan-450",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-himalayan-450-white/69e279ae5685096a33ad96f9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-mobile-holder",
+    targetPath: "/product/mobile-holder/zana-universal-mobile-holder-without-charger/69e279ad5685096a33ad9541"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gt-interceptor-650-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-gt-interceptor-650/69e279ad5685096a33ad9571"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davison-x440-tail-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-harley-davidson-x440/69e279ad5685096a33ad95f2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-aluminium-for-himalayan-450/69e279ad5685096a33ad94e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-rear-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-himalayan-450/69e279ad5685096a33ad94fd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-crash-guard",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-dominar-250-400/69e279ad5685096a33ad9665"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-pillion-back-rest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-suzuki-v-strom-250/69e279ad5685096a33ad9474"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/sde-stand-extender-apache-rtx-300",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-tvs-apache-rtx-300-sheet-metal/69e279ae5685096a33ad97a6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-front-number-plate-relocator",
+    targetPath: "/product/accessories/zana-front-number-plate-relocator-dominar-250-400-2019-22/69e279ad5685096a33ad9345"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-saddle-stay?ordername=saleprice&order=asc",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-390-paddock-spools",
+    targetPath: "/product/side-stand-support/zana-paddock-spool-for-ktm-enduro-390/6a0c3d920fe84fd6728b70bc"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-handle-riser?ordername=name&order=desc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-top-rack?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-top-rack-compatible-with-royal-enfield-backrest-ms-for-super-meteor-650/69e279ad5685096a33ad9466"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yamaha-mt15-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-yamaha-mt-15/69e279ad5685096a33ad94a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-mobile-holder",
+    targetPath: "/product/touring-essentials/zana-back-rest-mild-steel-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-crash-guard",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb-350-rs-fog-light-mount?ordername=id&order=desc",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb350-rs/69e279ad5685096a33ad93eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-headlight-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-himalayan-450-white/69e279ae5685096a33ad96f9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-panniers",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-2021-22-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-aluminum-stainless-steel-for-royal-enfield-himalayan-bs6-2021-2022/69e279ad5685096a33ad93ed"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter350-bash-plate-973",
+    targetPath: "/product/bike-protection/zana-bash-plate-aluminum-royal-enfield-hunter350/69e279ad5685096a33ad93c1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger-900-rally-pro-panniers",
+    targetPath: "/product/bike-protection/z-pro-bash-plate-for-triumph-tiger-900-rally-pro-silver/69e279ad5685096a33ad951f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-single-for-harley-davidson-x440/69e279ad5685096a33ad9570"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-bear-650-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-bear-650-mild-steel/69e279ad5685096a33ad961d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gps-mount-yezdi-adventure-2025",
+    targetPath: "/product/accessories/zana-gps-mount-for-yezdi-adventure-2025/69e279ae5685096a33ad970a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-450-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-himalayan-450/69e279ad5685096a33ad94ef"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/universal-tail-tank-saddle-bags",
+    targetPath: "/product/bags/zana-universal-retro-saddle-bag/69e279ad5685096a33ad9542"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-backrest?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-backrest-for-honda-cb350/69e279ad5685096a33ad9372"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gps-mount-hero-xoom-160",
+    targetPath: "/product/accessories/zana-gps-mount-for-xoom-160/69e279ae5685096a33ad97a4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/handlebar-riser-x-pulse-210",
+    targetPath: "/product/ergonomics/zana-vertical-handlebar-riser-black-for-x-pulse-210/69e279ae5685096a33ad96db"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-cb-350-2025",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-honda-cb-350-2025-black/69e279ae5685096a33ad9753"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hand-guard-yezdi-adventure-2025",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9710"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bsa-goldstar650-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-bsa-goldstar-650-mild-steel/69e279ad5685096a33ad9623"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb200x-bash-plate",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-honda-cb200x-black/69e279ad5685096a33ad957a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-mudguard-riser",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-for-gt-interceptor-650/69e279ad5685096a33ad9307"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-mirror-extender",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-harley-davidson-x440/69e279ad5685096a33ad953d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/gps-mount-x-pulse-210",
+    targetPath: "/product/accessories/zana-gps-mount-for-x-pulse-210/69e279ae5685096a33ad96c9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/crash-guard-dominar-400-2017-2018",
+    targetPath: "/product/bike-protection/zana-crash-guard-for-z900-2017-2019/69e279ad5685096a33ad92fd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-saddle-stay?ordername=name&order=desc",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-gt-interceptor-650/69e279ad5685096a33ad94b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-top-rack?ordername=saleprice&order=desc",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-kawasaki-versys-650/69e279ad5685096a33ad93ba"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-triple-765-radiator-guard",
+    targetPath: "/product/bike-protection/z-pro-radiator-guard-for-triumph-street-triple-765/69e279ad5685096a33ad9582"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-scrambler/69e279ad5685096a33ad93e5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-guerrilla-450-headlight-grill",
+    targetPath: "/product/bike-protection/zana-headlight-grill-for-guerrilla-450-black-type-5/69e279ad5685096a33ad95df"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-saddle-stay",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hero-xpulse-200-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-xpulse-200/69e279ad5685096a33ad9318"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-front-fork-sliders",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-versys-650/69e279ad5685096a33ad934a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adv-390-rear-master-cylinder-cover",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-cover-for-ktm-adv-390-2025-aluminium-black/69e279ad5685096a33ad96a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-oil-cover-for-suzuki-vstrom-250-ss/69e279ad5685096a33ad93ad"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-scram-411-mudguard-riser",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-scram-411-bs6-2022/69e279ad5685096a33ad9369"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/radiator-guard-honda-cb300f",
+    targetPath: "/product/bike-protection/zana-honda-cb300f-radiator-guard-honeycomb-black/69e279ad5685096a33ad93ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-saddle-stay",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-twin/69e279ad5685096a33ad93db"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-honda-cb-350-2025",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb-350-2025/69e279ae5685096a33ad974d"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bajaj-dominar-250-400-handle-riser",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400-250/69e279ad5685096a33ad930f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-handlebar-riser?ordername=saleprice&order=asc",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-for-interceptor-650/69e279ad5685096a33ad932e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-honda-cb-350/69e279ad5685096a33ad9410"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-harley-davidson-x440/6a17e5b88bce4b00a14a76fa"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/jawa-classic-42-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-jawa-classic-and-42/69e279ad5685096a33ad92fb"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-footrest-shotgun-650",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-shotgun-650-black-mild-steel/69e279ad5685096a33ad9527"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount",
+    targetPath: "/product/fog-light/zana-universal-fog-light-mount/69e279ad5685096a33ad9664"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bmw-g-310-gs-engine-guard-with-puck",
+    targetPath: "/product/bike-protection/zana-lower-engine-guard-for-bmw-g310-gs-with-puck-black/69e279ad5685096a33ad9362"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-kawasaki-klx-230",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-kawasaki-klx-230/69e279ae5685096a33ad97a8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-radiator-grill",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-dominar400-2019-2021/69e279ad5685096a33ad9311"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/pillion-backrest-bajaj-dominar-400-2017-2018",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-dominar400-2017-2018/69e279ad5685096a33ad930d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-mirror-extender",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-suzuki-v-strom-250/69e279ad5685096a33ad9464"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fluid-reservoir-cover-meteor-450",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-guerrilla-450/69e279ad5685096a33ad95db"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-speed-twin-900/69e279ad5685096a33ad9438"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bmw-f900gs-axle-protector",
+    targetPath: "/product/bike-protection/z-pro-rear-axle-protector-for-bmw-f900-gs-gsa/69e279ad5685096a33ad963a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb-300-f-fog-light-mount?ordername=name&order=asc",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb-300f/69e279ad5685096a33ad9409"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-gps-mount?ordername=saleprice&order=asc",
+    targetPath: "/product/touring-essentials/zana-jerry-can-mount-for-suzuki-v-strom-250/69e279ae5685096a33ad975b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger850-saddle-stay?ordername=id&order=desc",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/crash-guard-tiger-660",
+    targetPath: "/product/bike-protection/zana-crash-guard-black-for-triumph-tiger-660/69e279ae5685096a33ad9722"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/hand-guard-triumph-tiger-900-rally-pro",
+    targetPath: "/product/bike-protection/z-pro-hand-guard-for-tiger-900-rally-pro-white/69e279ae5685096a33ad96f6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-scram-411-fog-light-mount-for",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-scram-411-bs6-2022/69e279ad5685096a33ad936c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-scrambler-top-rack",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-top-rack-type-w/69e279ad5685096a33ad9371"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-duke-250-390",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-footrest-meteor-350",
+    targetPath: "/product/ergonomics/zana-rear-footrest-steel-pair-for-meteor-350/69e279ad5685096a33ad94b0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-top-box-58-ltr",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-radiator-guard?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-yezdi-adventure-2025/69e279ae5685096a33ad9708"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-top-rack",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-plate-big-for-triumph-street-scrambler-900/69e279ad5685096a33ad93f6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-rc-200-390-saddle-stay",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-rc-200-390-texture-matt-black/69e279ad5685096a33ad931c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-bash-plate",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-scrambler-pillion-backrest?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-new-pillion-backrest-cushion-big/69e279ad5685096a33ad9375"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hero-xpulse-200-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-xpulse-200/69e279ad5685096a33ad930c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-hayabusa-1300-tank-bag",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-black-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-front-number-plate-relocator?ordername=name&order=asc",
+    targetPath: "/product/accessories/zana-front-number-plate-relocator-dominar-250-400-2019-22/69e279ad5685096a33ad9345"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/radiator-guard- yezdi-adventure -2025",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-yezdi-adventure-2025/69e279ae5685096a33ad9708"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-pair-for-suzuki-v-strom-250/69e279ad5685096a33ad9480"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-front-spools",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-triple-765-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-street-triple-765/69e279ad5685096a33ad9580"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-top-rack",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-with-plate-for-triumph-street-twin/69e279ad5685096a33ad93d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter350-bash-plate-973?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-bash-plate-aluminum-royal-enfield-hunter350/69e279ad5685096a33ad93c1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb-350-rs-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb350/69e279ad5685096a33ad93bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-scrambler-pillion-backrest?ordername=saleprice&order=desc",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-new-pillion-backrest-cushion-big/69e279ad5685096a33ad9375"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/side-stand-extenders-aprilia-rs-457",
+    targetPath: "/product/side-stand-support/zana-side-stand-extenders-black-for-aprilia-rs-457/69e279ae5685096a33ad971c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/tail-tidy-kawasaki-klx-230",
+    targetPath: "/product/bike-protection/zana-tail-tidy-for-kawasaki-klx-230/69e279ae5685096a33ad97a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/handle-riser-bajaj-dominar-400-2017-2018",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-dominar-400-250/69e279ad5685096a33ad930f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb200x-handlebar-riser",
+    targetPath: "/product/ergonomics/zana-vetrical-handlebar-riser-for-honda-cb200x/69e279ad5685096a33ad957d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-bag-super-meteor-650",
+    targetPath: "/product/bags/zana-adventure-saddle-bag-for-super-meteor-650/69e279ad5685096a33ad94bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-rear-master-cylinder-protector",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-gt-interceptor-650-bs6-ss/69e279ad5685096a33ad9315"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-triple-765-handlebar-weights",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-triumph-street-triple-765/69e279ad5685096a33ad957f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-pulsar-ns400z-side-stand",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-pulsar-ns400z/69e279ad5685096a33ad960e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fluid-reservoir-oil-cover",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-cb-300f/69e279ad5685096a33ad940b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-pulsar-ns400z-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-pulsar-ns-400z/69e279ad5685096a33ad9628"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-paddock-stand",
+    targetPath: "/product/touring-essentials/zana-yezdi-adventure-saddle-stay-black/69e279ad5685096a33ad9357"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/pillion-backrest-hero-xoom-160",
+    targetPath: "/product/touring-essentials/zana-pillion-back-rest-for-xoom-160/69e279ae5685096a33ad97aa"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fork-slider-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-aprilia-rs-457/69e279ae5685096a33ad971a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror extender super meteor 650",
+    targetPath: "/product/ergonomics/zana-mirror-extender-aluminum-for-super-meteor-650/69e279ad5685096a33ad947f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/side-stand-extender-hero-xoom-160",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-xoom-160/69e279ae5685096a33ad97a9"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-radiator-guard",
+    targetPath: "/product/bike-protection/z-pro-radiator-guard-for-triumph-street-triple-765/69e279ad5685096a33ad9582"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-ktm-adv-390-2025/69e279ad5685096a33ad969f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/saddle-stay-tiger-900-gt",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-black-for-triumph-tiger-900-gt/69e279ae5685096a33ad975f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-scram-411-pillion-backrest?ordername=name&order=desc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-scram-411/6a16a7b110cace8659fb6e0a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-side-stand-extender",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-for-triumph-street-scrambler-900/69e279ad5685096a33ad949f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/tank-guard-bmw-f-850-gs",
+    targetPath: "/product/bike-protection/z-pro-tank-guard-black-for-bmw-f850-gs/69e279ad5685096a33ad9405"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-top-box-plastic-55ltr",
+    targetPath: "/product/top-box/zana-universal-top-box-cushion/69e279ad5685096a33ad9545"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-backrest",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bmw-f900gs-saddle-stay",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-bmw-f900-gs-black/69e279ae5685096a33ad9771"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-gps-mount?ordername=name&order=asc",
+    targetPath: "/product/accessories/zana-gps-mount-duke-250-390/69e279ad5685096a33ad9313"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-radiator-guard?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-radiator-guard-hex-aluminum-for-super-meteor-650/69e279ad5685096a33ad942a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-saddle-stay?ordername=name&order=desc",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bash-plate-yezdi-adventure-2025",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9705"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-2016-2020-pillion-backrest?ordername=id&order=desc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-himalayan-2016-2020/69e279ad5685096a33ad930b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-hayabusa-1300-tail-tidy",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-black-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-bmw-g-310-gs",
+    targetPath: "/product/fog-light/zana-fog-light-mount-ms-for-bmw-310-gs/69e279ad5685096a33ad9495"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-twin-backrest",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-twin/69e279ad5685096a33ad93db"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-front-number-plate-relocator?ordername=saleprice&order=asc",
+    targetPath: "/product/accessories/zana-front-number-plate-relocator-dominar-250-400-2019-22/69e279ad5685096a33ad9345"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-scrambler-900-top-rack",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-plate-big-for-triumph-street-scrambler-900/69e279ad5685096a33ad93f6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-axle-protector-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-rear-axle-protector-for-aprilia-rs-457/69e279ae5685096a33ad9721"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-side-stand-extender?ordername=id&order=desc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/handle-bar-riser-bmw-f-850-gs",
+    targetPath: "/product/ergonomics/z-pro-offset-handlebar-riser-bmw-f-850-gs/69e279ad5685096a33ad9477"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-side-stand-extender?ordername=saleprice&order=asc",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb350/69e279ad5685096a33ad93bf"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bmw-f900gs-saddle-stay",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-bmw-f900-gs-black/69e279ae5685096a33ad9771"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-lights-bsa-goldstar-650",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-bsa-goldstar-650-mild-steel/69e279ad5685096a33ad9623"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-triple-765-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-triumph-street-triple-765/69e279ad5685096a33ad9581"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-bash-plate",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fork-slider-aprilia-tuono-457",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-aprilia-tuono-457-black/69e279ae5685096a33ad9711"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-gps-mount",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/handlebar-riser-bmw-r-1300-gs",
+    targetPath: "/product/ergonomics/z-pro-pivoting-handlebar-risers-for-bmw-r-1300-gs/6a2261039a7fe492f4f4efba"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-bag-bmw-f900-gs",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-bmw-f900-gs-black/69e279ae5685096a33ad9771"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-fork-slider-duke 390 gen 3",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-harley-davidson-x440/69e279ad5685096a33ad952f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-guerrilla-450-front-fork-slider",
+    targetPath: "/product/bike-protection/zana-front-fork-slider-for-guerrilla-450/69e279ad5685096a33ad95da"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-radiator-guard",
+    targetPath: "/product/bike-protection/zana-radiator-guard-honeycomb-black-for-yezdi-adventure-2025/69e279ae5685096a33ad9708"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-handle-bar-riser",
+    targetPath: "/product/ergonomics/zana-handle-bar-riser-for-harley-davidson-x440/69e279ad5685096a33ad9530"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himayan-411-bs6-tank-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-himalayan-bs6-411/69e279ad5685096a33ad951a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-footrest-hunter-350",
+    targetPath: "/product/ergonomics/zana-rear-footrest-mild-steel-pair-for-hunter-350/69e279ad5685096a33ad9458"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/hero-xpulse-200-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-x-pulse-200/69e279ad5685096a33ad9468"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-backrest?ordername=saleprice&order=asc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-cushion-big-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-2016-2020-rear-master-cylinder-protector",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-himalayan-ss-2016-2020/69e279ad5685096a33ad9305"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-pulsar-ns400z-rear-footrest",
+    targetPath: "/product/ergonomics/zana-rear-footrest-for-pulsar-ns400z/69e279ad5685096a33ad95fc"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-caliper-protector",
+    targetPath: "/product/bike-protection/zana-front-disc-caliper-protector-ktm-adventure-250-390-390-x-stainless-steel/69e279ad5685096a33ad9322"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bmw-g-310-gs-front-fork-slider",
+    targetPath: "/product/bike-protection/zana-bmw-g-310-gs-front-fork-slider/69e279ad5685096a33ad93b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-411-tail-bag",
+    targetPath: "/product/bags/zana-broozer-tail-bag-50-litre-himalayan-411/69e279ad5685096a33ad95a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-crash-guard?ordername=saleprice&order=asc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-gt-650-interceptor-650/69e279ad5685096a33ad9670"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bash-plate-tvs-apache-rtx-300-beak-version",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-tvs-apache-rtx-300-ms-black/69e279ae5685096a33ad97b2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-radiator-guard",
+    targetPath: "/product/bike-protection/zana-radiator-guard-hex-aluminum-for-super-meteor-650/69e279ad5685096a33ad942a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-kawasaki-versys-650/69e279ad5685096a33ad956d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-master-cylinder-cover-aprilia-rs-457",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-cover-black-for-aprilia-rs-457/69e279ae5685096a33ad971e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-bs6-2021-2022-headlight-grill",
+    targetPath: "/product/bike-protection/zana-headlight-grill-ss-type-4a-black-himalayan-bs6-2021-22/69e279ad5685096a33ad932b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-headlight-grill",
+    targetPath: "/product/bike-protection/zana-yezdi-head-light-grill-ss-black/69e279ad5685096a33ad9359"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/coolant-oil-guard-ktm-adv-390-2025",
+    targetPath: "/product/bike-protection/zana-coolant-oil-guard-black-for-ktm-adventure-390-2025/69e279ae5685096a33ad97c1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-honda-cb-200x",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb-200x/69e279ae5685096a33ad9782"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-paddock-stand",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/top-rack-ducati-scrambler",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-ducati-scrambler/69e279ad5685096a33ad93e6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-scram-411-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-scram-411/6a16a7b110cace8659fb6e0a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-twin-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-twin/69e279ad5685096a33ad93db"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-ktm-adventure-390-250/6a1d920f43abc2dda8ffabf6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-triple-765-tail-tidy",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-for-triumph-street-triple-765/69e279ad5685096a33ad9583"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-headlight-grill?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-yezdi-head-light-grill-ss-black/69e279ad5685096a33ad9359"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal--slider--puck",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bmw-g-310-gs-upper-fairing-guard",
+    targetPath: "/product/bike-protection/zana-bmw-g310-gs-upper-fairing-guard-ms-black/69e279ad5685096a33ad9370"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-crash-guard?ordername=saleprice&order=desc",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-stay-yezdi-adventure-2025",
+    targetPath: "/product/touring-essentials/zana-yezdi-adventure-saddle-stay-black/69e279ad5685096a33ad9357"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-triple-765-radiator-guard",
+    targetPath: "/product/bike-protection/z-pro-radiator-guard-for-triumph-street-triple-765/69e279ad5685096a33ad9582"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-fog-light-mount?ordername=name&order=asc",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-gt-interceptor-650/69e279ad5685096a33ad932f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror extender for cb300r",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-honda-cb300r/69e279ad5685096a33ad947e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/kawasaki-z900-paddock-stand",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-kawasaki-z900/69e279ad5685096a33ad941b"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/suzuki-hayabusa-1300-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-saddle-bag",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-kawasaki-versys-650/69e279ad5685096a33ad92df"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-paddock-spools",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spool-for-triumph-speed-twin-900/69e279ad5685096a33ad9439"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/ktm-adventure-250-390-bash-plate",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-mobile-holder",
+    targetPath: "/product/accessories/zana-gps-mount-for-kawasaki-versys-650/69e279ad5685096a33ad92e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-paddock-spool",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spools-for-kawasaki-versys-650/69e279ad5685096a33ad956e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fluid-reservoir-cover-tvs-apache-rtx-300",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-black-for-tvs-apache-rtx-300/69e279ae5685096a33ad97b3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-ktm-adv-390-250/69e279ad5685096a33ad9496"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger900-rally-pro-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-tiger-900-rally-pro/69e279ad5685096a33ad9644"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bash-plate-honda-cb-350-2025",
+    targetPath: "/product/bike-protection/zana-bash-plate-for-honda-cb-350-2025-aluminum-black/69e279ae5685096a33ad974b"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/ssc/ktm-rc-200-390-saddle-stay",
+    targetPath: "/product/touring-essentials/zana-saddle-stay-for-rc-200-390-texture-matt-black/69e279ad5685096a33ad931c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-ninja-300-radiator-grill",
+    targetPath: "/product/bike-protection/zana-radiator-grill-black-ninja-300/69e279ad5685096a33ad92fc"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-tvs-apache-rtx-300",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-tvs-apache-rtx-300/69e279ae5685096a33ad97a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-speed-400-crash-guard?ordername=saleprice&order=desc",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-engine-cover",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-scrambler-900/69e279ad5685096a33ad93e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-hero-xoom-160",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-hero-xoom-160/69e279ae5685096a33ad97a7"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/quick-shifter-guard-bmw-f900-gs-gsa",
+    targetPath: "/product/bike-protection/z-pro-quick-shifter-guard-for-bmw-f900-gs-gsa/69e279ad5685096a33ad9698"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/front-frok-slider",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-for-z900/69e279ad5685096a33ad934b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-bs6-2021-2022-crash-guard?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-himalayan-411-bs6-2021-2022/69e279ad5685096a33ad9673"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger850-saddle-stay",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb300r-tail-tidy",
+    targetPath: "/product/bike-protection/zana-tail-tidy-black-for-honda-cb300r/69e279ad5685096a33ad9502"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-adventure-top-rack-plate",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-for-yezdi-adventure-2025-black/69e279ae5685096a33ad9705"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/honda-cb-350-rs-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb350-rs/69e279ad5685096a33ad93eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-1200-backrest",
+    targetPath: "/product/touring-essentials/z-pro-backrest-for-speed-twin-1200/69e279ad5685096a33ad943c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb200x-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-honda-cb200x/69e279ad5685096a33ad962a"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-headlight-guard?ordername=saleprice&order=asc",
+    targetPath: "/product/bike-protection/zana-royal-enfield-hunter-350-headlight-guard-stainless-steel/69e279ad5685096a33ad93c2"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/royal-enfield-gt-interceptor-650-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-new-pillion-backrest-cushion-big-gt-interceptor-650/69e279ad5685096a33ad936e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/ktm-adventure-250-390-headlight-grill",
+    targetPath: "/product/bike-protection/zana-ktm-linear-headlight-grill-stainless-steel-adventure-390-390-x/69e279ad5685096a33ad92e3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-x-pulse-210",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-x-pulse-210/69e279ae5685096a33ad96c6"
+  },
+  {
+    type: "product",
+    sourcePath: "/index.php/ssc/suzuki-v-strom-sx-250-crash-guard",
+    targetPath: "/product/bike-protection/zana-hand-guard-for-suzuki-v-strom-sx-250-black/69e279ae5685096a33ad9758"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-trident660-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-twin/69e279ad5685096a33ad93db"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/headlight-guard-x-pulse-210",
+    targetPath: "/product/bike-protection/zana-headlight-guard-black-for-x-pulse-210/69e279ae5685096a33ad96c4"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/front-fork-slider-zp",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-for-z900/69e279ad5685096a33ad934b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-tiger850-saddle-stay",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/suzuki-hayabusa-1300-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-nx500-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-honda-nx500/69e279ad5685096a33ad9575"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-front-spools?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davidson-x440-fog-light-mount",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-harley-davidson-x440/69e279ad5685096a33ad953c"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb-350-rs-fog-light-mount?ordername=name&order=asc",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb350-rs/69e279ad5685096a33ad93eb"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-grabrail",
+    targetPath: "/product/touring-essentials/z-pro-grab-rail-for-triumph-speed-twin-1200/69e279ad5685096a33ad967f"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/bmw-f900gs-quickshifter-guard",
+    targetPath: "/product/bike-protection/z-pro-quick-shifter-guard-for-bmw-f900-gs/69e279ae5685096a33ad9776"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter-350-crash-guard?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-crash-guard-with-slider-black-ms-for-royal-enfield-hunter-350/69e279ad5685096a33ad93bd"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/paddock-spool-tvs-apache-rtx-300",
+    targetPath: "/product/side-stand-support/zana-rear-paddock-spool-black-for-tvs-apache-rtx-300/69e279ae5685096a33ad97b6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/rear-brake-protector",
+    targetPath: "/product/bike-protection/z-pro-rear-brake-protector-for-bmw-f850-gsa/69e279ad5685096a33ad945e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-bash-plate?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-uk-flag-black-bash-plate-for-gt-interceptor-650/69e279ad5685096a33ad92d3"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-fluid-reservoir-cover?ordername=name&order=desc",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-oil-cover-for-suzuki-vstrom-250-ss/69e279ad5685096a33ad93ad"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger850-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-tiger-850/69e279ad5685096a33ad93ce"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/rear-master-cylinder-protector",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-for-himalayan-2022/69e279ad5685096a33ad93a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger850-saddle-stay?ordername=name&order=asc",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-for-triumph-tiger-850/69e279ad5685096a33ad93d1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-twin-crash-guard",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-z900-radiator-grill",
+    targetPath: "/product/bike-protection/zana-kawasaki-radiator-guard-grill-black/69e279ad5685096a33ad92dc"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/front-fork-slider-tiger-900-gt",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-triumph-tiger-900-gt/69e279ae5685096a33ad9762"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/single-rod-slider-ducati-monster-950",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-ducati-monster-950/69e279ad5685096a33ad93c8"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-himalayan-bs6-2021-2022-mudguard-riser",
+    targetPath: "/product/bike-protection/zana-mudguard-riser-for-himalayan-bs6-2021/69e279ad5685096a33ad9302"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/top-box-plastic-45-ltr-nomada-series-black",
+    targetPath: "/product/top-box/zana-universal-top-box-nomada-45-ltr-plastic-with-backrest-black/69e279d95685096a33ad97e0"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb200x-reservior-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-honda-cb200x/69e279ad5685096a33ad957e"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/suzuki-hayabusa-1300-frame-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/number-plate-mount-bmw-r-1300-gs",
+    targetPath: "/product/accessories/z-pro-number-plate-mount-for-bmw-r-1300-gs/69e279ae5685096a33ad96fe"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/side-stand-extender-ducati-scrambler?ordername=saleprice&order=desc",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-black-aluminium-for-ducati-scrambler/69e279ad5685096a33ad93e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/ducati-hypermotard-950-frame-slider",
+    targetPath: "/product/bike-protection/z-pro-frame-slider-for-ducati-hypermotard/69e279ad5685096a33ad94ac"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-fluid-reservoir-cover?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-rear-fluid-reservoir-cover-for-honda-cb-350/69e279ad5685096a33ad9410"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger850-engine-guard",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-scrambler-900-paddock-spool",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-triumph-street-scrambler/69e279ad5685096a33ad93e5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-scrambler-400x-bash-plate",
+    targetPath: "/product/bike-protection/zana-bash-plate-ms-for-triumph-speed-400/69e279ad5685096a33ad94a0"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/kawasaki-z900-rear-spools",
+    targetPath: "/product/side-stand-support/z-pro-rear-paddock-spool-for-kawasaki-z900/69e279ad5685096a33ad941b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-tiger850-engine-guard",
+    targetPath: "/product/bike-protection/z-pro-engine-guard-for-triumph-street-twin/69e279ad5685096a33ad93d6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/ktm-adventure-250-390-fluid-reservoir-cover",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-ktm-adv-390-2025/69e279ad5685096a33ad969f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb300r-side-stand-extender",
+    targetPath: "/product/side-stand-support/zana-side-stand-extender-for-honda-cb300r/69e279ad5685096a33ad93be"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fluid-reservoir-cover-aprilia-tuono-457",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-red-for-aprilia-tuono-457/69e279ae5685096a33ad9733"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-slider-puck",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/ducati-hypermotard-950-front-fork-slider",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-ducati-hypermotard-950/69e279ad5685096a33ad94aa"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/mirror-extender-yezdi-adventure-2025",
+    targetPath: "/product/ergonomics/zana-mirror-extender-for-yezdi-adventure-2025-black-texture-aluminium/69e279ae5685096a33ad970d"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-brake-protector",
+    targetPath: "/product/bike-protection/z-pro-rear-brake-protector-for-bmw-f850-gsa/69e279ad5685096a33ad945e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/side-stand-extender-ducati-scrambler",
+    targetPath: "/product/side-stand-support/z-pro-side-stand-extender-black-aluminium-for-ducati-scrambler/69e279ad5685096a33ad93e9"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/saddle-stay-tiger-900-gt",
+    targetPath: "/product/touring-essentials/z-pro-saddle-stay-black-for-triumph-tiger-900-gt/69e279ae5685096a33ad975f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-crash-guard?ordername=id&order=desc",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-for-ktm-adventure-250-390/69e279ad5685096a33ad9473"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-handlebar-riser?ordername=id&order=desc",
+    targetPath: "/product/ergonomics/zana-vertical-handle-riser-for-interceptor-650/69e279ad5685096a33ad932e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/himalayan-411-bs6-saddle-bag",
+    targetPath: "/product/bags/zana-retro-saddle-bag-for-himalayan-bs6-411/69e279ad5685096a33ad951a"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/kawasaki-z900-front-fork-sliders-zpro",
+    targetPath: "/product/bike-protection/z-pro-front-fork-slider-for-kawasaki-z-900/69e279ad5685096a33ad93fa"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-duke-250-390-2019-2022-front-fork-sliders",
+    targetPath: "/product/bike-protection/zana-front-fork-sliders-ktm-duke-250-390/69e279ad5685096a33ad9339"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/yezdi-scrambler-paddock-stand",
+    targetPath: "/product/touring-essentials/zana-yezdi-scrambler-top-rack-type-w/69e279ad5685096a33ad9371"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-street-scrambler-900-bash-plate",
+    targetPath: "/product/touring-essentials/z-pro-top-rack-plate-big-for-triumph-street-scrambler-900/69e279ad5685096a33ad93f6"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-speed-twin-1200-grab-rail",
+    targetPath: "/product/touring-essentials/z-pro-grab-rail-for-triumph-speed-twin-1200/69e279ad5685096a33ad967f"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/honda-cb350-crash-guard?ordername=saleprice&order=desc",
+    targetPath: "/product/bike-protection/zana-sliders-pair-for-crash-guard-honda-cb350/69e279ad5685096a33ad966b"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-hunter350-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-cushion-big-for-royal-enfield-hunter-350/69e279ad5685096a33ad93f4"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-scram-411-rear-master-cylinder-protector",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-for-scram-411-bs6-ss-2022/69e279ad5685096a33ad9368"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fluid-reservoir-cover-x-pulse-210",
+    targetPath: "/product/bike-protection/zana-front-fluid-reservoir-cover-for-x-pulse-210/69e279ae5685096a33ad96c7"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/kawasaki-versys-650-top-rack",
+    targetPath: "/product/touring-essentials/zana-top-rack-plate-aluminium-kawasaki-versys-650/69e279ad5685096a33ad93ba"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/ktm-adventure-250-390-rear-master-cylinder",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-cover-for-ktm-adv-390-2025-aluminium-black/69e279ad5685096a33ad96a5"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/universal-slider-puck-791",
+    targetPath: "/product/bike-protection/zana-universal-slider-puck/69e279ad5685096a33ad9441"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bsa-goldstar650-pillion-backrest",
+    targetPath: "/product/touring-essentials/zana-pillion-backrest-hex-cushion-for-bsa-goldstar-650/6a16ca4f10cace8659fb6e24"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-gt-interceptor-650-rear-master-cylinder",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-gt-interceptor-650-bs6-ss/69e279ad5685096a33ad9315"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/radiator-guard-honda-cb300f?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-honda-cb300f-radiator-guard-honeycomb-black/69e279ad5685096a33ad93ff"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-v-strom-sx-250-mobile-holder",
+    targetPath: "/product/mobile-holder/zana-mobile-holder-without-charger-for-suzuki-v-strom-250/69e279ad5685096a33ad952e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/harley-davison-x440-tank-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-harley-davidson-x440/69e279ad5685096a33ad95f2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/bajaj-dominar-250-400-front-number-plate-relocator?ordername=id&order=desc",
+    targetPath: "/product/accessories/zana-front-number-plate-relocator-dominar-250-400-2019-22/69e279ad5685096a33ad9345"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/suzuki-hayabusa-1300-radiator-guard",
+    targetPath: "/product/side-stand-support/z-pro-paddock-spools-for-suzuki-hayabusa-1300/69e279ad5685096a33ad94d2"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/triumph-street-triple765-tail-bag",
+    targetPath: "/product/bike-protection/z-pro-tail-tidy-for-triumph-street-triple-765/69e279ad5685096a33ad9583"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-master-cylinder-protector",
+    targetPath: "/product/bike-protection/zana-rear-master-cylinder-protector-for-himalayan-2022/69e279ad5685096a33ad93a1"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/royal-enfield-super-meteor-650-crash-guard?ordername=id&order=desc",
+    targetPath: "/product/bike-protection/zana-crash-guard-ms-for-super-meteor-650/69e279ad5685096a33ad9429"
+  },
+  {
+    type: "product",
+    sourcePath: "/zpro/ssc/triumph-tiger900-rally-pro-tail-bag",
+    targetPath: "/product/bags/zana-pluto-tail-bag-tank-bag-for-triumph-tiger-900-rally-pro/69e279ad5685096a33ad9644"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/rear-oil-reservoir-hex-cover",
+    targetPath: "/product/bike-protection/zana-rear-oil-reservoir-hex-cover-for-bear-650/69e279ae5685096a33ad972e"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-honda-cb300r",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-cb300r/69e279ad5685096a33ad9462"
+  },
+  {
+    type: "product",
+    sourcePath: "/ssc/fog-light-mount-honda-rebel-500",
+    targetPath: "/product/fog-light/zana-fog-light-mount-for-honda-rebel-500/69e279ae5685096a33ad96d4"
+  },
 ]
 ) as readonly RedirectMapping[];
 
