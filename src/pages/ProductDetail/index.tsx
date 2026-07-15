@@ -226,10 +226,12 @@ const ProductDetailPage = () => {
 
       // GTM — dataLayer push
       if ((window as any).dataLayer) {
-        (window as any).dataLayer.push({
-          event: "view_item",
-          ...eventPayload,
-        });
+        setTimeout(() => {
+          (window as any).dataLayer.push({
+            event: "view_item",
+            ...eventPayload,
+          });
+        }, 500);
       }
 
       // GA4 — gtag direct
