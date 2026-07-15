@@ -199,12 +199,12 @@ export default function CheckoutPage() {
     };
 
     // GTM — dataLayer push
-    if ((window as any).dataLayer) {
-      (window as any).dataLayer.push({
-        event: "begin_checkout",
-        ...eventPayload,
-      });
-    }
+    // if ((window as any).dataLayer) {
+    //   (window as any).dataLayer.push({
+    //     event: "begin_checkout",
+    //     ...eventPayload,
+    //   });
+    // }
 
     // GA4 — gtag direct
     if ((window as any).gtag) {

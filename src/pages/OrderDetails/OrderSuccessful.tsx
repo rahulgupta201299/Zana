@@ -92,12 +92,12 @@ const OrderConfirmation = () => {
       };
 
       // GTM — dataLayer push
-      if ((window as any).dataLayer) {
-        (window as any).dataLayer.push({
-          event: "purchase",
-          ...eventPayload,
-        });
-      }
+      // if ((window as any).dataLayer) {
+      //   (window as any).dataLayer.push({
+      //     event: "purchase",
+      //     ...eventPayload,
+      //   });
+      // }
 
       // GA4 — gtag direct
       if ((window as any).gtag) {

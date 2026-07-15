@@ -82,12 +82,12 @@ export default function useCart() {
     const _phoneNumber = state.auth.login.phoneNumber || optional?.phoneNumber;
 
     // GTM — dataLayer push
-    if ((window as any).dataLayer) {
-      (window as any).dataLayer.push({
-        event: "add_to_cart",
-        ...eventPayload
-      });
-    }
+    // if ((window as any).dataLayer) {
+    //   (window as any).dataLayer.push({
+    //     event: "add_to_cart",
+    //     ...eventPayload
+    //   });
+    // }
 
     // GA4 — gtag direct
     if ((window as any).gtag) {

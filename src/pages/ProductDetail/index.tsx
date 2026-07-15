@@ -225,12 +225,12 @@ const ProductDetailPage = () => {
       };
 
       // GTM — dataLayer push
-      if ((window as any).dataLayer) {
-        (window as any).dataLayer.push({
-          event: "view_item",
-          ...eventPayload,
-        });
-      }
+      // if ((window as any).dataLayer) {
+      //   (window as any).dataLayer.push({
+      //     event: "view_item",
+      //     ...eventPayload,
+      //   });
+      // }
 
       // GA4 — gtag direct
       if ((window as any).gtag) {
