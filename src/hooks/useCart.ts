@@ -90,9 +90,9 @@ export default function useCart() {
     }
 
     // GA4 — gtag direct
-    if ((window as any).gtag) {
-      (window as any).gtag("event", "add_to_cart", eventPayload);
-    }
+    // if ((window as any).gtag) {
+    //   (window as any).gtag("event", "add_to_cart", eventPayload);
+    // }
 
     try {
       const response = (await dispatch(
