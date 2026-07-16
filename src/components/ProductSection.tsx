@@ -1,4 +1,3 @@
-
 import {
   Box,
   Button,
@@ -10,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -110,6 +109,11 @@ function ProductSection({
 
   const [modalType, setModalType] = useState<string | null>(null);
 
+
+  const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  const hasScrolledInitially = useRef(false);
+
   function handleProductClick(
     productCategory: string,
     productItem: string,
@@ -201,6 +205,19 @@ function ProductSection({
     return () => window.clearTimeout(timeoutId);
   }, [isProductListLoading, products]);
 
+
+  useEffect(() => {
+    const activePill = categoryRefs.current[selectedCategory];
+    if (activePill) {
+      activePill.scrollIntoView({
+        behavior: hasScrolledInitially.current ? "smooth" : "auto",
+        block: "nearest",
+        inline: "center",
+      });
+      hasScrolledInitially.current = true;
+    }
+  }, [selectedCategory, categoriesWithCount]);
+
   return (
     <>
       {/* Category Pills */}
@@ -225,6 +242,9 @@ function ProductSection({
           return (
             <Button
               key={ind}
+              ref={(el: HTMLButtonElement | null) =>
+                (categoryRefs.current[categoryName] = el)
+              }
               onClick={() => {
                 setSubCategory("");
                 onSelectCategory(categoryName);
