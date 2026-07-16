@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
-import HeroImage from "@/Assets/Images/ZANA_MOTORCYCLE_HERO_IMAGE.webp";
+import HeroImage from "@/Assets/Images/HeroSection.webp";
 
 type HeroSectionPropsType = {
   isMobile: boolean;
@@ -15,7 +15,7 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
       {/* Background Image */}
      
         <img
-          src={"/src/Assets/Images/HeroSection.webp"}
+          src={HeroImage}
           alt=""
           aria-hidden="true"
           fetchPriority="high"
