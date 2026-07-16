@@ -1,4 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import TriumphLogo from "@/Assets/Images/Triumph.png";
+import KTMLogo from "@/Assets/Images/KTM.webp";
+import RoyalEnfieldLogo from "@/Assets/Images/RoyalEnfield.webp";
+import HondaLogo from "@/Assets/Images/Honda.webp";
+import TVSLogo from "@/Assets/Images/TVS.webp";
 
 type BrandItem = {
   name: string;
@@ -16,27 +21,27 @@ type BrandShowcasePropsType = {
 const DEFAULT_BRANDS: BrandItem[] = [
   {
     name: "Royal Enfield",
-    logo: "/src/Assets/Images/RoyalEnfield.webp",
+    logo: RoyalEnfieldLogo,
     route: "/zana/bikes/royal-enfield",
   },
   {
     name: "KTM",
-    logo: "/src/Assets/Images/KTM.webp",
+    logo: KTMLogo,
     route: "/zana/bikes/ktm",
   },
   {
     name: "Triumph",
-    logo: "/src/Assets/Images/Triumph.png",
+    logo: TriumphLogo,
     route: "/zana/bikes/triumph",
   },
   {
     name: "Honda",
-    logo: "/src/Assets/Images/Honda.webp",
+    logo: HondaLogo,
     route: "/zana/bikes/honda",
   },
   {
     name: "TVS",
-    logo: "/src/Assets/Images/TVS.webp",
+    logo: TVSLogo,
     route: "/zana/bikes/tvs",
   },
 ];

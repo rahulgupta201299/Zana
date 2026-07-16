@@ -16,7 +16,7 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
      
         <img
           src={HeroImage}
-          alt=""
+          alt="Hero Section Background"
           aria-hidden="true"
           fetchPriority="high"
           decoding="async"
