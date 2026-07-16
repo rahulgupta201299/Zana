@@ -1,22 +1,23 @@
 import { Box, Typography } from "@mui/material";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
+import { CatalogueItem } from "@/Redux/Landing/Types";
 
 type Props = {
-  product: ShopByProductDetailsType;
+  details: CatalogueItem
   onProductClick: () => void;
 };
 
-export default function BikeKitProductCard({
-  product,
+export default function ShowcaseCatalogueCard({
+  details,
   onProductClick,
 }: Props) {
-  const { category, name, shortDescription } = product;
+  const { category, subCategory, description } = details;
 
   return (
     <Box
       onClick={onProductClick}
       sx={{
         height: "100%",
+        width: "100%",
         cursor: "pointer",
         bgcolor: "#17191e",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -63,7 +64,7 @@ export default function BikeKitProductCard({
             overflow: "hidden",
           }}
         >
-          {name}
+          {subCategory}
         </Typography>
 
         <Typography
@@ -77,7 +78,7 @@ export default function BikeKitProductCard({
             overflow: "hidden",
           }}
         >
-          {shortDescription}
+          {description}
         </Typography>
       </Box>
 

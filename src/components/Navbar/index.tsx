@@ -252,6 +252,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       width: "auto",
                       cursor: "pointer",
                       transition: "opacity 0.2s",
+                      transform: isZProPath ? "none" : "scale(3.5)",
                     }}
                     onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
                     onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
@@ -384,6 +385,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       width: "auto",
                       cursor: "pointer",
                       transition: "opacity 0.2s",
+                      transform: isZProPath ? "none" : "scale(3.5)",
                     }}
                     onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
                     onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}

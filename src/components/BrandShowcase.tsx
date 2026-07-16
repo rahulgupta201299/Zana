@@ -26,7 +26,7 @@ const DEFAULT_BRANDS: BrandItem[] = [
   },
   {
     name: "Triumph",
-    logo: "/src/Assets/Images/Triumph.png",
+    logo: "/src/Assets/Images/Triumph.webp",
     route: "/zana/bikes/triumph",
   },
   {

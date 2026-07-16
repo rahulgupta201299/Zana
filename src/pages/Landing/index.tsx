@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import OurPhilosophy from "@/components/OurPhilosophy";
-import BikeKitSection from "@/components/BikeKitSection";
+// import OurPhilosophy from "@/components/OurPhilosophy";
+import ShowcaseSection from "@/components/ShowcaseSection";
 import BrandShowcase from "@/components/BrandShowcase";
 
 // const GarageFavorite = lazy(() => import("@/components/GarageFavorite"));
 // const NewArrivals = lazy(() => import("@/components/NewArrivals"));
 const YouTubeSection = lazy(() => import("@/components/YouTubeSection"));
 const InstagramFeed = lazy(() => import("@/components/InstagramFeed"));
-const BrandStory = lazy(() => import("@/components/BrandStory"));
+// const BrandStory = lazy(() => import("@/components/BrandStory"));
 // const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 
 function LazyOnVisible({
@@ -54,11 +54,22 @@ function LazyOnVisible({
 }
 
 function Landing() {
+
   return (
     <div className="min-h-screen">
       <BrandShowcase/>
       {/* <OurPhilosophy /> */}
-      <BikeKitSection />
+      <ShowcaseSection 
+        sectionTitle = "Your motorcycle. Your kit."
+        sectionSubtitle = {`No drilling, no bending, no "universal-ish". Every part below bolts onto the model it's named after — and nothing else.`}
+        type="bike"
+      />
+      <ShowcaseSection 
+        sectionTitle = "Universal Products"
+        sectionSubtitle = "Some gear doesn't care what you ride. Fog lights and luggage systems designed to move between motorcycles as easily as you do."
+        sectionSupertitle = "FITS EVERY GARAGE"
+        type="product"
+      />
       {/* <LazyOnVisible minHeight={520}>
         <GarageFavorite />
       </LazyOnVisible>
@@ -72,9 +83,9 @@ function Landing() {
         <InstagramFeed />
       </LazyOnVisible>
       {/* <BlogsSection /> */}
-      <LazyOnVisible minHeight={420}>
+      {/* <LazyOnVisible minHeight={420}>
         <BrandStory />
-      </LazyOnVisible>
+      </LazyOnVisible> */}
       {/* <LazyOnVisible minHeight={360}>
         <TestimonialsSection />
       </LazyOnVisible> */}
