@@ -43,7 +43,7 @@ const DEFAULT_BRANDS: BrandItem[] = [
 
 function BrandShowcase({
   brands = DEFAULT_BRANDS,
-  seeAllRoute = "/brands",
+  seeAllRoute = "/zana/bikes/all",
 }: BrandShowcasePropsType) {
   const navigate = useNavigate();
 

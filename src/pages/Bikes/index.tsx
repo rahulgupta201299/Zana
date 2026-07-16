@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
@@ -19,7 +19,10 @@ import {
 } from "@/Redux/Product/Actions";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { encodedGeneratedPath } from "@/Utils/global";
-import { replaceHiphenWithSpaces, replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
+import {
+  replaceHiphenWithSpaces,
+  replaceSpecialCharactersWithHyphen,
+} from "@/Utils/StringUtils";
 import { SeoMeta } from "@/components/SeoMeta";
 import {
   Box,
@@ -35,6 +38,8 @@ import { BRAND_SEO_MAPS } from "./BRAND_SEO_MAPS";
 
 function Bikes() {
   const params = useParams();
+  const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
   const { bikeType: bikeTypeParams = "", bikeBrand: bikeBrandParams = "" } =
     params;
 
@@ -45,17 +50,23 @@ function Bikes() {
     isZProPath ? zProBikeSelector : shopByBikeSelector,
   );
 
-  const activeServiceName = isZProPath ? zProBikeServiceName : shopByBikeServiceName;
-  const bikeServiceStatus = useSelector<TAppStore, string | undefined>((state) =>
-    getServiceSelector(state, activeServiceName),
+  const activeServiceName = isZProPath
+    ? zProBikeServiceName
+    : shopByBikeServiceName;
+  const bikeServiceStatus = useSelector<TAppStore, string | undefined>(
+    (state) => getServiceSelector(state, activeServiceName),
   );
-  const isBikeProductLoading = bikeServiceStatus === "LOADING" || bikeServiceStatus === undefined;
-  const isApiCompleted = bikeServiceStatus === "SUCCESS" || bikeServiceStatus === "ERROR";
+  const isBikeProductLoading =
+    bikeServiceStatus === "LOADING" || bikeServiceStatus === undefined;
+  const isApiCompleted =
+    bikeServiceStatus === "SUCCESS" || bikeServiceStatus === "ERROR";
 
   const location = useLocation();
   const { brand: initialBikeBrand = "" } = location.state || {};
 
-  const seoData = BRAND_SEO_MAPS?.[replaceHiphenWithSpaces(bikeBrandParams).toUpperCase()] || {
+  const seoData = BRAND_SEO_MAPS?.[
+    replaceHiphenWithSpaces(bikeBrandParams).toUpperCase()
+  ] || {
     title: "Bikes | Zana Motorcycles",
     description:
       "Explore our range of premium bikes from various brands. Find crash guards, luggage carriers, engine guards, touring accessories, and more for your motorcycle.",
@@ -86,7 +97,6 @@ function Bikes() {
 
   const navigate = useNavigate();
 
- 
   const allBrandDetails = useMemo(() => {
     return bikeSelector.reduce<ShopByBikeModelsType[]>((acc, curr) => {
       return [...acc, ...curr.models];
@@ -105,9 +115,23 @@ function Bikes() {
     return result;
   }, [bikeSelector]);
 
+  useEffect(() => {
+    const activeButton = buttonRefs.current[selectedBrand];
+    if (activeButton) {
+      activeButton.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [selectedBrand, categoriesWithCount]);
+
   function getFilteredModels(brand: string): ShopByBikeModelsType[] {
     if (brand === ALL_CATEGORY) return allBrandDetails;
-    return bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models || [];
+    return (
+      bikeSelector.find((item) => item.name.toLowerCase() === brand)?.models ||
+      []
+    );
   }
 
   function handleBikeClick(
@@ -150,10 +174,7 @@ function Bikes() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
-      <SeoMeta
-        title={seoData.title}
-        description={seoData.description}
-      />
+      <SeoMeta title={seoData.title} description={seoData.description} />
       <div className="py-8 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           <AppBreadcrumb
@@ -182,6 +203,7 @@ function Bikes() {
               return (
                 <button
                   key={name}
+                  ref={(el) => (buttonRefs.current[brandName] = el)}
                   onClick={() => handleBrandCategoryClick(brandName)}
                   className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
                     selectedBrand === brandName
@@ -189,7 +211,10 @@ function Bikes() {
                       : "bg-white/10 text-white hover:bg-white/20"
                   }`}
                 >
-                  {brandName === ALL_CATEGORY ? ALL_CATEGORY.toUpperCase() : brandName.toUpperCase()} ({count})
+                  {brandName === ALL_CATEGORY
+                    ? ALL_CATEGORY.toUpperCase()
+                    : brandName.toUpperCase()}{" "}
+                  ({count})
                 </button>
               );
             })}
