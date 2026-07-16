@@ -112,9 +112,7 @@ export default function ShowcaseSection({
     try {
       if (!bikeSpecificData.length && type === "bike") retry(() => dispatch(bikeSpecificServiceAction()));
       if (!universalData.length && type === "product") retry(() => dispatch(universalServiceAction()));
-    } catch (error: any) {
-
-    }
+    } catch (error: any) {}
   }
 
   useEffect(() => {
@@ -189,6 +187,10 @@ export default function ShowcaseSection({
                   heroImageUrl={imageUrl}
                   catalogue={catalogue}
                   imagePosition={imagePosition}
+                  type="bike"
+                  brandName={brandName}
+                  modelName={modelName}
+                  model={model}
                 />
               )
             })
@@ -209,6 +211,7 @@ export default function ShowcaseSection({
                   heroImageUrl={imageUrl}
                   catalogue={catalogue}
                   imagePosition={imagePosition}
+                  type="product"
                 />
               )
             })

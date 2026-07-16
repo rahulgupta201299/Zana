@@ -88,8 +88,8 @@ const BikeDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
   const location = useLocation();
-  const { category: categoryFromState = ALL_CATEGORY } = (location.state ||
-    {}) as BikeDetailLocationState;
+  const { category: categoryFromState = ALL_CATEGORY, subCategory: subCategoryFromState = "" } = location.state || {};
+
   const initialCategory = useMemo(() => {
     if (productCategoryParams) {
       const matchedCategory = productCategory.find(
@@ -105,6 +105,7 @@ const BikeDetailPage = () => {
 
     return (categoryFromState || ALL_CATEGORY).toLowerCase();
   }, [categoryFromState, productCategory, productCategoryParams]);
+  const initialSubCategory = subCategoryFromState.toLowerCase();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     initialCategory || ALL_CATEGORY,
@@ -119,7 +120,7 @@ const BikeDetailPage = () => {
   const [bikeProducts, setBikeProducts] = useState<ShopByProductDetailsType[]>(
     [],
   );
-  const [subCategory, setSubCategory] = useState<string>("");
+  const [subCategory, setSubCategory] = useState<string>(initialSubCategory);
   const [filteredBikeProducts, setFilteredBikeProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
@@ -204,11 +205,11 @@ const BikeDetailPage = () => {
   async function pageOps() {
     const activeCategory = initialCategory || ALL_CATEGORY;
     setSelectedCategory(activeCategory);
-    setFilters({ category: activeCategory, subCategory: "" });
-    setSubCategory("");
+    setFilters({ category: activeCategory, subCategory: initialSubCategory });
+    setSubCategory(initialSubCategory);
     getBikeDetails();
     getBikeModelCategoryCount();
-    getBikeProducts(activeCategory);
+    getBikeProducts(activeCategory, initialSubCategory);
   }
 
   function handleSelectCategory(val: string) {

@@ -21,6 +21,10 @@ type OwnProps = {
   source?: string;
   /** Image position for desktop layout */
   imagePosition?: "left" | "right";
+  type: "product" | "bike";
+  brandName?: string;
+  modelName?: string;
+  model?: string;
 };
 
 type Props = OwnProps & IWithDeviceDetails;
@@ -28,15 +32,15 @@ type Props = OwnProps & IWithDeviceDetails;
 // ─── Catalogue tile ───────────────────────────────────────────────────────────
 
 function CatalogueTile({
-  title,
+  onClick,
   minHeight,
 }: {
-  title: string;
+  onClick: () => void;
   minHeight: number | string;
 }) {
   return (
     <Box
-      // onClick={item.onClick}
+      onClick={onClick}
       sx={{
         minHeight,
         height: "100%",
@@ -81,7 +85,7 @@ function CatalogueTile({
           fontFamily: "'Georgia', serif",
         }}
       >
-        See all {title.toUpperCase()} →
+        View Catalogue →
       </Typography>
     </Box>
   );
@@ -209,20 +213,46 @@ function ShowcaseItem({
   catalogue = [],
   imagePosition = "left",
   isMobile,
+  type,
+  brandName = "",
+  modelName = "",
+  model = ""
 }: Props) {
   const navigate = useNavigate();
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
-  function handleProductClick(catalogue: CatalogueItem) {
-    // navigate(
-    //   encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
-    //     productCategory: product.category,
-    //     productItem: product.subCategory || product.name || "",
-    //     productId: product._id || "universal",
-    //   }),
-    //   { state: { source } },
-    // );
+  function handleBoxClick(category = "", subCategory = "") {
+    if (type === "product") {
+      navigate(
+        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: category }), { 
+          state: { 
+            category: category.toLowerCase(),
+            subCategory: subCategory.toLowerCase()
+          }
+        },
+      );
+    }
+    if (type === "bike") {
+      navigate(
+        encodedGeneratedPath(ROUTES.BIKE_DETAIL_WITH_CATEGORY, {
+          bikeType: 'zana',
+          bikeBrand: brandName,
+          bikeModel: modelName,
+          bikeId: model,
+          productCategory: category
+        }), {
+          state: { 
+            category: category.toLowerCase(),
+            subCategory: subCategory.toLowerCase()
+          }
+        }
+      )
+    }
+  }
+
+  function handleViewCatalogue() {
+    
   }
 
   // ── Layout constants ──────────────────────────────────────────────────────
@@ -258,7 +288,7 @@ function ShowcaseItem({
                 >
                   <ShowcaseProductCard
                     details={cat}
-                    onProductClick={() => {}}
+                    onProductClick={() => handleBoxClick(cat.category, cat.subCategory)}
                   />
                 </Grid>
               ))}
@@ -266,7 +296,7 @@ function ShowcaseItem({
               {/* Catalogue tile */}
               <Grid size={{ xs: 6 }} sx={{ display: "flex" }}>
                 <CatalogueTile
-                  title={title}
+                  onClick={handleViewCatalogue}
                   minHeight={cardMinHeight}
                 />
               </Grid>
@@ -295,14 +325,14 @@ function ShowcaseItem({
             >
               <ShowcaseProductCard
                 details={cat}
-                onProductClick={() => {}}
+                onProductClick={() => handleBoxClick(cat.category, cat.subCategory)}
               />
             </Grid>
           ))}
 
           <Grid size={{ xs: 6 }} sx={{ display: "flex" }}>
             <CatalogueTile
-              title={title}
+              onClick={handleViewCatalogue}
               minHeight={isMobile ? 160 : 200}
             />
           </Grid>

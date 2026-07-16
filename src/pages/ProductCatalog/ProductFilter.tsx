@@ -62,10 +62,15 @@ function ProductFilter(props: ProductFilterPropsType) {
 
   const { phoneNumber = "" } = loginDetails;
 
+  const isInitialMount = useRef(true);
+
   async function handleCategoryChange() {
     console.log("Category changed to:", category);
-    setSubCategoryList([]);
-    setSubCategory("");
+    
+    if (!isInitialMount.current) {
+      setSubCategoryList([]);
+      setSubCategory("");
+    }
     try {
       const response =
         type === "bike"
@@ -109,10 +114,17 @@ function ProductFilter(props: ProductFilterPropsType) {
 
   useEffect(() => {
     handleCategoryChange();
+    isInitialMount.current = false;
   }, [category]);
 
+  const isInitialPageMount = useRef(true);
+
   useEffect(() => {
-    handleApplyFilter(subCategory, page);
+    if (!isInitialPageMount.current) {
+      handleApplyFilter(subCategory, page);
+    } else {
+      isInitialPageMount.current = false;
+    }
   }, [page]);
 
   return (

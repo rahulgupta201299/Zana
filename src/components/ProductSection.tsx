@@ -8,7 +8,6 @@ import {
   Pagination,
   Typography,
 } from "@mui/material";
-import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -310,23 +309,19 @@ function ProductSection({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1 hidden lg:block self-start sticky top-5">
-          {
-            isDesktop && (
-              <ProductFilter
-                type={type}
-                modelId={modelId}
-                page={page}
-                subCategory={subCategory}
-                setSubCategory={setSubCategory}
-                category={selectedCategory}
-                onChangeFilterProducts={onChangeFilterProducts}
-                clearFilter={() => {
-                  onClearFilter();
-                  setSubCategory("");
-                }}
-              />
-            )
-          }
+          <ProductFilter
+            type={type}
+            modelId={modelId}
+            page={page}
+            subCategory={subCategory}
+            setSubCategory={setSubCategory}
+            category={selectedCategory}
+            onChangeFilterProducts={onChangeFilterProducts}
+            clearFilter={() => {
+              onClearFilter();
+              setSubCategory("");
+            }}
+          />
         </div>
 
         <div className="lg:col-span-3">
@@ -438,31 +433,27 @@ function ProductSection({
           >
             X
           </IconButton>
-          {
-            !isDesktop && (
-              <ProductFilter
-                type={type}
-                modelId={modelId}
-                page={page}
-                subCategory={subCategory}
-                setSubCategory={setSubCategory}
-                category={selectedCategory}
-                onChangeFilterProducts={(data, pagination) => {
-                  onChangeFilterProducts(data, pagination);
-                  setTimeout(() => {
-                    setModalType(null);
-                  }, 300);
-                }}
-                clearFilter={() => {
-                  setSubCategory("");
-                  onClearFilter();
-                  setTimeout(() => {
-                    setModalType(null);
-                  }, 300);
-                }}
-              />
-            )
-          }
+          <ProductFilter
+            type={type}
+            modelId={modelId}
+            page={page}
+            subCategory={subCategory}
+            setSubCategory={setSubCategory}
+            category={selectedCategory}
+            onChangeFilterProducts={(data, pagination) => {
+              onChangeFilterProducts(data, pagination);
+              setTimeout(() => {
+                setModalType(null);
+              }, 300);
+            }}
+            clearFilter={() => {
+              setSubCategory("");
+              onClearFilter();
+              setTimeout(() => {
+                setModalType(null);
+              }, 300);
+            }}
+          />
         </DialogContent>
       </Dialog>
 
