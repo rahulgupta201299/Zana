@@ -232,8 +232,10 @@ function ShowcaseItem({
           }
         },
       );
+      return;
     }
     if (type === "bike") {
+      // TODO hardcoded types
       navigate(
         encodedGeneratedPath(ROUTES.BIKE_DETAIL_WITH_CATEGORY, {
           bikeType: 'zana',
@@ -248,11 +250,28 @@ function ShowcaseItem({
           }
         }
       )
+      return;
     }
   }
 
   function handleViewCatalogue() {
-    
+    if (type === "product") {
+      navigate(ROUTES.PRODUCT_CATALOG)
+      return;
+    }
+
+    // TODO hardcoded types
+    if (type === "bike") {
+      navigate(
+        encodedGeneratedPath(ROUTES.BIKE_DETAIL, {
+          bikeType: 'zana',
+          bikeBrand: brandName,
+          bikeModel: modelName,
+          bikeId: model,
+        })
+      )
+      return;
+    }
   }
 
   // ── Layout constants ──────────────────────────────────────────────────────
