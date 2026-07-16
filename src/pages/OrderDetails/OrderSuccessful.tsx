@@ -100,9 +100,9 @@ const OrderConfirmation = () => {
       }
 
       // GA4 — gtag direct
-      if ((window as any).gtag) {
-        (window as any).gtag("event", "purchase", eventPayload);
-      }
+      // if ((window as any).gtag) {
+      //   (window as any).gtag("event", "purchase", eventPayload);
+      // }
 
       hasTracked.current = true;
     }

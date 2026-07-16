@@ -207,9 +207,9 @@ export default function CheckoutPage() {
     }
 
     // GA4 — gtag direct
-    if ((window as any).gtag) {
-      (window as any).gtag("event", "begin_checkout", eventPayload);
-    }
+    // if ((window as any).gtag) {
+    //   (window as any).gtag("event", "begin_checkout", eventPayload);
+    // }
   }
 
   useEffect(() => {
