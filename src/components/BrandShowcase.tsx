@@ -84,11 +84,13 @@ function BrandShowcase({
             aria-label={brand.name}
             className="group flex items-center justify-center h-[220px] md:h-[260px] cursor-pointer transition-colors duration-300 hover:bg-white/[0.02] focus:outline-none"
           >
-            <img
-              src={brand.logo}
-              alt={`${brand.name} logo`}
-              className="h-16 md:h-24 max-w-[70%] w-auto object-contain  transition-all duration-300 "
-            />
+            <div className="flex items-center justify-center w-[180px] h-20 md:w-[240px] md:h-28">
+              <img
+                src={brand.logo}
+                alt={`${brand.name} logo`}
+               className="w-[140px] h-[140px] md:w-[200px] md:h-[200px] object-contain transition-all duration-300"
+              />
+            </div>
           </button>
         ))}
 
