@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import TriumphLogo from "@/Assets/Images/Triumph.png";
+import TriumphLogo from "@/Assets/Images/Triumph.webp";
 import KTMLogo from "@/Assets/Images/KTM.webp";
 import RoyalEnfieldLogo from "@/Assets/Images/RoyalEnfield.webp";
 import HondaLogo from "@/Assets/Images/Honda.webp";

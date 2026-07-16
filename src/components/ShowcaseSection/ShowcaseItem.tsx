@@ -1,24 +1,22 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import { encodedGeneratedPath } from "@/Utils/global";
 import { ROUTES } from "@/Constants/Routes";
-import BikeKitProductCard from "./BikeKitProductCard";
+import ShowcaseProductCard from "./ShowcaseCatalogueCard";
 import withDeviceDetails, { IWithDeviceDetails } from "@/Hocs/withDeviceDetails";
+import { CatalogueItem } from "@/Redux/Landing/Types";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export type BikeKitProduct = ShopByProductDetailsType;
-
 type OwnProps = {
-  /** Brand name shown in accent colour inside the hero card */
-  brandName: string;
-  /** Model name shown in white below the brand name */
-  modelName: string;
+  /** Tag shown in accent colour inside the hero card */
+  tag: string;
+  /** Title shown in white below the tag */
+  title: string;
   /** Hero image URL; falls back to a gradient swatch when not provided */
   heroImageUrl?: string;
   /** Up to 3 products shown as small cards in the grid */
-  products: BikeKitProduct[];
+  catalogue: CatalogueItem[];
   /** Source tag forwarded to product-detail breadcrumb state */
   source?: string;
   /** Image position for desktop layout */
@@ -30,10 +28,10 @@ type Props = OwnProps & IWithDeviceDetails;
 // ─── Catalogue tile ───────────────────────────────────────────────────────────
 
 function CatalogueTile({
-  modelName,
+  title,
   minHeight,
 }: {
-  modelName: string;
+  title: string;
   minHeight: number | string;
 }) {
   return (
@@ -42,6 +40,7 @@ function CatalogueTile({
       sx={{
         minHeight,
         height: "100%",
+        width: "100%",
         cursor: "pointer",
         bgcolor: "#17191e",
         border: "1px dashed rgba(255,255,255,0.18)",
@@ -69,7 +68,7 @@ function CatalogueTile({
           textTransform: "uppercase",
         }}
       >
-        FULL CATALOGUE
+        FULL RANGE
       </Typography>
       <Typography
         sx={{
@@ -82,16 +81,7 @@ function CatalogueTile({
           fontFamily: "'Georgia', serif",
         }}
       >
-        See all {modelName} parts →
-      </Typography>
-      <Typography
-        sx={{
-          fontSize: "0.8rem",
-          color: "rgba(255,255,255,0.45)",
-          lineHeight: 1.6,
-        }}
-      >
-        Racks, guards, footpegs, screens & more.
+        See all {title.toUpperCase()} →
       </Typography>
     </Box>
   );
@@ -100,13 +90,13 @@ function CatalogueTile({
 // ─── Hero card ────────────────────────────────────────────────────────────────
 
 function HeroCard({
-  brandName,
-  modelName,
+  tag,
+  title,
   heroImageUrl,
   minHeight,
 }: {
-  brandName: string;
-  modelName: string;
+  tag: string;
+  title: string;
   heroImageUrl?: string;
   minHeight: number | string;
 }) {
@@ -122,11 +112,11 @@ function HeroCard({
         bgcolor: "#1c1c1e",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "flex-end",
         width: "100%",
       }}
     >
-      {/* Watermark model text */}
+      {/* Watermark text */}
       <Typography
         aria-hidden="true"
         sx={{
@@ -145,15 +135,16 @@ function HeroCard({
           pointerEvents: "none",
         }}
       >
-        {modelName}
+        {title}
       </Typography>
+
 
       {/* Hero image */}
       {heroImageUrl && (
         <Box
           component="img"
           src={heroImageUrl}
-          alt={`${brandName} ${modelName}`}
+          alt={`${tag} ${title}`}
           sx={{
             position: "absolute",
             inset: 0,
@@ -176,8 +167,8 @@ function HeroCard({
         }}
       />
 
-      {/* Brand + Model text */}
-      <Box sx={{ position: "relative", p: { xs: 2.5, sm: 3.5 }, zIndex: 2, textAlign: "center" }}>
+      {/* Tag + Title text */}
+      <Box sx={{ position: "relative", p: { xs: 3, sm: 4.5 }, zIndex: 2, textAlign: "center", width: "100%" }}>
         <Typography
           sx={{
             fontSize: "0.65rem",
@@ -189,7 +180,7 @@ function HeroCard({
             mb: 0.75,
           }}
         >
-          {brandName}
+          {tag}
         </Typography>
         <Typography
           variant="h4"
@@ -202,7 +193,7 @@ function HeroCard({
             lineHeight: 1.2,
           }}
         >
-          {modelName}
+          {title}
         </Typography>
       </Box>
     </Box>
@@ -211,12 +202,11 @@ function HeroCard({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-function BikeKitItem({
-  brandName,
-  modelName,
+function ShowcaseItem({
+  tag,
+  title,
   heroImageUrl,
-  products,
-  source = "bike-kit",
+  catalogue = [],
   imagePosition = "left",
   isMobile,
 }: Props) {
@@ -224,21 +214,18 @@ function BikeKitItem({
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
-  function handleProductClick(product: ShopByProductDetailsType) {
-    navigate(
-      encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
-        productCategory: product.category,
-        productItem: product.name,
-        productId: product._id,
-      }),
-      { state: { source } },
-    );
+  function handleProductClick(catalogue: CatalogueItem) {
+    // navigate(
+    //   encodedGeneratedPath(ROUTES.PRODUCT_DETAIL, {
+    //     productCategory: product.category,
+    //     productItem: product.subCategory || product.name || "",
+    //     productId: product._id || "universal",
+    //   }),
+    //   { state: { source } },
+    // );
   }
 
   // ── Layout constants ──────────────────────────────────────────────────────
-
-  // Show up to 3 real products; 4th tile is the optional catalogue card.
-  const visibleProducts = products.slice(0, 3);
 
   const cardMinHeight = isMobile ? 180 : 210;
   const heroMinHeight = isMobile ? 340 : 440;
@@ -253,8 +240,8 @@ function BikeKitItem({
           {/* Hero card — spans full column height */}
           <Grid size={{ md: 6, lg: 6 }} sx={{ display: "flex" }}>
             <HeroCard
-              brandName={brandName}
-              modelName={modelName}
+              tag={tag}
+              title={title}
               heroImageUrl={heroImageUrl}
               minHeight={heroMinHeight}
             />
@@ -263,27 +250,25 @@ function BikeKitItem({
           {/* 2×2 product / catalogue grid */}
           <Grid size={{ md: 6, lg: 6 }}>
             <Grid container spacing={1.5} sx={{ height: "100%" }}>
-              {visibleProducts.map((product, index) => (
+              {catalogue.map((cat, index) => (
                 <Grid
-                  key={product._id}
+                  key={index}
                   size={{ xs: 6 }}
-                  sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}
+                  sx={{ display: "flex" }}
                 >
-                  <BikeKitProductCard
-                    product={product}
-                    onProductClick={() => handleProductClick(product)}
+                  <ShowcaseProductCard
+                    details={cat}
+                    onProductClick={() => {}}
                   />
                 </Grid>
               ))}
 
               {/* Catalogue tile */}
-              <Grid size={{ xs: 6 }} sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}>
-                <Box sx={{ width: "100%" }}>
-                  <CatalogueTile
-                    modelName={modelName}
-                    minHeight={cardMinHeight}
-                  />
-                </Box>
+              <Grid size={{ xs: 6 }} sx={{ display: "flex" }}>
+                <CatalogueTile
+                  title={title}
+                  minHeight={cardMinHeight}
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -294,34 +279,32 @@ function BikeKitItem({
       <Box sx={{ display: { xs: "flex", md: "none" }, flexDirection: "column", gap: 1.5 }}>
         {/* Hero */}
         <HeroCard
-          brandName={brandName}
-          modelName={modelName}
+          tag={tag}
+          title={title}
           heroImageUrl={heroImageUrl}
           minHeight={heroMinHeight}
         />
 
         {/* Products — 2-col grid on tablet portrait and mobile */}
         <Grid container spacing={1.5}>
-          {visibleProducts.map((product, index) => (
+          {catalogue.map((cat, index) => (
             <Grid
-              key={product._id}
+              key={index}
               size={{ xs: 6 }}
-              sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}
+              sx={{ display: "flex" }}
             >
-              <BikeKitProductCard
-                product={product}
-                onProductClick={() => handleProductClick(product)}
+              <ShowcaseProductCard
+                details={cat}
+                onProductClick={() => {}}
               />
             </Grid>
           ))}
 
-          <Grid size={{ xs: 6 }} sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}>
-            <Box sx={{ width: "100%" }}>
-              <CatalogueTile
-                modelName={modelName}
-                minHeight={isMobile ? 160 : 200}
-              />
-            </Box>
+          <Grid size={{ xs: 6 }} sx={{ display: "flex" }}>
+            <CatalogueTile
+              title={title}
+              minHeight={isMobile ? 160 : 200}
+            />
           </Grid>
         </Grid>
       </Box>
@@ -329,4 +312,4 @@ function BikeKitItem({
   );
 }
 
-export default withDeviceDetails(BikeKitItem);
+export default withDeviceDetails(ShowcaseItem);
