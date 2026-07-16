@@ -185,8 +185,10 @@ function Navbar({ isMobile }: NavbarPropsType) {
           top: 0,
           width: "100%",
           zIndex: 4,
-          backgroundColor: "#0d0d0d",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+          backgroundColor: "rgba(13, 13, 13, 0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
         }}
       >
         <Box
