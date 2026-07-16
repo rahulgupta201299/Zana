@@ -256,7 +256,14 @@ function ShowcaseItem({
 
   function handleViewCatalogue() {
     if (type === "product") {
-      navigate(ROUTES.PRODUCT_CATALOG)
+      const firstCategory = catalogue?.[0]?.category?.toLowerCase() || "";
+      navigate(
+        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: firstCategory }), { 
+          state: { 
+            category: firstCategory,
+          }
+        },
+      );
       return;
     }
 

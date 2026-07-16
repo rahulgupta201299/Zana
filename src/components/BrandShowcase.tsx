@@ -73,11 +73,10 @@ function BrandShowcase({
 
       {/* Subtitle */}
       <p
-        className="text-white/50 text-base md:text-xl max-w-2xl mb-12 md:mb-16"
+        className="text-white/50 text-base md:text-xl max-w-3xl mb-12 md:mb-16"
         style={{ fontFamily: "'Playfair Display', serif" }}
       >
-        Select your brand to see accessories engineered, test-fitted and
-        torque-checked.
+        Select your brand to see accessories engineered, test-fitted and torque-checked.
       </p>
 
       {/* Brand Grid */}
