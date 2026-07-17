@@ -14,6 +14,8 @@ import { ShopByProductDetailsType } from "@/Redux/Product/Types";
 import getCartDetailServiceAction from "@/Redux/Cart/Services/GetCartDetailService";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
+
 export default function useCart() {
   const cartDetail = useSelector(cartDetailSelector);
 
@@ -82,7 +84,7 @@ export default function useCart() {
     const _phoneNumber = state.auth.login.phoneNumber || optional?.phoneNumber;
 
     // GTM — dataLayer push
-    if ((window as any).dataLayer) {
+    if (VITE_ENABLE_TRACKING && (window as any).dataLayer) {
       (window as any).dataLayer.push({
         event: "add_to_cart",
         ...eventPayload
@@ -90,9 +92,9 @@ export default function useCart() {
     }
 
     // GA4 — gtag direct
-    if ((window as any).gtag) {
-      (window as any).gtag("event", "add_to_cart", eventPayload);
-    }
+    // if ((window as any).gtag) {
+    //   (window as any).gtag("event", "add_to_cart", eventPayload);
+    // }
 
     try {
       const response = (await dispatch(

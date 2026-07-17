@@ -5,7 +5,7 @@ import { APP_DOMAIN_URL } from "@/Configurations/env";
 // import { getHeroImageProps } from "@/Utils/ImageUtils";
 
 const SITE_NAME = "Zana Motorcycles";
-const DEFAULT_OG_IMAGE = "/og-image.jpg";
+const DEFAULT_OG_IMAGE = "/HeroSection.webp";
 const DEFAULT_OG_IMAGE_WIDTH = "1200";
 const DEFAULT_OG_IMAGE_HEIGHT = "630";
 const DEFAULT_OG_IMAGE_ALT =
@@ -151,7 +151,14 @@ export function SeoMeta({
 }
 
 export function getRouteSeo(pathname: string): SeoMetaProps {
-  if (pathname === "/") return {};
+  if (pathname === "/") {
+    return {
+      title: "PRECISION-BUILT MOTORCYCLE PROTECTION & TOURING ESSENTIALS",
+      description: "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.",
+      keywords: "Motorcycle Accessories Guide, Motorcycle Accessories, Bike Accessories, Essential Motorcycle Accessories, Must Have Motorcycle Accessories, Motorcycle Accessories for Beginners, Motorcycle Touring Accessories, Motorcycle Protection Accessories, Bike Accessories Guide, Motorcycle Accessories India, Best Motorcycle Accessories, What Motorcycle Accessories Do I Need, Essential Accessories for New Motorcycle, Best Motorcycle Accessories for Long Rides, Motorcycle Accessories for Touring, Motorcycle Accessories Checklist, Motorcycle Accessories for Daily Commuting, Beginner Motorcycle Accessories Guide, How to Choose Motorcycle Accessories, Best Accessories for Adventure Motorcycles, Motorcycle Accessories Buying Guid",
+      image: "/HeroSection.webp"
+    };
+  }
   if (pathname === "/product-catalog") {
     return {
       title: "Motorcycle Accessories Catalog | Zana Motorcycles",

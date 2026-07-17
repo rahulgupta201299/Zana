@@ -40,12 +40,13 @@ const ProductCatalogPage = () => {
   const { productCategory: productCategoryParams = "" } = useParams<{
     productCategory?: string;
   }>();
-  const { category: categoryFromState = "" } = location.state || {};
+  const { category: categoryFromState = "", subCategory: subCategoryFromState = "" } = location.state || {};
 
   const { incrementToCart } = useCart();
 
   const productCategory = useSelector(productCategorySelector);
   const initialCategory = replaceHiphenWithSpaces(productCategoryParams).toLowerCase() || categoryFromState.toLowerCase();
+  const initialSubCategory = subCategoryFromState.toLowerCase();
 
   const currency = useSelector(getSelectedCurrency);
   const isProductCategoryLoading = useSelector<TAppStore, boolean>((state) =>
@@ -58,7 +59,7 @@ const ProductCatalogPage = () => {
 
   const [selectedCategory, setSelectedCategory] =
     useState<string>(initialCategory);
-  const [subCategory, setSubCategory] = useState<string>("");
+  const [subCategory, setSubCategory] = useState<string>(initialSubCategory);
   const [filteredProducts, setFilteredProducts] = useState<
     ShopByProductDetailsType[]
   >([]);
@@ -75,7 +76,7 @@ const ProductCatalogPage = () => {
   const isCatalogProductsPending =
     isProductCategoryLoading || isCatalogProductsHydrating;
 
-  async function handleCategoryService(type: string, page = 1, skip = false) {
+  async function handleCategoryService(type: string, currentSubCategory = "", page = 1, skip = false) {
     const requestId = catalogRequestRef.current + 1;
     catalogRequestRef.current = requestId;
     const { phoneNumber = "" } = loginDetails;
@@ -159,22 +160,10 @@ const ProductCatalogPage = () => {
     if (filteredProducts.length && validCategory === selectedCategory) return;
     
     try {
-      await handleCategoryService(validCategory, 1, true);
+      await handleCategoryService(validCategory, initialSubCategory, 1, true);
     } catch (error: any) {
       console.error(error);
     }
-  }
-
-  function handleAddToCart(
-    e: MouseEvent<HTMLButtonElement>,
-    product: ShopByProductDetailsType,
-    productId: string,
-    quantityAvailable: number,
-  ) {
-    e.stopPropagation();
-    incrementToCart(product, productId, quantityAvailable, {
-      navigateTo: ROUTES.CART,
-    });
   }
 
   useEffect(() => {
@@ -235,7 +224,7 @@ const ProductCatalogPage = () => {
               setIsCatalogProductsHydrating(false);
             }}
             onClearFilter={() =>
-              handleCategoryService(selectedCategory, currentPage, true)
+              handleCategoryService(selectedCategory, "", currentPage, true)
             }
             isLoading={isCatalogProductsPending}
             page={currentPage}
@@ -243,7 +232,7 @@ const ProductCatalogPage = () => {
             onPageChange={(p) => {
               setCurrentPage(p);
               if (!subCategory) {
-                handleCategoryService(selectedCategory, p);
+                handleCategoryService(selectedCategory, "", p);
               }
             }}
           />

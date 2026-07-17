@@ -298,7 +298,7 @@ export default function Search({ onClose }: SearchPropsType) {
             textTransform: "none",
             "&:hover": { bgcolor: "#d62839" },
           }}
-          onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+          onClick={() => navigate(`${ROUTES.PRODUCT_CATALOG}/all`)}
         >
           See all results →
         </Button>

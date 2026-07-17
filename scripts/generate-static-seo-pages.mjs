@@ -7,15 +7,17 @@ const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
 const DIST_SITEMAP_FILE = join(DIST_DIR, "sitemap.xml");
 const PUBLIC_SITEMAP_FILE = resolve("public/sitemap.xml");
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
-const DEFAULT_OG_IMAGE_PATH = "/og-image.jpg";
+const DEFAULT_OG_IMAGE_PATH = "/HeroSection.webp";
 const DEFAULT_OG_IMAGE_WIDTH = "1200";
 const DEFAULT_OG_IMAGE_HEIGHT = "630";
 const DEFAULT_OG_IMAGE_ALT =
   "Zana motorcycle accessories mounted on an adventure motorcycle";
 const HOME_TITLE =
-  "Zana Motorcycles | Premium Bike Accessories & Riding Gear India";
+  "PRECISION-BUILT MOTORCYCLE PROTECTION & TOURING ESSENTIALS";
 const HOME_DESCRIPTION =
   "Shop genuine motorcycle accessories for Royal Enfield, KTM, BMW, Bajaj & more. Crash guards, saddle stays, bash plates & many more - Made in India Products.";
+const HOME_KEYWORDS =
+  "Motorcycle Accessories Guide, Motorcycle Accessories, Bike Accessories, Essential Motorcycle Accessories, Must Have Motorcycle Accessories, Motorcycle Accessories for Beginners, Motorcycle Touring Accessories, Motorcycle Protection Accessories, Bike Accessories Guide, Motorcycle Accessories India, Best Motorcycle Accessories, What Motorcycle Accessories Do I Need, Essential Accessories for New Motorcycle, Best Motorcycle Accessories for Long Rides, Motorcycle Accessories for Touring, Motorcycle Accessories Checklist, Motorcycle Accessories for Daily Commuting, Beginner Motorcycle Accessories Guide, How to Choose Motorcycle Accessories, Best Accessories for Adventure Motorcycles, Motorcycle Accessories Buying Guid";
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
@@ -171,6 +173,8 @@ function getSeoForPath(pathname) {
     return {
       title: HOME_TITLE,
       description: HOME_DESCRIPTION,
+      keywords: HOME_KEYWORDS,
+      image: "/HeroSection.webp",
       type: "website",
     };
   }

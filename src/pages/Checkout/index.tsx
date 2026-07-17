@@ -58,6 +58,7 @@ import { getPhoneNumber } from "@/Utils/global";
 import { handlePostalCodeChange } from "@/Utils/Pincode";
 import { getCurrencyList } from "@/Redux/Landing/Selectors";
 import { selectedCurrencyActions } from "@/Redux/Landing/Actions";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 interface CheckoutFormValues {
   shippingCountry: string;
@@ -199,7 +200,7 @@ export default function CheckoutPage() {
     };
 
     // GTM — dataLayer push
-    if ((window as any).dataLayer) {
+    if (VITE_ENABLE_TRACKING && (window as any).dataLayer) {
       (window as any).dataLayer.push({
         event: "begin_checkout",
         ...eventPayload,
@@ -207,9 +208,9 @@ export default function CheckoutPage() {
     }
 
     // GA4 — gtag direct
-    if ((window as any).gtag) {
-      (window as any).gtag("event", "begin_checkout", eventPayload);
-    }
+    // if ((window as any).gtag) {
+    //   (window as any).gtag("event", "begin_checkout", eventPayload);
+    // }
   }
 
   useEffect(() => {

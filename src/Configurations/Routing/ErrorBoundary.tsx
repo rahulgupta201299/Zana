@@ -5,17 +5,20 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Navigate, useLocation, useRouteError } from "react-router-dom";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 function ErrorBoundary() {
   const error: any = useRouteError();
   const location = useLocation();
 
   useEffect(() => {
-    (window as any).gtag?.("event", "route_error", {
-      message: error?.message,
-      stack: error?.stack,
-      path: window.location.pathname,
-    });
+    if (VITE_ENABLE_TRACKING) {
+      (window as any).gtag?.("event", "route_error", {
+        message: error?.message,
+        stack: error?.stack,
+        path: window.location.pathname,
+      });
+    }
   }, [error]);
 
   const isAdminPath =

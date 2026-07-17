@@ -52,6 +52,7 @@ import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { SeoMeta } from "@/components/SeoMeta";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 import {
   getHeroImageProps,
   getSuggestedProductImageProps,
@@ -225,17 +226,19 @@ const ProductDetailPage = () => {
       };
 
       // GTM — dataLayer push
-      if ((window as any).dataLayer) {
-        (window as any).dataLayer.push({
-          event: "view_item",
-          ...eventPayload,
-        });
+      if (VITE_ENABLE_TRACKING && (window as any).dataLayer) {
+        setTimeout(() => {
+          (window as any).dataLayer.push({
+            event: "view_item",
+            ...eventPayload,
+          });
+        }, 500);
       }
 
       // GA4 — gtag direct
-      if ((window as any).gtag) {
-        (window as any).gtag("event", "view_item", eventPayload);
-      }
+      // if ((window as any).gtag) {
+      //   (window as any).gtag("event", "view_item", eventPayload);
+      // }
 
       const { category, isBikeSpecific, model } = response;
 

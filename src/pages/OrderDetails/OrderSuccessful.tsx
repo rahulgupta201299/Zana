@@ -19,6 +19,7 @@ import { getAddressLabel } from "@/Utils/StringUtils";
 import { ROUTES } from "@/Constants/Routes";
 import { isServiceLoading } from "@/Redux/ServiceTracker/Selectors";
 import { orderDetailByIdName } from "@/Redux/Order/Action";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 
 const OrderConfirmation = () => {
   const location = useLocation();
@@ -92,7 +93,7 @@ const OrderConfirmation = () => {
       };
 
       // GTM — dataLayer push
-      if ((window as any).dataLayer) {
+      if (VITE_ENABLE_TRACKING && (window as any).dataLayer) {
         (window as any).dataLayer.push({
           event: "purchase",
           ...eventPayload,
@@ -100,9 +101,9 @@ const OrderConfirmation = () => {
       }
 
       // GA4 — gtag direct
-      if ((window as any).gtag) {
-        (window as any).gtag("event", "purchase", eventPayload);
-      }
+      // if ((window as any).gtag) {
+      //   (window as any).gtag("event", "purchase", eventPayload);
+      // }
 
       hasTracked.current = true;
     }

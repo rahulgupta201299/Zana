@@ -21,6 +21,10 @@ type MobileNavMenuPropsType = {
 	onClose: () => void;
 };
 
+// Single source of truth for header height, so the fixed header and the
+// scrollable content below it can never drift out of sync.
+const HEADER_HEIGHT = 64;
+
 function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
 	const shopByBike = useSelector(shopByBikeSelector)
@@ -119,57 +123,91 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 			PaperProps={{
 				sx: {
 					width: { xs: "100%" },
-					bgcolor: "#2f2f2f",
+					bgcolor: "#0d0d0d",
 					animation: "slideIn 0.35s ease",
-					overflow: "scroll",
+					overflow: "hidden",
 					position: "relative",
-					padding: "2rem",
 				},
 			}}
 			ModalProps={{
 				keepMounted: true,
 			}}
 		>
+			{/* Fixed header */}
 			<Box
 				sx={{
-					bgcolor: "#2f2f2f",
+					bgcolor: "#0d0d0d",
 					width: "100%",
+					height: `${HEADER_HEIGHT}px`,
 					position: "fixed",
 					top: 0,
 					zIndex: 10,
-
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					px: 3,
+					borderBottom: "1px solid rgba(255,255,255,0.08)",
 				}}
 			>
-				<Box
+				<Typography
 					sx={{
-						display: "flex",
-						justifyContent: 'flex-end',
-						marginTop: '1rem',
-						marginRight: "3rem",
-						cursor: "pointer"
+						color: "white",
+						fontSize: "0.8rem",
+						fontWeight: 700,
+						letterSpacing: "0.25em",
+						fontFamily: "'Inter', sans-serif",
 					}}
 				>
-					<IconButton onClick={onClose} aria-label="Close navigation menu">
-						<CloseIcon sx={{ color: "white", fontSize: 30 }} />
-					</IconButton>
-				</Box>
+					MENU
+				</Typography>
+
+				<IconButton
+					onClick={onClose}
+					aria-label="Close navigation menu"
+					sx={{
+						color: "rgba(255,255,255,0.7)",
+						transition: "background-color 0.2s, color 0.2s",
+						"&:hover": {
+							backgroundColor: "rgba(255,255,255,0.08)",
+							color: "white",
+						},
+					}}
+				>
+					<CloseIcon sx={{ fontSize: 22 }} />
+				</IconButton>
 			</Box>
-			{isDataPending && <MobileNavMenuSkeleton />}
-			{
-				historyStackRef.current.length > 0 && (
+
+			{/* Scrollable content, offset below the fixed header */}
+			<Box
+				sx={{
+					pt: `${HEADER_HEIGHT}px`,
+					height: "100%",
+					overflowY: "auto",
+				}}
+			>
+				{isDataPending && <MobileNavMenuSkeleton />}
+
+				{!isDataPending && historyStackRef.current.length > 0 && (
 					<Box
 						sx={{
-							backgroundColor: "#3b3b3b",
+							backgroundColor: "rgba(255,255,255,0.03)",
 							display: "flex",
 							alignItems: "center",
-							padding: "16px 20px",
-							marginTop: '3rem',
-							borderBottom: "1px solid rgba(255,255,255,0.1)",
+							padding: "14px 20px",
+							borderBottom: "1px solid rgba(255,255,255,0.08)",
 						}}
 					>
 						<IconButton
 							size="small"
-							sx={{ color: "#bdbdbd", marginRight: 1 }}
+							sx={{
+								color: "rgba(255,255,255,0.6)",
+								marginRight: 1.5,
+								transition: "background-color 0.2s, color 0.2s",
+								"&:hover": {
+									backgroundColor: "rgba(255,255,255,0.08)",
+									color: "white",
+								},
+							}}
 							onClick={handleBack}
 							aria-label="Go back in navigation menu"
 						>
@@ -178,76 +216,85 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 
 						<Typography
 							component="p"
-							variant="h6"
 							sx={{
-								fontWeight: 700,
-								color: "#bdbdbd",
-								fontSize: "1.25rem",
+								fontWeight: 600,
+								color: "white",
+								fontSize: "0.95rem",
+								letterSpacing: "0.08em",
+								textTransform: "uppercase",
+								fontFamily: "'Inter', sans-serif",
 							}}
 						>
 							{historyStackRef.current.at(-1).name}
 						</Typography>
 					</Box>
-				)
-			}
-			<Box
-				sx={{
-					marginTop: "3rem",
-					display: "flex",
-					flexDirection: "column",
-				}}
-			>
-				{
-					!isDataPending && menuOptions.map((item, ind) => {
-						const { name } = item
-						const shouldLinkBikeBrand = isBikeBrandLevel(item)
+				)}
 
-						return (
-							<Box
-								key={ind}
-								sx={{
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'space-between',
-									width: "100%",
-									cursor: "pointer"
-								}}
-								onClick={() => shouldLinkBikeBrand ? undefined : handleMenuItemClick(item)}
-							>
-								<Typography
+				{!isDataPending && (
+					<Box sx={{ display: "flex", flexDirection: "column", px: 3 }}>
+						{menuOptions.map((item, ind) => {
+							const { name } = item
+							const shouldLinkBikeBrand = isBikeBrandLevel(item)
+							const isLast = ind === menuOptions.length - 1
+
+							return (
+								<Box
+									key={ind}
 									sx={{
-										fontSize: "1.375rem",
-										paddingY: "1rem",
-										lineHeight: 1,
-										fontWeight: 700,
-										color: 'white',
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										width: "100%",
+										cursor: "pointer",
+										py: 2.25,
+										borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.08)",
+										transition: "opacity 0.2s",
+										"&:active": { opacity: 0.6 },
+										"&:hover .nav-menu-arrow": { color: "#ff3f6c", transform: "translateX(2px)" },
+										"&:hover .nav-menu-label": { color: "#ff3f6c" },
 									}}
-									onClick={(event) => {
-										if (!shouldLinkBikeBrand) return
-
-										event.stopPropagation()
-										handleBikeBrandClick(item)
-									}}
+									onClick={() => shouldLinkBikeBrand ? undefined : handleMenuItemClick(item)}
 								>
-									{name}
-								</Typography>
-								<ArrowForwardIosIcon
-									sx={{
-										color: "white",
-										fontSize: 30,
-										my: 'auto',
-									}}
-									onClick={(event) => {
-										if (!shouldLinkBikeBrand) return
+									<Typography
+										className="nav-menu-label"
+										sx={{
+											fontSize: "1.05rem",
+											lineHeight: 1.2,
+											fontWeight: 600,
+											letterSpacing: "0.02em",
+											color: 'white',
+											fontFamily: "'Inter', sans-serif",
+											transition: "color 0.2s",
+										}}
+										onClick={(event) => {
+											if (!shouldLinkBikeBrand) return
 
-										event.stopPropagation()
-										handleMenuItemClick(item)
-									}}
-								/>
-							</Box>
-						)
-					})
-				}
+											event.stopPropagation()
+											handleBikeBrandClick(item)
+										}}
+									>
+										{name}
+									</Typography>
+									<ArrowForwardIosIcon
+										className="nav-menu-arrow"
+										sx={{
+											color: "rgba(255,255,255,0.35)",
+											fontSize: 16,
+											transition: "color 0.2s, transform 0.2s",
+										}}
+										onClick={(event) => {
+											if (!shouldLinkBikeBrand) return
+
+											event.stopPropagation()
+											handleMenuItemClick(item)
+										}}
+									/>
+								</Box>
+							)
+						})}
+					</Box>
+				)}
 			</Box>
 		</Drawer>
 	)
