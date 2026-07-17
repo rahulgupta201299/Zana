@@ -92,6 +92,7 @@ function BrandShowcase({
               <img
                 src={brand.logo}
                 alt={`${brand.name} logo`}
+                loading="lazy"
                className="w-[140px] h-[140px] md:w-[200px] md:h-[200px] object-contain transition-all duration-300"
               />
             </div>
