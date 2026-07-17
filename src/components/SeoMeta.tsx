@@ -5,7 +5,7 @@ import { APP_DOMAIN_URL } from "@/Configurations/env";
 // import { getHeroImageProps } from "@/Utils/ImageUtils";
 
 const SITE_NAME = "Zana Motorcycles";
-const DEFAULT_OG_IMAGE = "/og-image.jpg";
+const DEFAULT_OG_IMAGE = "/HeroSection.webp";
 const DEFAULT_OG_IMAGE_WIDTH = "1200";
 const DEFAULT_OG_IMAGE_HEIGHT = "630";
 const DEFAULT_OG_IMAGE_ALT =
