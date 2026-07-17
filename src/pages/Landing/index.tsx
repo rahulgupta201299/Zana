@@ -61,7 +61,7 @@ function Landing() {
       {/* <OurPhilosophy /> */}
       <ShowcaseSection 
         sectionTitle = "Your motorcycle. Your kit."
-        sectionSubtitle = {`No drilling, no bending, no "universal-ish". Every part below bolts onto the model it's named after — and nothing else.`}
+        sectionSubtitle = {`No drilling, no bending, no "universal-ish". Every part below bolts onto the model it's named after - and nothing else.`}
         type="bike"
       />
       <ShowcaseSection 

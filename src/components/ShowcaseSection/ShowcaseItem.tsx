@@ -224,6 +224,16 @@ function ShowcaseItem({
 
   function handleBoxClick(category = "", subCategory = "") {
     if (type === "product") {
+      // TODO hardcoded types
+      if (subCategory.toLowerCase() === "pannier") {
+        navigate("/bike-accessories/zana/bike/royal-enfield/himalayan-450/69bea3ebc222d7fdd0662a6a/luggage", {
+          state: {
+            category: "luggage",
+            subCategory: "panniers"
+          }
+        })
+        return;
+      }
       navigate(
         encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: category }), { 
           state: { 
