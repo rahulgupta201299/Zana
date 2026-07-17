@@ -18,7 +18,7 @@ import { cartModifyActions } from "@/Redux/Cart/Action";
 import cartUtmServiceAction from "@/Redux/Cart/Services/UtmCartService";
 import { setUtmParams, clearUtmParams } from "@/Redux/Cart/Reducer";
 import { getUtmParamsFromUrl } from "@/Utils/global";
-import { useLocation } from "react-router";
+import { useLocation, useNavigationType } from "react-router";
 import { setOpenSignupPopup } from "@/Redux/Auth/Reducer";
 
 // import geoLocationServiceAction from "@/Redux/Landing/Services/GeoLocation";
@@ -46,12 +46,20 @@ export function useNetwork() {
   const location = useLocation();
   const initialLocation = useRef(location.pathname);
 
+  const navigationType = useNavigationType();
+
   useEffect(() => {
     if (location.pathname !== initialLocation.current) {
-      dispatch(setOpenSignupPopup(false));
+      // Only close the signup popup when the user navigates backward (POP).
+      // On PUSH / REPLACE the popup may have been opened intentionally as part
+      // of the same action that triggered the navigation (e.g. "BUY NOW" when
+      // the user has no phone number), so we must not close it here.
+      if (navigationType === "POP") {
+        dispatch(setOpenSignupPopup(false));
+      }
       initialLocation.current = location.pathname;
     }
-  }, [location.pathname]);
+  }, [location.pathname, navigationType]);
 
   const shopByBike = state.product.menu.shopByBike;
   const zProBike = state.product.menu.zProBikes;
