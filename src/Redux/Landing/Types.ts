@@ -24,11 +24,42 @@ export interface IpLocationCurrencyType extends GeolocationType {
   ip: string;
 };
 
+export type CatalogueItem = {
+  category: string;
+  subCategory: string;
+  description: string;
+};
+
+export type ApiBikeSpecificData = {
+  brand: string;
+  brandName: string;
+  model: string;
+  modelName: string;
+  imageUrl: string;
+  catalogue: CatalogueItem[];
+};
+
+export type ApiUniversalData = {
+  productName: string;
+  imageUrl: string;
+  catalogue: CatalogueItem[];
+};
+
+export type BikeSpecificResponse = {
+  brand: string;
+  brandName: string;
+  model: string;
+  modelName: string;
+  imageUrl: string;
+  catalogue: CatalogueItem[];
+};
+
 export type T_LANDING_REDUCER = {
   garageFavoriteList: ShopByProductDetailsType[];
   newArrivalsList: ShopByProductDetailsType[];
-  currencyList: CurrencyType[],
-  selectedCurrency: string,
-  initialLoading: boolean,
+  currencyList: CurrencyType[];
+  selectedCurrency: string;
+  initialLoading: boolean;
+  bikeSpecificList: ApiBikeSpecificData[];
+  universalList: ApiUniversalData[];
 };
-

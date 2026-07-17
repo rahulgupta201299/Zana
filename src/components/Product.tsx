@@ -1,4 +1,3 @@
-
 import { Box, Card, CardContent, Chip, IconButton, Tooltip, Typography } from "@mui/material";
 import { Heart, ShoppingCart } from "lucide-react";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
@@ -9,6 +8,7 @@ type Props = {
   product: ShopByProductDetailsType;
   quantityAddedInCart: number;
   isWishlisted: boolean;
+  hideWishlistIcon?: boolean;
   onProductClick: () => void;
   onAddToCart: (e: React.MouseEvent) => void;
   onWishList: (e: React.MouseEvent) => void;
@@ -19,12 +19,13 @@ export default function Products({
   product,
   quantityAddedInCart,
   isWishlisted,
+  hideWishlistIcon = false,
   onProductClick,
   onAddToCart,
   onWishList,
   priority = false,
 }: Props) {
-  const { _id, category, name, shortDescription, imageUrl, isBikeSpecific, price, currencySymbol, quantityAvailable, isComingSoon } = product;
+  const { _id, category, name, shortDescription, longDescription, imageUrl, isBikeSpecific, price, currencySymbol, quantityAvailable, isComingSoon } = product;
   const isDisabled = quantityAddedInCart >= quantityAvailable;
   const imageProps = getProductImageProps(
     imageUrl,
@@ -32,7 +33,10 @@ export default function Products({
     480,
   );
 
-  return (
+  const rawTooltipText = longDescription || shortDescription || "";
+  const tooltipText = rawTooltipText.length > 150 ? rawTooltipText.substring(0, 150) + "..." : rawTooltipText;
+
+  const cardContent = (
     <Card
       onClick={onProductClick}
       sx={{
@@ -169,19 +173,21 @@ export default function Products({
           </Typography>
 
           <Box sx={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-            <IconButton
-              onClick={onWishList}
-              aria-label={`Add ${name} to wishlist`}
-              sx={{
-                width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,
-                color: isWishlisted ? "black" : "white",
-                bgcolor: isWishlisted ? "#FACC15" : "rgba(255,255,255,0.1)",
-                transition: "all 0.2s",
-                "&:hover": { bgcolor: "#FACC15", color: "black" },
-              }}
-            >
-              <Heart size={14} className="md:w-4 md:h-4" />
-            </IconButton>
+            {!hideWishlistIcon && (
+              <IconButton
+                onClick={onWishList}
+                aria-label={`Add ${name} to wishlist`}
+                sx={{
+                  width: { xs: 28, md: 36 }, height: { xs: 28, md: 36 }, borderRadius: 2,
+                  color: isWishlisted ? "black" : "white",
+                  bgcolor: isWishlisted ? "#FACC15" : "rgba(255,255,255,0.1)",
+                  transition: "all 0.2s",
+                  "&:hover": { bgcolor: "#FACC15", color: "black" },
+                }}
+              >
+                <Heart size={14} className="md:w-4 md:h-4" />
+              </IconButton>
+            )}
 
             <Box position="relative">
               <Tooltip title="Out of stock" arrow disableHoverListener={!isDisabled}>
@@ -219,5 +225,20 @@ export default function Products({
         </Box>
       </CardContent>
     </Card>
+  );
+
+  return tooltipText ? (
+    <Tooltip 
+      title={tooltipText} 
+      placement="top" 
+      arrow
+      PopperProps={{
+        style: { zIndex: 3 }
+      }}
+    >
+      {cardContent}
+    </Tooltip>
+  ) : (
+    cardContent
   );
 }

@@ -216,6 +216,41 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
     return () => clearTimeout(timerId.current);
   }, []);
 
+  useEffect(() => {
+    if (!otpSent) return;
+
+    const abortController = new AbortController();
+
+    if ("OTPCredential" in window) {
+      navigator.credentials
+        .get({
+          otp: { transport: ["sms"] },
+          signal: abortController.signal,
+        } as any)
+        .then((otp: any) => {
+          if (otp && otp.code) {
+            const digits = otp.code.split("").slice(0, 6);
+            const newArr = ["", "", "", "", "", ""];
+            digits.forEach((d: string, i: number) => {
+              if (i < 6) newArr[i] = d;
+            });
+            setOtpArray(newArr);
+            const otpCode = newArr.join("");
+            setOtp(otpCode);
+            // Autofocus the last box or submit directly
+            handleSubmitOtp(otpCode);
+          }
+        })
+        .catch((err) => {
+          console.error("Web OTP API Error:", err);
+        });
+    }
+
+    return () => {
+      abortController.abort();
+    };
+  }, [otpSent]);
+
   const showClose = location.pathname !== ROUTES.CHECKOUT;
 
   if (!open) return null;
@@ -432,6 +467,7 @@ const SignupPopup = ({ isMobile }: SIGN_UP_TYPE) => {
                         "aria-label": `OTP digit ${index + 1}`,
                         inputMode: "numeric",
                         pattern: "[0-9]*",
+                        autoComplete: index === 0 ? "one-time-code" : "off",
                       },
                     },
                   }}

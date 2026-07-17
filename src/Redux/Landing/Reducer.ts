@@ -8,6 +8,8 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { CURRENCY_LIST } from "@/Constants/AppConstant";
 import {
+  bikeSpecificActions,
+  universalActions,
   currencyListActions,
   garageFavoriteActions,
   geoLocationActions,
@@ -16,7 +18,7 @@ import {
   newArrivalsActions,
   selectedCurrencyActions,
 } from "./Actions";
-import { CurrencyType, GeolocationType, IpLocationCurrencyType, T_LANDING_REDUCER } from "./Types";
+import { CurrencyType, GeolocationType, IpLocationCurrencyType, T_LANDING_REDUCER, BikeSpecificResponse, ApiUniversalData } from "./Types";
 import { SLICE_NAME as LandingSliceName } from "./Selectors";
 import { ShopByProductDetailsType } from "../Product/Types";
 
@@ -26,6 +28,8 @@ export const INITIAL_STATE: T_LANDING_REDUCER = {
   currencyList: [],
   selectedCurrency: CURRENCY_LIST.INR,
   initialLoading: false,
+  bikeSpecificList: [],
+  universalList: [],
 };
 
 const LandingPersistConfig = {
@@ -42,6 +46,19 @@ const sliceOptions: CreateSliceOptions<T_LANDING_REDUCER> = {
   },
   extraReducers: (builder: ActionReducerMapBuilder<T_LANDING_REDUCER>) => {
     builder.addCase(
+      bikeSpecificActions.success,
+      (state, action: PayloadAction<BikeSpecificResponse[]>) => {
+        state.bikeSpecificList = action.payload;
+      },
+    );
+    builder.addCase(
+      universalActions.success,
+      (state, action: PayloadAction<ApiUniversalData[]>) => {
+        state.universalList = action.payload;
+      },
+    );
+    builder.addCase(
+
       garageFavoriteActions.success,
       (state, action: PayloadAction<ShopByProductDetailsType[]>) => {
         state.garageFavoriteList = action.payload;

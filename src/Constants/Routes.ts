@@ -7,11 +7,13 @@ export const SUB_ROUTES = Object.freeze({
   ADMIN: '/admin'
 })
 
+const PRODUCT_CATALOG = '/product-catalog';
+
 export const ROUTES = Object.freeze({
   BASE_URL: '/',
   PRODUCT_DETAIL: `${SUB_ROUTES.PRODUCT}/:productCategory/:productItem/:productId`,
-  PRODUCT_CATALOG: '/product-catalog',
-  PRODUCT_CATALOG_WITH_CATEGORY: '/product-catalog/:productCategory',
+  PRODUCT_CATALOG,
+  PRODUCT_CATALOG_WITH_CATEGORY: `${PRODUCT_CATALOG}/:productCategory`,
   BIKES: `/:bikeType${SUB_ROUTES.BIKES}`,
   BIKES_WITH_BRAND: `/:bikeType${SUB_ROUTES.BIKES}/:bikeBrand`,
   BIKE_DETAIL: `${SUB_ROUTES.BIKE_ACCESSORIES}/:bikeType${SUB_ROUTES.BIKE}/:bikeBrand/:bikeModel/:bikeId`,

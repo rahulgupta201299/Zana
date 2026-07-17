@@ -52,6 +52,7 @@ import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { SeoMeta } from "@/components/SeoMeta";
+import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
 import {
   getHeroImageProps,
   getSuggestedProductImageProps,
@@ -225,7 +226,7 @@ const ProductDetailPage = () => {
       };
 
       // GTM — dataLayer push
-      if ((window as any).dataLayer) {
+      if (VITE_ENABLE_TRACKING && (window as any).dataLayer) {
         setTimeout(() => {
           (window as any).dataLayer.push({
             event: "view_item",

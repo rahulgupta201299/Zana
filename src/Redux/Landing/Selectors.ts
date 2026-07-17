@@ -25,3 +25,14 @@ export const getGarageFavorite = createSelector(
     (selectedCurrency) => selectedCurrency
   ) 
 
+  export const getBikeSpecificList = createSelector(
+    (state: TAppStore) => state[SLICE_NAME].bikeSpecificList,
+    (bikeSpecificList) => bikeSpecificList
+  );
+
+  export const getUniversalList = createSelector(
+    (state: TAppStore) => state[SLICE_NAME].universalList,
+    (universalList) => universalList
+  );
+
+
