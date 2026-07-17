@@ -66,7 +66,7 @@ function Landing() {
       />
       <ShowcaseSection 
         sectionTitle = "Universal Products"
-        sectionSubtitle = "Some gear doesn't care what you ride. Fog lights and luggage systems designed to move between motorcycles as easily as you do."
+        sectionSubtitle = "Some gear doesn't care what you ride. Luggage systems designed to move between motorcycles as easily as you do."
         sectionSupertitle = "FITS EVERY GARAGE"
         type="product"
       />

@@ -163,7 +163,7 @@ export default function ShowcaseSection({
           sx={{
             color: "rgba(255,255,255,0.5)",
             fontSize: { xs: "0.85rem", md: "0.95rem" },
-            maxWidth: 480,
+            maxWidth: "100%",
             lineHeight: 1.7,
           }}
         >
