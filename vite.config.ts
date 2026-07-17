@@ -43,8 +43,9 @@ function viteImageOptimizer(videoDomain: string) {
     transformIndexHtml(html: string, ctx: any) {
       let processedHtml = html;
       if (videoDomain) {
-        const preconnectTag = `\n    <link rel="preconnect" href="${videoDomain}" crossorigin />`;
-        processedHtml = processedHtml.replace('</head>', `${preconnectTag}\n  </head>`);
+        // Removed preconnect to fix lighthouse warning for unused preconnect
+        // const preconnectTag = `\n    <link rel="preconnect" href="${videoDomain}" crossorigin />`;
+        // processedHtml = processedHtml.replace('</head>', `${preconnectTag}\n  </head>`);
       }
 
       if (!ctx.bundle) return processedHtml;

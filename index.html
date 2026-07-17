@@ -8,13 +8,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
+     rel="preload"
+     as="style"
      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-     rel="stylesheet"
      />
+    <link
+     rel="stylesheet"
+     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+     media="print"
+     onload="this.media='all'"
+     />
+    <noscript>
+      <link
+       rel="stylesheet"
+       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+       />
+    </noscript>
     <link rel="icon" href="/src/Assets/Icons/favico.ico" />
     <link rel="preconnect" href="%VITE_API_DOMAIN%" crossorigin />
     <link rel="preconnect" href="https://d1bw1i3fxlc6zi.cloudfront.net" crossorigin />
-    <link rel="preconnect" href="https://d3s3r7gevtfrvd.cloudfront.net" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <link rel="dns-prefetch" href="https://www.google-analytics.com" />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
@@ -23,6 +35,13 @@
     <link
       rel="preload"
       href="/src/Assets/Icons/Zana.webp"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      href="/src/Assets/Images/HeroSection.webp"
       as="image"
       type="image/webp"
       fetchpriority="high"
