@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useNavigate, useLocation } from "react-router";
 import { ROUTES } from "@/Constants/Routes";
-import { getLoginDetails } from "@/Redux/Auth/Selectors";
+import { getLoginDetails, getProfileDetails } from "@/Redux/Auth/Selectors";
 import { cartDetailSelector } from "@/Redux/Cart/Selectors";
 import cartModifyServiceAction from "@/Redux/Cart/Services/CartModifyService";
 import { CartDetailResType, CartItemDetail, GetCartDetailResType } from "@/Redux/Cart/Types";
@@ -28,12 +28,9 @@ export default function useCart() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const loginDetails = useSelector(getLoginDetails);
-  const { phoneNumber = "" } = loginDetails;
+  const loginDetails = useSelector(getProfileDetails);
 
-  const debounceFn = useMemo(() => {
-    return createDebounce(handleSaveToDB, 500);
-  }, []);
+  const { phoneNumber = "" } = loginDetails;
 
   async function getCartFromDB({ phoneNumberField, newCurrency }: { phoneNumberField?: string; newCurrency?: string }) {
     if (!phoneNumber && !phoneNumberField) return;
@@ -53,8 +50,10 @@ export default function useCart() {
       phoneNumber?: string;
     },
   ): Promise<CartDetailResType> {
+    const { phoneNumber: optionalPhoneNumber } = optional || {};
+    const { phoneNumber: loginPhoneNumber } = loginDetails;
 
-    if (!phoneNumber) dispatch(setOpenSignupPopup(true));
+    if (!loginPhoneNumber && !optionalPhoneNumber) dispatch(setOpenSignupPopup(true));
 
     const items = details.map((item) => ({
       productId: item.product._id,
@@ -129,6 +128,18 @@ export default function useCart() {
       throw error;
     }
   }
+
+
+  const handleSaveToDBRef = useRef(handleSaveToDB);
+  handleSaveToDBRef.current = handleSaveToDB;
+
+  const debounceFn = useMemo(() => {
+    return createDebounce(
+      (details: CartItemDetail[], optional?: { easyCheckout?: boolean; navigateTo?: string; phoneNumber?: string }) =>
+        handleSaveToDBRef.current(details, optional),
+      500,
+    );
+  }, []);
 
   async function validateCart(
     cartItems: CartItemDetail[],
