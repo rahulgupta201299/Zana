@@ -1,165 +1,148 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <title>Zana Motorcycles | Premium Bike Accessories & Riding Gear India</title> -->
-    <!-- SEO meta tags are now injected via react-helmet-async -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-     rel="preload"
-     as="style"
-     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-     />
-    <link
-     rel="stylesheet"
-     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-     media="print"
-     onload="this.media='all'"
-     />
-    <noscript>
-      <link
-       rel="stylesheet"
-       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-       />
-    </noscript>
-    <link rel="icon" href="/src/Assets/Icons/favico.ico" />
-    <link rel="preconnect" href="%VITE_API_DOMAIN%" crossorigin />
-    <link rel="preconnect" href="https://d1bw1i3fxlc6zi.cloudfront.net" crossorigin />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-    <link rel="dns-prefetch" href="https://connect.facebook.net" />
-    <link rel="dns-prefetch" href="https://www.facebook.com" />
-    <link rel="dns-prefetch" href="https://embed.tawk.to" />
-    <link
-      rel="preload"
-      href="/src/Assets/Icons/Zana.webp"
-      as="image"
-      type="image/webp"
-      fetchpriority="high"
-    />
-    <link
-      rel="preload"
-      href="/src/Assets/Images/HeroSection.webp"
-      as="image"
-      type="image/webp"
-      fetchpriority="high"
-    />
 
-    <script type="module">
-      const scheduleTrackingLoad = (callback) => {
-        let didRun = false;
-        const events = ["pointerdown", "keydown", "touchstart", "scroll"];
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- <title>Zana Motorcycles | Premium Bike Accessories & Riding Gear India</title> -->
+  <!-- SEO meta tags are now injected via react-helmet-async -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" />
+  </noscript>
+  <link rel="icon" href="/src/Assets/Icons/favico.ico" />
+  <link rel="preconnect" href="%VITE_API_DOMAIN%" crossorigin />
+  <link rel="preconnect" href="https://d1bw1i3fxlc6zi.cloudfront.net" crossorigin />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+  <link rel="dns-prefetch" href="https://connect.facebook.net" />
+  <link rel="dns-prefetch" href="https://www.facebook.com" />
+  <link rel="dns-prefetch" href="https://embed.tawk.to" />
+  <link rel="preload" href="/src/Assets/Icons/Zana.webp" as="image" type="image/webp" fetchpriority="high" />
+  <link rel="preload" href="/src/Assets/Images/HeroSection.webp" as="image" type="image/webp" fetchpriority="high" />
 
-        const cleanup = () => {
-          window.clearTimeout(fallbackId);
-          events.forEach((eventName) => {
-            window.removeEventListener(eventName, runOnce);
-          });
-        };
+  <script type="text/javascript">
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "xc42zpn9m1");
+  </script>
 
-        const runOnce = () => {
-          if (didRun) return;
-          didRun = true;
-          cleanup();
+  <script type="module">
+    const scheduleTrackingLoad = (callback) => {
+      let didRun = false;
+      const events = ["pointerdown", "keydown", "touchstart", "scroll"];
 
-          if ("requestIdleCallback" in window) {
-            window.requestIdleCallback(callback, { timeout: 2000 });
-            return;
-          }
-
-          callback();
-        };
-
-        const fallbackId = window.setTimeout(runOnce, 10000);
+      const cleanup = () => {
+        window.clearTimeout(fallbackId);
         events.forEach((eventName) => {
-          window.addEventListener(eventName, runOnce, {
-            passive: true,
-            once: true,
-          });
+          window.removeEventListener(eventName, runOnce);
         });
       };
 
-      if (import.meta.env.VITE_ENABLE_TRACKING === "true") {
-        scheduleTrackingLoad(() => {
-          // Google Tag Manager
-          (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-            var f = d.getElementsByTagName(s)[0],
-              j = d.createElement(s),
-              dl = l != "dataLayer" ? "&l=" + l : "";
-            j.async = true;
-            j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-            f.parentNode.insertBefore(j, f);
-          })(window, document, "script", "dataLayer", "GTM-PKKFHGQS");
+      const runOnce = () => {
+        if (didRun) return;
+        didRun = true;
+        cleanup();
 
-          // GA
-          const script = document.createElement("script");
-          script.async = true;
-          script.src =
-            "https://www.googletagmanager.com/gtag/js?id=G-RM7848E6XE4";
-          document.head.appendChild(script);
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(callback, { timeout: 2000 });
+          return;
+        }
 
-          window.dataLayer = window.dataLayer || [];
-          function gtag() {
-            dataLayer.push(arguments);
-          }
-          window.gtag = gtag;
+        callback();
+      };
 
-          gtag("js", new Date());
-          gtag("config", "G-RM7848E6XE4");
-          gtag("config", "AW-17772463315");
-
-          // Meta Pixel
-          !(function (f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-
-            n = f.fbq = function () {
-              n.callMethod
-                ? n.callMethod.apply(n, arguments)
-                : n.queue.push(arguments);
-            };
-
-            // Extra Meta Pixel properties
-            if (!f._fbq) f._fbq = n;
-
-            n.push = n;
-            n.loaded = true;
-            n.version = "2.0";
-            n.queue = [];
-
-            t = b.createElement(e);
-            t.async = true;
-            t.src = v;
-
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s);
-          })(
-            window,
-            document,
-            "script",
-            "https://connect.facebook.net/en_US/fbevents.js",
-          );
-
-          fbq("init", "2088242422033311");
-          fbq("track", "PageView");
-
+      const fallbackId = window.setTimeout(runOnce, 10000);
+      events.forEach((eventName) => {
+        window.addEventListener(eventName, runOnce, {
+          passive: true,
+          once: true,
         });
-      }
-    </script>
-    <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xc42zpn9m1");
-</script>
-  </head>
+      });
+    };
 
-  <body>
-    <main id="root"></main>
-    <script type="module" src="/src/index.tsx" fetchpriority="high"></script>
-  </body>
+    if (import.meta.env.VITE_ENABLE_TRACKING === "true") {
+      scheduleTrackingLoad(() => {
+        // Google Tag Manager
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != "dataLayer" ? "&l=" + l : "";
+          j.async = true;
+          j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, "script", "dataLayer", "GTM-PKKFHGQS");
+
+        // GA
+        const script = document.createElement("script");
+        script.async = true;
+        script.src =
+          "https://www.googletagmanager.com/gtag/js?id=G-RM7848E6XE4";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+
+        gtag("js", new Date());
+        gtag("config", "G-RM7848E6XE4");
+        gtag("config", "AW-17772463315");
+
+        // Meta Pixel
+        !(function (f, b, e, v, n, t, s) {
+          if (f.fbq) return;
+
+          n = f.fbq = function () {
+            n.callMethod
+              ? n.callMethod.apply(n, arguments)
+              : n.queue.push(arguments);
+          };
+
+          // Extra Meta Pixel properties
+          if (!f._fbq) f._fbq = n;
+
+          n.push = n;
+          n.loaded = true;
+          n.version = "2.0";
+          n.queue = [];
+
+          t = b.createElement(e);
+          t.async = true;
+          t.src = v;
+
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        })(
+          window,
+          document,
+          "script",
+          "https://connect.facebook.net/en_US/fbevents.js",
+        );
+
+        fbq("init", "2088242422033311");
+        fbq("track", "PageView");
+
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <main id="root"></main>
+  <script type="module" src="/src/index.tsx" fetchpriority="high"></script>
+</body>
+
 </html>
