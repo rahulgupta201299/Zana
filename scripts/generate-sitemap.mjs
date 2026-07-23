@@ -84,6 +84,8 @@ const staticSections = [
     urls: [
       { path: "/zana/bikes", priority: "0.8", changefreq: "weekly" },
       { path: "/zpro/bikes", priority: "0.8", changefreq: "weekly" },
+      { path: "/zana/bikes/all", priority: "0.9", changefreq: "weekly" },
+      { path: "/zpro/bikes/all", priority: "0.9", changefreq: "weekly" },
     ],
   },
 ];
@@ -487,6 +489,8 @@ const MAIN_PAGE_LABELS = new Map([
   ["/product-catalog", "Product Catalog"],
   ["/zana/bikes", "Shop by Bike - ZANA"],
   ["/zpro/bikes", "Shop by Bike - Z-PRO"],
+  ["/zana/bikes/all", "Shop by Bike - ZANA (All Models)"],
+  ["/zpro/bikes/all", "Shop by Bike - Z-PRO (All Models)"],
   ["/blogs", "Blogs"],
   ["/our-stories", "Our Stories"],
   ["/contact-us", "Contact Us"],

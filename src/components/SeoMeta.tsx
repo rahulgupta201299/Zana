@@ -166,7 +166,7 @@ export function getRouteSeo(pathname: string): SeoMetaProps {
         "Explore Zana motorcycle accessories by category, fitment, and price.",
     };
   }
-  if (pathname.endsWith("/bikes")) {
+  if (pathname.includes("/bikes")) {
     return {
       title: "Shop Motorcycle Accessories by Bike | Zana Motorcycles",
       description:
