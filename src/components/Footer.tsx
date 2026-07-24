@@ -164,7 +164,7 @@ const Footer = () => {
               />
             </button>
             {openSections.zproAccessories && (
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm cursor-pointer">
                 {zProBikeBrands.map((brand) => (
                   <li key={brand}>
                     <a

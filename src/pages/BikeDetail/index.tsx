@@ -485,7 +485,7 @@ const BikeDetailPage = () => {
               </div>
               <button
                 onClick={handleBackToBikes}
-                className="text-yellow-400 hover:text-yellow-300 font-medium text-lg transition-colors"
+                className="text-yellow-400 hover:text-yellow-300 font-medium text-lg transition-colors cursor-pointer"
               >
                 ← Back to All Bikes
               </button>
@@ -537,7 +537,7 @@ const BikeDetailPage = () => {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleShowAllBikeProducts}
-                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
+                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black cursor-pointer"
                 >
                   View all {selectedCategoryCount} products
                 </button>

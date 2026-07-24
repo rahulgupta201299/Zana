@@ -286,6 +286,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                     aria-label="Select currency"
                     sx={{
                       color: "white",
+                      cursor: "pointer",
                       fontSize:  "0.8rem" ,
                       height: "32px",
                       ".MuiSelect-select": {
@@ -305,6 +306,9 @@ function Navbar({ isMobile }: NavbarPropsType) {
                         color: "white",
                         fontSize: ".75rem",
                       },
+                      "& .MuiSelect-select": {
+                        cursor: "pointer",
+                      }
                     }}
                     MenuProps={{
                       PaperProps: {
@@ -345,7 +349,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       key={ind}
                       onClick={() => handleTopLevelClick(item)}
                       aria-label={name}
-                      sx={{ p: 0, minWidth: 0, position: "relative" }}
+                      sx={{ p: 0, minWidth: 0, position: "relative", cursor: "pointer" }}
                     >
                       <Component
                         sx={{
@@ -407,7 +411,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                   <button
                     key={index}
                     onClick={(event) => handleMenuItemClick(event, navItem)}
-                    className="text-white/80 hover:text-white transition-colors text-xs font-semibold tracking-[0.2em] font-sans relative group py-2"
+                    className="text-white/80 hover:text-white transition-colors text-xs font-semibold tracking-[0.2em] font-sans relative group py-2 cursor-pointer"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     {navItem.name}
@@ -427,6 +431,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                     MenuProps={currencyMenuProps}
                     sx={{
                       color: "rgba(255, 255, 255, 0.8)",
+                      cursor: "pointer",
                       fontSize: "0.85rem",
                       fontWeight: 500,
                       fontFamily: "'Inter', sans-serif",
@@ -444,6 +449,9 @@ function Navbar({ isMobile }: NavbarPropsType) {
                         right: 0,
                         fontSize: "1.1rem",
                       },
+                      "& .MuiSelect-select": {
+                        cursor: "pointer",
+                      }
                     }}
                   >
                     {currencies.map((item) => (
@@ -465,7 +473,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
                       key={ind}
                       onClick={() => handleTopLevelClick(item)}
                       aria-label={name}
-                      sx={{ p: 0, minWidth: 0, position: "relative" }}
+                      sx={{ p: 0, minWidth: 0, position: "relative", cursor: "pointer" }}
                     >
                       <Component
                         sx={{

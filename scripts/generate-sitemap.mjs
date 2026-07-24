@@ -168,11 +168,15 @@ function createProductPath(productId, productName, fallbackCategory) {
 }
 
 function normalizePath(path) {
-  const pathOnly = String(path || "").split(/[?#]/)[0];
-  const normalizedPath =
-    pathOnly === "/" ? "/" : `/${pathOnly.replace(/^\/+|\/+$/g, "")}`;
+  const [pathOnly = ""] = String(path || "").split(/[?#]/);
+  if (!pathOnly || pathOnly === "/") return "/";
 
-  return normalizedPath || "/";
+  if (/\.[a-z0-9]+$/i.test(pathOnly)) {
+    return `/${pathOnly.replace(/^\/+/g, "")}`;
+  }
+
+  const cleanPath = pathOnly.replace(/^\/+|\/+$/g, "");
+  return cleanPath ? `/${cleanPath}/` : "/";
 }
 
 function toAbsoluteUrl(path) {
@@ -388,9 +392,10 @@ function getBrandListingUrls() {
   return urls;
 }
 
-function getUniversalProductListingUrls() {
+async function getUniversalProductListingUrls() {
   const map = loadUniversalProductSeoMap();
   const urls = [];
+  const mapCategoryNames = new Set(Object.keys(map).map((k) => k.trim().toLowerCase()));
 
   for (const [categoryName, seo] of Object.entries(map)) {
     urls.push(
@@ -400,6 +405,27 @@ function getUniversalProductListingUrls() {
         changefreq: "weekly",
       }),
     );
+  }
+
+  try {
+    const response = await fetchJson("/api/v1/product/categories/count");
+    const categories = Array.isArray(response?.data) ? response.data : [];
+    for (const category of categories) {
+      if (category?.name && category?.count > 0) {
+        const catKey = category.name.trim().toLowerCase();
+        if (!mapCategoryNames.has(catKey)) {
+          urls.push(
+            createUrl(`/product-catalog/${slugify(category.name)}`, {
+              title: `${category.name} | Zana Motorcycles`,
+              priority: "0.8",
+              changefreq: "weekly",
+            }),
+          );
+        }
+      }
+    }
+  } catch (error) {
+    console.warn(`Could not fetch dynamic product categories for sitemap: ${error.message}`);
   }
 
   return urls;
@@ -436,6 +462,30 @@ async function getBikeUrls() {
             },
           ),
         );
+
+        // Fetch categories for this specific bike model
+        try {
+          const catResponse = await fetchJson(`/api/v1/product/model/${model._id}/categories/count`);
+          const categories = Array.isArray(catResponse?.data) ? catResponse.data : [];
+          for (const category of categories) {
+            if (category?.name && category?.count > 0) {
+              urls.push(
+                createUrl(
+                  `/bike-accessories/${bikeType}/bike/${slugify(brandName)}/${slugify(model.name)}/${model._id}/${slugify(category.name)}`,
+                  {
+                    id: `${model._id}-${slugify(category.name)}`,
+                    title: `${brandName} ${bikeSeoMap[model._id]?.title || model.name} - ${category.name}`,
+                    lastmod: getLastModified(model),
+                    priority: "0.6",
+                    changefreq: "weekly",
+                  },
+                ),
+              );
+            }
+          }
+        } catch (catError) {
+          console.warn(`Could not fetch categories for model ${model._id}: ${catError.message}`);
+        }
       }
     }
   }
