@@ -20,7 +20,8 @@ export function encodedGeneratedPath(route: string, obj?: object): string {
     acc[k] = replaceSpecialCharactersWithHyphen(String(v));
     return acc;
   }, {});
-  return generatePath(route, encodedObj);
+  const path = generatePath(route, encodedObj);
+  return path.endsWith("/") ? path : `${path}/`;
 }
 
 // export function decodeParams<T extends Record<string, string>>(

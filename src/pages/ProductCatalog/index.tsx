@@ -150,7 +150,10 @@ const ProductCatalogPage = () => {
       const isValid = productCategory.some(
         (cat) => cat.name.toLowerCase() === validCategory.toLowerCase()
       );
-      if (!isValid) {
+      const isStaticCategory = Object.keys(UNIVERSAL_PRODUCT_SEO_MAP).some(
+        (key) => key.toLowerCase() === validCategory.toLowerCase()
+      );
+      if (!isValid && !isStaticCategory) {
         validCategory = ALL_CATEGORY;
         // Optionally redirect to base catalog if URL was invalid
         navigate(ROUTES.PRODUCT_CATALOG, { replace: true });
