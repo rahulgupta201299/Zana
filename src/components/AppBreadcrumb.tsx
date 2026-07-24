@@ -49,7 +49,7 @@ export default function AppBreadcrumb({
                 ) : item.to ? (
                   <BreadcrumbLink
                     asChild
-                    className="text-white/60 hover:text-yellow-400"
+                    className="text-white/60 hover:text-yellow-400 cursor-pointer"
                   >
                     <Link to={item.to} state={item.state}>
                       {label}

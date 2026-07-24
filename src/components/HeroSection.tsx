@@ -75,14 +75,14 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center">
             <button
               onClick={() => navigate("/zana/bikes/all")}
-              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase"
+              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase cursor-pointer"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               SHOP BY BIKE
             </button>
             <button
               onClick={() => navigate("/product-catalog")}
-              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2"
+              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2 cursor-pointer"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               EXPLORE UNIVERSAL PRODUCTS

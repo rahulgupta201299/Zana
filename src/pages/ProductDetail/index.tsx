@@ -326,7 +326,7 @@ const ProductDetailPage = () => {
           </h1>
           <button
             onClick={handleBackToProducts}
-            className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+            className="px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors cursor-pointer"
           >
             Back to Products
           </button>

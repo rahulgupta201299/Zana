@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import BikePlaceholderImage from "@/Assets/Images/BikePlaceholder.svg";
 import { ALL_CATEGORY, BikeCategoryEnum } from "@/Constants/AppConstant";
@@ -157,9 +157,7 @@ function Bikes() {
     navigate(
       `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
         normalisedBrand,
-      )}`,
-      { replace: true },
-    );
+      )}`);
   }
 
   useEffect(() => {
@@ -201,11 +199,11 @@ function Bikes() {
               const brandName = name.toLowerCase();
 
               return (
-                <button
+                <Link
                   key={name}
-                  ref={(el) => (buttonRefs.current[brandName] = el)}
-                  onClick={() => handleBrandCategoryClick(brandName)}
-                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
+                  ref={(el) => (buttonRefs.current[brandName] = el as any)}
+                  to={`/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(brandName)}`}
+                  className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all inline-block cursor-pointer ${
                     selectedBrand === brandName
                       ? "bg-yellow-400 text-black"
                       : "bg-white/10 text-white hover:bg-white/20"
@@ -215,7 +213,7 @@ function Bikes() {
                     ? ALL_CATEGORY.toUpperCase()
                     : brandName.toUpperCase()}{" "}
                   ({count})
-                </button>
+                </Link>
               );
             })}
             {categoriesWithCount.length === 0 && <CategorySkeleton />}
@@ -227,23 +225,31 @@ function Bikes() {
                 brand;
               return (
                 <Grid size={{ xs: 12, md: 4, sm: 6 }} key={_id}>
-                  <Card
-                    onClick={() => handleBikeClick(brandName, name, _id)}
-                    sx={{
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      p: "8px",
-                      cursor: "pointer",
-                      background: "#2a2a2a",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        borderColor: "#facc15",
-                        transform: "scale(1.05)",
-                        boxShadow: "0 25px 50px rgba(250,204,21,0.2)",
-                      },
-                    }}
+                  <Link
+                    to={encodedGeneratedPath(ROUTES.BIKE_DETAIL, {
+                      bikeType,
+                      bikeBrand: brandName,
+                      bikeModel: name,
+                      bikeId: _id,
+                    })}
+                    className="block h-full text-inherit no-underline"
                   >
+                    <Card
+                      sx={{
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 3,
+                        overflow: "hidden",
+                        p: "8px",
+                        cursor: "pointer",
+                        background: "#2a2a2a",
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          borderColor: "#facc15",
+                          transform: "scale(1.05)",
+                          boxShadow: "0 25px 50px rgba(250,204,21,0.2)",
+                        },
+                      }}
+                    >
                     <CardActionArea disableRipple>
                       <Box
                         sx={{
@@ -356,6 +362,7 @@ function Bikes() {
                       </CardContent>
                     </CardActionArea>
                   </Card>
+                  </Link>
                 </Grid>
               );
             })}
@@ -374,7 +381,7 @@ function Bikes() {
               </p>
               <button
                 onClick={() => handleBrandCategoryClick(ALL_CATEGORY)}
-                className="mt-4 px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors"
+                className="mt-4 px-6 py-3 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition-colors cursor-pointer"
               >
                 View All Bikes
               </button>
