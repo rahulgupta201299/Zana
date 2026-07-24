@@ -86,12 +86,12 @@ function DynamicRedirect() {
 function BikesRedirect() {
   const { bikeType } = useParams();
   const location = useLocation();
-  return <Navigate replace to={`/${bikeType}${SUB_ROUTES.BIKES}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
+  return <Navigate replace to={`/${bikeType}${SUB_ROUTES.BIKES}/all/`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
 }
 
 function ProductsRedirect() {
   const location = useLocation();
-  return <Navigate replace to={`${ROUTES.PRODUCT_CATALOG}/all`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
+  return <Navigate replace to={`${ROUTES.PRODUCT_CATALOG}/all/`} state={{ ...location.state, brand: ALL_CATEGORY }} />;
 }
 
 export const routeObj: RouteObject[] = [

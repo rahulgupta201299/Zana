@@ -157,7 +157,7 @@ function Bikes() {
     navigate(
       `/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(
         normalisedBrand,
-      )}`);
+      )}/`);
   }
 
   useEffect(() => {
@@ -202,7 +202,7 @@ function Bikes() {
                 <Link
                   key={name}
                   ref={(el) => (buttonRefs.current[brandName] = el as any)}
-                  to={`/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(brandName)}`}
+                  to={`/${bikeType}${SUB_ROUTES.BIKES}/${replaceSpecialCharactersWithHyphen(brandName)}/`}
                   className={`px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all inline-block cursor-pointer ${
                     selectedBrand === brandName
                       ? "bg-yellow-400 text-black"
