@@ -116,6 +116,7 @@ const ProductDetailPage = () => {
   >([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isProductHydrating, setIsProductHydrating] = useState(true);
+  const [isProductNotFound, setIsProductNotFound] = useState(false);
   // true while the real hero image is still downloading after product data arrives
   const [isHeroImageLoaded, setIsHeroImageLoaded] = useState(false);
   const productRequestRef = useRef(0);
@@ -196,6 +197,7 @@ const ProductDetailPage = () => {
 
     setQuantity(getQuantityValue || 1);
     setIsProductHydrating(true);
+    setIsProductNotFound(false);
 
     try {
       const response = (await dispatch(
@@ -206,6 +208,7 @@ const ProductDetailPage = () => {
       )) as ShopByProductDetailsType;
       if (productRequestRef.current !== requestId) return;
       setProduct(response);
+      setIsProductNotFound(false);
       setIsProductHydrating(false);
 
       const eventPayload = {
@@ -269,6 +272,7 @@ const ProductDetailPage = () => {
       if (productRequestRef.current === requestId) {
         setProduct(null);
         setSuggestedProducts([]);
+        setIsProductNotFound(true);
         setIsProductHydrating(false);
       }
       console.error(error);
@@ -309,7 +313,7 @@ const ProductDetailPage = () => {
     pageOps();
   }, [currency, location.pathname]);
 
-  if (!product && !isProductDetailPending) {
+  if (isProductNotFound && !isProductDetailPending) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
