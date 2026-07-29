@@ -81,7 +81,7 @@ const HeroSection = ({ isMobile }: HeroSectionPropsType) => {
               SHOP BY BIKE
             </button>
             <button
-              onClick={() => navigate("/product-catalog")}
+              onClick={() => navigate("/product-catalog/all/")}
               className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2 cursor-pointer"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >

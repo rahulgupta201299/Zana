@@ -66,7 +66,7 @@ const staticSections = [
     name: "Core Pages",
     urls: [
       { path: "/", priority: "1.0", changefreq: "daily" },
-      { path: "/product-catalog", priority: "0.9", changefreq: "daily" },
+      { path: "/product-catalog/all/", priority: "0.9", changefreq: "daily" },
       { path: "/our-stories", priority: "0.7", changefreq: "monthly" },
       { path: "/contact-us", priority: "0.6", changefreq: "monthly" },
       { path: "/return-and-exchange", priority: "0.6", changefreq: "monthly" },
@@ -82,10 +82,8 @@ const staticSections = [
   {
     name: "Bike Pages",
     urls: [
-      { path: "/zana/bikes", priority: "0.8", changefreq: "weekly" },
-      { path: "/zpro/bikes", priority: "0.8", changefreq: "weekly" },
-      { path: "/zana/bikes/all", priority: "0.9", changefreq: "weekly" },
-      { path: "/zpro/bikes/all", priority: "0.9", changefreq: "weekly" },
+      { path: "/zana/bikes/all/", priority: "0.9", changefreq: "weekly" },
+      { path: "/zpro/bikes/all/", priority: "0.9", changefreq: "weekly" },
     ],
   },
 ];
@@ -399,7 +397,7 @@ async function getUniversalProductListingUrls() {
 
   for (const [categoryName, seo] of Object.entries(map)) {
     urls.push(
-      createUrl(`/product-catalog/${slugify(categoryName)}`, {
+      createUrl(`/product-catalog/${slugify(categoryName)}/`, {
         title: seo.title || `${categoryName} | Zana Motorcycles`,
         priority: "0.8",
         changefreq: "weekly",
@@ -415,7 +413,7 @@ async function getUniversalProductListingUrls() {
         const catKey = category.name.trim().toLowerCase();
         if (!mapCategoryNames.has(catKey)) {
           urls.push(
-            createUrl(`/product-catalog/${slugify(category.name)}`, {
+            createUrl(`/product-catalog/${slugify(category.name)}/`, {
               title: `${category.name} | Zana Motorcycles`,
               priority: "0.8",
               changefreq: "weekly",
@@ -536,11 +534,9 @@ function sectionLabel(section) {
 
 const MAIN_PAGE_LABELS = new Map([
   ["/", "Home"],
-  ["/product-catalog", "Product Catalog"],
-  ["/zana/bikes", "Shop by Bike - ZANA"],
-  ["/zpro/bikes", "Shop by Bike - Z-PRO"],
-  ["/zana/bikes/all", "Shop by Bike - ZANA (All Models)"],
-  ["/zpro/bikes/all", "Shop by Bike - Z-PRO (All Models)"],
+  ["/product-catalog/all/", "Product Catalog"],
+  ["/zana/bikes/all/", "Shop by Bike - ZANA (All Models)"],
+  ["/zpro/bikes/all/", "Shop by Bike - Z-PRO (All Models)"],
   ["/blogs", "Blogs"],
   ["/our-stories", "Our Stories"],
   ["/contact-us", "Contact Us"],

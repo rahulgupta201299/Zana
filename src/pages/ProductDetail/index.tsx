@@ -83,7 +83,7 @@ const FALLBACK_PLACEHOLDER_IMAGE =
 function getProductCatalogCategoryPath(category: string) {
   return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
     category,
-  )}`;
+  )}/`;
 }
 
 const ProductDetailPage = () => {
@@ -421,7 +421,7 @@ const ProductDetailPage = () => {
     ]
     : [
         { label: "Home", to: ROUTES.BASE_URL },
-        { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
+        { label: "Universal Products", to: `${ROUTES.PRODUCT_CATALOG}/all/` },
         {
           label: breadcrumbCategory,
           to: getProductCatalogCategoryPath(breadcrumbCategory),

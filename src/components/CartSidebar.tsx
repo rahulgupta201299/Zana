@@ -295,7 +295,7 @@ const CartSidebar = ({
             }}
             onClick={() => {
               onClose();
-              navigate("/product-catalog");
+              navigate("/product-catalog/all/");
             }}
           >
             + Add more products

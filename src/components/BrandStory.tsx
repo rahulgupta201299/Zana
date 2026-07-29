@@ -87,7 +87,7 @@ const BrandStory = () => {
               boxShadow: "none",
             },
           }}
-          onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+          onClick={() => navigate(`${ROUTES.PRODUCT_CATALOG}/all/`)}
         >
           EXPLORE
         </Button>
