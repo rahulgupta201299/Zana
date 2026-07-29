@@ -57,7 +57,7 @@ export default function OrderConfirmDialog() {
 	}
 
 	function handleReturn() {
-		navigate(ROUTES.PRODUCT_CATALOG)
+		navigate(`${ROUTES.PRODUCT_CATALOG}/all/`)
 		// dispatch(setOpenOrder(false))
 	}
 

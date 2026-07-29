@@ -22,27 +22,27 @@ const DEFAULT_BRANDS: BrandItem[] = [
   {
     name: "Royal Enfield",
     logo: RoyalEnfieldLogo,
-    route: "/zana/bikes/royal-enfield",
+    route: "/zana/bikes/royal-enfield/",
   },
   {
     name: "KTM",
     logo: KTMLogo,
-    route: "/zana/bikes/ktm",
+    route: "/zana/bikes/ktm/",
   },
   {
     name: "Triumph",
     logo: TriumphLogo,
-    route: "/zana/bikes/triumph",
+    route: "/zana/bikes/triumph/",
   },
   {
     name: "Honda",
     logo: HondaLogo,
-    route: "/zana/bikes/honda",
+    route: "/zana/bikes/honda/",
   },
   {
     name: "TVS",
     logo: TVSLogo,
-    route: "/zana/bikes/tvs",
+    route: "/zana/bikes/tvs/",
   },
 ];
 

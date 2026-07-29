@@ -26,7 +26,7 @@ const Footer = () => {
   };
 
   function redirectToBikes(type: string, brand: string) {
-    navigate(`/${type}${SUB_ROUTES.BIKES}`, {
+    navigate(`/${type}${SUB_ROUTES.BIKES}/all/`, {
       state: { brand: brand.toLowerCase() },
     });
   }

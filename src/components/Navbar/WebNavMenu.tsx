@@ -43,13 +43,13 @@ export default function WebNavMenu({ menuName, anchorEl, onClose }: WebNavMenuPr
 	}
 
 	function handleCategoryClick(category: string) {
-		navigate(`${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(category)}`)
+		navigate(`${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(category)}/`)
 		onClose()
 	}
 
 	function handleBikeBrandClick(category: string) {
 		const bikeType = menuName === MenuItemsName.Z_PRO ? BikeCategoryEnum.ZPRO : BikeCategoryEnum.ZANA
-		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(category)}`)
+		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(category)}/`)
 		onClose()
 	}
 

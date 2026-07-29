@@ -64,7 +64,7 @@ const OrderConfirmation = () => {
   }
 
   function handleReturn() {
-    navigate(ROUTES.PRODUCT_CATALOG)
+    navigate(`${ROUTES.PRODUCT_CATALOG}/all/`)
   }
 
   useEffect(() => {

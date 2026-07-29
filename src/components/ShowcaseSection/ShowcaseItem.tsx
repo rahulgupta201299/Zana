@@ -235,7 +235,7 @@ function ShowcaseItem({
         return;
       }
       navigate(
-        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: category }), { 
+        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: category }) + "/", { 
           state: { 
             category: category.toLowerCase(),
             subCategory: subCategory.toLowerCase()
@@ -268,7 +268,7 @@ function ShowcaseItem({
     if (type === "product") {
       const firstCategory = catalogue?.[0]?.category?.toLowerCase() || "";
       navigate(
-        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: firstCategory }), { 
+        encodedGeneratedPath(ROUTES.PRODUCT_CATALOG_WITH_CATEGORY, { productCategory: firstCategory }) + "/", { 
           state: { 
             category: firstCategory,
           }

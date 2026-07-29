@@ -42,7 +42,7 @@ export default function Cart() {
             <p className="text-white text-2xl md:text-3xl font-bold mb-2">Your cart is empty</p>
             <p className="text-white/60 text-base md:text-lg mb-8">Add some products to get started</p>
             <button
-              onClick={() => navigate('/product-catalog')}
+              onClick={() => navigate('/product-catalog/all/')}
               className="bg-yellow-400 text-black px-8 py-3 rounded-lg text-lg font-bold hover:bg-yellow-500 transition-colors"
             >
               SHOP NOW
@@ -168,7 +168,7 @@ export default function Cart() {
 
               {/* Continue Shopping Button */}
               <button
-                onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+                onClick={() => navigate(`${ROUTES.PRODUCT_CATALOG}/all/`)}
                 className="mt-6 w-full bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-all duration-300"
               >
                 + Continue Shopping
