@@ -232,6 +232,8 @@ function Row(props: {
 
   const razorpayOrderId = (order.razorpayOrderId ?? "").trim() || NULL_PLACEHOLDER;
   const razorpayPaymentId = (order.razorpayPaymentId ?? "").trim() || NULL_PLACEHOLDER;
+  const salesPersonName = (order.salesPersonName ?? "").trim();
+  const showSalesPerson = Boolean(order.isAdminCreated && salesPersonName);
 
   const history = order.statusHistory ?? [];
 
@@ -307,6 +309,12 @@ function Row(props: {
                     {formatUtcToIstDateTime(order.updatedAt ?? null, NULL_PLACEHOLDER)}
                   </Typography>
                 </Box>
+                {showSalesPerson && (
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">Salesperson</Typography>
+                    <Typography variant="body2">{salesPersonName}</Typography>
+                  </Box>
+                )}
               </Stack>
 
               <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
@@ -496,6 +504,7 @@ export default function AdminOrderList() {
       shippingAddressSameAsBillingAddress: editingOrder.shippingAddressSameAsBillingAddress !== false,
       couponCode: editingOrder.couponCode || null,
       appliedCoupon: editingOrder.couponCode || null,
+      
     };
   }, [editingOrder]);
 
@@ -609,6 +618,7 @@ export default function AdminOrderList() {
         orderStatus: editingOrder.orderStatus || "placed",
         paymentType: payload.paymentType,
         adminCapturedPaymentId: payload.adminCapturedPaymentId,
+        salesPersonName: payload.salesPersonName,
       };
 
       await updateAdminOrder(editingOrder._id, updatePayload);
@@ -1092,14 +1102,14 @@ export default function AdminOrderList() {
               const newMode = method === "cod" ? PaymentTypeEnum.COD : PaymentTypeEnum.RAZORPAY;
               setPaymentMode(newMode);
               if (draftCart?.items) {
-                void handleCartItemsChange(draftCart.items, method, selectedCurrency);
+                void handleCartItemsChange(draftCart.items.map((item) => ({ productId: item.product?._id ?? "", quantity: item.quantity ?? 1 })), method, selectedCurrency);
               }
             }}
             onCurrencyChange={(curr) => {
               setSelectedCurrency(curr);
               dispatch(selectedCurrencyActions(curr));
               if (draftCart?.items) {
-                void handleCartItemsChange(draftCart.items, paymentMode === PaymentTypeEnum.COD ? "cod" : "online", curr);
+                void handleCartItemsChange(draftCart.items.map((item) => ({ productId: item.product?._id ?? "", quantity: item.quantity ?? 1 })), paymentMode === PaymentTypeEnum.COD ? "cod" : "online", curr);
               }
             }}
           />
