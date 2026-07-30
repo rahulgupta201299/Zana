@@ -31,7 +31,7 @@ import UNIVERSAL_PRODUCT_SEO_MAP from "./UNIVERSAL_PRODUCT_SEO_MAP";
 function getProductCatalogCategoryPath(category: string) {
   return `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(
     category,
-  )}`;
+  )}/`;
 }
 
 const ProductCatalogPage = () => {
@@ -150,10 +150,13 @@ const ProductCatalogPage = () => {
       const isValid = productCategory.some(
         (cat) => cat.name.toLowerCase() === validCategory.toLowerCase()
       );
-      if (!isValid) {
+      const isStaticCategory = Object.keys(UNIVERSAL_PRODUCT_SEO_MAP).some(
+        (key) => key.toLowerCase() === validCategory.toLowerCase()
+      );
+      if (!isValid && !isStaticCategory) {
         validCategory = ALL_CATEGORY;
         // Optionally redirect to base catalog if URL was invalid
-        navigate(ROUTES.PRODUCT_CATALOG, { replace: true });
+        navigate(`${ROUTES.PRODUCT_CATALOG}/all/`, { replace: true });
       }
     }
 
@@ -186,7 +189,7 @@ const ProductCatalogPage = () => {
             className="mb-8"
             items={[
               { label: "Home", to: ROUTES.BASE_URL },
-              { label: "Universal Products", to: ROUTES.PRODUCT_CATALOG },
+              { label: "Universal Products", to: `${ROUTES.PRODUCT_CATALOG}/all/` },
               ...(selectedCategory && selectedCategory !== ALL_CATEGORY
                 ? [{ label: capitalise(selectedCategory) }]
                 : []),

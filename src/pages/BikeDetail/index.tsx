@@ -130,6 +130,7 @@ const BikeDetailPage = () => {
   
   const [isBikeProductsHydrating, setIsBikeProductsHydrating] = useState(true);
   const [isBikeDetailsHydrating, setIsBikeDetailsHydrating] = useState(true);
+  const [isBikeDetailsNotFound, setIsBikeDetailsNotFound] = useState(false);
   // true while the real hero image is still downloading after bike data arrives
   const [isBikeHeroImageLoaded, setIsBikeHeroImageLoaded] = useState(false);
   const [showAllBikeProducts, setShowAllBikeProducts] = useState(false);
@@ -176,16 +177,19 @@ const BikeDetailPage = () => {
     bikeDetailsRequestRef.current = requestId;
 
     setIsBikeDetailsHydrating(true);
+    setIsBikeDetailsNotFound(false);
     try {
       const response = (await dispatch(
         BikeDetailService(bikeId),
       )) as BikeDetailResType;
       if (bikeDetailsRequestRef.current !== requestId) return;
       setBikeDetails(response);
+      setIsBikeDetailsNotFound(false);
       setIsBikeDetailsHydrating(false);
     } catch (error: any) {
       if (bikeDetailsRequestRef.current === requestId) {
         setBikeDetails(null);
+        setIsBikeDetailsNotFound(true);
         setIsBikeDetailsHydrating(false);
       }
       console.error(error);
@@ -291,7 +295,7 @@ const BikeDetailPage = () => {
     setIsBikeProductsHydrating(false);
   }
 
-  if (!bikeDetails && !isBikeDetailsPending) {
+  if (isBikeDetailsNotFound && !isBikeDetailsPending) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -485,7 +489,7 @@ const BikeDetailPage = () => {
               </div>
               <button
                 onClick={handleBackToBikes}
-                className="text-yellow-400 hover:text-yellow-300 font-medium text-lg transition-colors"
+                className="text-yellow-400 hover:text-yellow-300 font-medium text-lg transition-colors cursor-pointer"
               >
                 ← Back to All Bikes
               </button>
@@ -537,7 +541,7 @@ const BikeDetailPage = () => {
               <div className="mt-8 flex justify-center">
                 <button
                   onClick={handleShowAllBikeProducts}
-                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
+                  className="rounded-lg border border-yellow-400 px-5 py-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black cursor-pointer"
                 >
                   View all {selectedCategoryCount} products
                 </button>

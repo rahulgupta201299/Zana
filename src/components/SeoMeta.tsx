@@ -29,8 +29,11 @@ export type SeoMetaProps = {
 
 function normalizePath(pathname: string): string {
   if (pathname === "/" || pathname === "") return "/";
-  const trimmed = pathname.replace(/\/+$/, "");
-  return trimmed === "" ? "/" : trimmed;
+  const hasExtension = /\.[a-z0-9]+$/i.test(pathname);
+  if (hasExtension) {
+    return pathname.replace(/\/+$/, "");
+  }
+  return pathname.replace(/\/+$/, "") + "/";
 }
 
 function stripHtml(value: string): string {
@@ -166,7 +169,7 @@ export function getRouteSeo(pathname: string): SeoMetaProps {
         "Explore Zana motorcycle accessories by category, fitment, and price.",
     };
   }
-  if (pathname.endsWith("/bikes")) {
+  if (pathname.includes("/bikes")) {
     return {
       title: "Shop Motorcycle Accessories by Bike | Zana Motorcycles",
       description:

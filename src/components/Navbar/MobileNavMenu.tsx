@@ -60,7 +60,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 	function handleBikeBrandClick(item: MenuOptionsType) {
 		const bikeType = getBikeTypeFromRoute()
 
-		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(item.name)}`)
+		navigate(`/${bikeType}/bikes/${replaceSpecialCharactersWithHyphen(item.name)}/`)
 		onClose()
 	}
 
@@ -76,7 +76,7 @@ function MobileNavMenu({ onClose }: MobileNavMenuPropsType) {
 		if (route && models.length === 0) {
 			const nextRoute =
 				route === ROUTES.PRODUCT_CATALOG
-					? `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(name)}`
+					? `${ROUTES.PRODUCT_CATALOG}/${replaceSpecialCharactersWithHyphen(name)}/`
 					: route
 			navigate(nextRoute, { state: { category: name.toLowerCase() } })
 			onClose()

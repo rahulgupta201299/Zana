@@ -103,7 +103,7 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
 
           {/* Animated Button */}
           <Button
-            onClick={() => navigate("/product-catalog")}
+            onClick={() => navigate("/product-catalog/all/")}
             sx={{
               position: "relative",
               border: "2px solid white",

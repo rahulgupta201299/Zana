@@ -382,7 +382,7 @@ const Wishlist = () => {
                   bgcolor: "#eab308",
                 },
               }}
-              onClick={() => navigate(ROUTES.PRODUCT_CATALOG)}
+              onClick={() => navigate(`${ROUTES.PRODUCT_CATALOG}/all/`)}
             >
               View All Products
             </Button>
