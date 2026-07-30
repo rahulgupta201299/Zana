@@ -561,6 +561,7 @@ export default function AdminCreateOrder() {
               <CartOrderEditor
                 cart={draftCart}
                 countryOptions={isdCodes}
+                paymentMode={paymentMode}
                 saving={saving}
                 onSave={handleCreateOrder}
                 submitLabel="Create order"

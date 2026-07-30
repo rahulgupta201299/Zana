@@ -63,7 +63,9 @@ export type CartOrderEditorCart = Pick<
   | "couponCode"
   | "appliedCoupon"
   | "paymentMethod"
->;
+> & {
+  salesPersonName?: string | null;
+};
 
 
 export type CartOrderEditorSavePayload = {
@@ -408,7 +410,7 @@ function initialValuesFromCart(
     billingPincode: billing?.postalCode ?? shipping?.postalCode ?? "",
     billingPhone:
       stripIsd(billing?.phone ?? "") || stripIsd(shipping?.phone ?? "") || fallbackPhone,
-    salesPersonName: "",
+    salesPersonName: cart?.salesPersonName ?? "",
     paymentType: "razorpay",
     paymentStatus: "paid",
     advancePaid: 0,
@@ -490,6 +492,7 @@ export default function CartOrderEditor(props: {
   showPaymentMethodAndCurrency?: boolean;
   onPaymentMethodChange?: (method: "online" | "cod") => void;
   onCurrencyChange?: (currency: string) => void;
+  paymentMode?: "online" | "cod";
 }) {
   const {
     cart,
@@ -508,6 +511,7 @@ export default function CartOrderEditor(props: {
     showPaymentMethodAndCurrency = true,
     onPaymentMethodChange,
     onCurrencyChange,
+    paymentMode,
   } = props;
   const dispatch = useDispatch<TAppDispatch>();
   const currencyOptions = useSelector(getCurrencyList);
@@ -609,7 +613,7 @@ export default function CartOrderEditor(props: {
   };
 
   const addProductToDraft = (product: SearchDataProductsType) => {
-    if (hasUnavailableLines) return;
+   
     setDraftItems((current) => {
       let nextDraft = [];
       const existing = current.find((item) => item.productId === product._id);
@@ -739,6 +743,7 @@ export default function CartOrderEditor(props: {
         setFieldTouched,
         isValid,
       }) => {
+   
         const shippingIsd = getCountryIsd(values.shippingCountry, normalizedCountries);
         const billingIsd = getCountryIsd(values.billingCountry, normalizedCountries);
         const submitDisabled =
@@ -773,13 +778,7 @@ export default function CartOrderEditor(props: {
                   This cart needs a phone number before details can be saved.
                 </Alert>
               )}
-              {hasUnavailableLines && (
-                <Alert severity="warning">
-                  This cart has unavailable product lines. Address details can still
-                  be saved, but product changes are disabled until those lines are
-                  resolved.
-                </Alert>
-              )}
+            
 
               <Box>
                 <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 700 }}>
@@ -893,7 +892,7 @@ export default function CartOrderEditor(props: {
                   onChange={(event) => setQuery(event.target.value)}
                   size="small"
                   fullWidth
-                  disabled={saving || hasUnavailableLines}
+                  disabled={saving }
                 />
                 <Box sx={{ mt: 1.25 }}>
                   {loadingProducts ? (
@@ -910,7 +909,7 @@ export default function CartOrderEditor(props: {
                         <Button
                           key={product._id}
                           color="inherit"
-                          disabled={saving || hasUnavailableLines}
+                          disabled={saving}
                           onClick={() => addProductToDraft(product)}
                           sx={{
                             justifyContent: "flex-start",
@@ -1125,8 +1124,10 @@ export default function CartOrderEditor(props: {
                       label="Payment Method"
                       value={values.paymentMethod}
                       onChange={(event) => {
-                        handleChange(event);
-                        onPaymentMethodChange?.(event.target.value as any);
+                        const method = event.target.value as "online" | "cod";           
+                        setFieldValue("paymentMethod", method);
+                        setFieldTouched("paymentMethod", true);
+                        onPaymentMethodChange?.(method);
                       }}
                       onBlur={handleBlur}
                     >
@@ -1192,18 +1193,20 @@ export default function CartOrderEditor(props: {
               </Box>
 
               <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" } }}>
-                <TextField
-                  fullWidth
-                  name="advancePaid"
-                  label="Advance Paid"
-                  type="number"
-                  value={values.advancePaid}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={getFieldErrorState({ errors, touched }, "advancePaid")}
-                  helperText={getHelperOrErrorText({ errors, touched }, "advancePaid")}
-                  size="small"
-                />
+                {(paymentMode === "cod" || values.paymentMethod === "cod") && (
+                  <TextField
+                    fullWidth
+                    name="advancePaid"
+                    label="Advance Paid"
+                    type="number"
+                    value={values.advancePaid}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={getFieldErrorState({ errors, touched }, "advancePaid")}
+                    helperText={getHelperOrErrorText({ errors, touched }, "advancePaid")}
+                    size="small"
+                  />
+                )}
 
                 <TextInput
                   name="adminCapturedPaymentId"
