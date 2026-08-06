@@ -231,7 +231,7 @@ function Row(props: {
   const advancePaid = order.advancePaid ?? 0;
 
   const razorpayOrderId = (order.razorpayOrderId ?? "").trim() || NULL_PLACEHOLDER;
-  const razorpayPaymentId = (order.razorpayPaymentId ?? "").trim() || NULL_PLACEHOLDER;
+  const razorpayPaymentId = (order.razorpayPaymentId ?? "").trim() || order.adminCapturedPaymentId ||NULL_PLACEHOLDER;
   const salesPersonName = (order.salesPersonName ?? "").trim();
   const showSalesPerson = Boolean(order.isAdminCreated && salesPersonName);
 
@@ -277,7 +277,7 @@ function Row(props: {
         </TableCell>
         <TableCell>
           <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-            {razorpayPaymentId}
+            {razorpayPaymentId }
           </Typography>
         </TableCell>
         <TableCell>

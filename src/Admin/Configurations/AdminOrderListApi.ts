@@ -106,6 +106,7 @@ export type AdminOrderListRecord = {
   logisticsAWBNumber?: string | null;
   isAdminCreated?: boolean;
   salesPersonName?: string | null;
+  adminCapturedPaymentId?: string | number | null;
 };
 
 export type AdminOrderListPagination = {
