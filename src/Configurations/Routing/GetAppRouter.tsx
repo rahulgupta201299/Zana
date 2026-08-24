@@ -43,6 +43,7 @@ const OrderSuccessful = lazyLoadPage(() => import("@/pages/OrderDetails/OrderSuc
 const AdminLogin = lazyLoadPage(() => import("@/Admin/Login"), Loading);
 const AdminDashboard = lazyLoadPage(() => import("@/Admin/Dashboard"), Loading);
 const AdminProducts = lazyLoadPage(() => import("@/Admin/Products"), Loading);
+const AdminBlogs = lazyLoadPage(() => import("@/Admin/Blogs"), Loading);
 const AdminActiveCarts = lazyLoadPage(() => import("@/Admin/ActiveCarts"), Loading);
 const AdminCreateOrder = lazyLoadPage(() => import("@/Admin/CreateOrder"), Loading);
 const AdminOrderList = lazyLoadPage(() => import("@/Admin/OrderList"), Loading);
@@ -104,6 +105,7 @@ export const routeObj: RouteObject[] = [
       { path: "login", element: AdminLogin },
       { path: "dashboard", element: AdminDashboard },
       { path: "products", element: AdminProducts },
+      { path: "blogs", element: AdminBlogs },
       { path: "active-carts", element: AdminActiveCarts },
       { path: "create-order", element: AdminCreateOrder },
       { path: "orders", element: AdminOrderList },
