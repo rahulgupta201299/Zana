@@ -13,8 +13,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Continental GT 650 / Interceptor 650",
-    title: "Continental GT 650 / Interceptor 650",
-    description: "Royal Enfield Gt Interceptor 650 Accessories",
+    title: "Shop Royal Enfield GT 650 & Interceptor 650 Bike Gear | Zana",
+    description: "The Continental GT 650 and Interceptor 650 have plenty of character. Add useful Royal Enfield accessories that make carrying gear and longer rides more convenient.",
     keywords:
       "Continental GT 650 / Interceptor 650, bike accessories, motorcycle accessories,  accessories,  Continental GT 650 / Interceptor 650,  Continental GT 650 / Interceptor 650 accessories, best accessories for  Continental GT 650 / Interceptor 650, buy  Continental GT 650 / Interceptor 650 accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/842543847_500X500.webp",},
@@ -22,8 +22,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Guerrilla 450",
-    title: "Guerrilla 450",
-    description: "Royal Enfield Guerrilla 450 Accessories",
+    title: "Shop Royal Enfield Guerrilla 450 Riding Gear & Accessories | Zana",
+    description: "Your next ride doesn't need a fixed plan. Zana's Royal Enfield Guerrilla 450 accessories help you to stay prepared with different kinds of journeys. Shop now!",
     keywords:
       "Guerrilla 450, bike accessories, motorcycle accessories,  accessories,  Guerrilla 450,  Guerrilla 450 accessories, best accessories for  Guerrilla 450, buy  Guerrilla 450 accessories, Zana Motorcycles",
     image:
@@ -110,8 +110,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zana",
     model: "Scrambler 400 X",
-    title: "Scrambler 400 X",
-    description: "Scrambler 400 X Accessories",
+    title: "Shop Triumph Scrambler 400 X Gear & Accessories | Zana",
+    description: "Take the Scrambler 400 X beyond the everyday route with accessories that help you carry what matters, protect the motorcycle and stay comfortable along the way.",
     keywords:
       "Scrambler 400 X, bike accessories, motorcycle accessories,  accessories,  Scrambler 400 X,  Scrambler 400 X accessories, best accessories for  Scrambler 400 X, buy  Scrambler 400 X accessories, Zana Motorcycles",
     image:
@@ -129,8 +129,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Super Meteor 650",
-    title: "Super Meteor 650",
-    description: "Royal Enfield Super Meteor 650 Accessories",
+    title: "Shop Royal Enfield Super Meteor 650 Bike Accessories | Zana",
+    description: "The destination can wait; the road is part of the ride. Set up your Royal Enfield Super Meteor 650 with accessories that make longer journeys more comfortable.",
     keywords:
       "Super Meteor 650, bike accessories, motorcycle accessories,  accessories,  Super Meteor 650,  Super Meteor 650 accessories, best accessories for  Super Meteor 650, buy  Super Meteor 650 accessories, Zana Motorcycles",
     image:
@@ -139,8 +139,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "Duke 390/250/200/390 Gen 3",
-    title: "Duke 390/250/200/390 Gen 3",
-    description: "KTM Duke 390/250/200/390 Gen 3 Accessories",
+    title: "Shop KTM Duke 200, 250 & 390 Riding Accessories | Zana",
+    description: "Keep the character of your Duke while adding the things you actually need on the road. Find accessories for KTM Duke 200, 250 and 390 models at Zana. Shop now!",
     keywords:
       "Duke 390/250/200/390 Gen 3, bike accessories, motorcycle accessories,  accessories,  Duke 390/250/200/390 Gen 3,  Duke 390/250/200/390 Gen 3 accessories, best accessories for  Duke 390/250/200/390 Gen 3, buy  Duke 390/250/200/390 Gen 3 accessories, Zana Motorcycles",
     image:
@@ -149,8 +149,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Bear 650",
-    title: "Bear 650",
-    description: "Royal Enfield Bear 650 Accessories",
+    title: "Shop Royal Enfield Bear 650 Bike Gear & Accessories | Zana",
+    description: "Your next Bear 650 ride could be a quick trip or an entire weekend. Choose Zana's accessories that make both kinds of journeys easier to handle. Shop now!",
     keywords:
       "Bear 650, bike accessories, motorcycle accessories,  accessories,  Bear 650,  Bear 650 accessories, best accessories for  Bear 650, buy  Bear 650 accessories, Zana Motorcycles",
     image:
@@ -159,8 +159,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "XPulse 200",
-    title: "XPulse 200",
-    description: "Hero Xpulse 200 Accessories",
+    title: "Shop Hero Xpulse 200 Riding Equipment & Accessories | Zana",
+    description: "A rough patch of road shouldn't change the plan. Choose Hero Xpulse 200 accessories that add useful protection, carrying options and touring practicality.",
     keywords:
       "XPulse 200, bike accessories, motorcycle accessories,  accessories,  XPulse 200,  XPulse 200 accessories, best accessories for  XPulse 200, buy  XPulse 200 accessories, Zana Motorcycles",
     image:
@@ -188,8 +188,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB350 HIGHNESS",
-    title: "CB350 HIGHNESS",
-    description: "Honda CB350 Accessories",
+    title: "Honda CB350 Highness Bike Accessories for Touring & More | Zana",
+    description: "From weekday rides to weekend highways, give your Honda CB350 Highness the accessories it needs for more comfortable and better-prepared journeys. Shop now!",
     keywords:
       "CB350 HIGHNESS, bike accessories, motorcycle accessories,  accessories,  CB350 HIGHNESS,  CB350 HIGHNESS accessories, best accessories for  CB350 HIGHNESS, buy  CB350 HIGHNESS accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/280732382_500X500.webp",},
@@ -216,8 +216,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB 350 2025",
-    title: "CB 350 2025",
-    description: "Honda CB 350 2025 Accessories",
+    title: "Shop Honda CB350 2025 Accessories for Touring & Protection | Zana",
+    description: "Thinking beyond the daily ride on your new CB350? Add Zana's Honda CB350 2025 accessories that bring protection, luggage options and comfort to longer journeys.",
     keywords:
       "CB 350 2025, bike accessories, motorcycle accessories,  accessories,  CB 350 2025,  CB 350 2025 accessories, best accessories for  CB 350 2025, buy  CB 350 2025 accessories, Zana Motorcycles",
     image:
@@ -265,8 +265,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Scram 411",
-    title: "Scram 411",
-    description: "Royal Enfield Scram 411 Accessories",
+    title: "Shop Royal Enfield Scram 411 Accessories for Mixed Roads | Zana",
+    description: "When the road turns from familiar to interesting, be ready. Equip your Scram 411 with accessories that support every rides, weekend trips and mixed-road adventures.",
     keywords:
       "Scram 411, bike accessories, motorcycle accessories,  accessories,  Scram 411,  Scram 411 accessories, best accessories for  Scram 411, buy  Scram 411 accessories, Zana Motorcycles",
     image:
@@ -275,8 +275,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB300F",
-    title: "CB300F",
-    description: "Honda CB300F Accessories",
+    title: "Shop Honda CB300F Riding Gear & Accessories | Zana",
+    description: "Heading out after work or early on Sunday? Give your Honda CB300F useful additions for luggage, protection and the everyday details that make riding easier.",
     keywords:
       "CB300F, bike accessories, motorcycle accessories,  accessories,  CB300F,  CB300F accessories, best accessories for  CB300F, buy  CB300F accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/460576659_500X500.webp",},
@@ -312,8 +312,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Meteor 350",
-    title: "Meteor 350",
-    description: "Royal Enfield Meteor 350 Accessories",
+    title: "Shop Royal Enfield Meteor 350 Ride Essentials & Accessories | Zana",
+    description: "Pack the essentials, protect your motorcycle and enjoy the miles ahead. Find Zana's Royal Enfield Meteor 350 accessories built around real touring needs. Shop now!",
     keywords:
       "Meteor 350, bike accessories, motorcycle accessories,  accessories,  Meteor 350,  Meteor 350 accessories, best accessories for  Meteor 350, buy  Meteor 350 accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/229479279_500X500.webp",},
@@ -351,8 +351,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "TVS",
     type: "zana",
     model: "Apache RTX 300",
-    title: "Apache RTX 300",
-    description: "Apache RTX 300 Accessories",
+    title: "Shop TVS Apache RTX 300 Accessories for Every Ride | Zana",
+    description: "Your Apache RTX 300 is ready for the road. Complete the setup with bike-specific accessories built around protection, touring needs and everyday practicality.",
     keywords:
       "Apache RTX 300, bike accessories, motorcycle accessories,  accessories,  Apache RTX 300,  Apache RTX 300 accessories, best accessories for  Apache RTX 300, buy  Apache RTX 300 accessories, Zana Motorcycles",
     image:
@@ -390,8 +390,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB200X",
-    title: "CB200X",
-    description: "Honda CB200X Accessories",
+    title: "Shop Honda CB200X Touring Gear & Bike Accessories | Zana",
+    description: "When the road changes, your CB200X should be ready. Choose Zana's Honda accessories that add practical utility without making the bike feel over-equipped.",
     keywords:
       "CB200X, bike accessories, motorcycle accessories,  accessories,  CB200X,  CB200X accessories, best accessories for  CB200X, buy  CB200X accessories, Zana Motorcycles",
     image:
@@ -410,8 +410,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "SUZUKI",
     type: "zana",
     model: "V Strom SX 250",
-    title: "V Strom SX 250",
-    description: "Suzuki V Storm Accessories",
+    title: "Shop Suzuki V-Strom SX 250 Accessories for Longer Rides | Zana",
+    description: "Your V-Strom SX 250 doesn't need much to become a better touring companion. Add the right accessories for carrying gear, protection and everyday riding comfort.",
     keywords:
       "V Strom SX 250, bike accessories, motorcycle accessories,  accessories,  V Strom SX 250,  V Strom SX 250 accessories, best accessories for  V Strom SX 250, buy  V Strom SX 250 accessories, Zana Motorcycles",
     image:
@@ -420,8 +420,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "X Pulse 210",
-    title: "X Pulse 210",
-    description: "Hero Xpulse 210 Accessories",
+    title: "Shop Hero X-Pulse 210 Accessories for Adventure Rides | Zana",
+    description: "When the road gets rough, the right setup matters. Choose Zana's Hero X-Pulse 210 accessories that add useful protection, carrying options and touring convenience.",
     keywords:
       "X Pulse 210, bike accessories, motorcycle accessories,  accessories,  X Pulse 210,  X Pulse 210 accessories, best accessories for  X Pulse 210, buy  X Pulse 210 accessories, Zana Motorcycles",
     image:
@@ -449,8 +449,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zpro",
     model: "Tiger 900 Rally Pro",
-    title: "Tiger 900 Rally Pro",
-    description: "Tiger 900 Rally Pro Accessories",
+    title: "Shop Triumph Tiger 900 Rally Pro Adventure Accessories | Zana",
+    description: "More distance, more gear and sometimes rougher roads. Triumph Tiger 900 Rally Pro accessories from Zana help you prepare for all three without unnecessary fuss.",
     keywords:
       "Tiger 900 Rally Pro, bike accessories, motorcycle accessories,  accessories,  Tiger 900 Rally Pro,  Tiger 900 Rally Pro accessories, best accessories for  Tiger 900 Rally Pro, buy  Tiger 900 Rally Pro accessories, Zana Motorcycles",
     image:
@@ -469,8 +469,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Himalayan 411 (2016-2020)",
-    title: "Himalayan 411 (2016-2020)",
-    description: "Royal Enfield Himalayan Accessories",
+    title: "Shop Royal Enfield Himalayan 411 Adventure Accessories | Zana",
+    description: "Mountain roads don't care how old your Himalayan is. Add Zana's Royal Enfield Himalayan 411 accessories & Protection Gear made for the journey ahead. Shop Now!",
     keywords:
       "Himalayan 411 (2016-2020), bike accessories, motorcycle accessories,  accessories,  Himalayan 411 (2016-2020),  Himalayan 411 (2016-2020) accessories, best accessories for  Himalayan 411 (2016-2020), buy  Himalayan 411 (2016-2020) accessories, Zana Motorcycles",
     image:
@@ -517,8 +517,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "REBEL 500",
-    title: "REBEL 500",
-    description: "Honda Rebel 500 Accessories",
+    title: "Shop Honda Rebel 500 Riding Gear & Cruiser Accessories | Zana",
+    description: "Keep the clean look of your Rebel 500 while adding useful function. Find Honda Rebel 500 accessories for luggage, protection and relaxed road trips. Shop now!",
     keywords:
       "REBEL 500, bike accessories, motorcycle accessories,  accessories,  REBEL 500,  REBEL 500 accessories, best accessories for  REBEL 500, buy  REBEL 500 accessories, Zana Motorcycles",
     image:
@@ -537,8 +537,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Hunter 350",
-    title: "Hunter 350",
-    description: "Royal Enfield Hunter 350 Accessories",
+    title: "Shop Royal Enfield Hunter 350 Accessories for Dream Ride | Zana",
+    description: "Heading out on your Hunter 350 this weekend? Get the accessories that make carrying your essentials, protecting the bike and enjoying the ride a little easier.",
     keywords:
       "Hunter 350, bike accessories, motorcycle accessories,  accessories,  Hunter 350,  Hunter 350 accessories, best accessories for  Hunter 350, buy  Hunter 350 accessories, Zana Motorcycles",
     image:
@@ -547,8 +547,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zana",
     model: "Speed 400",
-    title: "Speed 400",
-    description: "Speed 400 Accessories",
+    title: "Shop Triumph Speed 400 Accessories for City & Touring | Zana",
+    description: "From the morning Routine to a weekend highway run, equip your Triumph Speed 400 with Zana's accessories that make each journey easier to manage. Shop now!",
     keywords:
       "Speed 400, bike accessories, motorcycle accessories,  accessories,  Speed 400,  Speed 400 accessories, best accessories for  Speed 400, buy  Speed 400 accessories, Zana Motorcycles",
     image:
@@ -634,8 +634,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zpro",
     model: "Tiger 900 GT",
-    title: "Tiger 900 GT",
-    description: "Tiger 900 GT Accessories",
+    title: "Shop Triumph Tiger 900 GT Riding Equipment & Accessories | Zana",
+    description: "The next destination might be far away, but preparation starts at home. Equip your Triumph Tiger 900 GT with practical accessories before setting off. Shop now!",
     keywords:
       "Tiger 900 GT, bike accessories, motorcycle accessories,  accessories,  Tiger 900 GT,  Tiger 900 GT accessories, best accessories for  Tiger 900 GT, buy  Tiger 900 GT accessories, Zana Motorcycles",
     image:
@@ -654,8 +654,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "YEZDI",
     type: "zana",
     model: "Yezdi Adventure",
-    title: "Yezdi Adventure",
-    description: "Yezdi Adventure Accessories",
+    title: "Shop Yezdi Adventure Riding Accessories & Essentials | Zana",
+    description: "The Yezdi Adventure is happiest when the route gets interesting. Add Zana's accessories for carrying gear, protecting the bike and making longer rides easier.",
     keywords:
       "Yezdi Adventure, bike accessories, motorcycle accessories,  accessories,  Yezdi Adventure,  Yezdi Adventure accessories, best accessories for  Yezdi Adventure, buy  Yezdi Adventure accessories, Zana Motorcycles",
     image:
@@ -664,8 +664,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "Xoom 160",
-    title: "Xoom 160",
-    description: "Hero Xoom 160Accessories",
+    title: "Shop Hero Xoom 160 Accessories for Daily Riding | Zana",
+    description: "From busy city streets to weekend outings, set up your Hero Xoom 160 with accessories that make carrying, riding and everyday use more convenient. Shop now!",
     keywords:
       "Xoom 160, bike accessories, motorcycle accessories,  accessories,  Xoom 160,  Xoom 160 accessories, best accessories for  Xoom 160, buy  Xoom 160 accessories, Zana Motorcycles",
     image:
@@ -674,8 +674,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB350 RS",
-    title: "CB350 RS",
-    description: "Honda CB350 RS Accessories",
+    title: "Honda CB350 RS Bike Accessories for Touring & Protection | Zana",
+    description: "Make your CB350 RS ready for more than the daily ride with practical accessories that give you extra protection, carrying space and riding convenience.",
     keywords:
       "CB350 RS, bike accessories, motorcycle accessories,  accessories,  CB350 RS,  CB350 RS accessories, best accessories for  CB350 RS, buy  CB350 RS accessories, Zana Motorcycles",
     image:
@@ -684,8 +684,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Classic 350 Reborn",
-    title: "Classic 350 Reborn",
-    description: "Royal Enfield Classic Reborn Accessories",
+    title: "Shop Classic 350 Reborn Touring Accessories for Next Ride | Zana",
+    description: "The Classic 350 Reborn already has its own character. Add Zana's accessories that make everyday riding, carrying your gear and longer journeys more convenient.",
     keywords:
       "Classic 350 Reborn, bike accessories, motorcycle accessories,  accessories,  Classic 350 Reborn,  Classic 350 Reborn accessories, best accessories for  Classic 350 Reborn, buy  Classic 350 Reborn accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/715257951_500X500.webp",},
@@ -693,8 +693,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "Adventure 250/390/390X (2025)",
-    title: "Adventure 250/390/390X (2025)",
-    description: "KTM Adventure 250/390/390X (2025) Accessories",
+    title: "Shop KTM Adventure 250 & 390 Accessories for Long Rides | Zana",
+    description: "Highway, backroad or rougher terrain, the route can change quickly. Equip your 2025 KTM Adventure with accessories made for real touring needs. Shop Now!",
     keywords:
       "Adventure 250/390/390X (2025), bike accessories, motorcycle accessories,  accessories,  Adventure 250/390/390X (2025),  Adventure 250/390/390X (2025) accessories, best accessories for  Adventure 250/390/390X (2025), buy  Adventure 250/390/390X (2025) accessories, Zana Motorcycles",
     image:
@@ -703,8 +703,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "ADVENTURE 250/390/390X/390 Rally",
-    title: "ADVENTURE 250/390/390X/390 Rally",
-    description: "KTM Adventure 250 Accessories, KTM 390 Adventure Accessories",
+    title: "Shop KTM Adventure 250 & 390 Bike Accessories | Zana",
+    description: "The route doesn't always go according to plan. Equip your KTM Adventure 250 or 390 with accessories that make changing roads and longer journeys easier.",
     keywords:
       "ADVENTURE 250/390/390X/390 Rally, bike accessories, motorcycle accessories,  accessories,  ADVENTURE 250/390/390X/390 Rally,  ADVENTURE 250/390/390X/390 Rally accessories, best accessories for  ADVENTURE 250/390/390X/390 Rally, buy  ADVENTURE 250/390/390X/390 Rally accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/279845362_500X500.webp",},
@@ -732,8 +732,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "KAWASAKI",
     type: "zana",
     model: "KLX 230",
-    title: "KLX 230",
-    description: "Kawasaki KLX 230 Accessories",
+    title: "Shop Kawasaki KLX 230 Bike Gear & Accessories | Zana",
+    description: "The next road may be rough, muddy or completely unfamiliar. Prepare your KLX 230 with useful accessories for protection, carrying needs and adventure riding.",
     keywords:
       "KLX 230, bike accessories, motorcycle accessories,  accessories,  KLX 230,  KLX 230 accessories, best accessories for  KLX 230, buy  KLX 230 accessories, Zana Motorcycles",
     image:
@@ -742,8 +742,8 @@ export const STAGING_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Himalayan 411 BS6 (2021-23)",
-    title: "Himalayan 411 BS6 (2021-23)",
-    description: "Royal Enfield Himalayan Accessories",
+    title: "Shop Royal Enfield Himalayan 411 Riding Gear & Accessories | Zana",
+    description: "Heading into the hills or planning a long-distance trip? Royal Enfield Himalayan 411 accessories help you carry your essentials and stay better prepared on the road.",
     keywords:
       "Himalayan 411 BS6 (2021-23), bike accessories, motorcycle accessories,  accessories,  Himalayan 411 BS6 (2021-23),  Himalayan 411 BS6 (2021-23) accessories, best accessories for  Himalayan 411 BS6 (2021-23), buy  Himalayan 411 BS6 (2021-23) accessories, Zana Motorcycles",
     image: "https://d3s3r7gevtfrvd.cloudfront.net/bikes/981416670_500X500.webp",},
@@ -794,8 +794,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Super Meteor 650",
-    title: "Super Meteor 650",
-    description: "Royal Enfield Super Meteor 650 Accessories",
+    title: "Shop Royal Enfield Super Meteor 650 Bike Accessories | Zana",
+    description: "The destination can wait; the road is part of the ride. Set up your Royal Enfield Super Meteor 650 with accessories that make longer journeys more comfortable.",
     keywords:
       "Super Meteor 650, bike accessories, motorcycle accessories,  accessories,  Super Meteor 650,  Super Meteor 650 accessories, best accessories for  Super Meteor 650, buy  Super Meteor 650 accessories, Zana Motorcycles",
     image:
@@ -805,8 +805,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "Duke 390/250/200/390 Gen 3",
-    title: "Duke 390/250/200/390 Gen 3",
-    description: "KTM Duke 390/250/200/390 Gen 3 Accessories",
+    title: "Shop KTM Duke 200, 250 & 390 Riding Accessories | Zana",
+    description: "Keep the character of your Duke while adding the things you actually need on the road. Find accessories for KTM Duke 200, 250 and 390 models at Zana. Shop now!",
     keywords:
       "Duke 390/250/200/390 Gen 3, bike accessories, motorcycle accessories,  accessories,  Duke 390/250/200/390 Gen 3,  Duke 390/250/200/390 Gen 3 accessories, best accessories for  Duke 390/250/200/390 Gen 3, buy  Duke 390/250/200/390 Gen 3 accessories, Zana Motorcycles",
     image:
@@ -859,8 +859,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "YEZDI",
     type: "zana",
     model: "Yezdi Adventure",
-    title: "Yezdi Adventure",
-    description: "Yezdi Adventure Accessories",
+    title: "Shop Yezdi Adventure Riding Accessories & Essentials | Zana",
+    description: "The Yezdi Adventure is happiest when the route gets interesting. Add Zana's accessories for carrying gear, protecting the bike and making longer rides easier.",
     keywords:
       "Yezdi Adventure, bike accessories, motorcycle accessories,  accessories,  Yezdi Adventure,  Yezdi Adventure accessories, best accessories for  Yezdi Adventure, buy  Yezdi Adventure accessories, Zana Motorcycles",
     image:
@@ -892,8 +892,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Continental GT 650 / Interceptor 650",
-    title: "Continental GT 650 / Interceptor 650",
-    description: "Royal Enfield Gt Interceptor 650 Accessories",
+    title: "Shop Royal Enfield GT 650 & Interceptor 650 Bike Gear | Zana",
+    description: "The Continental GT 650 and Interceptor 650 have plenty of character. Add useful Royal Enfield accessories that make carrying gear and longer rides more convenient.",
     keywords:
       "Continental GT 650 / Interceptor 650, bike accessories, motorcycle accessories,  accessories,  Continental GT 650 / Interceptor 650,  Continental GT 650 / Interceptor 650 accessories, best accessories for  Continental GT 650 / Interceptor 650, buy  Continental GT 650 / Interceptor 650 accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/842543847_500X500.webp",
@@ -902,8 +902,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Guerrilla 450",
-    title: "Guerrilla 450",
-    description: "Royal Enfield Guerrilla 450 Accessories",
+    title: "Shop Royal Enfield Guerrilla 450 Riding Gear & Accessories | Zana",
+    description: "Your next ride doesn't need a fixed plan. Zana's Royal Enfield Guerrilla 450 accessories help you to stay prepared with different kinds of journeys. Shop now!",
     keywords:
       "Guerrilla 450, bike accessories, motorcycle accessories,  accessories,  Guerrilla 450,  Guerrilla 450 accessories, best accessories for  Guerrilla 450, buy  Guerrilla 450 accessories, Zana Motorcycles",
     image:
@@ -913,8 +913,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Bear 650",
-    title: "Bear 650",
-    description: "Royal Enfield Bear 650 Accessories",
+    title: "Shop Royal Enfield Bear 650 Bike Gear & Accessories | Zana",
+    description: "Your next Bear 650 ride could be a quick trip or an entire weekend. Choose Zana's accessories that make both kinds of journeys easier to handle. Shop now!",
     keywords:
       "Bear 650, bike accessories, motorcycle accessories,  accessories,  Bear 650,  Bear 650 accessories, best accessories for  Bear 650, buy  Bear 650 accessories, Zana Motorcycles",
     image:
@@ -924,8 +924,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "XPulse 200",
-    title: "XPulse 200",
-    description: "Hero Xpulse 200 Accessories",
+    title: "Shop Hero Xpulse 200 Riding Equipment & Accessories | Zana",
+    description: "A rough patch of road shouldn't change the plan. Choose Hero Xpulse 200 accessories that add useful protection, carrying options and touring practicality.",
     keywords:
       "XPulse 200, bike accessories, motorcycle accessories,  accessories,  XPulse 200,  XPulse 200 accessories, best accessories for  XPulse 200, buy  XPulse 200 accessories, Zana Motorcycles",
     image:
@@ -978,8 +978,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zpro",
     model: "Tiger 900 GT",
-    title: "Tiger 900 GT",
-    description: "Tiger 900 GT Accessories",
+    title: "Shop Triumph Tiger 900 GT Riding Equipment & Accessories | Zana",
+    description: "The next destination might be far away, but preparation starts at home. Equip your Triumph Tiger 900 GT with practical accessories before setting off. Shop now!",
     keywords:
       "Tiger 900 GT, bike accessories, motorcycle accessories,  accessories,  Tiger 900 GT,  Tiger 900 GT accessories, best accessories for  Tiger 900 GT, buy  Tiger 900 GT accessories, Zana Motorcycles",
     image:
@@ -989,8 +989,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB350 HIGHNESS",
-    title: "CB350 HIGHNESS",
-    description: "Honda CB350 Accessories",
+    title: "Honda CB350 Highness Bike Accessories for Touring & More | Zana",
+    description: "From weekday rides to weekend highways, give your Honda CB350 Highness the accessories it needs for more comfortable and better-prepared journeys. Shop now!",
     keywords:
       "CB350 HIGHNESS, bike accessories, motorcycle accessories,  accessories,  CB350 HIGHNESS,  CB350 HIGHNESS accessories, best accessories for  CB350 HIGHNESS, buy  CB350 HIGHNESS accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/280732382_500X500.webp",
@@ -1029,8 +1029,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zpro",
     model: "Tiger 900 Rally Pro",
-    title: "Tiger 900 Rally Pro",
-    description: "Tiger 900 Rally Pro Accessories",
+    title: "Shop Triumph Tiger 900 Rally Pro Adventure Accessories | Zana",
+    description: "More distance, more gear and sometimes rougher roads. Triumph Tiger 900 Rally Pro accessories from Zana help you prepare for all three without unnecessary fuss.",
     keywords:
       "Tiger 900 Rally Pro, bike accessories, motorcycle accessories,  accessories,  Tiger 900 Rally Pro,  Tiger 900 Rally Pro accessories, best accessories for  Tiger 900 Rally Pro, buy  Tiger 900 Rally Pro accessories, Zana Motorcycles",
     image:
@@ -1072,8 +1072,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB300F",
-    title: "CB300F",
-    description: "Honda CB300F Accessories",
+    title: "Shop Honda CB300F Riding Gear & Accessories | Zana",
+    description: "Heading out after work or early on Sunday? Give your Honda CB300F useful additions for luggage, protection and the everyday details that make riding easier.",
     keywords:
       "CB300F, bike accessories, motorcycle accessories,  accessories,  CB300F,  CB300F accessories, best accessories for  CB300F, buy  CB300F accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/460576659_500X500.webp",
@@ -1092,8 +1092,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB200X",
-    title: "CB200X",
-    description: "Honda CB200X Accessories",
+    title: "Shop Honda CB200X Touring Gear & Bike Accessories | Zana",
+    description: "When the road changes, your CB200X should be ready. Choose Zana's Honda accessories that add practical utility without making the bike feel over-equipped.",
     keywords:
       "CB200X, bike accessories, motorcycle accessories,  accessories,  CB200X,  CB200X accessories, best accessories for  CB200X, buy  CB200X accessories, Zana Motorcycles",
     image:
@@ -1113,8 +1113,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "TVS",
     type: "zana",
     model: "Apache RTX 300",
-    title: "Apache RTX 300",
-    description: "Apache RTX 300 Accessories",
+    title: "Shop TVS Apache RTX 300 Accessories for Every Ride | Zana",
+    description: "Your Apache RTX 300 is ready for the road. Complete the setup with bike-specific accessories built around protection, touring needs and everyday practicality.",
     keywords:
       "Apache RTX 300, bike accessories, motorcycle accessories,  accessories,  Apache RTX 300,  Apache RTX 300 accessories, best accessories for  Apache RTX 300, buy  Apache RTX 300 accessories, Zana Motorcycles",
     image:
@@ -1146,8 +1146,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Scram 411",
-    title: "Scram 411",
-    description: "Royal Enfield Scram 411 Accessories",
+    title: "Shop Royal Enfield Scram 411 Accessories for Mixed Roads | Zana",
+    description: "When the road turns from familiar to interesting, be ready. Equip your Scram 411 with accessories that support every rides, weekend trips and mixed-road adventures.",
     keywords:
       "Scram 411, bike accessories, motorcycle accessories,  accessories,  Scram 411,  Scram 411 accessories, best accessories for  Scram 411, buy  Scram 411 accessories, Zana Motorcycles",
     image:
@@ -1168,8 +1168,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "KAWASAKI",
     type: "zana",
     model: "KLX 230",
-    title: "KLX 230",
-    description: "Kawasaki KLX 230 Accessories",
+    title: "Shop Kawasaki KLX 230 Bike Gear & Accessories | Zana",
+    description: "The next road may be rough, muddy or completely unfamiliar. Prepare your KLX 230 with useful accessories for protection, carrying needs and adventure riding.",
     keywords:
       "KLX 230, bike accessories, motorcycle accessories,  accessories,  KLX 230,  KLX 230 accessories, best accessories for  KLX 230, buy  KLX 230 accessories, Zana Motorcycles",
     image:
@@ -1179,8 +1179,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zana",
     model: "Speed 400",
-    title: "Speed 400",
-    description: "Speed 400 Accessories",
+    title: "Shop Triumph Speed 400 Accessories for City & Touring | Zana",
+    description: "From the morning Routine to a weekend highway run, equip your Triumph Speed 400 with Zana's accessories that make each journey easier to manage. Shop now!",
     keywords:
       "Speed 400, bike accessories, motorcycle accessories,  accessories,  Speed 400,  Speed 400 accessories, best accessories for  Speed 400, buy  Speed 400 accessories, Zana Motorcycles",
     image:
@@ -1233,8 +1233,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "REBEL 500",
-    title: "REBEL 500",
-    description: "Honda Rebel 500 Accessories",
+    title: "Shop Honda Rebel 500 Riding Gear & Cruiser Accessories | Zana",
+    description: "Keep the clean look of your Rebel 500 while adding useful function. Find Honda Rebel 500 accessories for luggage, protection and relaxed road trips. Shop now!",
     keywords:
       "REBEL 500, bike accessories, motorcycle accessories,  accessories,  REBEL 500,  REBEL 500 accessories, best accessories for  REBEL 500, buy  REBEL 500 accessories, Zana Motorcycles",
     image:
@@ -1255,8 +1255,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Meteor 350",
-    title: "Meteor 350",
-    description: "Royal Enfield Meteor 350 Accessories",
+    title: "Shop Royal Enfield Meteor 350 Ride Essentials & Accessories | Zana",
+    description: "Pack the essentials, protect your motorcycle and enjoy the miles ahead. Find Zana's Royal Enfield Meteor 350 accessories built around real touring needs. Shop now!",
     keywords:
       "Meteor 350, bike accessories, motorcycle accessories,  accessories,  Meteor 350,  Meteor 350 accessories, best accessories for  Meteor 350, buy  Meteor 350 accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/229479279_500X500.webp",
@@ -1287,8 +1287,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Classic 350 Reborn",
-    title: "Classic 350 Reborn",
-    description: "Royal Enfield Classic Reborn Accessories",
+    title: "Shop Classic 350 Reborn Touring Accessories for Next Ride | Zana",
+    description: "The Classic 350 Reborn already has its own character. Add Zana's accessories that make everyday riding, carrying your gear and longer journeys more convenient.",
     keywords:
       "Classic 350 Reborn, bike accessories, motorcycle accessories,  accessories,  Classic 350 Reborn,  Classic 350 Reborn accessories, best accessories for  Classic 350 Reborn, buy  Classic 350 Reborn accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/715257951_500X500.webp",
@@ -1317,8 +1317,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB 350 2025",
-    title: "CB 350 2025",
-    description: "Honda CB 350 2025 Accessories",
+    title: "Shop Honda CB350 2025 Accessories for Touring & Protection | Zana",
+    description: "Thinking beyond the daily ride on your new CB350? Add Zana's Honda CB350 2025 accessories that bring protection, luggage options and comfort to longer journeys.",
     keywords:
       "CB 350 2025, bike accessories, motorcycle accessories,  accessories,  CB 350 2025,  CB 350 2025 accessories, best accessories for  CB 350 2025, buy  CB 350 2025 accessories, Zana Motorcycles",
     image:
@@ -1370,8 +1370,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Himalayan 411 (2016-2020)",
-    title: "Himalayan 411 (2016-2020)",
-    description: "Royal Enfield Himalayan Accessories",
+    title: "Shop Royal Enfield Himalayan 411 Adventure Accessories | Zana",
+    description: "Mountain roads don't care how old your Himalayan is. Add Zana's Royal Enfield Himalayan 411 accessories & Protection Gear made for the journey ahead. Shop Now!",
     keywords:
       "Himalayan 411 (2016-2020), bike accessories, motorcycle accessories,  accessories,  Himalayan 411 (2016-2020),  Himalayan 411 (2016-2020) accessories, best accessories for  Himalayan 411 (2016-2020), buy  Himalayan 411 (2016-2020) accessories, Zana Motorcycles",
     image:
@@ -1413,8 +1413,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Hunter 350",
-    title: "Hunter 350",
-    description: "Royal Enfield Hunter 350 Accessories",
+    title: "Shop Royal Enfield Hunter 350 Accessories for Dream Ride | Zana",
+    description: "Heading out on your Hunter 350 this weekend? Get the accessories that make carrying your essentials, protecting the bike and enjoying the ride a little easier.",
     keywords:
       "Hunter 350, bike accessories, motorcycle accessories,  accessories,  Hunter 350,  Hunter 350 accessories, best accessories for  Hunter 350, buy  Hunter 350 accessories, Zana Motorcycles",
     image:
@@ -1457,8 +1457,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "SUZUKI",
     type: "zana",
     model: "V Strom SX 250",
-    title: "V Strom SX 250",
-    description: "Suzuki V Storm Accessories",
+    title: "Shop Suzuki V-Strom SX 250 Accessories for Longer Rides | Zana",
+    description: "Your V-Strom SX 250 doesn't need much to become a better touring companion. Add the right accessories for carrying gear, protection and everyday riding comfort.",
     keywords:
       "V Strom SX 250, bike accessories, motorcycle accessories,  accessories,  V Strom SX 250,  V Strom SX 250 accessories, best accessories for  V Strom SX 250, buy  V Strom SX 250 accessories, Zana Motorcycles",
     image:
@@ -1468,8 +1468,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "X Pulse 210",
-    title: "X Pulse 210",
-    description: "Hero Xpulse 210 Accessories",
+    title: "Shop Hero X-Pulse 210 Accessories for Adventure Rides | Zana",
+    description: "When the road gets rough, the right setup matters. Choose Zana's Hero X-Pulse 210 accessories that add useful protection, carrying options and touring convenience.",
     keywords:
       "X Pulse 210, bike accessories, motorcycle accessories,  accessories,  X Pulse 210,  X Pulse 210 accessories, best accessories for  X Pulse 210, buy  X Pulse 210 accessories, Zana Motorcycles",
     image:
@@ -1512,8 +1512,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "TRIUMPH",
     type: "zana",
     model: "Scrambler 400 X",
-    title: "Scrambler 400 X",
-    description: "Scrambler 400 X Accessories",
+    title: "Shop Triumph Scrambler 400 X Gear & Accessories | Zana",
+    description: "Take the Scrambler 400 X beyond the everyday route with accessories that help you carry what matters, protect the motorcycle and stay comfortable along the way.",
     keywords:
       "Scrambler 400 X, bike accessories, motorcycle accessories,  accessories,  Scrambler 400 X,  Scrambler 400 X accessories, best accessories for  Scrambler 400 X, buy  Scrambler 400 X accessories, Zana Motorcycles",
     image:
@@ -1523,8 +1523,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HERO",
     type: "zana",
     model: "Xoom 160",
-    title: "Xoom 160",
-    description: "Hero Xoom 160Accessories",
+    title: "Shop Hero Xoom 160 Accessories for Daily Riding | Zana",
+    description: "From busy city streets to weekend outings, set up your Hero Xoom 160 with accessories that make carrying, riding and everyday use more convenient. Shop now!",
     keywords:
       "Xoom 160, bike accessories, motorcycle accessories,  accessories,  Xoom 160,  Xoom 160 accessories, best accessories for  Xoom 160, buy  Xoom 160 accessories, Zana Motorcycles",
     image:
@@ -1545,8 +1545,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "ROYAL ENFIELD",
     type: "zana",
     model: "Himalayan 411 BS6 (2021-23)",
-    title: "Himalayan 411 BS6 (2021-23)",
-    description: "Royal Enfield Himalayan Accessories",
+    title: "Shop Royal Enfield Himalayan 411 Riding Gear & Accessories | Zana",
+    description: "Heading into the hills or planning a long-distance trip? Royal Enfield Himalayan 411 accessories help you carry your essentials and stay better prepared on the road.",
     keywords:
       "Himalayan 411 BS6 (2021-23), bike accessories, motorcycle accessories,  accessories,  Himalayan 411 BS6 (2021-23),  Himalayan 411 BS6 (2021-23) accessories, best accessories for  Himalayan 411 BS6 (2021-23), buy  Himalayan 411 BS6 (2021-23) accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/981416670_500X500.webp",
@@ -1577,8 +1577,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "Adventure 250/390/390X (2025)",
-    title: "Adventure 250/390/390X (2025)",
-    description: "KTM Adventure 250/390/390X (2025) Accessories",
+    title: "Shop KTM Adventure 250 & 390 Accessories for Long Rides | Zana",
+    description: "Highway, backroad or rougher terrain, the route can change quickly. Equip your 2025 KTM Adventure with accessories made for real touring needs. Shop Now!",
     keywords:
       "Adventure 250/390/390X (2025), bike accessories, motorcycle accessories,  accessories,  Adventure 250/390/390X (2025),  Adventure 250/390/390X (2025) accessories, best accessories for  Adventure 250/390/390X (2025), buy  Adventure 250/390/390X (2025) accessories, Zana Motorcycles",
     image:
@@ -1610,8 +1610,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "KTM",
     type: "zana",
     model: "ADVENTURE 250/390/390X/390 Rally",
-    title: "ADVENTURE 250/390/390X/390 Rally",
-    description: "KTM Adventure 250 Accessories, KTM 390 Adventure Accessories",
+    title: "Shop KTM Adventure 250 & 390 Bike Accessories | Zana",
+    description: "The route doesn't always go according to plan. Equip your KTM Adventure 250 or 390 with accessories that make changing roads and longer journeys easier.",
     keywords:
       "ADVENTURE 250/390/390X/390 Rally, bike accessories, motorcycle accessories,  accessories,  ADVENTURE 250/390/390X/390 Rally,  ADVENTURE 250/390/390X/390 Rally accessories, best accessories for  ADVENTURE 250/390/390X/390 Rally, buy  ADVENTURE 250/390/390X/390 Rally accessories, Zana Motorcycles",
     image: "https://d1bw1i3fxlc6zi.cloudfront.net/bikes/279845362_500X500.webp",
@@ -1620,8 +1620,8 @@ export const PRODUCTION_BIKE_SEO_MAP = {
     brand: "HONDA",
     type: "zana",
     model: "CB350 RS",
-    title: "CB350 RS",
-    description: "Honda CB350 RS Accessories",
+    title: "Honda CB350 RS Bike Accessories for Touring & Protection | Zana",
+    description: "Make your CB350 RS ready for more than the daily ride with practical accessories that give you extra protection, carrying space and riding convenience.",
     keywords:
       "CB350 RS, bike accessories, motorcycle accessories,  accessories,  CB350 RS,  CB350 RS accessories, best accessories for  CB350 RS, buy  CB350 RS accessories, Zana Motorcycles",
     image:
