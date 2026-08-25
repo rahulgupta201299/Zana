@@ -95,13 +95,10 @@ const BlogDetail = () => {
                   </div>
 
                   <div
-                    className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
-                   dangerouslySetInnerHTML={{
-                   __html: blogDetails?.content
-                   ?.replace(/\r\n/g, "<br />")
-                   ?.replace(/\n/g, "<br />")
-                   ?.replace(/\r/g, "<br />") ?? "",
-             }}
+                    className="blog-content"
+                    dangerouslySetInnerHTML={{
+                      __html: blogDetails?.content || "",
+                    }}
                   />
                 </>
               )}
