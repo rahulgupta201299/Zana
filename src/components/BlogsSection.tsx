@@ -10,6 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 
+function stripHtml(value?: string): string {
+  if (!value) return "";
+  const documentValue = new DOMParser().parseFromString(value, "text/html");
+  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
+}
+
 const BlogsSection = () => {
   const blogList = useSelector(getListOfBlogs);
 
@@ -64,7 +70,7 @@ const BlogsSection = () => {
               <div className="relative inline-block max-w-full mb-4 rounded-lg overflow-hidden">
                 <img
                   src={blog?.imageUrl}
-                  alt={blog?.title}
+                  alt={stripHtml(blog?.title)}
                   width={360}
                   height={200}
                   className="w-full h-auto object-contain"
@@ -73,12 +79,12 @@ const BlogsSection = () => {
 
               {/* Title */}
               <h3 className="text-base md:text-xl font-bold text-white mb-3 leading-tight">
-                {blog?.title}
+                {stripHtml(blog?.title)}
               </h3>
 
               {/* Description */}
               <p className="text-white/80 mb-4 leading-relaxed text-xs md:text-sm flex-grow">
-                {blog?.description}
+                {stripHtml(blog?.description)}
               </p>
 
               {/* Button */}
