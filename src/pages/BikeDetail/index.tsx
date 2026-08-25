@@ -321,8 +321,8 @@ const BikeDetailPage = () => {
 
   
   const {
-    name: modelName = seoData?.title || "",
-    description = seoData?.description || "",
+    name: modelName = seoData?.model || "",
+    description = "",
     type = "",
     imageUrl = seoData?.image || "",
     brand: { name: brandName = "" } = {},
@@ -349,12 +349,10 @@ const BikeDetailPage = () => {
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <SeoMeta
         title={
-          modelName
-            ? `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`
-            : `${seoData?.title || "Bike"} Accessories | Zana Motorcycles`
+          seoData?.title ? seoData.title : `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`
         }
         description={
-          description ||
+          seoData?.description ||
           `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
         }
         image={imageUrl || seoData?.image}
