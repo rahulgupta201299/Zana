@@ -82,7 +82,7 @@ const BlogDetail = () => {
               ) : (
                 <>
                   <div
-                    className="text-white text-4xl md:text-5xl font-bold mb-6"
+                    className="blog-title text-white text-4xl md:text-5xl font-bold mb-6"
                     dangerouslySetInnerHTML={{ __html: blogDetails?.title || "" }}
                   />
 
@@ -105,7 +105,7 @@ const BlogDetail = () => {
             </div>
 
             {/* Right Side - Related Reads */}
-            <div className="lg:col-span-1">
+            {/* <div className="lg:col-span-1">
               <div
                 className="bg-related-reads-gradient rounded-lg p-6 min-h-[800px] flex flex-col"
                 style={{
@@ -144,7 +144,7 @@ const BlogDetail = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

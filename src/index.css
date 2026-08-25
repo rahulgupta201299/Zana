@@ -179,8 +179,25 @@ All colors MUST be HSL.
   line-height: 1.75;
 }
 
+.blog-title,
+.blog-title [style*="color: black"],
+.blog-title [style*="color:#000"],
+.blog-title [style*="color: #000"],
+.blog-title [style*="color: rgb(0, 0, 0)"],
+.blog-title [style*="color: rgba(0, 0, 0"] {
+  color: #ffffff !important;
+}
+
+.blog-content [style*="color: black"],
+.blog-content [style*="color:#000"],
+.blog-content [style*="color: #000"],
+.blog-content [style*="color: rgb(0, 0, 0)"],
+.blog-content [style*="color: rgba(0, 0, 0"] {
+  color: #e5e7eb !important;
+}
+
 .blog-content a {
-  color: #60a5fa;
+  color: #4ade80;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
