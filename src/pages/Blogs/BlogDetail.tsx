@@ -1,4 +1,5 @@
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
+import { isProduction } from "@/Configurations/env";
 import { blogDetailsName, fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { getBlogDetail, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
 import getBlogDetailServiceAction from "@/Redux/Blogs/Services/GetBlogDetail";
@@ -10,9 +11,14 @@ import {
   BlogDetailsSkeleton,
   RelatedReadsSkeleton,
 } from "@/components/Skeleton/BlogDetail";
+import { SeoMeta } from "@/components/SeoMeta";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  PRODUCTION_BLOG_SEO_MAP,
+  STAGING_BLOG_SEO_MAP,
+} from "./BLOG_SEO_MAPS";
 
 function stripHtml(value?: string): string {
   if (!value) return "";
@@ -70,8 +76,22 @@ const BlogDetail = () => {
     getBlogList(1);
   }, [id]);
 
+  // Resolve SEO metadata: prefer the static map entry for this blog ID,
+  // falling back to the blog's own title / content excerpt.
+  const blogSeoMap = isProduction ? PRODUCTION_BLOG_SEO_MAP : STAGING_BLOG_SEO_MAP;
+  const seoEntry = id ? blogSeoMap[id] : undefined;
+  const seoTitle = seoEntry?.title;
+  const seoDescription = seoEntry?.description
+  const seoKeywords = seoEntry?.keywords;
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
+      <SeoMeta
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        type="website"
+      />
       <div className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
