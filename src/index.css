@@ -173,6 +173,116 @@ All colors MUST be HSL.
   max-width: 6rem;
 }
 
+.blog-content {
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.blog-content a {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+  color: #ffffff;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.blog-content h1 {
+  font-size: 2rem;
+  margin: 0 0 1rem;
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.blog-content h3 {
+  font-size: 1.35rem;
+  margin: 1.5rem 0 0.65rem;
+}
+
+.blog-content h4 {
+  font-size: 1.15rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.blog-content p {
+  color: #d1d5db;
+  margin: 0 0 1.25rem;
+}
+
+.blog-content ul,
+.blog-content ol {
+  color: #d1d5db;
+  margin: 0 0 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.blog-content ul {
+  list-style: disc;
+}
+
+.blog-content ol {
+  list-style: decimal;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-content img {
+  border-radius: 0.5rem;
+  display: block;
+  height: auto;
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+
+.blog-content table {
+  border-collapse: collapse;
+  display: block;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.blog-content td,
+.blog-content th {
+  border: 1px solid #4b5563;
+  color: #d1d5db;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  min-width: 120px;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.blog-content tr:first-of-type td,
+.blog-content th {
+  background: #27272a;
+  color: #ffffff;
+  font-weight: 750;
+}
+
+@media (min-width: 768px) {
+  .blog-content h1 {
+    font-size: 2.75rem;
+  }
+
+  .blog-content h2 {
+    font-size: 2rem;
+  }
+}
+
 /* Prevent horizontal scroll on mobile */
 html, body {
   overflow-x: hidden;

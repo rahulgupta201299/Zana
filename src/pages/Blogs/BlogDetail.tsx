@@ -14,6 +14,12 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
+function stripHtml(value?: string): string {
+  if (!value) return "";
+  const documentValue = new DOMParser().parseFromString(value, "text/html");
+  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
+}
+
 const BlogDetail = () => {
   const params = useParams();
 
@@ -75,26 +81,24 @@ const BlogDetail = () => {
                 <BlogDetailsSkeleton />
               ) : (
                 <>
-                  <h1 className="text-white text-4xl md:text-5xl font-bold mb-6">
-                    {blogDetails?.title}
-                  </h1>
+                  <div
+                    className="text-white text-4xl md:text-5xl font-bold mb-6"
+                    dangerouslySetInnerHTML={{ __html: blogDetails?.title || "" }}
+                  />
 
                   <div className="mb-8">
                     <img
                       src={blogDetails?.imageUrl}
-                      alt=""
+                      alt={stripHtml(blogDetails?.title)}
                       className="w-full h-auto rounded-lg object-cover"
                     />
                   </div>
 
                   <div
-                    className="blog-content text-white leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-6 [&_ul]:pl-6"
-                   dangerouslySetInnerHTML={{
-                   __html: blogDetails?.content
-                   ?.replace(/\r\n/g, "<br />")
-                   ?.replace(/\n/g, "<br />")
-                   ?.replace(/\r/g, "<br />") ?? "",
-             }}
+                    className="blog-content"
+                    dangerouslySetInnerHTML={{
+                      __html: blogDetails?.content || "",
+                    }}
                   />
                 </>
               )}
@@ -131,9 +135,10 @@ const BlogDetail = () => {
                               className="w-full h-full object-cover rounded-lg"
                             />
                           </div>
-                          <h3 className="text-black text-sm font-semibold">
-                            {blog.title}
-                          </h3>
+                          <h3
+                            className="text-black text-sm font-semibold"
+                            dangerouslySetInnerHTML={{ __html: blog.title }}
+                          />
                         </div>
                       ))
                   )}

@@ -21,6 +21,7 @@ const HOME_KEYWORDS =
 const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
+const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -134,6 +135,30 @@ function loadBrandSeoMaps() {
 
 const brandSeoMaps = loadBrandSeoMaps();
 
+function loadBikeSeoMaps() {
+  if (!existsSync(BIKE_SEO_MAPS_FILE)) return {};
+  const source = readFileSync(BIKE_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+const\s+STAGING_BIKE_SEO_MAP\s*=/, "const STAGING_BIKE_SEO_MAP =")
+    .replace(/export\s+const\s+PRODUCTION_BIKE_SEO_MAP\s*=/, "const PRODUCTION_BIKE_SEO_MAP =")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const script = new vm.Script(`${source}
+    ;({
+      staging: typeof STAGING_BIKE_SEO_MAP === "undefined" ? {} : STAGING_BIKE_SEO_MAP,
+      production: typeof PRODUCTION_BIKE_SEO_MAP === "undefined" ? (typeof STAGING_BIKE_SEO_MAP === "undefined" ? {} : STAGING_BIKE_SEO_MAP) : PRODUCTION_BIKE_SEO_MAP,
+    });
+  `);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const bikeSeoMaps = loadBikeSeoMaps();
+
+function getBikeSeo(bikeId) {
+  const bikeMap = isProduction
+    ? bikeSeoMaps.production
+    : bikeSeoMaps.staging;
+  return bikeMap?.[bikeId];
+}
+
 function loadUniversalProductSeoMaps() {
   if (!existsSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE)) return {};
   const source = readFileSync(UNIVERSAL_PRODUCT_SEO_MAPS_FILE, "utf8")
@@ -238,6 +263,17 @@ function getSeoForPath(pathname) {
     parts[2] === "bike" &&
     parts.length >= 6
   ) {
+    const bikeId = parts[parts.length - 1];
+    const bikeSeo = getBikeSeo(bikeId);
+    if (bikeSeo) {
+      return {
+        title: bikeSeo.title || `${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])} Accessories | Zana Motorcycles`,
+        description: bikeSeo.description || `Shop crash guards, racks, guards, and motorcycle accessories for ${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])}.`,
+        keywords: bikeSeo.keywords,
+        image: bikeSeo.image,
+        type: "website",
+      };
+    }
     const brand = titleCaseSlug(parts[3]);
     const model = titleCaseSlug(parts[4]);
     return {

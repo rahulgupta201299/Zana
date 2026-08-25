@@ -13,6 +13,12 @@ import { Grid } from "lucide-react";
 import BlogsSkeleton from "@/components/Skeleton/BlogsSkeleton";
 import { Box, Pagination } from "@mui/material";
 
+function stripHtml(value?: string): string {
+  if (!value) return "";
+  const documentValue = new DOMParser().parseFromString(value, "text/html");
+  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
+}
+
 const Blogs = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
@@ -67,15 +73,16 @@ const Blogs = () => {
                     <div className="h-80 overflow-hidden p-3">
                       <img
                         src={blog?.imageUrl}
-                        alt={blog?.title}
+                        alt={stripHtml(blog?.title)}
                          className="w-full h-full object-fit rounded-lg"
                       />
                     </div>
 
                     <div className="p-4 flex flex-col flex-1">
-                      <h3 className="text-xl font-bold text-black mb-4">
-                        {blog?.title}
-                      </h3>
+                      <h3
+                        className="text-xl font-bold text-black mb-4"
+                        dangerouslySetInnerHTML={{ __html: blog?.title || "" }}
+                      />
 
                       <Button className="mt-auto self-start bg-transparent text-black border-2 border-black hover:bg-black hover:text-white rounded-none font-bold px-6">
                         READ MORE
