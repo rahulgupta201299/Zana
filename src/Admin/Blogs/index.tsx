@@ -27,6 +27,7 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import BorderStyleIcon from "@mui/icons-material/BorderStyle";
 import CloseIcon from "@mui/icons-material/Close";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
@@ -91,6 +92,7 @@ function buildFormValues(blog: AdminBlog | null): AdminBlogFormValues {
 }
 
 function RichTextEditor(props: {
+  allowBorder?: boolean;
   allowImages?: boolean;
   label: string;
   minHeight?: number;
@@ -100,6 +102,7 @@ function RichTextEditor(props: {
   onChange: (value: string) => void;
 }) {
   const {
+    allowBorder = true,
     allowImages = true,
     label,
     minHeight = 260,
@@ -159,6 +162,38 @@ function RichTextEditor(props: {
     editorRef.current?.focus();
     restoreSelection();
     document.execCommand("insertHTML", false, html);
+    emitChange();
+    saveSelection();
+  };
+
+  const applyBorder = () => {
+    editorRef.current?.focus();
+    restoreSelection();
+
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+
+    const range = selection.getRangeAt(0);
+    if (range.collapsed) {
+      window.alert("Select the content you want to add a border to first.");
+      return;
+    }
+
+    if (!editorRef.current?.contains(range.commonAncestorContainer)) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute(
+      "style",
+      "border:1px solid #d1d5db;border-radius:8px;padding:16px;margin:16px 0;",
+    );
+    wrapper.appendChild(range.extractContents());
+    range.insertNode(wrapper);
+
+    selection.removeAllRanges();
+    const nextRange = document.createRange();
+    nextRange.selectNodeContents(wrapper);
+    selection.addRange(nextRange);
+
     emitChange();
     saveSelection();
   };
@@ -310,6 +345,13 @@ function RichTextEditor(props: {
               <FormatColorFillIcon fontSize="small" />
             </IconButton>
           </Tooltip>
+          {allowBorder ? (
+            <Tooltip title="Add border">
+              <IconButton aria-label="Add border" onClick={applyBorder} size="small">
+                <BorderStyleIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          ) : null}
           {showFullToolbar ? (
             <>
               <Tooltip title="Add link">
@@ -895,6 +937,7 @@ export default function AdminBlogs() {
         <DialogContent dividers>
           <Stack spacing={2.25} sx={{ pt: 0.5 }}>
             <RichTextEditor
+              allowBorder={false}
               allowImages={false}
               label="Title"
               minHeight={58}
