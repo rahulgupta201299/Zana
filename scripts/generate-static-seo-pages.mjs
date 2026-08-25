@@ -22,6 +22,7 @@ const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
+const BLOG_SEO_MAPS_FILE = resolve("src/pages/Blogs/BLOG_SEO_MAPS.ts");
 
 function loadEnvFile(filePath) {
   if (!existsSync(filePath)) return {};
@@ -157,6 +158,30 @@ function getBikeSeo(bikeId) {
     ? bikeSeoMaps.production
     : bikeSeoMaps.staging;
   return bikeMap?.[bikeId];
+}
+
+function loadBlogSeoMaps() {
+  if (!existsSync(BLOG_SEO_MAPS_FILE)) return { staging: {}, production: {} };
+  const source = readFileSync(BLOG_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+type\s+BlogSeoEntry\s*=\s*\{[\s\S]*?\};\s*/g, "")
+    .replace(/:\s*Record<string,\s*BlogSeoEntry>/g, "")
+    .replace(/export\s+const\s+STAGING_BLOG_SEO_MAP/g, "const STAGING_BLOG_SEO_MAP")
+    .replace(/export\s+const\s+PRODUCTION_BLOG_SEO_MAP/g, "const PRODUCTION_BLOG_SEO_MAP")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const script = new vm.Script(`${source}
+    ;({
+      staging: typeof STAGING_BLOG_SEO_MAP === "undefined" ? {} : STAGING_BLOG_SEO_MAP,
+      production: typeof PRODUCTION_BLOG_SEO_MAP === "undefined" ? {} : PRODUCTION_BLOG_SEO_MAP,
+    });
+  `);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const blogSeoMaps = loadBlogSeoMaps();
+
+function getBlogSeo(blogId) {
+  const blogMap = isProduction ? blogSeoMaps.production : blogSeoMaps.staging;
+  return blogMap?.[blogId];
 }
 
 function loadUniversalProductSeoMaps() {
@@ -316,7 +341,18 @@ function getSeoForPath(pathname) {
     };
   }
 
-  if (parts[0] === "blog") {
+  if (parts[0] === "blog" && parts.length >= 2) {
+    const blogId = parts[1];
+    const blogSeo = getBlogSeo(blogId);
+    if (blogSeo) {
+      return {
+        title: blogSeo.title,
+        description: blogSeo.description,
+        keywords: blogSeo.keywords,
+        image: blogSeo.image,
+        type: "article",
+      };
+    }
     return {
       title: "Motorcycle Guide | Zana Motorcycles",
       description:
