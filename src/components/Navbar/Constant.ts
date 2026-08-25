@@ -44,10 +44,10 @@ export const MenuItems = [
     name: MenuItemsName.Z_PRO,
     route: '',
   },
-  {
-    name: MenuItemsName.RIDE_STORIES,
-    route: ROUTES.BLOGS,
-  },
+  // {
+  //   name: MenuItemsName.RIDE_STORIES,
+  //   route: ROUTES.BLOGS,
+  // },
   {
     name: MenuItemsName.MOTODEVIL,
     route: 'https://motodevil.shop'
