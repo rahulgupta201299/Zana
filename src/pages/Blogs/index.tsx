@@ -12,7 +12,12 @@ import { fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { Grid } from "lucide-react";
 import BlogsSkeleton from "@/components/Skeleton/BlogsSkeleton";
 import { Box, Pagination } from "@mui/material";
-import { getBlogRoutePath, stripHtml } from "@/Utils/BlogUtils";
+
+function stripHtml(value?: string): string {
+  if (!value) return "";
+  const documentValue = new DOMParser().parseFromString(value, "text/html");
+  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
+}
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -60,9 +65,9 @@ const Blogs = () => {
             {isListLoading
               ? Array.from({ length: 4 }).map((_, i) => <BlogsSkeleton />)
               : blogs.map((blog, index) => (
-                <div
-                  key={index}
-                    onClick={() => navigate(getBlogRoutePath(blog))}
+                  <div
+                    key={index}
+                    onClick={() => navigate(`/blog/${blog?._id}`)}
                     className="rounded-lg overflow-hidden bg-card-gradient flex flex-col cursor-pointer"
                   >
                     <div className="h-80 overflow-hidden p-3">
@@ -76,9 +81,8 @@ const Blogs = () => {
                     <div className="p-4 flex flex-col flex-1">
                       <h3
                         className="text-xl font-bold text-black mb-4"
-                      >
-                        {stripHtml(blog?.title)}
-                      </h3>
+                        dangerouslySetInnerHTML={{ __html: blog?.title || "" }}
+                      />
 
                       <Button className="mt-auto self-start bg-transparent text-black border-2 border-black hover:bg-black hover:text-white rounded-none font-bold px-6">
                         READ MORE

@@ -9,6 +9,7 @@ const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
+const BLOG_SEO_MAPS_FILE = resolve("src/pages/Blogs/BLOG_SEO_MAPS.ts");
 const PAGE_SIZE = 1000;
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
@@ -60,6 +61,22 @@ const bikeSeoMap = loadSelectedStaticMap(
 );
 const productSeoIds = new Set(Object.keys(productSeoMap));
 const bikeSeoIds = new Set(Object.keys(bikeSeoMap));
+
+function loadBlogSeoMap() {
+  if (!existsSync(BLOG_SEO_MAPS_FILE)) return {};
+  const source = readFileSync(BLOG_SEO_MAPS_FILE, "utf8")
+    .replace(/export\s+type\s+BlogSeoEntry\s*=\s*\{[\s\S]*?\};\s*/g, "")
+    .replace(/:\s*Record<string,\s*BlogSeoEntry>/g, "")
+    .replace(/export\s+const\s+STAGING_BLOG_SEO_MAP/g, "const STAGING_BLOG_SEO_MAP")
+    .replace(/export\s+const\s+PRODUCTION_BLOG_SEO_MAP/g, "const PRODUCTION_BLOG_SEO_MAP")
+    .replace(/}\s+as\s+const\s*;/g, "};");
+  const exportName = isProduction ? "PRODUCTION_BLOG_SEO_MAP" : "STAGING_BLOG_SEO_MAP";
+  const script = new vm.Script(`${source}\n;(typeof ${exportName} === "undefined" ? {} : ${exportName});`);
+  return script.runInNewContext(Object.create(null), { timeout: 1000 });
+}
+
+const blogSeoMap = loadBlogSeoMap();
+const blogSeoIds = new Set(Object.keys(blogSeoMap));
 
 const staticSections = [
   {
@@ -349,19 +366,34 @@ async function getProductUrls() {
   );
 }
 
+function readBlogSeoMapUrls() {
+  return Object.entries(blogSeoMap).map(([blogId, seoData]) =>
+    createUrl(`/blog/${blogId}`, {
+      id: blogId,
+      title: seoData?.title,
+      priority: "0.6",
+      changefreq: "monthly",
+    }),
+  );
+}
+
 async function getBlogUrls() {
   const blogs = await fetchPaginated("/api/v1/blog");
 
-  return blogs
+  const apiUrls = blogs
     .filter((blog) => blog?._id)
-    .map((blog) =>
-      createUrl(`/blog/${blog.slug || slugify(stripHtml(blog.title || blog.name)) || blog._id}/${blog._id}`, {
-        title: blog.title || blog.name,
+    .filter((blog) => blogSeoIds.size === 0 || blogSeoIds.has(blog._id))
+    .map((blog) => {
+      const seoEntry = blogSeoMap[blog._id];
+      return createUrl(`/blog/${blog._id}`, {
+        title: seoEntry?.title || blog.title || blog.name,
         lastmod: getLastModified(blog),
-        priority: "0.6",
+        priority: seoEntry ? "0.7" : "0.6",
         changefreq: "monthly",
-      }),
-    );
+      });
+    });
+
+  return mergeUrls(apiUrls, readBlogSeoMapUrls());
 }
 
 function getBrandListingUrls() {
@@ -915,6 +947,15 @@ async function main() {
       console.log(`Added ${sourceUrls.length} ${label} to sitemap.`);
     } catch (error) {
       console.warn(`Could not add ${label} to sitemap: ${error.message}`);
+      if (label === "blogs") {
+        const fallbackUrls = readBlogSeoMapUrls();
+        if (fallbackUrls.length) {
+          sections.push({ name: "Blog Detail Pages", urls: fallbackUrls });
+          console.log(
+            `Added ${fallbackUrls.length} blog pages from local ${isProduction ? "production" : "staging"} map.`,
+          );
+        }
+      }
       if (label === "products") {
         const fallbackUrls = readProductSeoMapUrls();
         if (fallbackUrls.length) {
