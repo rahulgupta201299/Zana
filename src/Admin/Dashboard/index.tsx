@@ -16,10 +16,8 @@ import {
   TextField,
   Tooltip as MuiTooltip,
   Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
-import DesktopWindowsOutlinedIcon from "@mui/icons-material/DesktopWindowsOutlined";
 
 import {
   AdminOrderStats,
@@ -230,27 +228,10 @@ function StatDonut(props: {
   );
 }
 
-function DesktopOnlyNotice() {
-  return (
-    <Box sx={{ alignItems: "center", bgcolor: "#eef2f6", display: "flex", height: "100vh", justifyContent: "center", p: 4 }}>
-      <Paper sx={{ borderRadius: 2, boxShadow: "none", maxWidth: 380, p: 4, textAlign: "center" }}>
-        <DesktopWindowsOutlinedIcon sx={{ color: "#9ca3af", fontSize: 40, mb: 1.5 }} />
-        <Typography sx={{ color: "#111827", fontWeight: 800, mb: 1 }} variant="h6">
-          Desktop only
-        </Typography>
-        <Typography color="text.secondary" variant="body2">
-          This dashboard is designed for larger screens. Please open it on a desktop or laptop for the full experience.
-        </Typography>
-      </Paper>
-    </Box>
-  );
-}
-
 /* ---------------------------------------------------------------------- */
 
 export default function AdminDashboard() {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const [stats, setStats] = useState<AdminOrderStats>(EMPTY_STATS);
   const [loading, setLoading] = useState(false);
@@ -304,10 +285,6 @@ export default function AdminDashboard() {
     setEndDate("");
     setAppliedDateRange({ startDate: "", endDate: "" });
   };
-
-  if (!isDesktop) {
-    return <DesktopOnlyNotice />;
-  }
 
   const avgOrderValue = stats.overall.count > 0 ? stats.overall.totalAmount / stats.overall.count : 0;
 
