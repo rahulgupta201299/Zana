@@ -6,7 +6,6 @@ import { blogDetailsActions, fetchBlogListActions } from "../Actions";
 const network = new Network();
 
 async function blogDetailService(blogId): Promise<any> {
-    console.log(blogId)
   const options = {
     url: `/api/v1/blog/${blogId}`,
     method: API_METHOD_ENUM.GET,

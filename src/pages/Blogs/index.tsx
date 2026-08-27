@@ -12,12 +12,7 @@ import { fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { Grid } from "lucide-react";
 import BlogsSkeleton from "@/components/Skeleton/BlogsSkeleton";
 import { Box, Pagination } from "@mui/material";
-
-function stripHtml(value?: string): string {
-  if (!value) return "";
-  const documentValue = new DOMParser().parseFromString(value, "text/html");
-  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
-}
+import { getBlogRoutePath, stripHtml } from "@/Utils/BlogUtils";
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -65,9 +60,9 @@ const Blogs = () => {
             {isListLoading
               ? Array.from({ length: 4 }).map((_, i) => <BlogsSkeleton />)
               : blogs.map((blog, index) => (
-                  <div
-                    key={index}
-                    onClick={() => navigate(`/blog/${blog?._id}`)}
+                <div
+                  key={index}
+                    onClick={() => navigate(getBlogRoutePath(blog))}
                     className="rounded-lg overflow-hidden bg-card-gradient flex flex-col cursor-pointer"
                   >
                     <div className="h-80 overflow-hidden p-3">

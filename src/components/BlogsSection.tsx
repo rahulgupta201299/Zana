@@ -1,5 +1,4 @@
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
-import { ROUTES } from "@/Constants/Routes";
 import { fetchBlogListName } from "@/Redux/Blogs/Actions";
 import { getListOfBlogs, getTopFourBlogs } from "@/Redux/Blogs/Selectors";
 import fetchBlogListServiceAction from "@/Redux/Blogs/Services/GetBlogList";
@@ -7,14 +6,9 @@ import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PersistPartial } from "redux-persist/es/persistReducer";
-
-function stripHtml(value?: string): string {
-  if (!value) return "";
-  const documentValue = new DOMParser().parseFromString(value, "text/html");
-  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
-}
+import { getBlogRoutePath, stripHtml } from "@/Utils/BlogUtils";
 
 const BlogsSection = () => {
   const blogList = useSelector(getListOfBlogs);
@@ -63,7 +57,7 @@ const BlogsSection = () => {
                 padding: "1rem",
                  cursor: 'pointer',
               }}
-                onClick={() => navigate(ROUTES.BLOG_DETAIL.replace(":id", blog?._id))}
+                onClick={() => navigate(getBlogRoutePath(blog))}
             >
 
              
@@ -90,7 +84,10 @@ const BlogsSection = () => {
               {/* Button */}
            
                 <button
-                onClick={() => navigate(ROUTES.BLOG_DETAIL.replace(":id", blog?._id))}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  navigate(getBlogRoutePath(blog));
+                }}
                   className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-base font-medium overflow-hidden group transition-colors duration-500 w-fit"
                   style={{
                     background:

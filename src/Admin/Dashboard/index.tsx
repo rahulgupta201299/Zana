@@ -7,17 +7,19 @@ import {
   Divider,
   Paper,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
+  Tooltip as MuiTooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import DesktopWindowsOutlinedIcon from "@mui/icons-material/DesktopWindowsOutlined";
 
 import {
   AdminOrderStats,
@@ -26,32 +28,40 @@ import {
 } from "../Configurations/AdminDashboardApi";
 import { formatIsoDate } from "../Utils/DateUtils";
 
+/* ---------------------------------------------------------------------- */
+/*  Data shape                                                            */
+/* ---------------------------------------------------------------------- */
+/*
+  {
+    organicOnline: { count, totalAmount },
+    organicCod:    { count, totalAmount },
+    adminOnline:   { count, totalAmount },
+    adminCod:      { count, totalAmount },
+    overall:       { count, totalAmount },
+  }
+*/
+
 const EMPTY_STATS: AdminOrderStats = {
-  online: { count: 0, totalAmount: 0 },
-  cod: { count: 0, totalAmount: 0 },
+  organicOnline: { count: 0, totalAmount: 0 },
+  organicCod: { count: 0, totalAmount: 0 },
+  adminOnline: { count: 0, totalAmount: 0 },
+  adminCod: { count: 0, totalAmount: 0 },
   overall: { count: 0, totalAmount: 0 },
 };
 
 const CHART_COLORS = {
-  online: "#2563eb",
+  organic: "#16a34a",
+  admin: "#2563eb",
+  online: "#7c3aed",
   cod: "#f97316",
 };
 
-type AppliedDateRange = {
-  startDate: string;
-  endDate: string;
-};
-
-type PieDatum = {
-  key: "online" | "cod";
-  name: string;
-  value: number;
-  color: string;
-};
-
-type PieTooltipPayload = {
-  payload?: PieDatum;
-  value?: number | string;
+type AppliedDateRange = { startDate: string; endDate: string };
+type Bucket = { count: number; totalAmount: number };
+type PieDatum = { key: string; name: string; value: number; color: string };
+type PaymentModeBreakdown = {
+  online: { organic: Bucket; admin: Bucket; total: Bucket };
+  cod: { organic: Bucket; admin: Bucket; total: Bucket };
 };
 
 function formatLocalIsoDate(d: Date): string {
@@ -77,190 +87,178 @@ function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-IN").format(value);
 }
 
-function metricShare(value: number, total: number): string {
-  if (total <= 0) return "0%";
-  return `${Math.round((value / total) * 100)}%`;
+function sharePct(value: number, total: number): number {
+  if (total <= 0) return 0;
+  return Math.round((value / total) * 100);
 }
 
-function buildPieData(stats: AdminOrderStats, metric: "count" | "totalAmount"): PieDatum[] {
+function metricShare(value: number, total: number): string {
+  return `${sharePct(value, total)}%`;
+}
+
+function addBuckets(...buckets: Bucket[]): Bucket {
+  return buckets.reduce(
+    (acc, b) => ({ count: acc.count + b.count, totalAmount: acc.totalAmount + b.totalAmount }),
+    { count: 0, totalAmount: 0 },
+  );
+}
+
+// Organic vs Admin — source breakdown (unchanged)
+function buildSourcePieData(stats: AdminOrderStats, metric: "count" | "totalAmount"): PieDatum[] {
+  const organic = addBuckets(stats.organicOnline, stats.organicCod);
+  const admin = addBuckets(stats.adminOnline, stats.adminCod);
   return [
-    {
-      key: "online",
-      name: "Online",
-      value: stats.online[metric],
-      color: CHART_COLORS.online,
-    },
-    {
-      key: "cod",
-      name: "COD",
-      value: stats.cod[metric],
-      color: CHART_COLORS.cod,
-    },
+    { key: "organic", name: "Organic", value: organic[metric], color: CHART_COLORS.organic },
+    { key: "admin", name: "Admin", value: admin[metric], color: CHART_COLORS.admin },
   ].filter((item) => item.value > 0);
 }
 
-function MetricCard(props: {
-  label: string;
-  count: number;
-  totalAmount: number;
-  accent: string;
-  share?: string;
+// Online vs COD — combined across organic + admin sources
+function buildPaymentModePieData(stats: AdminOrderStats, metric: "count" | "totalAmount"): PieDatum[] {
+  const online = addBuckets(stats.organicOnline, stats.adminOnline);
+  const cod = addBuckets(stats.organicCod, stats.adminCod);
+  return [
+    { key: "online", name: "Online", value: online[metric], color: CHART_COLORS.online },
+    { key: "cod", name: "COD", value: cod[metric], color: CHART_COLORS.cod },
+  ].filter((item) => item.value > 0);
+}
+
+// Online / COD split further broken out by Organic vs Admin
+function buildPaymentModeBreakdown(stats: AdminOrderStats): PaymentModeBreakdown {
+  return {
+    online: {
+      organic: stats.organicOnline,
+      admin: stats.adminOnline,
+      total: addBuckets(stats.organicOnline, stats.adminOnline),
+    },
+    cod: {
+      organic: stats.organicCod,
+      admin: stats.adminCod,
+      total: addBuckets(stats.organicCod, stats.adminCod),
+    },
+  };
+}
+
+/* ---------------------------------------------------------------------- */
+/*  Small, reusable pieces                                                */
+/* ---------------------------------------------------------------------- */
+
+// Compact KPI, used inline in a single divided strip (not a grid of cards)
+function KpiStat(props: { label: string; value: string; helper?: string }) {
+  const { label, value, helper } = props;
+  return (
+    <Box sx={{ px: 3, py: 1.5 }}>
+      <Typography color="text.secondary" variant="body2">
+        {label}
+      </Typography>
+      <Typography sx={{ color: "#111827", fontWeight: 800, lineHeight: 1.3, mt: 0.25 }} variant="h5">
+        {value}
+      </Typography>
+      {helper ? (
+        <Typography color="text.secondary" sx={{ mt: 0.25 }} variant="caption">
+          {helper}
+        </Typography>
+      ) : null}
+    </Box>
+  );
+}
+
+// Generic at-a-glance donut, reused for source and payment splits.
+function StatDonut(props: {
+  data: PieDatum[];
+  total: number;
+  centerLabel?: string;
+  size?: number;
+  valueFormatter?: (value: number) => string;
 }) {
-  const { label, count, totalAmount, accent, share } = props;
+  const { data, total, centerLabel = "Orders", size = 180, valueFormatter = formatNumber } = props;
+  const strokeWidth = 26;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const sum = data.reduce((s, d) => s + d.value, 0);
+
+  let offsetAccum = 0;
 
   return (
-    <Paper
-      sx={{
-        borderLeft: `4px solid ${accent}`,
-        borderRadius: 2,
-        boxShadow: "none",
-        minWidth: 220,
-        p: 2,
-      }}
-    >
-      <Stack spacing={1}>
-        <Stack direction="row" justifyContent="space-between" spacing={2}>
-          <Typography color="text.secondary" variant="body2">
-            {label}
-          </Typography>
-          {share ? (
-            <Typography color="text.secondary" variant="caption">
-              {share}
-            </Typography>
-          ) : null}
-        </Stack>
-        <Typography sx={{ color: "#111827", fontWeight: 800 }} variant="h5">
-          {formatNumber(count)}
+    <Box sx={{ position: "relative", mx: "auto" }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth} />
+        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+          {data.map((d) => {
+            const fraction = sum > 0 ? d.value / sum : 0;
+            const dash = fraction * circumference;
+            const gap = circumference - dash;
+            const dashoffset = -offsetAccum;
+            offsetAccum += dash;
+            const pct = sharePct(d.value, sum);
+            return (
+              <MuiTooltip key={d.key} arrow title={`${d.name}: ${valueFormatter(d.value)} (${pct}%)`}>
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="none"
+                  stroke={d.color}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={`${dash} ${gap}`}
+                  strokeDashoffset={dashoffset}
+                  style={{ cursor: "pointer" }}
+                />
+              </MuiTooltip>
+            );
+          })}
+        </g>
+      </svg>
+      <Box
+        sx={{
+          left: "50%",
+          pointerEvents: "none",
+          position: "absolute",
+          textAlign: "center",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <Typography color="text.secondary" variant="caption">
+          {centerLabel}
+        </Typography>
+        <Typography sx={{ color: "#111827", fontWeight: 850 }} variant="h6">
+          {valueFormatter(total)}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+function DesktopOnlyNotice() {
+  return (
+    <Box sx={{ alignItems: "center", bgcolor: "#eef2f6", display: "flex", height: "100vh", justifyContent: "center", p: 4 }}>
+      <Paper sx={{ borderRadius: 2, boxShadow: "none", maxWidth: 380, p: 4, textAlign: "center" }}>
+        <DesktopWindowsOutlinedIcon sx={{ color: "#9ca3af", fontSize: 40, mb: 1.5 }} />
+        <Typography sx={{ color: "#111827", fontWeight: 800, mb: 1 }} variant="h6">
+          Desktop only
         </Typography>
         <Typography color="text.secondary" variant="body2">
-          {formatCurrency(totalAmount)}
+          This dashboard is designed for larger screens. Please open it on a desktop or laptop for the full experience.
         </Typography>
-      </Stack>
-    </Paper>
+      </Paper>
+    </Box>
   );
 }
 
-function StatsPieChart(props: {
-  title: string;
-  data: PieDatum[];
-  emptyLabel: string;
-  valueFormatter: (value: number) => string;
-}) {
-  const { title, data, emptyLabel, valueFormatter } = props;
-
-  return (
-    <Paper sx={{ borderRadius: 2, boxShadow: "none", p: 2 }}>
-      <Typography sx={{ color: "#111827", fontWeight: 750, mb: 1 }} variant="subtitle1">
-        {title}
-      </Typography>
-      <Box sx={{ height: 320 }}>
-        {data.length === 0 ? (
-          <Box
-            sx={{
-              alignItems: "center",
-              bgcolor: "#f8fafc",
-              border: "1px dashed #cbd5e1",
-              borderRadius: 2,
-              display: "flex",
-              height: "100%",
-              justifyContent: "center",
-              px: 2,
-              textAlign: "center",
-            }}
-          >
-            <Typography color="text.secondary">{emptyLabel}</Typography>
-          </Box>
-        ) : (
-          <ResponsiveContainer height="100%" width="100%">
-            <PieChart>
-              <Pie
-                cx="50%"
-                cy="45%"
-                data={data}
-                dataKey="value"
-                innerRadius={58}
-                nameKey="name"
-                outerRadius={104}
-                paddingAngle={3}
-              >
-                {data.map((entry) => (
-                  <Cell fill={entry.color} key={entry.key} />
-                ))}
-              </Pie>
-              <Tooltip
-                content={(tooltipProps) => (
-                  <PieTooltip
-                    active={tooltipProps.active}
-                    payload={tooltipProps.payload as PieTooltipPayload[] | undefined}
-                    valueFormatter={valueFormatter}
-                  />
-                )}
-              />
-              <Legend
-                formatter={(value) => (
-                  <span style={{ color: "#374151", fontSize: 13 }}>{value}</span>
-                )}
-                verticalAlign="bottom"
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
-    </Paper>
-  );
-}
-
-function PieTooltip(props: {
-  active?: boolean;
-  payload?: PieTooltipPayload[];
-  valueFormatter: (value: number) => string;
-}) {
-  const { active, payload, valueFormatter } = props;
-  const item = payload?.[0];
-  const datum = item?.payload;
-  const value = Number(item?.value ?? datum?.value ?? 0);
-
-  if (!active || !datum) return null;
-
-  return (
-    <Paper
-      sx={{
-        border: "1px solid #d1d5db",
-        borderRadius: 1,
-        boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
-        px: 1.5,
-        py: 1,
-      }}
-    >
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Box
-          aria-hidden
-          sx={{
-            bgcolor: datum.color,
-            borderRadius: "50%",
-            height: 10,
-            width: 10,
-          }}
-        />
-        <Typography sx={{ color: "#111827", fontWeight: 700 }} variant="body2">
-          {datum.name}: {valueFormatter(value)}
-        </Typography>
-      </Stack>
-    </Paper>
-  );
-}
+/* ---------------------------------------------------------------------- */
 
 export default function AdminDashboard() {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+
   const [stats, setStats] = useState<AdminOrderStats>(EMPTY_STATS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [appliedDateRange, setAppliedDateRange] = useState<AppliedDateRange>({
-    startDate: "",
-    endDate: "",
-  });
+  const [appliedDateRange, setAppliedDateRange] = useState<AppliedDateRange>({ startDate: "", endDate: "" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -283,47 +281,50 @@ export default function AdminDashboard() {
     void load();
   }, [load]);
 
-  const countPieData = useMemo(() => buildPieData(stats, "count"), [stats]);
-  const amountPieData = useMemo(() => buildPieData(stats, "totalAmount"), [stats]);
+  const organicTotal = useMemo(() => addBuckets(stats.organicOnline, stats.organicCod), [stats]);
+  const adminTotal = useMemo(() => addBuckets(stats.adminOnline, stats.adminCod), [stats]);
+  const sourceCountPieData = useMemo(() => buildSourcePieData(stats, "count"), [stats]);
+  const paymentModeCountPieData = useMemo(() => buildPaymentModePieData(stats, "count"), [stats]);
+  const paymentModeBreakdown = useMemo(() => buildPaymentModeBreakdown(stats), [stats]);
 
   const todayIso = formatLocalIsoDate(new Date());
   const startDateInputMax = endDate ? minIsoDate(todayIso, endDate) : todayIso;
   const endDateInputMin = startDate || undefined;
-  const isApplyDisabled =
-    startDate === appliedDateRange.startDate && endDate === appliedDateRange.endDate;
+  const isApplyDisabled = startDate === appliedDateRange.startDate && endDate === appliedDateRange.endDate;
   const isClearDisabled =
     startDate === "" && endDate === "" && appliedDateRange.startDate === "" && appliedDateRange.endDate === "";
   const activeRangeLabel =
     appliedDateRange.startDate || appliedDateRange.endDate
-      ? `${formatIsoDate(appliedDateRange.startDate, "Start")} to ${formatIsoDate(
-          appliedDateRange.endDate || todayIso,
-          "Today",
-        )}`
+      ? `${formatIsoDate(appliedDateRange.startDate, "Start")} to ${formatIsoDate(appliedDateRange.endDate || todayIso, "Today")}`
       : "Overall";
 
-  const handleApplyFilters = () => {
-    setAppliedDateRange({ startDate, endDate });
-  };
-
+  const handleApplyFilters = () => setAppliedDateRange({ startDate, endDate });
   const handleClearFilters = () => {
     setStartDate("");
     setEndDate("");
     setAppliedDateRange({ startDate: "", endDate: "" });
   };
 
+  if (!isDesktop) {
+    return <DesktopOnlyNotice />;
+  }
+
+  const avgOrderValue = stats.overall.count > 0 ? stats.overall.totalAmount / stats.overall.count : 0;
+
   return (
-    <Box sx={{ bgcolor: "#eef2f6", minHeight: "100%", p: { xs: 2, md: 3 } }}>
+    <Box sx={{ bgcolor: "#eef2f6", minHeight: "100%", minWidth: 1100, p: 3 }}>
       <Stack spacing={3}>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={2}>
+        {/* Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
           <Box>
             <Typography sx={{ color: "#111827", fontWeight: 800 }} variant="h5">
               Dashboard
             </Typography>
             <Typography color="text.secondary" variant="body2">
-              Order split and revenue analysis by payment type.
+              Organic vs. admin orders, at a glance.
             </Typography>
           </Box>
-          <Paper sx={{ alignSelf: { sm: "flex-start" }, borderRadius: 2, boxShadow: "none", px: 2, py: 1 }}>
+          <Paper sx={{ borderRadius: 2, boxShadow: "none", px: 2, py: 1 }}>
             <Typography color="text.secondary" variant="caption">
               Showing
             </Typography>
@@ -339,8 +340,9 @@ export default function AdminDashboard() {
           </Alert>
         ) : null}
 
+        {/* Filters — compact single row */}
         <Paper sx={{ borderRadius: 2, boxShadow: "none", p: 2 }}>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap" useFlexGap alignItems="center">
+          <Stack direction="row" spacing={2} alignItems="center">
             <TextField
               label="Start date"
               type="date"
@@ -350,13 +352,11 @@ export default function AdminDashboard() {
               onChange={(e) => {
                 const next = e.target.value;
                 setStartDate(next);
-                if (next && endDate && next > endDate) {
-                  setEndDate(next);
-                }
+                if (next && endDate && next > endDate) setEndDate(next);
               }}
               InputLabelProps={{ shrink: true }}
               slotProps={{ htmlInput: { max: startDateInputMax } }}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: 180 }}
             />
             <TextField
               label="End date"
@@ -368,29 +368,19 @@ export default function AdminDashboard() {
                 const next = e.target.value;
                 const capped = next && next > todayIso ? todayIso : next;
                 setEndDate(capped);
-                if (capped && startDate && capped < startDate) {
-                  setStartDate(capped);
-                }
+                if (capped && startDate && capped < startDate) setStartDate(capped);
               }}
               InputLabelProps={{ shrink: true }}
-              slotProps={{
-                htmlInput: {
-                  max: todayIso,
-                  ...(endDateInputMin ? { min: endDateInputMin } : {}),
-                },
-              }}
-              sx={{ minWidth: 200 }}
+              slotProps={{ htmlInput: { max: todayIso, ...(endDateInputMin ? { min: endDateInputMin } : {}) } }}
+              sx={{ minWidth: 180 }}
             />
             <Button
               variant="contained"
               onClick={handleApplyFilters}
               disabled={isApplyDisabled}
-              sx={{
-                bgcolor: isApplyDisabled ? "action.disabledBackground" : "#e10600",
-                "&:hover": { bgcolor: "#c00500" },
-              }}
+              sx={{ bgcolor: isApplyDisabled ? "action.disabledBackground" : "#e10600", "&:hover": { bgcolor: "#c00500" } }}
             >
-              Apply filters
+              Apply
             </Button>
             <Button variant="outlined" onClick={handleClearFilters} disabled={isClearDisabled} color="inherit">
               Clear
@@ -398,76 +388,246 @@ export default function AdminDashboard() {
           </Stack>
         </Paper>
 
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-          <MetricCard
-            label="Overall orders"
-            count={stats.overall.count}
-            totalAmount={stats.overall.totalAmount}
-            accent="#111827"
-          />
-          <MetricCard
-            label="Online"
-            count={stats.online.count}
-            totalAmount={stats.online.totalAmount}
-            accent={CHART_COLORS.online}
-            share={`${metricShare(stats.online.count, stats.overall.count)} of orders`}
-          />
-          <MetricCard
-            label="COD"
-            count={stats.cod.count}
-            totalAmount={stats.cod.totalAmount}
-            accent={CHART_COLORS.cod}
-            share={`${metricShare(stats.cod.count, stats.overall.count)} of orders`}
-          />
-        </Stack>
-
-        <Paper sx={{ borderRadius: 2, boxShadow: "none", p: 2 }}>
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            divider={<Divider flexItem orientation="vertical" />}
-            spacing={2}
-          >
-            <Box sx={{ flex: 1 }}>
-              <Typography color="text.secondary" variant="body2">
-                Online revenue share
-              </Typography>
-              <Typography sx={{ color: "#111827", fontWeight: 800 }} variant="h6">
-                {metricShare(stats.online.totalAmount, stats.overall.totalAmount)}
-              </Typography>
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography color="text.secondary" variant="body2">
-                COD revenue share
-              </Typography>
-              <Typography sx={{ color: "#111827", fontWeight: 800 }} variant="h6">
-                {metricShare(stats.cod.totalAmount, stats.overall.totalAmount)}
-              </Typography>
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography color="text.secondary" variant="body2">
-                Average order value
-              </Typography>
-              <Typography sx={{ color: "#111827", fontWeight: 800 }} variant="h6">
-                {formatCurrency(stats.overall.count > 0 ? stats.overall.totalAmount / stats.overall.count : 0)}
-              </Typography>
-            </Box>
+        {/* KPI strip — one Paper, divided, instead of separate cards */}
+        <Paper sx={{ borderRadius: 2, boxShadow: "none" }}>
+          <Stack direction="row" divider={<Divider flexItem orientation="vertical" />}>
+            <KpiStat label="Overall orders" value={formatNumber(stats.overall.count)} helper={formatCurrency(stats.overall.totalAmount)} />
+            <KpiStat label="Average order value" value={formatCurrency(avgOrderValue)} helper="Across all orders" />
+            <KpiStat
+              label="Organic share"
+              value={metricShare(organicTotal.count, stats.overall.count)}
+              helper={`${formatNumber(organicTotal.count)} orders`}
+            />
+            <KpiStat
+              label="Admin share"
+              value={metricShare(adminTotal.count, stats.overall.count)}
+              helper={`${formatNumber(adminTotal.count)} orders`}
+            />
           </Stack>
         </Paper>
 
-        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" } }}>
-          <StatsPieChart
-            title="Orders by payment type"
-            data={countPieData}
-            emptyLabel="No order count data for this range."
-            valueFormatter={formatNumber}
-          />
-          <StatsPieChart
-            title="Revenue by payment type"
-            data={amountPieData}
-            emptyLabel="No revenue data for this range."
-            valueFormatter={formatCurrency}
-          />
+        {/* Main content: source table + two donuts (source split, online/COD split) */}
+        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: "1.5fr 1fr 1fr" }}>
+          <Paper sx={{ borderRadius: 2, boxShadow: "none", p: 2.5 }}>
+            <Typography sx={{ color: "#111827", fontWeight: 750, mb: 1.5 }} variant="subtitle1">
+              Source breakdown
+            </Typography>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700, color: "text.secondary" }}>Source</TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                      Orders
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                      Revenue
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                      Rev. share
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box sx={{ bgcolor: CHART_COLORS.organic, borderRadius: "50%", height: 10, width: 10 }} />
+                        <Typography sx={{ fontWeight: 600 }} variant="body2">
+                          Organic
+                        </Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="right">{formatNumber(organicTotal.count)}</TableCell>
+                    <TableCell align="right">{formatCurrency(organicTotal.totalAmount)}</TableCell>
+                    <TableCell align="right">{metricShare(organicTotal.totalAmount, stats.overall.totalAmount)}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box sx={{ bgcolor: CHART_COLORS.admin, borderRadius: "50%", height: 10, width: 10 }} />
+                        <Typography sx={{ fontWeight: 600 }} variant="body2">
+                          Admin
+                        </Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="right">{formatNumber(adminTotal.count)}</TableCell>
+                    <TableCell align="right">{formatCurrency(adminTotal.totalAmount)}</TableCell>
+                    <TableCell align="right">{metricShare(adminTotal.totalAmount, stats.overall.totalAmount)}</TableCell>
+                  </TableRow>
+                  <TableRow sx={{ "& td": { borderBottom: "none", pt: 1.5 } }}>
+                    <TableCell>
+                      <Typography sx={{ fontWeight: 800 }} variant="body2">
+                        Total
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography sx={{ fontWeight: 800 }} variant="body2">
+                        {formatNumber(stats.overall.count)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography sx={{ fontWeight: 800 }} variant="body2">
+                        {formatCurrency(stats.overall.totalAmount)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography sx={{ fontWeight: 800 }} variant="body2">
+                        100%
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+
+          <Paper sx={{ alignItems: "center", borderRadius: 2, boxShadow: "none", display: "flex", flexDirection: "column", justifyContent: "center", p: 2.5 }}>
+            <Typography sx={{ alignSelf: "flex-start", color: "#111827", fontWeight: 750, mb: 1.5 }} variant="subtitle1">
+              Orders by source
+            </Typography>
+            <StatDonut data={sourceCountPieData} total={stats.overall.count} />
+            <Stack direction="row" spacing={3} sx={{ mt: 2 }}>
+              {sourceCountPieData.map((d) => (
+                <Stack key={d.key} direction="row" spacing={1} alignItems="center">
+                  <Box sx={{ bgcolor: d.color, borderRadius: "50%", height: 10, width: 10 }} />
+                  <Typography variant="body2">{d.name}</Typography>
+                </Stack>
+              ))}
+            </Stack>
+          </Paper>
+
+          {/* Online vs COD donut, with per-mode count + amount and organic/admin split */}
+          <Paper sx={{ alignItems: "center", borderRadius: 2, boxShadow: "none", display: "flex", flexDirection: "column", justifyContent: "center", p: 2.5 }}>
+            <Typography sx={{ alignSelf: "flex-start", color: "#111827", fontWeight: 750, mb: 1.5 }} variant="subtitle1">
+              Online vs COD
+            </Typography>
+            <StatDonut data={paymentModeCountPieData} total={stats.overall.count} />
+            <Stack spacing={1.25} sx={{ mt: 2, width: "100%" }}>
+              {paymentModeCountPieData.map((d) => {
+                const mode = d.key === "online" ? paymentModeBreakdown.online : paymentModeBreakdown.cod;
+                return (
+                  <Box key={d.key}>
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box sx={{ bgcolor: d.color, borderRadius: "50%", height: 10, width: 10 }} />
+                        <Typography sx={{ fontWeight: 700 }} variant="body2">
+                          {d.name}
+                        </Typography>
+                      </Stack>
+                      <Typography color="text.secondary" variant="caption">
+                        {formatNumber(mode.total.count)} orders · {formatCurrency(mode.total.totalAmount)}
+                      </Typography>
+                    </Stack>
+                    <Typography color="text.secondary" sx={{ display: "block", pl: 2.5 }} variant="caption">
+                      Organic {formatNumber(mode.organic.count)} ({formatCurrency(mode.organic.totalAmount)}) · Admin{" "}
+                      {formatNumber(mode.admin.count)} ({formatCurrency(mode.admin.totalAmount)})
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Stack>
+          </Paper>
         </Box>
+
+        {/* Payment mode breakdown table — mirrors the Source breakdown table above */}
+        <Paper sx={{ borderRadius: 2, boxShadow: "none", p: 2.5 }}>
+          <Typography sx={{ color: "#111827", fontWeight: 750, mb: 1.5 }} variant="subtitle1">
+            Payment mode breakdown
+          </Typography>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }}>Mode</TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                    Organic orders
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                    Admin orders
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                    Total orders
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                    Total revenue
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: "text.secondary" }} align="right">
+                    Rev. share
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Box sx={{ bgcolor: CHART_COLORS.online, borderRadius: "50%", height: 10, width: 10 }} />
+                      <Typography sx={{ fontWeight: 600 }} variant="body2">
+                        Online
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.online.organic.count)}</TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.online.admin.count)}</TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.online.total.count)}</TableCell>
+                  <TableCell align="right">{formatCurrency(paymentModeBreakdown.online.total.totalAmount)}</TableCell>
+                  <TableCell align="right">
+                    {metricShare(paymentModeBreakdown.online.total.totalAmount, stats.overall.totalAmount)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Box sx={{ bgcolor: CHART_COLORS.cod, borderRadius: "50%", height: 10, width: 10 }} />
+                      <Typography sx={{ fontWeight: 600 }} variant="body2">
+                        COD
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.cod.organic.count)}</TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.cod.admin.count)}</TableCell>
+                  <TableCell align="right">{formatNumber(paymentModeBreakdown.cod.total.count)}</TableCell>
+                  <TableCell align="right">{formatCurrency(paymentModeBreakdown.cod.total.totalAmount)}</TableCell>
+                  <TableCell align="right">
+                    {metricShare(paymentModeBreakdown.cod.total.totalAmount, stats.overall.totalAmount)}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ "& td": { borderBottom: "none", pt: 1.5 } }}>
+                  <TableCell>
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      Total
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      {formatNumber(organicTotal.count)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      {formatNumber(adminTotal.count)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      {formatNumber(stats.overall.count)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      {formatCurrency(stats.overall.totalAmount)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 800 }} variant="body2">
+                      100%
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
         {loading ? (
           <Box
@@ -478,7 +638,7 @@ export default function AdminDashboard() {
               inset: 0,
               justifyContent: "center",
               position: "fixed",
-              zIndex: (theme) => theme.zIndex.modal,
+              zIndex: (t) => t.zIndex.modal,
             }}
           >
             <CircularProgress size={34} />

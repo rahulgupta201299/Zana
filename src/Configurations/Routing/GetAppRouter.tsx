@@ -126,6 +126,7 @@ export const routeObj: RouteObject[] = [
       { path: ROUTES.BIKE_DETAIL, element: BikeDetailPage },
       { path: ROUTES.BLOGS, element: BlogsPage },
       { path: ROUTES.BLOG_DETAIL, element: BlogDetailPage },
+      { path: ROUTES.BLOG_DETAIL_LEGACY, element: BlogDetailPage },
       { path: ROUTES.OUR_STORIES, element: OurStoriesPage },
       { path: ROUTES.CART, element: Cart },
       { path: ROUTES.CONTACT_US, element: ContactUsForm },

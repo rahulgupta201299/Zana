@@ -355,7 +355,7 @@ async function getBlogUrls() {
   return blogs
     .filter((blog) => blog?._id)
     .map((blog) =>
-      createUrl(`/blog/${blog._id}`, {
+      createUrl(`/blog/${blog.slug || slugify(stripHtml(blog.title || blog.name)) || blog._id}/${blog._id}`, {
         title: blog.title || blog.name,
         lastmod: getLastModified(blog),
         priority: "0.6",

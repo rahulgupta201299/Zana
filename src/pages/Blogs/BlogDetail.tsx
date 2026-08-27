@@ -12,19 +12,15 @@ import {
 } from "@/components/Skeleton/BlogDetail";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-
-function stripHtml(value?: string): string {
-  if (!value) return "";
-  const documentValue = new DOMParser().parseFromString(value, "text/html");
-  return (documentValue.body.textContent || "").replace(/\s+/g, " ").trim();
-}
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getBlogRoutePath, stripHtml } from "@/Utils/BlogUtils";
 
 const BlogDetail = () => {
   const params = useParams();
 
   const { id = "" } = params;
 
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
 
@@ -69,6 +65,15 @@ const BlogDetail = () => {
     if (id) fetchBlogDetails();
     getBlogList(1);
   }, [id]);
+
+  useEffect(() => {
+    if (!blogDetails?._id || blogDetails._id !== id) return;
+
+    const blogPath = getBlogRoutePath(blogDetails);
+    if (location.pathname !== blogPath) {
+      navigate(blogPath, { replace: true });
+    }
+  }, [blogDetails?._id, blogDetails?.slug, blogDetails?.title, id, location.pathname, navigate]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
@@ -126,7 +131,7 @@ const BlogDetail = () => {
                         <div
                           key={index}
                           className="cursor-pointer"
-                          onClick={() => navigate(`/blog/${blog?._id}`)}
+                          onClick={() => navigate(getBlogRoutePath(blog))}
                         >
                           <div className="h-50 overflow-hidden mb-4">
                             <img

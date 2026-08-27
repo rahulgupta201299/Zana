@@ -4,6 +4,7 @@ export type T_BLOG_REDUCER = {
 };
 export type blogDataType = {
   _id: string;
+  slug?: string;
   title: string;
   description: string;
   content: string;

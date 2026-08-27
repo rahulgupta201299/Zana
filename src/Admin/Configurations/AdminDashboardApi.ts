@@ -17,8 +17,10 @@ export type AdminOrderStatsBucket = {
 };
 
 export type AdminOrderStats = {
-  online: AdminOrderStatsBucket;
-  cod: AdminOrderStatsBucket;
+  organicOnline: AdminOrderStatsBucket;
+  organicCod: AdminOrderStatsBucket;
+  adminOnline: AdminOrderStatsBucket;
+  adminCod: AdminOrderStatsBucket;
   overall: AdminOrderStatsBucket;
 };
 
@@ -33,8 +35,10 @@ export function parseAdminOrderStatsResponse(raw: unknown): AdminOrderStats {
   const body = getAdminApiBody<Partial<AdminOrderStats>>(raw);
 
   return {
-    online: bucketOrDefault(body.data?.online),
-    cod: bucketOrDefault(body.data?.cod),
+    organicOnline: bucketOrDefault(body.data?.organicOnline),
+    organicCod: bucketOrDefault(body.data?.organicCod),
+    adminOnline: bucketOrDefault(body.data?.adminOnline),
+    adminCod: bucketOrDefault(body.data?.adminCod),
     overall: bucketOrDefault(body.data?.overall),
   };
 }
