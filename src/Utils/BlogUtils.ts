@@ -1,3 +1,6 @@
+import { isProduction } from "@/Configurations/env";
+import { PRODUCTION_BLOG_SEO_MAP, STAGING_BLOG_SEO_MAP } from "@/pages/Blogs/BLOGS_SEO_MAPS";
+
 export function stripHtml(value?: string): string {
   if (!value) return "";
   const documentValue = new DOMParser().parseFromString(value, "text/html");
@@ -13,7 +16,10 @@ export function createBlogSlug(value?: string): string {
 }
 
 export function getBlogRouteSlug(blog?: { _id?: string; slug?: string; title?: string }): string {
-  return blog?.slug || createBlogSlug(blog?.title) || blog?._id || "";
+  const blogSeoMap = isProduction ? PRODUCTION_BLOG_SEO_MAP : STAGING_BLOG_SEO_MAP;
+  const mappedSlug = blog?._id ? blogSeoMap[blog._id]?.slug : undefined;
+
+  return mappedSlug || blog?.slug || createBlogSlug(blog?.title) || blog?._id || "";
 }
 
 export function getBlogRoutePath(blog?: { _id?: string; slug?: string; title?: string }): string {
