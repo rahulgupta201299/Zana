@@ -96,6 +96,7 @@ function RichTextEditor(props: {
   allowBorder?: boolean;
   allowImages?: boolean;
   label: string;
+  maxHeight?: number;
   minHeight?: number;
   required?: boolean;
   toolbarMode?: "basic" | "full";
@@ -106,6 +107,7 @@ function RichTextEditor(props: {
     allowBorder = true,
     allowImages = true,
     label,
+    maxHeight,
     minHeight = 260,
     required = false,
     toolbarMode = "full",
@@ -311,6 +313,9 @@ function RichTextEditor(props: {
             bgcolor: "#f8fafc",
             borderBottom: "1px solid #dbe2ea",
             flexWrap: "wrap",
+            position: "sticky",
+            top: 0,
+            zIndex: 2,
             px: 1,
             py: 0.75,
           }}
@@ -541,6 +546,8 @@ function RichTextEditor(props: {
             "&:focus": { outline: "2px solid #1976d2", outlineOffset: -2 },
             "& ol, & ul": { pl: 3 },
             "& p": { mb: 1, mt: 0 },
+            height: maxHeight ? maxHeight : minHeight,
+            maxHeight,
             minHeight,
             overflowY: "auto",
             px: 2,
@@ -595,7 +602,7 @@ function BlogPreview(props: {
             }}
             dangerouslySetInnerHTML={{ __html: blog.title || "Untitled" }}
           />
-          {blog.description ? (
+          {/* {blog.description ? (
             <Box
               sx={{
                 "& *": { color: "inherit", fontSize: "inherit", lineHeight: "inherit", margin: 0 },
@@ -605,7 +612,7 @@ function BlogPreview(props: {
               }}
               dangerouslySetInnerHTML={{ __html: blog.description }}
             />
-          ) : null}
+          ) : null} */}
         </Stack>
 
         <Box
@@ -1005,6 +1012,7 @@ export default function AdminBlogs() {
             </Button>
             <RichTextEditor
               label="Content"
+              maxHeight={380}
               onChange={(value) => updateField("content", value)}
               required
               value={formValues.content}

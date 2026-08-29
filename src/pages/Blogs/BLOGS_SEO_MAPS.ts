@@ -28,6 +28,15 @@ export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
 } as const;
 
 export const PRODUCTION_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
+   "6a92f94dd24c7eb8243ccc5e": {
+    title:
+      "How to Build the Perfect Motorcycle Touring Setup for Long-Distance Rides | Zana",
+    description:
+      "Build a complete motorcycle touring setup with the right protection, luggage, comfort upgrades, lighting, navigation, tools, riding gear, load management, and pre-ride checks.",
+    slug: "motorcycle-touring-setup-for-long-distance-rides",   
+    keywords:
+      "motorcycle touring setup, motorcycle touring accessories, long distance motorcycle setup, bike touring setup, motorcycle luggage setup, touring accessories for motorcycle, motorcycle travel setup, Zana motorcycle accessories",
+  },
   "6a8d5876ef7087442fc00d1b": {
     title: "Ladakh Bike Trip Checklist 2026: What to Pack for the Ride | Zana",
     description:
