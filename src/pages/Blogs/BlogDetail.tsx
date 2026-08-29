@@ -12,10 +12,11 @@ import {
   RelatedReadsSkeleton,
 } from "@/components/Skeleton/BlogDetail";
 import { SeoMeta } from "@/components/SeoMeta";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { PRODUCTION_BLOG_SEO_MAP, STAGING_BLOG_SEO_MAP } from "./BLOGS_SEO_MAPS";
+
 
 
 function stripHtml(value?: string): string {
@@ -31,6 +32,8 @@ const BlogDetail = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch<TAppDispatch>();
+
+  const blogContentRef = useRef<HTMLDivElement>(null);
 
   const actions = useMemo(
     () => ({
@@ -74,6 +77,33 @@ const BlogDetail = () => {
     getBlogList(1);
   }, [id]);
 
+  
+  useEffect(() => {
+    const container = blogContentRef.current;
+    if (!container || !blogDetails?.content) return;
+
+    const tables = container.querySelectorAll("table");
+
+    tables.forEach((table) => {
+      // Avoid double-wrapping if this effect ever re-runs on the same DOM
+      if (table.parentElement?.classList.contains("table-scroll-wrapper")) {
+        return;
+      }
+
+      // Strip inline width so the table sizes to its content, and lets
+      // our CSS take over instead of the editor's fixed px value.
+      table.style.removeProperty("width");
+      table.querySelectorAll("td, th").forEach((cell) => {
+        (cell as HTMLElement).style.removeProperty("width");
+      });
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-scroll-wrapper";
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+  }, [blogDetails?.content]);
+
   // Resolve SEO metadata: prefer the static map entry for this blog ID,
   // falling back to the blog's own title / content excerpt.
   const blogSeoMap = isProduction ? PRODUCTION_BLOG_SEO_MAP : STAGING_BLOG_SEO_MAP;
@@ -113,6 +143,7 @@ const BlogDetail = () => {
                   </div>
 
                   <div
+                    ref={blogContentRef}
                     className="blog-content"
                     dangerouslySetInnerHTML={{
                       __html: blogDetails?.content || "",
