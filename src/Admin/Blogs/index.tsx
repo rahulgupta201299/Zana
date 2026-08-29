@@ -35,6 +35,7 @@ import FormatClearIcon from "@mui/icons-material/FormatClear";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import FormatSizeIcon from "@mui/icons-material/FormatSize";
 import FormatColorFillIcon from "@mui/icons-material/FormatColorFill";
 import FormatColorTextIcon from "@mui/icons-material/FormatColorText";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
@@ -118,6 +119,7 @@ function RichTextEditor(props: {
   const selectionRef = useRef<Range | null>(null);
   const [textColorAnchor, setTextColorAnchor] = useState<HTMLElement | null>(null);
   const [highlightColorAnchor, setHighlightColorAnchor] = useState<HTMLElement | null>(null);
+  const [textSizeAnchor, setTextSizeAnchor] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) {
@@ -261,6 +263,11 @@ function RichTextEditor(props: {
     setTextColorAnchor(event.currentTarget);
   };
 
+  const openTextSizePalette = (event: MouseEvent<HTMLElement>) => {
+    saveSelection();
+    setTextSizeAnchor(event.currentTarget);
+  };
+
   const openHighlightColorPalette = (event: MouseEvent<HTMLElement>) => {
     saveSelection();
     setHighlightColorAnchor(event.currentTarget);
@@ -274,6 +281,11 @@ function RichTextEditor(props: {
   const applyHighlightColor = (color: string) => {
     runCommand("hiliteColor", color);
     setHighlightColorAnchor(null);
+  };
+
+  const applyTextSize = (size: "1" | "2" | "3" | "4" | "5" | "6" | "7") => {
+    runCommand("fontSize", size);
+    setTextSizeAnchor(null);
   };
 
   return (
@@ -343,6 +355,15 @@ function RichTextEditor(props: {
               size="small"
             >
               <FormatColorFillIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Text size">
+            <IconButton
+              aria-label="Text size"
+              onClick={openTextSizePalette}
+              size="small"
+            >
+              <FormatSizeIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           {allowBorder ? (
@@ -486,6 +507,25 @@ function RichTextEditor(props: {
                 type="color"
               />
             </Box>
+          </Box>
+        </Popover>
+        <Popover
+          anchorEl={textSizeAnchor}
+          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+          onClose={() => setTextSizeAnchor(null)}
+          open={Boolean(textSizeAnchor)}
+          transformOrigin={{ horizontal: "left", vertical: "top" }}
+        >
+          <Box sx={{ p: 1.5, width: 220 }}>
+            <Typography color="text.secondary" sx={{ display: "block", mb: 1 }} variant="caption">
+              Text size
+            </Typography>
+            <Stack spacing={0.75}>
+              <Button onClick={() => applyTextSize("2")} size="small" variant="outlined">12</Button>
+              <Button onClick={() => applyTextSize("3")} size="small" variant="outlined">14</Button>
+              <Button onClick={() => applyTextSize("4")} size="small" variant="outlined">18</Button>
+              <Button onClick={() => applyTextSize("5")} size="small" variant="outlined">24</Button>
+            </Stack>
           </Box>
         </Popover>
         <Box

@@ -9,7 +9,7 @@ const PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductDetail/PRODUCT_SEO_MAPS.
 const BIKE_SEO_MAPS_FILE = resolve("src/pages/BikeDetail/BIKE_SEO_MAPS.ts");
 const BRAND_SEO_MAPS_FILE = resolve("src/pages/Bikes/BRAND_SEO_MAPS.ts");
 const UNIVERSAL_PRODUCT_SEO_MAPS_FILE = resolve("src/pages/ProductCatalog/UNIVERSAL_PRODUCT_SEO_MAP.ts");
-const BLOG_SEO_MAPS_FILE = resolve("src/pages/Blogs/BLOG_SEO_MAPS.ts");
+const BLOG_SEO_MAPS_FILE = resolve("src/pages/Blogs/BLOGS_SEO_MAPS.ts");
 const PAGE_SIZE = 1000;
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
 const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
@@ -382,7 +382,6 @@ async function getBlogUrls() {
 
   const apiUrls = blogs
     .filter((blog) => blog?._id)
-    .filter((blog) => blogSeoIds.size === 0 || blogSeoIds.has(blog._id))
     .map((blog) => {
       const seoEntry = blogSeoMap[blog._id];
       return createUrl(`/blog/${blog._id}`, {
