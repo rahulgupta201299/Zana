@@ -7,15 +7,15 @@ export type BlogSeoEntry = {
 };
 
 export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
-  "6a92f5da925c4f62ab8f7813": {
+  "6a95a46f61788d1d1b1e3462": {
     title:
       "How to Build the Perfect Motorcycle Touring Setup for Long-Distance Rides | Zana",
     description:
       "Build a complete motorcycle touring setup with the right protection, luggage, comfort upgrades, lighting, navigation, tools, riding gear, load management, and pre-ride checks.",
     slug: "motorcycle-touring-setup-for-long-distance-rides",
-    
     keywords:
       "motorcycle touring setup, motorcycle touring accessories, long distance motorcycle setup, bike touring setup, motorcycle luggage setup, touring accessories for motorcycle, motorcycle travel setup, Zana motorcycle accessories",
+    image: "https://d3s3r7gevtfrvd.cloudfront.net/blogs/hero_image-1788193138619-80090605.jpg",
   },
   "6a8d88c65c6d181142a88699": {
     title: "Ladakh Bike Trip Checklist 2026: What to Pack for the Ride | Zana",
@@ -30,12 +30,13 @@ export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
 export const PRODUCTION_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
    "6a92f94dd24c7eb8243ccc5e": {
     title:
-      "10 Motorcycle Touring Setup: Complete Guide for Long Rides",
+      "How to Build the Perfect Motorcycle Touring Setup for Long-Distance Rides | Zana",
     description:
-      "Zana's practical motorcycle touring guide covering luggage, accessories, riding gear and other essentials to prepare your bike for long-distance journeys.",
+      "Before a long ride, most riders think about the route, fuel, and luggage. But what about the motorcycle carrying all of it? Good preparation means knowing those limits before the journey begins.",
     slug: "motorcycle-touring-setup-for-long-distance-rides",   
     keywords:
       "motorcycle touring setup, motorcycle touring accessories, long distance motorcycle setup, bike touring setup, motorcycle luggage setup, touring accessories for motorcycle, motorcycle travel setup, Zana motorcycle accessories",
+    image: "https://d1bw1i3fxlc6zi.cloudfront.net/blogs/hero_image-1788193335238-969763535.jpg",
   },
   "6a8d5876ef7087442fc00d1b": {
     title: "Ladakh Bike Trip Checklist 2026: What to Pack for the Ride | Zana",
