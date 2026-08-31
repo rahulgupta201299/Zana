@@ -115,10 +115,11 @@ const BlogDetail = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
-        title={seoTitle}
-        description={seoDescription}
+        title={stripHtml(seoTitle) || stripHtml(blogDetails?.title)}
+        description={stripHtml(seoDescription) || stripHtml(blogDetails?.description)}
         keywords={seoKeywords}
-        type="website"
+        image={seoEntry?.image || blogDetails?.imageUrl}
+       
       />
       <div className="py-16 px-6">
         <div className="max-w-7xl mx-auto">

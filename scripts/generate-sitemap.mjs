@@ -367,14 +367,16 @@ async function getProductUrls() {
 }
 
 function readBlogSeoMapUrls() {
-  return Object.entries(blogSeoMap).map(([blogId, seoData]) =>
-    createUrl(`/blog/${blogId}`, {
+  return Object.entries(blogSeoMap).map(([blogId, seoData]) => {
+    const slug = seoData?.slug;
+    const path = slug ? `/blog/${slug}/${blogId}` : `/blog/${blogId}`;
+    return createUrl(path, {
       id: blogId,
       title: seoData?.title,
       priority: "0.6",
       changefreq: "monthly",
-    }),
-  );
+    });
+  });
 }
 
 async function getBlogUrls() {
@@ -384,7 +386,9 @@ async function getBlogUrls() {
     .filter((blog) => blog?._id)
     .map((blog) => {
       const seoEntry = blogSeoMap[blog._id];
-      return createUrl(`/blog/${blog._id}`, {
+      const slug = seoEntry?.slug || blog.slug || slugify(blog.title || blog.name || "");
+      const path = slug ? `/blog/${slug}/${blog._id}` : `/blog/${blog._id}`;
+      return createUrl(path, {
         title: seoEntry?.title || blog.title || blog.name,
         lastmod: getLastModified(blog),
         priority: seoEntry ? "0.7" : "0.6",
