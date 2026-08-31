@@ -30,9 +30,9 @@ export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
 export const PRODUCTION_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
    "6a92f94dd24c7eb8243ccc5e": {
     title:
-      "How to Build the Perfect Motorcycle Touring Setup for Long-Distance Rides | Zana",
+      "10 Motorcycle Touring Setup: Complete Guide for Long Rides",
     description:
-      "Build a complete motorcycle touring setup with the right protection, luggage, comfort upgrades, lighting, navigation, tools, riding gear, load management, and pre-ride checks.",
+      "Zana's practical motorcycle touring guide covering luggage, accessories, riding gear and other essentials to prepare your bike for long-distance journeys.",
     slug: "motorcycle-touring-setup-for-long-distance-rides",   
     keywords:
       "motorcycle touring setup, motorcycle touring accessories, long distance motorcycle setup, bike touring setup, motorcycle luggage setup, touring accessories for motorcycle, motorcycle travel setup, Zana motorcycle accessories",
