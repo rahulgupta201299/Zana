@@ -130,9 +130,13 @@ const BlogDetail = () => {
                 <BlogDetailsSkeleton />
               ) : (
                 <>
-                  <div
+                  <h1
                     className="blog-title text-white text-4xl md:text-5xl font-bold mb-6"
-                    dangerouslySetInnerHTML={{ __html: blogDetails?.title || "" }}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        blogDetails?.title ||
+                        (seoTitle ? seoTitle.replace(/\s*\|\s*Zana\s*$/i, "") : ""),
+                    }}
                   />
 
                   <div className="mb-8">

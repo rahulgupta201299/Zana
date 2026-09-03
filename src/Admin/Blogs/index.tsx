@@ -593,6 +593,7 @@ function BlogPreview(props: {
             variant={blog.isActive === false ? "outlined" : "filled"}
           />
           <Box
+            component="h1"
             sx={{
               "& *": { color: "inherit", fontSize: "inherit", lineHeight: "inherit", margin: 0 },
               color: "#111827",
