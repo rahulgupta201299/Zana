@@ -238,6 +238,26 @@ const Footer = () => {
             </span>
             <div className="flex gap-2 md:gap-4 items-center flex-shrink-0">
               <a
+                href="https://www.facebook.com/zanamotorcycles/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-80"
+                aria-label="Facebook"
+              >
+                <svg
+                  className="w-[20px] h-[20px] md:w-[34px] md:h-[34px]"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  role="img"
+                >
+                  <path
+                    fill="#1877F2"
+                    d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.093 10.125 24v-8.438H7.078v-3.49h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.313 0 2.686.235 2.686.235v2.953h-1.513c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0024 12.073z"
+                  />
+                </svg>
+              </a>
+
+              <a
                 href="https://www.instagram.com/zanamotorcycles/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -291,11 +311,11 @@ const Footer = () => {
               </a>
 
               <a
-                href="https://www.facebook.com/"
+                href="https://in.pinterest.com/zanamotorcycles/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80"
-                aria-label="Facebook"
+                aria-label="Pinterest"
               >
                 <svg
                   className="w-[20px] h-[20px] md:w-[34px] md:h-[34px]"
@@ -304,14 +324,14 @@ const Footer = () => {
                   role="img"
                 >
                   <path
-                    fill="#1877F2"
-                    d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.093 10.125 24v-8.438H7.078v-3.49h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.313 0 2.686.235 2.686.235v2.953h-1.513c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0024 12.073z"
+                    fill="#E60023"
+                    d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.291 1.199-.334 1.357-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"
                   />
                 </svg>
               </a>
 
               <a
-                href="https://www.youtube.com/"
+                href="https://www.youtube.com/channel/UCDJ8YL2y9lipIe9n-YIMEXg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80"
