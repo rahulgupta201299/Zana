@@ -149,6 +149,90 @@ export function SeoMeta({
             : JSON.stringify(productSchema)}
         </script>
       )} */}
+
+      {/* Homepage JSON-LD Schema — injected only on the root route */}
+      {pathname === "/" && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://www.zanamotorcycles.com/#organization",
+                "name": "Zana Motorcycles",
+                "url": "https://www.zanamotorcycles.com/",
+                "logo": {
+                  "@type": "ImageObject",
+                  "@id": "https://www.zanamotorcycles.com/#logo",
+                  "url": "https://www.zanamotorcycles.com/assets/Zana-CH_-qJw1.webp",
+                  "contentUrl": "https://www.zanamotorcycles.com/assets/Zana-CH_-qJw1.webp",
+                  "caption": "Zana Motorcycles"
+                },
+                "brand": {
+                  "@id": "https://www.zanamotorcycles.com/#brand"
+                },
+                "sameAs": [
+                  "https://www.facebook.com/zanamotorcycles/",
+                  "https://www.instagram.com/zanamotorcycles/",
+                  "https://in.pinterest.com/zanamotorcycles/",
+                  "https://www.youtube.com/channel/UCDJ8YL2y9lipIe9n-YIMEXg"
+                ],
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "contactType": "customer service",
+                  "telephone": "+91-9953112277",
+                  "email": "onlinesales@zanainternational.com",
+                  "availableLanguage": ["English"]
+                },
+                "knowsAbout": [
+                  "Motorcycle Accessories",
+                  "Motorcycle Luggage",
+                  "Motorcycle Touring Equipment",
+                  "Motorcycle Protection Accessories",
+                  "Motorcycle Panniers",
+                  "Motorcycle Top Boxes",
+                  "Motorcycle Luggage Racks"
+                ]
+              },
+              {
+                "@type": "Brand",
+                "@id": "https://www.zanamotorcycles.com/#brand",
+                "name": "Zana Motorcycles",
+                "url": "https://www.zanamotorcycles.com/",
+                "logo": {
+                  "@id": "https://www.zanamotorcycles.com/assets/Zana-CH_-qJw1.webp#logo"
+                }
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://www.zanamotorcycles.com/#website",
+                "url": "https://www.zanamotorcycles.com/",
+                "name": "Zana Motorcycles",
+                "publisher": {
+                  "@id": "https://www.zanamotorcycles.com/#organization"
+                },
+                "inLanguage": "en-IN"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://www.zanamotorcycles.com/#webpage",
+                "url": "https://www.zanamotorcycles.com/",
+                "name": "Zana Motorcycles",
+                "isPartOf": {
+                  "@id": "https://www.zanamotorcycles.com/#website"
+                },
+                "about": {
+                  "@id": "https://www.zanamotorcycles.com/#organization"
+                },
+                "publisher": {
+                  "@id": "https://www.zanamotorcycles.com/#organization"
+                },
+                "inLanguage": "en-IN"
+              }
+            ]
+          })}
+        </script>
+      )}
     </Helmet>
   );
 }

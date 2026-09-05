@@ -52,7 +52,8 @@ import { encodedGeneratedPath } from "@/Utils/global";
 import AppBreadcrumb from "@/components/AppBreadcrumb";
 import { SUB_ROUTES } from "@/Constants/Routes";
 import { SeoMeta } from "@/components/SeoMeta";
-import { VITE_ENABLE_TRACKING } from "@/Configurations/env";
+import { ProductJsonLd } from "@/components/ProductJsonLd";
+import { VITE_ENABLE_TRACKING, APP_DOMAIN_URL } from "@/Configurations/env";
 import {
   getHeroImageProps,
   getSuggestedProductImageProps,
@@ -430,6 +431,14 @@ const ProductDetailPage = () => {
         { label: name || staticName },
       ];
 
+  // Canonical URL for JSON-LD — matches what SeoMeta already injects as
+  // <link rel="canonical">: origin + pathname (always trailing-slash normalised
+  // by the router / encodedGeneratedPath).
+  const origin = APP_DOMAIN_URL || window.location.origin;
+  const rawPath = location.pathname;
+  const canonicalPath = rawPath.endsWith("/") ? rawPath : `${rawPath}/`;
+  const productCanonicalUrl = `${origin}${canonicalPath}`;
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
@@ -446,6 +455,16 @@ const ProductDetailPage = () => {
         image={newImages[0] || seoData?.image}
         type="product"
         keywords={seoData?.keywords}
+      />
+      <ProductJsonLd
+        canonicalUrl={productCanonicalUrl}
+        productName={name || staticName || ""}
+        description={longDescription || seoData?.description}
+        images={newImages}
+        sku={productCode}
+        category={category || seoData?.category}
+        price={price}
+        breadcrumbItems={productBreadcrumbItems}
       />
       {/* Product Details */}
       <div className="max-w-7xl mx-auto px-6 py-8">
