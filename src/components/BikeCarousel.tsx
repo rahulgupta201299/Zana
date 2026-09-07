@@ -18,6 +18,7 @@ interface BikeSlide {
   imageUrl: string;
   brandPath: string;
   keywords: string[];
+  targetPath?: string;
 }
 
 const BIKE_SLIDES: BikeSlide[] = [
@@ -64,7 +65,7 @@ const BIKE_SLIDES: BikeSlide[] = [
     subtitle: "Extreme Adventure Crash Guards & Racks",
     imageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/homepage/Zana-KTM-ADV-390-Accessories.webp",
     brandPath: "ktm",
-    keywords: ["adventure", "390", "250", "rally"],
+    keywords: ["adventure", "390", "250", "390X"],
   },
   {
     id: "zana-rtx-300",
@@ -113,12 +114,12 @@ const BIKE_SLIDES: BikeSlide[] = [
   },
   {
     id: "zana-xpulse-210",
-    name: "Xpulse 200 / 210",
+    name: "Xpulse 210",
     brand: "Hero",
     subtitle: "Off-Road Crash Guards & Rally Gear",
     imageUrl: "https://d3s3r7gevtfrvd.cloudfront.net/homepage/Zana-XPULSE-210-Crashguard.webp",
     brandPath: "hero",
-    keywords: ["xpulse", "200", "210"],
+    keywords: ["X pulse", "210"],
   },
 ];
 
@@ -221,6 +222,10 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
   };
 
   const handleSlideClick = (slide: BikeSlide) => {
+    if (slide.targetPath) {
+      navigate(slide.targetPath);
+      return;
+    }
     if (slide.brandPath === "all") {
       navigate("/zana/bikes/all/");
       return;
