@@ -7,7 +7,7 @@ import Zana from "@/Assets/Icons/Zana.webp";
 import ZPro from "@/Assets/Icons/ZPro.webp";
 import { TopLevelItems, MenuItemsName, MenuItems } from "./Constant";
 import { MenuItemsType } from "./Types";
-import HeroSection from "@/components/HeroSection";
+import BikeCarousel from "@/components/BikeCarousel";
 import MenuIcon from "@mui/icons-material/Menu";
 import withDeviceDetails from "@/Hocs/withDeviceDetails";
 import Search from "./Search";
@@ -176,7 +176,7 @@ function Navbar({ isMobile }: NavbarPropsType) {
   return (
     <Box>
       <Box ref={heroSectionRef}>
-        {location.pathname === ROUTES.BASE_URL && <HeroSection />}
+        {location.pathname === ROUTES.BASE_URL && <BikeCarousel />}
       </Box>
       <Box
         ref={containerRef}
