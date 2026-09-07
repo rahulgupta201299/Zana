@@ -71,11 +71,11 @@ const Blogs = () => {
                       onClick={() => navigate(getBlogRoutePath(blog))}
                     className="rounded-lg overflow-hidden bg-card-gradient flex flex-col cursor-pointer"
                   >
-                    <div className="h-80 overflow-hidden p-3">
+                    <div className="h-56 sm:h-72 md:h-80 overflow-hidden p-3">
                       <img
                         src={blog?.imageUrl}
                         alt={stripHtml(blog?.title)}
-                         className="w-full h-full object-fit rounded-lg"
+                        className="w-full h-full object-cover object-center rounded-lg"
                       />
                     </div>
 
