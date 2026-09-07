@@ -8,6 +8,8 @@ import { ROUTES } from "@/Constants/Routes";
 import { encodedGeneratedPath } from "@/Utils/global";
 import { replaceSpecialCharactersWithHyphen } from "@/Utils/StringUtils";
 
+import HeroImage from "@/Assets/Images/HeroSection.webp";
+
 interface BikeSlide {
   id: string;
   name: string;
@@ -19,6 +21,15 @@ interface BikeSlide {
 }
 
 const BIKE_SLIDES: BikeSlide[] = [
+  {
+    id: "zana-hero-main",
+    name: "ZANA MOTORCYCLES",
+    brand: "Zana",
+    subtitle: "Made in India - Ridden Everywhere.",
+    imageUrl: HeroImage,
+    brandPath: "all",
+    keywords: [],
+  },
   {
     id: "zana-cb350-rs",
     name: "CB350 RS",
@@ -184,7 +195,7 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
     if (isPaused) return;
     const interval = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [isPaused, nextSlide]);
 
@@ -210,6 +221,11 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
   };
 
   const handleSlideClick = (slide: BikeSlide) => {
+    if (slide.brandPath === "all") {
+      navigate("/zana/bikes/all/");
+      return;
+    }
+
     const matchedModel = findDynamicBikeModel(slide, shopByBike);
 
     if (matchedModel) {
@@ -229,7 +245,7 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
 
   return (
     <section
-      className="relative flex h-[520px] sm:h-[600px] md:h-screen md:min-h-[640px] items-end sm:items-center overflow-hidden bg-[#0d0d0d] text-white select-none"
+      className="relative flex h-[450px] sm:h-[520px] md:h-screen md:min-h-[640px] items-end sm:items-center overflow-hidden bg-[#0d0d0d] text-white select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -242,7 +258,6 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
         // Smart loading: only load current slide, adjacent slides, or initial slide to reduce payload
         const isAdjacent = Math.abs(index - currentIndex) <= 1 || (currentIndex === 0 && index === BIKE_SLIDES.length - 1) || (currentIndex === BIKE_SLIDES.length - 1 && index === 0);
         const shouldLoadImage = isCurrent || isAdjacent || index === 0;
-
         return (
           <div
             key={slide.id}
@@ -258,7 +273,7 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "low"}
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-center cursor-pointer transform transition-transform duration-7000 ease-out scale-105 hover:scale-100"
+                className="absolute inset-0 h-full w-full object-cover object-center cursor-pointer transition-transform duration-7000 ease-out sm:scale-105 hover:scale-100"
               />
             )}
           </div>
@@ -266,8 +281,9 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
       })}
 
       {/* Dark Overlays */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/50 to-black/30 pointer-events-none" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+         {/* <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/85 via-black/60 to-black/25" /> */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/60 to-black/40 pointer-events-none" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
       {/* Watermark Brand Text */}
       <div
@@ -283,38 +299,69 @@ const BikeCarousel = ({ isMobile }: BikeCarouselPropsType) => {
       {/* Slide Foreground Content */}
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 z-10 pb-16 sm:pb-16 md:py-0">
         <div className="max-w-[800px] text-left">
-          {/* Main Headline (Bike Name) */}
+          {/* Bike Model / Brand Pill Badge */}
+          {currentIndex > 0 ? (
+            <div className="inline-flex items-center cursor-pointer gap-2 px-3 py-1 mb-3 rounded-full bg-yellow-400/10 backdrop-blur-md border border-yellow-400/40"
+              onClick={() => handleSlideClick(currentSlide)}
+            >
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+              <span
+                className="text-yellow-400 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {currentSlide.brand} — {currentSlide.name}
+              </span>
+            </div>
+          ) :      
+        (
+            <span
+              className="block text-white/50 text-[10px] md:text-xs font-sans tracking-[0.25em] uppercase mb-2 font-semibold"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              PRECISION-BUILT MOTORCYCLE PROTECTION & TOURING ESSENTIALS
+            </span>
+          )}
+
+          {/* Signature Headline on ALL slides */}
           <h1
-            className="text-white text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-medium leading-[1.15] mb-1.5 sm:mb-4 md:mb-6 tracking-tight font-serif cursor-pointer hover:text-yellow-400 transition-colors"
+            className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.12] mb-2 sm:mb-4 tracking-tight font-serif cursor-pointer hover:text-yellow-400 transition-colors"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
             onClick={() => handleSlideClick(currentSlide)}
           >
-            {currentSlide.name}
+            Forged in Fire.
+            <br />
+            <span>More Than Metal.</span>
           </h1>
 
           {/* Subtitle */}
           <p
-            className="text-white/80 text-xs sm:text-base md:text-xl font-serif max-w-[620px] leading-relaxed mb-4 md:mb-10"
+            className="text-white/80 text-xs sm:text-base md:text-lg font-serif max-w-[620px] leading-relaxed mb-4 md:mb-8"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             {currentSlide.subtitle}
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 max-w-[320px] sm:max-w-none">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center">
             <button
-              onClick={() => handleSlideClick(currentSlide)}
-              className="border-2 border-yellow-400 text-black bg-yellow-400 hover:bg-yellow-500 hover:border-yellow-500 transition-all duration-300 px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-lg text-[11px] sm:text-sm font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase cursor-pointer shadow-lg shadow-yellow-500/20 text-center"
+              onClick={() => {
+                if (currentIndex === 0) {
+                  navigate("/zana/bikes/all/");
+                } else {
+                  handleSlideClick(currentSlide);
+                }
+              }}
+              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase cursor-pointer text-center"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              EXPLORE {currentSlide.name} →
+              {currentIndex === 0 ? "SHOP BY BIKE" : `EXPLORE ${currentSlide.name}`}
             </button>
             <button
-              onClick={() => navigate("/zana/bikes/all/")}
-              className="border border-white/40 text-white bg-black/40 backdrop-blur-md hover:bg-white hover:text-black transition-all duration-300 px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-lg text-[11px] sm:text-sm font-semibold tracking-[0.12em] sm:tracking-[0.15em] uppercase cursor-pointer text-center"
+              onClick={() => navigate("/product-catalog/all/")}
+              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase cursor-pointer text-center"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              ALL BIKES
+              EXPLORE UNIVERSAL PRODUCTS
             </button>
           </div>
         </div>

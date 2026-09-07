@@ -101,35 +101,23 @@ const HeroSection = ({ isMobile }: { isMobile: boolean }) => {
             Made in India - Ridden Everywhere
           </p>
 
-          {/* Animated Button */}
-          <Button
-            onClick={() => navigate("/product-catalog/all/")}
-            sx={{
-              position: "relative",
-              border: "2px solid white",
-              textTransform: "none",
-              color: "white",
-              px: { xs: 2, md: 6 },
-              py: { xs: 1, md: 2 },
-              fontSize: { xs: "0.75rem", md: "1.1rem" },
-              borderRadius: "8px",
-              overflow: "hidden",
-              transition: "0.4s ease",
-
-              background:
-                "linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)",
-              backgroundSize: "200% 200%",
-              backgroundPosition: "0% 0%",
-
-              "&:hover": {
-              backgroundPosition: "100% 100%",
-                color: "#000",
-                borderColor: "white",
-              },
-            }}
-          >
-            Explore the Collection
-          </Button>
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center">
+            <button
+              onClick={() => navigate("/zana/bikes/all/")}
+              className="border border-white text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase cursor-pointer"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              SHOP BY BIKE
+            </button>
+            <button
+              onClick={() => navigate("/product-catalog/all/")}
+              className="border border-white/20 text-white/60 bg-transparent hover:border-white hover:text-white transition-all duration-300 px-6 md:px-8 py-2.5 md:py-3.5 rounded-none text-xs md:text-sm font-semibold tracking-[0.15em] uppercase sm:ml-2 cursor-pointer"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              EXPLORE UNIVERSAL PRODUCTS
+            </button>
+          </div>
         </div>
       </div>
     </section>
