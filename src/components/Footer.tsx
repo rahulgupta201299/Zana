@@ -356,6 +356,20 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        {/* Copyright Section */}
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center">
+          <div className="px-5 py-2.5 md:px-8 md:py-3 rounded-full bg-neutral-900/80 border border-white/10 shadow-lg backdrop-blur-md text-center transition-all duration-300 hover:border-white/20">
+            <p className="text-xs md:text-sm text-neutral-400 tracking-wide font-light leading-relaxed flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
+              <span>© 2026</span>
+              <span className="text-white font-medium">Zana Motorcycles</span>
+              <span className="text-red-600 font-bold">•</span>
+              <span>A Product of <span className="text-white font-medium">Vibhas Mohan Bhutani</span></span>
+              <span className="text-red-600 font-bold">•</span>
+              <span>All Rights Reserved</span>
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );
