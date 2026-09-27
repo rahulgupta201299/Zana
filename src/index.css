@@ -265,28 +265,34 @@ All colors MUST be HSL.
 
 .blog-content table {
   border-collapse: collapse;
-  display: block;
+  display: table;
   margin: 1.5rem 0;
   overflow-x: auto;
   width: 100%;
 }
 
+.blog-content table tr {
+  background-color: transparent !important;
+}
+
 .blog-content td,
 .blog-content th {
   border: 1px solid #4b5563;
-  color: #d1d5db;
+  color: #d1d5db !important;
   font-size: 0.95rem;
   line-height: 1.55;
   min-width: 120px;
   padding: 0.85rem 1rem;
   text-align: left;
   vertical-align: top;
+  background-color: transparent !important;
 }
 
+.blog-content thead tr,
 .blog-content tr:first-of-type td,
 .blog-content th {
-  background: #27272a;
-  color: #ffffff;
+  background: #27272a !important;
+  color: #ffffff !important;
   font-weight: 750;
 }
 

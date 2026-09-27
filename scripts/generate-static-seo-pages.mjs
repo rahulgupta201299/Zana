@@ -297,14 +297,22 @@ function getSeoForPath(pathname) {
     parts[2] === "bike" &&
     parts.length >= 6
   ) {
-    const bikeId = parts[parts.length - 1];
+    const bikeId = parts[5];
+    const categorySlug = parts[6] || null;
     const bikeSeo = getBikeSeo(bikeId);
     if (bikeSeo) {
+      const categorySeo = categorySlug && bikeSeo.categories?.[categorySlug];
       return {
-        title: bikeSeo.title || `${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])} Accessories | Zana Motorcycles`,
-        description: bikeSeo.description || `Shop crash guards, racks, guards, and motorcycle accessories for ${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])}.`,
-        keywords: bikeSeo.keywords,
-        image: bikeSeo.image,
+        title:
+          categorySeo?.title ||
+          bikeSeo.title ||
+          `${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])} Accessories | Zana Motorcycles`,
+        description:
+          categorySeo?.description ||
+          bikeSeo.description ||
+          `Shop crash guards, racks, guards, and motorcycle accessories for ${titleCaseSlug(parts[3])} ${titleCaseSlug(parts[4])}.`,
+        keywords: categorySeo?.keywords || bikeSeo.keywords,
+        image: categorySeo?.image || bikeSeo.image,
         type: "website",
       };
     }

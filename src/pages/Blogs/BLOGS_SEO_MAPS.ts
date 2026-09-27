@@ -7,6 +7,24 @@ export type BlogSeoEntry = {
 };
 
 export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
+  "6ab8cde85c003db5275fea4a": {
+    title: "Motorcycle Luggage Packing Checklist: What to Carry on a Tour",
+    description:
+      "Heading out on a motorcycle tour? Learn how to organize your luggage, balance the load and pack your essentials efficiently for a more comfortable journey with Zana.",
+    slug: "how-to-pack-motorcycle-luggage-for-touring",
+    keywords:
+      "motorcycle luggage packing checklist, how to pack motorcycle luggage, motorcycle touring packing, motorcycle luggage weight distribution, motorcycle luggage essentials, Zana motorcycle accessories",
+    image: "https://d3s3r7gevtfrvd.cloudfront.net/blogs/Hero-Image---How-to-Pack-Motorcycle-Luggage-for-Touring-1790496231084-756586003.jpg",
+  },
+  "6ab0f64a0e1bc3612ec5c5cd": {
+    title: "7 Monsoon Bike Inspection Checklist: What to Check | Zana",
+    description:
+      "Rain can turn a small bike issue into a serious problem. Use zana's monsoon inspection checklist to check your tyres, brakes, lights, chain, and more in Detail.",
+    slug: "monsoon-bike-inspection-checklist",
+    keywords:
+      "monsoon bike inspection checklist, monsoon bike care, bike checkup before monsoon, rain motorcycle safety, wet road riding, motorcycle maintenance monsoon, Zana motorcycle accessories",
+    image: "https://d3s3r7gevtfrvd.cloudfront.net/blogs/monsoon_bike_inspection_hero-1789982281184-932649482.jpg",
+  },
   "6a9dc97f9cf6e97045916532": {
     title: "Motorcycle Luggage Guide 2026: Choose the Right System | Zana",
     description:
@@ -57,6 +75,24 @@ export const STAGING_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
 } as const;
 
 export const PRODUCTION_BLOG_SEO_MAP: Record<string, BlogSeoEntry> = {
+  "6ab8cdf40b659a8065d51aac": {
+    title: "Motorcycle Luggage Packing Checklist: What to Carry on a Tour",
+    description:
+      "Heading out on a motorcycle tour? Learn how to organize your luggage, balance the load and pack your essentials efficiently for a more comfortable journey with Zana.",
+    slug: "how-to-pack-motorcycle-luggage-for-touring",
+    keywords:
+      "motorcycle luggage packing checklist, how to pack motorcycle luggage, motorcycle touring packing, motorcycle luggage weight distribution, motorcycle luggage essentials, Zana motorcycle accessories",
+    image: "https://d1bw1i3fxlc6zi.cloudfront.net/blogs/Hero-Image---How-to-Pack-Motorcycle-Luggage-for-Touring-1790496243722-964796364.jpg",
+  },
+  "6ab0f64ff110aa62497cc4f4": {
+    title: "7 Monsoon Bike Inspection Checklist: What to Check | Zana",
+    description:
+      "Rain can turn a small bike issue into a serious problem. Use zana's monsoon inspection checklist to check your tyres, brakes, lights, chain, and more in Detail.",
+    slug: "monsoon-bike-inspection-checklist",
+    keywords:
+      "monsoon bike inspection checklist, monsoon bike care, bike checkup before monsoon, rain motorcycle safety, wet road riding, motorcycle maintenance monsoon, Zana motorcycle accessories",
+    image: "https://d1bw1i3fxlc6zi.cloudfront.net/blogs/monsoon_bike_inspection_hero-1789982285790-109694590.jpg",
+  },
   "6a9dc98725088d32994b9c97": {
     title: "Motorcycle Luggage Guide 2026: Choose the Right System | Zana",
     description:

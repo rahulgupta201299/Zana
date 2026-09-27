@@ -345,18 +345,17 @@ const BikeDetailPage = () => {
   brandName.toLowerCase(),
 )}`;
 
+  const categorySeo = productCategoryParams && seoData?.categories?.[productCategoryParams];
+  const pageTitle = categorySeo?.title || seoData?.title || `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`;
+  const pageDescription = categorySeo?.description || seoData?.description || `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`;
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2a2a2a" }}>
       <SeoMeta
-        title={
-          seoData?.title ? seoData.title : `${brandName ? brandName + " " : ""}${modelName} Accessories | Zana Motorcycles`
-        }
-        description={
-          seoData?.description ||
-          `Shop crash guards, racks, guards, and motorcycle accessories for ${brandName} ${modelName}.`
-        }
-        image={imageUrl || seoData?.image}
-        keywords={seoData?.keywords}
+        title={pageTitle}
+        description={pageDescription}
+        image={categorySeo?.image || imageUrl || seoData?.image}
+        keywords={categorySeo?.keywords || seoData?.keywords}
       />
       {/* Hero Section */}
       <div className="relative py-12 md:py-20 px-4 md:px-6 border-b border-white/10">
