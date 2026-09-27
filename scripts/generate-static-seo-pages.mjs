@@ -7,6 +7,7 @@ const DIST_INDEX_FILE = join(DIST_DIR, "index.html");
 const DIST_SITEMAP_FILE = join(DIST_DIR, "sitemap.xml");
 const PUBLIC_SITEMAP_FILE = resolve("public/sitemap.xml");
 const SITE_ORIGIN_ENV_KEYS = ["APP_DOMAIN_URL", "VITE_APP_DOMAIN_URL"];
+const API_ORIGIN_ENV_KEYS = ["SITEMAP_API_URL", "VITE_API_DOMAIN"];
 const DEFAULT_OG_IMAGE_PATH = "/HeroSection.webp";
 const DEFAULT_OG_IMAGE_WIDTH = "1200";
 const DEFAULT_OG_IMAGE_HEIGHT = "630";
@@ -68,6 +69,9 @@ const isProduction = envNodeEnv === "production";
 const siteOrigin = normalizeOrigin(getEnvValue(SITE_ORIGIN_ENV_KEYS)) || (isProduction
   ? "https://www.zanamotorcycles.com"
   : "https://staging.dc5j4f0as6jwq.amplifyapp.com");
+const apiOrigin = normalizeOrigin(getEnvValue(API_ORIGIN_ENV_KEYS)) || (isProduction
+  ? "https://zana-motor-0d2fc2df02c6.herokuapp.com"
+  : "https://zana-motor-staging-d0a0c868c063.herokuapp.com");
 
 function escapeHtml(value) {
   return String(value || "")
@@ -191,6 +195,109 @@ function getBlogSeo(blogId) {
     ? blogSeoMaps.production
     : blogSeoMaps.staging;
   return blogMap?.[blogId];
+}
+
+function decodeHtml(value) {
+  return String(value || "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'");
+}
+
+function htmlToText(value) {
+  return decodeHtml(String(value || "")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]*>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Extract question/answer pairs from a clearly labelled FAQ section in blog HTML. */
+function extractFaqsFromContent(content) {
+  const html = String(content || "");
+  const headingPattern = /<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi;
+  let faqSection;
+  let match;
+
+  while ((match = headingPattern.exec(html))) {
+    if (/\bfaq(?:s)?\b|frequently asked questions/i.test(htmlToText(match[2]))) {
+      faqSection = html.slice(headingPattern.lastIndex);
+      break;
+    }
+  }
+
+  if (!faqSection) return [];
+
+  const nextSection = faqSection.search(/<h[12]\b[^>]*>/i);
+  const sectionHtml = nextSection === -1 ? faqSection : faqSection.slice(0, nextSection);
+  const questionPattern = /<h[3-6]\b[^>]*>([\s\S]*?)<\/h[3-6]>/gi;
+  const headings = [...sectionHtml.matchAll(questionPattern)];
+
+  return headings
+    .map((questionMatch, index) => {
+      const question = htmlToText(questionMatch[1]);
+      const answerEnd = index + 1 < headings.length
+        ? headings[index + 1].index
+        : sectionHtml.length;
+      const answer = htmlToText(sectionHtml.slice(questionMatch.index + questionMatch[0].length, answerEnd));
+      return { question, answer };
+    })
+    .filter((faq) => faq.question && faq.answer);
+}
+
+function createBlogSchema(canonicalUrl, blog, seo) {
+  // SEO map data controls presentation metadata. The detail response supplies
+  // only schema-specific article data: dates, headline fallback, and FAQ HTML.
+  const title = stripHtml(seo?.title || blog?.title || "Motorcycle Guide | Zana Motorcycles");
+  const summary = stripHtml(seo?.description || blog?.description || "Read motorcycle accessory guides, product stories, and Zana updates.");
+  const headline = stripHtml(blog?.title || title);
+  const bannerUrl = seo?.image || blog?.imageUrl;
+  const datePublished = blog?.createdAt;
+  const dateModified = blog?.updatedAt || blog?.createdAt;
+  const validFaqs = extractFaqsFromContent(blog?.content);
+  const graph = [
+    {
+      "@type": "Organization", "@id": "https://www.zanamotorcycles.com/#organization", name: "Zana Motorcycles", url: "https://www.zanamotorcycles.com/",
+      logo: { "@type": "ImageObject", "@id": "https://www.zanamotorcycles.com/#logo", url: "https://www.zanamotorcycles.com/assets/Zana-CH_-qJw1.webp", contentUrl: "https://www.zanamotorcycles.com/assets/Zana-CH_-qJw1.webp", caption: "Zana Motorcycles" },
+      brand: { "@id": "https://www.zanamotorcycles.com/#brand" },
+      sameAs: ["https://www.facebook.com/zanamotorcycles/", "https://www.instagram.com/zanamotorcycles/", "https://in.pinterest.com/zanamotorcycles/", "https://www.youtube.com/channel/UCDJ8YL2y9lipIe9n-YIMEXg"],
+      contactPoint: { "@type": "ContactPoint", contactType: "customer service", telephone: "+91-9953112277", email: "onlinesales@zanainternational.com", availableLanguage: ["English"] },
+      knowsAbout: ["Motorcycle Accessories", "Motorcycle Luggage", "Motorcycle Touring Equipment", "Motorcycle Protection Accessories", "Motorcycle Panniers", "Motorcycle Top Boxes", "Motorcycle Luggage Racks"],
+    },
+    { "@type": "Brand", "@id": "https://www.zanamotorcycles.com/#brand", name: "Zana Motorcycles", url: "https://www.zanamotorcycles.com/", logo: { "@id": "https://www.zanamotorcycles.com/#logo" } },
+    { "@type": "WebSite", "@id": "https://www.zanamotorcycles.com/#website", url: "https://www.zanamotorcycles.com/", name: "Zana Motorcycles", publisher: { "@id": "https://www.zanamotorcycles.com/#organization" }, inLanguage: "en-IN" },
+    { "@type": "WebPage", "@id": `${canonicalUrl}#webpage`, url: canonicalUrl, name: title, description: summary, isPartOf: { "@id": "https://www.zanamotorcycles.com/#website" }, about: { "@id": `${canonicalUrl}#article` }, mainEntity: { "@id": `${canonicalUrl}#article` }, primaryImageOfPage: { "@id": `${canonicalUrl}#primaryimage` }, publisher: { "@id": "https://www.zanamotorcycles.com/#organization" }, inLanguage: "en-IN" },
+    { "@type": "BlogPosting", "@id": `${canonicalUrl}#article`, url: canonicalUrl, headline, description: summary, image: { "@type": "ImageObject", "@id": `${canonicalUrl}#primaryimage`, url: bannerUrl, contentUrl: bannerUrl, caption: headline }, datePublished, dateModified, author: { "@id": "https://www.zanamotorcycles.com/#organization" }, publisher: { "@id": "https://www.zanamotorcycles.com/#organization" }, mainEntityOfPage: { "@id": `${canonicalUrl}#webpage` }, isPartOf: { "@id": "https://www.zanamotorcycles.com/#website" }, inLanguage: "en-IN" },
+  ];
+
+  if (validFaqs.length > 0) {
+    graph.push({ "@type": "FAQPage", "@id": `${canonicalUrl}#faq`, url: canonicalUrl, isPartOf: { "@id": `${canonicalUrl}#webpage` }, mainEntity: validFaqs.map((faq) => ({ "@type": "Question", name: faq.question.trim(), acceptedAnswer: { "@type": "Answer", text: faq.answer.trim() } })) });
+  }
+
+  return { "@context": "https://schema.org", "@graph": graph };
+}
+
+const blogDetailCache = new Map();
+
+async function getBlogDetail(blogId) {
+  if (!blogId) return undefined;
+  if (blogDetailCache.has(blogId)) return blogDetailCache.get(blogId);
+
+  const request = fetch(new URL(`/api/v1/blog/${blogId}`, `${apiOrigin}/`))
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      const body = await response.json();
+      return body?.data || body;
+    })
+    .catch((error) => {
+      console.warn(`Could not fetch blog ${blogId} for static schema: ${error.message}`);
+      return undefined;
+    });
+  blogDetailCache.set(blogId, request);
+  return request;
 }
 
 function loadUniversalProductSeoMaps() {
@@ -436,6 +543,16 @@ function upsertCanonical(html, href) {
   return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
 }
 
+function upsertBlogSchema(html, schema) {
+  if (!schema) return html;
+  const schemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
+  const tag = `<script id="blog-json-ld" type="application/ld+json">${schemaJson}</script>`;
+  if (/<script\s+id=["']blog-json-ld["'][^>]*>[\s\S]*?<\/script>/i.test(html)) {
+    return html.replace(/<script\s+id=["']blog-json-ld["'][^>]*>[\s\S]*?<\/script>/i, tag);
+  }
+  return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
+}
+
 function addStaticRouteMarker(html, pathname) {
   return html.replace(
     /<html([^>]*)>/i,
@@ -443,7 +560,7 @@ function addStaticRouteMarker(html, pathname) {
   );
 }
 
-function createRouteHtml(baseHtml, absoluteUrl, pathname) {
+async function createRouteHtml(baseHtml, absoluteUrl, pathname) {
   const seo = getSeoForPath(pathname);
   const title = truncate(seo.title, 70);
   const description = truncate(seo.description, 160);
@@ -483,6 +600,13 @@ function createRouteHtml(baseHtml, absoluteUrl, pathname) {
   html = upsertMetaName(html, "twitter:image:alt", imageAlt);
   html = upsertCanonical(html, absoluteUrl);
 
+  const pathParts = pathname.split("/").filter(Boolean);
+  if (pathParts[0] === "blog" && pathParts.length >= 2) {
+    const blogId = pathParts[pathParts.length - 1];
+    const blog = await getBlogDetail(blogId);
+    if (blog) html = upsertBlogSchema(html, createBlogSchema(absoluteUrl, blog, getBlogSeo(blogId)));
+  }
+
   return html;
 }
 
@@ -493,7 +617,7 @@ function outputFileForPath(pathname) {
     : DIST_INDEX_FILE;
 }
 
-function main() {
+async function main() {
   if (!existsSync(DIST_INDEX_FILE)) {
     throw new Error("Missing dist/index.html. Run this script after vite build.");
   }
@@ -510,11 +634,14 @@ function main() {
 
     const outputFile = outputFileForPath(pathname);
     mkdirSync(dirname(outputFile), { recursive: true });
-    writeFileSync(outputFile, createRouteHtml(baseHtml, url.href, pathname));
+    writeFileSync(outputFile, await createRouteHtml(baseHtml, url.href, pathname));
     generatedCount += 1;
   }
 
   console.log(`Generated ${generatedCount} static SEO route pages in ${DIST_DIR}.`);
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

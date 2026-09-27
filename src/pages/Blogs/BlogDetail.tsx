@@ -11,10 +11,12 @@ import {
   BlogDetailsSkeleton,
   RelatedReadsSkeleton,
 } from "@/components/Skeleton/BlogDetail";
+import { BlogJsonLd } from "@/components/BlogJsonLd";
 import { SeoMeta } from "@/components/SeoMeta";
+import { APP_DOMAIN_URL } from "@/Configurations/env";
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PRODUCTION_BLOG_SEO_MAP, STAGING_BLOG_SEO_MAP } from "./BLOGS_SEO_MAPS";
 
 
@@ -27,6 +29,7 @@ function stripHtml(value?: string): string {
 
 const BlogDetail = () => {
   const params = useParams();
+  const { pathname } = useLocation();
 
   const { id = "" } = params;
 
@@ -111,16 +114,33 @@ const BlogDetail = () => {
   const seoTitle = seoEntry?.title;
   const seoDescription = seoEntry?.description
   const seoKeywords = seoEntry?.keywords;
+  const canonicalPath = pathname === "/" ? "/" : `${pathname.replace(/\/+$/, "")}/`;
+  const canonicalUrl = `${APP_DOMAIN_URL || window.location.origin}${canonicalPath}`;
+  const schemaTitle = stripHtml(seoTitle) || stripHtml(blogDetails?.title);
+  const schemaSummary = stripHtml(seoDescription) || stripHtml(blogDetails?.description);
+  const schemaHeadline = stripHtml(blogDetails?.title) || schemaTitle;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#181818" }}>
       <SeoMeta
-        title={stripHtml(seoTitle) || stripHtml(blogDetails?.title)}
-        description={stripHtml(seoDescription) || stripHtml(blogDetails?.description)}
+        title={schemaTitle}
+        description={schemaSummary}
         keywords={seoKeywords}
         image={seoEntry?.image || blogDetails?.imageUrl}
        
       />
+      {blogDetails?._id && (
+        <BlogJsonLd
+          canonicalUrl={canonicalUrl}
+          metaTitle={schemaTitle}
+          summary={schemaSummary}
+          headline={schemaHeadline}
+          bannerUrl={seoEntry?.image || blogDetails.imageUrl}
+          datePublished={blogDetails.createdAt}
+          dateModified={blogDetails.createdAt}
+          content={blogDetails.content}
+        />
+      )}
       <div className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
