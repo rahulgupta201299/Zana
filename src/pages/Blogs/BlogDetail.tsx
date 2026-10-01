@@ -15,11 +15,11 @@ import { BlogJsonLd } from "@/components/BlogJsonLd";
 import { SeoMeta } from "@/components/SeoMeta";
 import { APP_DOMAIN_URL } from "@/Configurations/env";
 import { useEffect, useMemo, useRef } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { PRODUCTION_BLOG_SEO_MAP, STAGING_BLOG_SEO_MAP } from "./BLOGS_SEO_MAPS";
-
-
+import { getBlogRoutePath } from "@/Utils/BlogUtils";
 
 function stripHtml(value?: string): string {
   if (!value) return "";
@@ -29,11 +29,17 @@ function stripHtml(value?: string): string {
 
 const BlogDetail = () => {
   const params = useParams();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   const { id = "" } = params;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname.startsWith("/blog/") && !pathname.endsWith("/")) {
+      navigate(`${pathname}/${search}`, { replace: true });
+    }
+  }, [pathname, search, navigate]);
   const dispatch = useDispatch<TAppDispatch>();
 
   const blogContentRef = useRef<HTMLDivElement>(null);

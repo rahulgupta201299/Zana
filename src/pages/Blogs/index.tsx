@@ -1,5 +1,4 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TAppDispatch, TAppStore } from "@/Configurations/AppStore";
 import { useEffect, useMemo, useState } from "react";
@@ -9,9 +8,8 @@ import { TReducers } from "@/Redux/Reducers";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { fetchBlogListName } from "@/Redux/Blogs/Actions";
-import { Grid } from "lucide-react";
 import BlogsSkeleton from "@/components/Skeleton/BlogsSkeleton";
-import { Box, Pagination } from "@mui/material";
+import { Box, Pagination, PaginationItem } from "@mui/material";
 import { getBlogRoutePath } from "@/Utils/BlogUtils";
 
 function stripHtml(value?: string): string {
@@ -21,11 +19,15 @@ function stripHtml(value?: string): string {
 }
 
 const Blogs = () => {
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch<TAppDispatch>();
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [numberOfPages, setNumberOfPages] = useState<number>(0);
   const LIMIT_PER_PAGE = 10;
+
+  const rawPage = parseInt(searchParams.get("page") || "1", 10);
+  const activePage = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
+
   const actions = useMemo(
     () => ({
       fetchBlogList: (payload: any) =>
@@ -54,8 +56,8 @@ const Blogs = () => {
   };
 
   useEffect(() => {
-    getBlogList(1);
-  }, []);
+    getBlogList(activePage);
+  }, [activePage]);
 
   return (
     <div className="min-h-screen bg-dark-gray">
@@ -64,12 +66,12 @@ const Blogs = () => {
           <h1 className="text-white text-5xl font-bold mb-12">BLOGS</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {isListLoading
-              ? Array.from({ length: 4 }).map((_, i) => <BlogsSkeleton />)
+              ? Array.from({ length: 4 }).map((_, i) => <BlogsSkeleton key={i} />)
               : blogs.map((blog, index) => (
-                  <div
-                    key={index}
-                      onClick={() => navigate(getBlogRoutePath(blog))}
-                    className="rounded-lg overflow-hidden bg-card-gradient flex flex-col cursor-pointer"
+                  <Link
+                    key={blog?._id || index}
+                    to={getBlogRoutePath(blog)}
+                    className="rounded-lg overflow-hidden bg-card-gradient flex flex-col cursor-pointer block no-underline"
                   >
                     <div className="h-56 sm:h-72 md:h-80 overflow-hidden p-3">
                       <img
@@ -85,11 +87,11 @@ const Blogs = () => {
                         dangerouslySetInnerHTML={{ __html: blog?.title || "" }}
                       />
 
-                      <Button className="mt-auto self-start bg-transparent text-black border-2 border-black hover:bg-black hover:text-white rounded-none font-bold px-6">
+                      <span className="mt-auto self-start bg-transparent text-black border-2 border-black hover:bg-black hover:text-white rounded-none font-bold px-6 py-2 text-sm inline-flex items-center justify-center transition-colors">
                         READ MORE
-                      </Button>
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
           </div>
           {blogs.length === 0 && !isListLoading && (
@@ -100,7 +102,7 @@ const Blogs = () => {
         </div>
       </div>
 
-      {blogs.length != 0 && (
+      {blogs.length !== 0 && (
         <Box
           sx={{
             marginTop: "2rem",
@@ -113,12 +115,16 @@ const Blogs = () => {
         >
           <Pagination
             count={numberOfPages}
-            page={currentPage}
+            page={currentPage || activePage}
             siblingCount={1}
             boundaryCount={0}
-            onChange={(_, page) => {
-              getBlogList(page);
-            }}
+            renderItem={(item) => (
+              <PaginationItem
+                component={Link}
+                to={item.page === 1 ? "/blogs/" : `/blogs/?page=${item.page}`}
+                {...item}
+              />
+            )}
             sx={{
               "& .MuiPaginationItem-root": {
                 color: "white",

@@ -26,8 +26,8 @@ export function getBlogRoutePath(blog?: { _id?: string; slug?: string; title?: s
   const slug = getBlogRouteSlug(blog);
   const id = blog?._id || "";
 
-  if (slug && id) return `/blog/${slug}/${id}`;
-  return slug ? `/blog/${slug}` : "/blogs";
+  if (slug && id) return `/blog/${slug}/${id}/`;
+  return slug ? `/blog/${slug}/` : "/blogs/";
 }
 
 export function isMongoObjectId(value?: string): boolean {
