@@ -6,7 +6,7 @@ import { TReducers } from "@/Redux/Reducers";
 import { getServiceSelector } from "@/Redux/ServiceTracker/Selectors";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PersistPartial } from "redux-persist/es/persistReducer";
 import { getBlogRoutePath, stripHtml } from "@/Utils/BlogUtils";
 
@@ -31,9 +31,8 @@ const BlogsSection = () => {
   const blogs = useSelector((state: TAppStore) => getTopFourBlogs(state));
 
   const getBlogList = async () => {
-    const result = actions.fetchBlogList();
+    actions.fetchBlogList();
   };
-  const navigate = useNavigate()
 
   useEffect(() => {
     getBlogList();
@@ -48,19 +47,17 @@ const BlogsSection = () => {
         {/* Responsive Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {blogs.map((blog) => (
-            <div
+            <Link
               key={blog?._id}
-              className="flex flex-col"
+              to={getBlogRoutePath(blog)}
+              className="flex flex-col block no-underline text-inherit"
               style={{
                 backgroundColor: "#2A2A2A",
                 borderRadius: "0.5rem",
                 padding: "1rem",
-                 cursor: 'pointer',
+                cursor: "pointer",
               }}
-                onClick={() => navigate(getBlogRoutePath(blog))}
             >
-
-             
               <div className="relative inline-block max-w-full mb-4 rounded-lg overflow-hidden">
                 <img
                   src={blog?.imageUrl}
@@ -81,36 +78,29 @@ const BlogsSection = () => {
                 {stripHtml(blog?.description)}
               </p>
 
-              {/* Button */}
-           
-                <button
-                onClick={(event) => {
-                  event.stopPropagation();
-                  navigate(getBlogRoutePath(blog));
+              {/* Button / Badge */}
+              <span
+                className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-base font-medium overflow-hidden group transition-colors duration-500 w-fit inline-flex items-center justify-center"
+                style={{
+                  background:
+                    "linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)",
+                  backgroundSize: "200% 200%",
+                  backgroundPosition: "0% 0%",
+                  transition:
+                    "background-position 0.4s ease, color 0.4s ease",
                 }}
-                  className="relative bg-transparent border-2 border-white text-white px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-base font-medium overflow-hidden group transition-colors duration-500 w-fit"
-                  style={{
-                    background:
-                      "linear-gradient(-45deg, white 0%, white 50%, transparent 50%, transparent 100%)",
-                    backgroundSize: "200% 200%",
-                    backgroundPosition: "0% 0%",
-                    transition:
-                      "background-position 0.4s ease, color 0.4s ease",
-                     
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundPosition = "100% 100%";
-                    e.currentTarget.style.color = "#000";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundPosition = "0% 0%";
-                    e.currentTarget.style.color = "#fff";
-                  }}
-                >
-                  READ MORE
-                </button>
-            
-            </div>
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundPosition = "100% 100%";
+                  e.currentTarget.style.color = "#000";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundPosition = "0% 0%";
+                  e.currentTarget.style.color = "#fff";
+                }}
+              >
+                READ MORE
+              </span>
+            </Link>
           ))}
         </div>
       </div>

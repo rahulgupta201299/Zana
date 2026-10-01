@@ -94,7 +94,7 @@ const staticSections = [
   },
   {
     name: "Blog",
-    urls: [{ path: "/blogs", priority: "0.7", changefreq: "weekly" }],
+    urls: [{ path: "/blogs/", priority: "0.7", changefreq: "weekly" }],
   },
   {
     name: "Bike Pages",
@@ -369,7 +369,7 @@ async function getProductUrls() {
 function readBlogSeoMapUrls() {
   return Object.entries(blogSeoMap).map(([blogId, seoData]) => {
     const slug = seoData?.slug;
-    const path = slug ? `/blog/${slug}/${blogId}` : `/blog/${blogId}`;
+    const path = slug ? `/blog/${slug}/${blogId}/` : `/blog/${blogId}/`;
     return createUrl(path, {
       id: blogId,
       title: seoData?.title,
@@ -387,7 +387,7 @@ async function getBlogUrls() {
     .map((blog) => {
       const seoEntry = blogSeoMap[blog._id];
       const slug = seoEntry?.slug || blog.slug || slugify(blog.title || blog.name || "");
-      const path = slug ? `/blog/${slug}/${blog._id}` : `/blog/${blog._id}`;
+      const path = slug ? `/blog/${slug}/${blog._id}/` : `/blog/${blog._id}/`;
       return createUrl(path, {
         title: seoEntry?.title || blog.title || blog.name,
         lastmod: getLastModified(blog),

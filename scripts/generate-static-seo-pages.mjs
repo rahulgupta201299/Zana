@@ -456,7 +456,7 @@ function getSeoForPath(pathname) {
     };
   }
 
-  if (pathname === "/blogs") {
+  if (pathname === "/blogs" || pathname === "/blogs/") {
     return {
       title: "Motorcycle Stories and Guides | Zana Motorcycles",
       description:
