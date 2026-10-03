@@ -65,6 +65,7 @@ export interface ClearCartResType {
 
 export interface CartModifyReqType {
   phoneNumber: string;
+  otpMethod?: "sms" | "whatsapp";
   items: Array<{
     productId: string;
     quantity: number;

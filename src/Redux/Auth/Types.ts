@@ -44,6 +44,7 @@ export type T_AUTH_REDUCER = {
   login: {
     phoneNumber: string;
     verified: boolean;
+    otpMethod?: OtpMethod;
     firstName?: string;
     lastName?: string;
     address?: string;
@@ -82,9 +83,12 @@ export interface VeriftyOtpReqType {
   otp: string;
 }
 
+export type OtpMethod = "sms" | "whatsapp";
+
 export type VerifyOtpResType = {
   message: string;
   phoneNumber: string;
+  otpMethod: OtpMethod;
   verified: boolean;
   profile: ProfileDetailsType;
 };

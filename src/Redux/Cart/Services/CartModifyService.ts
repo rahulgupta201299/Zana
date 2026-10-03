@@ -12,6 +12,7 @@ async function cartModifyService(
 ): Promise<CartDetailResType> {
   const state = AppStore.getState();
   const currency = state.landing.selectedCurrency;
+  const otpMethod = state.auth.login.otpMethod;
   
   const { phoneNumber = "" } = requestData;
 
@@ -23,6 +24,7 @@ async function cartModifyService(
     data: {
       ...requestData,
       currency,
+      ...(otpMethod ? { otpMethod } : {}),
     },
   };
   const response = await network.request(options);
